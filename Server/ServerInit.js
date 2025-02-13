@@ -18,19 +18,43 @@ const restaurant = mysql.createPool({
 });
 
 
+async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
+  const SQLFunction = `SELECT * FROM ${Table}`
+
+  PageSize = Math.min(PageSize, 100)
+
+  if (OrderBy){
+    SQLFunction = SQLFunction + `\n${OrderBy}`
+  }
+  if (PageNumber && PageNumber > 1){
+    SQLFunction = SQLFunction + `
+    OFFSET (${PageNumber} - 1) * ${PageSize} ROWS
+    FETCH NEXT ${PageSize} ROWS ONLY;`
+  }
+  const [rows] = await restaurant.promise().query(SQLFunction);
+  return rows
+}
+
 // ENDPOINTS
-
-
 app.get('/menu', async (req, res) => {
   try {
+    const query = req.query
+    console.log(query)
+    var result = await GetTablePage("menu", query.page, 5)
+    res.send(result)
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+app.get('/users', async (req, res) => {
+  try {
     const query = req.query
 
-    const SQLFunction = 'SELECT * FROM '
+    const SQLFunction = 'SELECT * FROM menu'
     const [rows] = await restaurant.promise().query(SQLFunction);
-    res.json(rows);
+    res.send(rows);
 
-    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -46,7 +70,8 @@ app.get('/get', async (req, res) => {
     const SQLFunction = 'SELECT * FROM ' + query.table + Rule
 
     const [rows] = await restaurant.promise().query(SQLFunction);
-    res.json(rows);
+
+    res.send(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -56,17 +81,15 @@ app.get('/get', async (req, res) => {
 
 app.post('/set', async (req, res) => {
   try {
-    const query = req.body
+    const body = req.body
 
 
 
 
-    const table = query[0]
-    const values = query[1]
-    const rule = query[2]
+    const table = body[0]
+    const values = body[1]
+    const rule = body[2]
 
-
-    console.log(query)
 
 
     const rulestring = rule && "WHERE " + rule || ""
@@ -103,7 +126,7 @@ app.post('/set', async (req, res) => {
     SQLFunction = SQLFunction.replace(/\n/g, '')
 
     const [rows] = await restaurant.promise().query(SQLFunction);
-    res.json(rows);
+    res.send(rows);
   } catch (err) {
 
     res.status(500).json({ error: err.message });
@@ -113,7 +136,9 @@ app.post('/set', async (req, res) => {
 });
 
 
-
+app.get("/", function(request, response){
+  response.send("DinnerSync API main page")
+})
 
 
 app.listen(3000, () => {

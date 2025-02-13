@@ -22,10 +22,24 @@
     }
     ?>
 
-    <script>ShowLoader()</script>
+    <script type="module">
+        
+        import config from "../../configurations.js"
+        ShowLoader()
+        
+        const FinalLink = config.API+'/menu?page=1'
+        try {
+            var response = await fetch(FinalLink);
+            var result = await response.json()
+        } catch (error) {
+            console.error('Fetch error:', error);
+}
+
+
+        HideLoader()
+    </script>
 
     
-    <script>HideLoader()</script>
     
     </div>
     </div>

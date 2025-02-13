@@ -19,14 +19,6 @@
 </head>
 
 
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<script>
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-    }
-    googleTranslateElementInit() 
-</script>
-
 
 
 
@@ -71,7 +63,7 @@
             <span class="nav-button-label">Users</span>
         </button>
         
-        <button class="navbar-button" page-link='settings.php''>
+        <button class="navbar-button" page-link='settings.php'>
             <img src="../Images/Icons/settings.svg" class="nav-button-icon"></img>
             <span class="nav-button-label">Settings</span>
         </button>
@@ -85,6 +77,9 @@
 
 
 <script>
+
+    // DEFAULT IMPORTS
+
     function Redirect(Page){
         window.location.href = Page
     }

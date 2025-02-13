@@ -1,5 +1,5 @@
 
-import  config  from './configurations.js';
+import  config  from '../configurations.js';
 var Host = "http://localhost:"+config.port
 
 export default class Database {

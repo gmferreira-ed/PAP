@@ -3,7 +3,8 @@ var config = {
     Snapping: 5,
 
     host:"127.0.0.1",
-    port:"3000"
+    port:"3000",
+    API:"http://localhost:3000",
 };
 
 export default  config
