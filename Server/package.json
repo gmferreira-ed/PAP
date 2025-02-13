@@ -1,0 +1,22 @@
+{
+    "name": "my-project",
+    "version": "1.0.0",
+    "description": "A Node.js project for a restaurant management system",
+    "main": "server.js",
+    "type":"module",
+    "scripts": {
+      "start": "node server.js",
+      "dev": "nodemon server.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.18.2",
+      "mysql2": "^3.2.0"
+    },
+    "devDependencies": {
+      "nodemon": "^2.0.22"
+    }
+  }
+  

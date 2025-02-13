@@ -29,7 +29,9 @@ var PageChangers = document.querySelectorAll("[page-link]")
 PageChangers.forEach(PageChanger => {
     let link = PageChanger.getAttribute('page-link')
     PageChanger.addEventListener('click', function(){
+        ShowLoader()
         window.location.href = link
+    
     })
     
     if (window.location.href.includes(link)){

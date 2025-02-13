@@ -28,7 +28,7 @@
         $profile_id = $_GET["id"];
 
 
-        $image_directory = '../../img/';
+        $image_directory = '..\..\Server\ImageDatabase\ProfilePictures/';;
 
 
         $sql = "SELECT * FROM users WHERE userid=".$profile_id;
@@ -36,7 +36,7 @@
 
         $profileinfo = mysqli_fetch_array( $result);
         
-        $pfp_file = $profileinfo["profile_icon"] != "" ? $profileinfo["profile_icon"] : "guest.png";
+        $pfp_file = $profileinfo["profile_icon"] != "" ? $profileinfo["profile_icon"] : "default.png";
         $pfp = $image_directory.$pfp_file;
 
 

@@ -26,7 +26,7 @@
 
     require "../php/ligabd.php";
 
-    $image_directory = '../../img/';
+    $image_directory = '..\..\Server\ImageDatabase\ProfilePictures/';
 
         $sql = "SELECT * FROM users";
 
@@ -69,7 +69,7 @@
                     $activecircle = '<div class="circle" style="background-color:'.($targetcolor).'">
                     </div>';
     
-                    $pfp_file = $registo["profile_icon"] != "" ? $registo["profile_icon"] : "guest.png";
+                    $pfp_file = $registo["profile_icon"] != "" ? $registo["profile_icon"] : "default.png";
     
                     $img = $image_directory.$pfp_file;
                     $userdata = "  'profile.php?id=".$registo["userid"]."'";
