@@ -22,6 +22,11 @@
     }
     ?>
 
+    <label class="title">Menu</label>
+    <div class="separator"></div>
+
+
+
     <script type="module">
         
         import config from "../../configurations.js"
@@ -44,6 +49,4 @@
     </div>
     </div>
 </body>
-
-</html>
 </html>

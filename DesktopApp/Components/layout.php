@@ -8,19 +8,21 @@
 ?>
 
 
-
-
-
-<head>
-    <script src="../GlobalFunctions.js"></script>
-    <script src="../initializer.js" defer></script>
-    <link rel="icon" type="image/x-icon" href="../Images/favicon.ico">
-    <title>Restro Link</title>
-</head>
+<script src="../GlobalFunctions.js"></script>
+<script src="../initializer.js" defer></script>
 
 
 
 
+<script>
+
+    // DEFAULT IMPORTS
+
+    function Redirect(Page){
+        window.location.href = Page
+    }
+
+</script>
 
 
 <div class="layout">
@@ -70,18 +72,7 @@
     </div>
 
     <div class="container">
-
-    <div>  
-</div>
+    
 
 
 
-<script>
-
-    // DEFAULT IMPORTS
-
-    function Redirect(Page){
-        window.location.href = Page
-    }
-
-</script>

@@ -35,6 +35,6 @@ PageChangers.forEach(PageChanger => {
     })
     
     if (window.location.href.includes(link)){
-        PageChanger.style.backgroundColor = "rgb(52, 55, 83)"
+        PageChanger.style.backgroundColor = "rgb(78, 78, 78)"
     }
 })
