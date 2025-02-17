@@ -30,7 +30,7 @@
         <div class="navbar-icon">
             <img  src="../Images/RestroLink.png">
         </div>
-        <button class="navbar-button"  page-link='home.php'>
+        <button class="navbar-button"  page-link='home.jsx'>
             <img src="../Images/Icons/home.svg" class="nav-button-icon" ></img>
             <span class="nav-button-label">Home</span>
         </button>

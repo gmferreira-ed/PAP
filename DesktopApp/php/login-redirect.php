@@ -21,7 +21,7 @@
                 $_SESSION["access_level"] = $result["access_level"]; 
                 $_SESSION["email"] = $result["email"]; 
                 $_SESSION["userid"] = $result["userid"]; 
-                header("Location: ../Pages/home.php");
+                header("Location: ../Pages/home.jsx");
                 exit();
             }else{
               $erro  = "The password is incorrect";

@@ -1,11 +1,11 @@
 import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
-import SwaggerUI from 'swagger-ui'
+import next from 'next';
 
-const app = express();
-app.use(cors())
-app.use(express.json());
+const Server = express();
+Server.use(cors())
+Server.use(express.json());
 
 
 
@@ -35,8 +35,13 @@ async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
   return rows
 }
 
+
+
+
+
+
 // ENDPOINTS
-app.get('/menu', async (req, res) => {
+Server.get('/menu', async (req, res) => {
   try {
     const query = req.query
     console.log(query)
@@ -47,7 +52,7 @@ app.get('/menu', async (req, res) => {
   }
 });
 
-app.get('/users', async (req, res) => {
+Server.get('/users', async (req, res) => {
   try {
     const query = req.query
 
@@ -61,7 +66,7 @@ app.get('/users', async (req, res) => {
 });
 
 // LAYOUT ENDPOINTS
-app.get('/get', async (req, res) => {
+Server.get('/get', async (req, res) => {
   try {
 
     const query = req.query
@@ -79,7 +84,7 @@ app.get('/get', async (req, res) => {
 
 
 
-app.post('/set', async (req, res) => {
+Server.post('/set', async (req, res) => {
   try {
     const body = req.body
 
@@ -136,11 +141,11 @@ app.post('/set', async (req, res) => {
 });
 
 
-app.get("/", function(request, response){
+Server.get("/", function(request, response){
   response.send("DinnerSync API main page")
 })
 
 
-app.listen(3000, () => {
+Server.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
 });

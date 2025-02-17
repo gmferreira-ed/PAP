@@ -46,7 +46,7 @@
         if ($IsAdmin){
             $response['redirect'] = "users.php";
         }else{
-            $response['redirect'] = "home.php";
+            $response['redirect'] = "home.jsx";
         }
 
     }else{

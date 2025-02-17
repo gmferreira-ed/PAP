@@ -18,7 +18,7 @@
     $IsAdmin = isset($_SESSION["username"]) && $_SESSION["access_level"] == "admin";
 
     if ($validlogin && $_SESSION["access_level"] != "admin"){
-      header("Location: home.php");
+      header("Location: home.jsx");
       exit();
     }
    ?>

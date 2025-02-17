@@ -19,7 +19,7 @@
 
   
   if (isset($_SESSION["username"])){
-    header("Location: home.php");
+    header("Location: home.jsx");
     exit();
   }else{
     
