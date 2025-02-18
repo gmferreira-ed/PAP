@@ -6,7 +6,7 @@ const createWindow = () => {
     height: 600
   })
 
-  win.loadFile('DesktopApp/Pages/home.jsx')
+  win.loadFile('src/Pages/home.jsx')
 }
 
 app.whenReady().then(() => {
