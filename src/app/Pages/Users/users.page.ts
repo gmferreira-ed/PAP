@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { PageLayout } from '../../Components/page-layout/page-layout.component';
 import { UsersService } from '../../Services/users.service';
 import { NgStyle } from '@angular/common';
+import { PageLayout } from '../../Components/page-layout/page-layout.component';
 
 @Component({
   selector: 'users-page',

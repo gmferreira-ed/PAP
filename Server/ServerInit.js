@@ -1,8 +1,6 @@
 import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
-import next from 'next';
-import { throwError } from 'rxjs';
 
 const Server = express();
 Server.use(cors())
