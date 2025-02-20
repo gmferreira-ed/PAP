@@ -47,7 +47,7 @@
       <div class="form-col">
           <label class="field-header">Username</label>
           <div class="row-layout">
-            <img src="../Images/Icons/profile.svg" class="input-icon">
+            <img src="Images/Icons/profile.svg" class="input-icon">
             <input class="login-input" type="text" id="username" name="username" placeholder="Enter your username" required>
           </div>
       </div>
@@ -55,7 +55,7 @@
       <div class="form-col" style="margin-top:25px">
           <label class="field-header">Password*</label>
           <div class="row-layout">
-            <img src="../Images/Icons/lock.svg" class="input-icon">
+            <img src="Images/Icons/lock.svg" class="input-icon">
             <input  class="login-input"  type="password" id="password" name="password" placeholder="Enter your password" required>      
           </div>
       </div>

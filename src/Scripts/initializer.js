@@ -14,27 +14,13 @@ PasswordRevealers.forEach(RevealButton => {
    
         if (IsRevealed){
             passwordInput.type = "password"
-            passwordIcon.src = "../Images/Icons/notvisible.svg"
+            passwordIcon.src = "Images/Icons/notvisible.svg"
         }else{
             passwordInput.type = "text"
-            passwordIcon.src = "../Images/Icons/visible.svg"
+            passwordIcon.src = "Images/Icons/visible.svg"
         }
 
         IsRevealed = !IsRevealed
         
     })
 });
-
-var PageChangers = document.querySelectorAll("[page-link]")
-PageChangers.forEach(PageChanger => {
-    let link = PageChanger.getAttribute('page-link')
-    PageChanger.addEventListener('click', function(){
-        ShowLoader()
-        window.location.href = link
-    
-    })
-    
-    if (window.location.href.includes(link)){
-        PageChanger.style.backgroundColor = "rgb(78, 78, 78)"
-    }
-})

@@ -138,7 +138,7 @@
           <div class="row-layout">
             <input class="login-input" type="password" id="password" name="password" placeholder="+8 characters*" required>
             <button type="button"  class="password-button" >
-              <img id="PasswordVis" src="../Images/Icons/notvisible.svg" style="width: 100%; height: 100fr;">
+              <img id="PasswordVis" src="Images/Icons/notvisible.svg" style="width: 100%; height: 100fr;">
             </button>
           </div>
         </div>

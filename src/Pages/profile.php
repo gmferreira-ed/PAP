@@ -53,8 +53,8 @@
                 <div style="margin-bottom:50px;" class="profile-collumn">
                     <div class="profile-row">
                         <h2  id="fullname" style="margin-bottom:2px;" editable>'.$profileinfo["fullname"].'</h2>
-                        <img id="edit-profile" onclick=Edit() src="../Images/Icons/edit.svg" class="input-icon" manager-component></img>
-                        <img id="deactivate-profile" onclick=Deactivate() src="../Images/Icons/deactivate.svg" class="input-icon" admin-component></img>
+                        <img id="edit-profile" onclick=Edit() src="Images/Icons/edit.svg" class="input-icon" manager-component></img>
+                        <img id="deactivate-profile" onclick=Deactivate() src="Images/Icons/deactivate.svg" class="input-icon" admin-component></img>
                     </div>
                     <label class="caption">@'.$profileinfo["username"].'</label>
                 </div>
@@ -112,7 +112,7 @@
     console.log(active)
     if (!active){
         profile_row.style.opacity = 0.3
-        deactivate_profile.src = "../Images/Icons/check.svg"
+        deactivate_profile.src = "Images/Icons/check.svg"
         edit_profile.remove()
     }
     
@@ -186,7 +186,7 @@
 
                         Comp.parentNode.replaceChild(input, Comp);
 
-                        edit_profile.src = "../Images/Icons/check.svg"
+                        edit_profile.src = "Images/Icons/check.svg"
                 
                 });
 
@@ -199,7 +199,7 @@
 
                 /*
                 OriginalStyles.forEach(CompInfo => {
-                    edit_profile.src = "../Images/Icons/edit.svg"
+                    edit_profile.src = "Images/Icons/edit.svg"
                     const input = document.createElement(CompInfo[2]);
                     
 

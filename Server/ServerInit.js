@@ -2,6 +2,7 @@ import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
 import next from 'next';
+import { throwError } from 'rxjs';
 
 const Server = express();
 Server.use(cors())
@@ -19,18 +20,19 @@ const restaurant = mysql.createPool({
 
 
 async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
-  const SQLFunction = `SELECT * FROM ${Table}`
+  var SQLFunction = `SELECT * FROM ${Table}`
 
   PageSize = Math.min(PageSize, 100)
 
   if (OrderBy){
     SQLFunction = SQLFunction + `\n${OrderBy}`
   }
-  if (PageNumber && PageNumber > 1){
+  if (PageNumber && PageNumber >= 1){
     SQLFunction = SQLFunction + `
-    OFFSET (${PageNumber} - 1) * ${PageSize} ROWS
-    FETCH NEXT ${PageSize} ROWS ONLY;`
+    LIMIT ${PageSize} OFFSET ${PageNumber - 1}`
   }
+
+  console.log(SQLFunction)
   const [rows] = await restaurant.promise().query(SQLFunction);
   return rows
 }
@@ -44,9 +46,11 @@ async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
 Server.get('/menu', async (req, res) => {
   try {
     const query = req.query
-    console.log(query)
+    
     var result = await GetTablePage("menu", query.page, 5)
     res.send(result)
+
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -55,10 +59,10 @@ Server.get('/menu', async (req, res) => {
 Server.get('/users', async (req, res) => {
   try {
     const query = req.query
+    const page = query.page ?? 1
 
-    const SQLFunction = 'SELECT * FROM menu'
-    const [rows] = await restaurant.promise().query(SQLFunction);
-    res.send(rows);
+    var result = await GetTablePage("users", page, 5)
+    res.send(result)
 
   } catch (err) {
     res.status(500).json({ error: err.message });
