@@ -10,13 +10,18 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 registerLocaleData(en);
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideAnimations(), provideZoneChangeDetection({ eventCoalescing: true }), 
+  providers: [
+    provideAnimations(), 
+    provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
-    provideHttpClient(), 
-    provideAnimationsAsync(), 
+    provideHttpClient(),
     NG_EVENT_PLUGINS, 
-    importProvidersFrom(FormsModule), NG_EVENT_PLUGINS, NG_EVENT_PLUGINS]
+    importProvidersFrom(FormsModule),
+    { provide: NZ_I18N, useValue: en_US }
+
+  ]
 };

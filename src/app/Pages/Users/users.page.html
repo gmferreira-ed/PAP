@@ -35,8 +35,18 @@
         </tbody>
     </table>
 
-    <div class="separator" style="margin-top:20px"></div>
-    
+    <div class="separator" style="margin-top:20px;"></div>
+    <nz-pagination style="margin-bottom: 10px;" 
+    [nzPageIndex]="1" 
+    [nzTotal]="PageCount"  
+    [nzPageSize]="5"
+    [nzPageSizeOptions]="[5,10,20,50]"
+
+    (nzPageIndexChange)="SwitchPage($event)"
+    (nzPageSizeChange)="UpdatePageSize($event)"
+
+    nzShowSizeChanger
+    ></nz-pagination>
     <div class="button-container" admin-component>
         <button class="button1" onclick='Redirect("register.php")'>Add User</button>
     </div>

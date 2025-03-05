@@ -18,21 +18,27 @@ const restaurant = mysql.createPool({
 
 
 async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
-  var SQLFunction = `SELECT * FROM ${Table}`
+  var SQLQuery = `SELECT * FROM ${Table}`
 
   PageSize = Math.min(PageSize, 100)
 
   if (OrderBy){
-    SQLFunction = SQLFunction + `\n${OrderBy}`
+    SQLQuery = SQLQuery + `\n${OrderBy}`
   }
   if (PageNumber && PageNumber >= 1){
-    SQLFunction = SQLFunction + `
-    LIMIT ${PageSize} OFFSET ${PageNumber - 1}`
+    SQLQuery = SQLQuery + `
+    LIMIT ${PageSize} OFFSET ${(PageNumber - 1)*PageSize}`
   }
 
-  console.log(SQLFunction)
-  const [rows] = await restaurant.promise().query(SQLFunction);
-  return rows
+  console.log(SQLQuery)
+  const [rows] = await restaurant.promise().query(SQLQuery);
+
+  const PagesSQLQuery = `SELECT CEIL(COUNT(*) / ${PageSize}) AS total_pages FROM users;`
+  let TotalPages = await restaurant.promise().query(PagesSQLQuery);
+
+  TotalPages = TotalPages[0][0].total_pages
+
+  return {Rows:rows, Pages:TotalPages}
 }
 
 
@@ -48,7 +54,6 @@ Server.get('/menu', async (req, res) => {
     var result = await GetTablePage("menu", query.page, 5)
     res.send(result)
 
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -57,9 +62,10 @@ Server.get('/menu', async (req, res) => {
 Server.get('/users', async (req, res) => {
   try {
     const query = req.query
-    const page = query.page ?? 1
+    const page = query.page
+    const pagesize = Math.min(query.pagesize ?? 5, 50)
 
-    var result = await GetTablePage("users", page, 5)
+    var result = await GetTablePage("users", page, pagesize)
     res.send(result)
 
   } catch (err) {
