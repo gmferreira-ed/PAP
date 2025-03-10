@@ -17,7 +17,7 @@ export class MenuService {
         return await Result.json()
     }
 
-    async InsertMenuItem(name:string, category:string, price:number){
+    async InsertMenuItem(name:string, category:string, price:number, filename:any){
       const UsersUrl = new URL("http://localhost:3000/menu");
       
       const Result = await fetch(UsersUrl, {
@@ -29,10 +29,14 @@ export class MenuService {
           product: name,
           category: category,
           price: price,
+          image_path: filename,
           active: true
         })
       })
-      return await Result.json()
+
+      const ConvResult = await Result.json()
+     
+      return ConvResult
   }
 
     async GetCategories(category:any = null){

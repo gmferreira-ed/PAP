@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { MenuService } from '../../Services/menu.service';
 import { PageLayout } from '../../Components/page-layout/page-layout.component';
 import { CurrencyPipe } from '@angular/common';
@@ -17,14 +17,15 @@ import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzUploadFile, NzUploadModule, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Subscription } from 'rxjs';
+import {FormControl, FormsModule, NgForm, ReactiveFormsModule} from '@angular/forms';
+
 
 @Component({
   selector: 'menu-page',
   imports: [PageLayout, CurrencyPipe, NzSegmentedModule, 
-    NzInputModule, NzIconModule, NzButtonModule,NzDrawerModule, NzInputNumberModule,
+    NzInputModule, NzButtonModule,NzDrawerModule, NzInputNumberModule,
     NzSkeletonModule, NzFloatButtonModule, NzModalModule, NzFormModule, NzSelectModule, NzRadioModule,
-    NzUploadModule
+    NzUploadModule, NzIconModule, FormsModule, ReactiveFormsModule
    ],
   templateUrl: './menu.page.html',
   styleUrl: './menu.page.css'
@@ -33,44 +34,56 @@ import { Subscription } from 'rxjs';
 export class MenuPage {
 
   MenuList = []
+
+  // SERVICES
   ModalService = inject(NzModalService)
   MenuService = inject(MenuService)
   MessageService = inject(NzMessageService)
   
+  // SIGNALS
   CurrentMenuList = signal<any[]>([])
   CurrentCategories = signal<any[]>([])
 
-
-  ThumbnailsUrl = "http://localhost:3000/images/menu-thumbnails"
+  // IMAGE UPLOADING / LOADING
+  ThumbnailsUrl = "http://localhost:3000/images/menu-thumbnails/"
   SelectedThumbnailUrl = ""
   LoadingThumbnail = false
 
-  private getBase64(img: File, callback: (img: string) => void): void {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result!.toString()));
-    reader.readAsDataURL(img);
+  // OBJECTS
+  IsInsertingItem = false
+  InsertItemThumbnailFileName = ""
+  InsertItemname = ""
+  InsertItemPrice= 0
+  InsertItemCategory= ""
+
+  DrawerOpen = false;
+  InsertModalOpen = false;
+
+  async InsertMenuItem(){
+    if (this.InsertItemname != "" && this.InsertItemCategory != "" && this.InsertItemPrice > 0){
+      this.IsInsertingItem = true
+      await this.MenuService.InsertMenuItem(this.InsertItemname, this.InsertItemCategory, this.InsertItemPrice, this.InsertItemThumbnailFileName)
+      await this.LoadProducts()
+      this.IsInsertingItem = false
+      this.InsertModalOpen = false
+    }else{
+      this.MessageService.error(`There are invalid fields`);
+    }
   }
-
-  // UploadImage = (item: any) => {
-
-  //   console.log('uploading image...');
-  //   console.log(item);
-
-  //   this.http.post('https://jsonplaceholder.typicode.com/posts/', item)
-  //     .subscribe(res => console.log(res));
-  // }
-
+  
   ChangeSelectedImage(info: { file: NzUploadFile }){
     switch (info.file.status) {
       case 'uploading':
+        this.LoadingThumbnail = true
         break;
       case 'done':
-        this.getBase64(info.file!.originFileObj!, (img: string) => {
-          this.SelectedThumbnailUrl = img;
-        });
+        this.SelectedThumbnailUrl = info.file.response.url
+        this.InsertItemThumbnailFileName = info.file.response.filename
+        this.LoadingThumbnail = false
         break;
       case 'error':
         this.MessageService.error('Network error');
+        this.LoadingThumbnail = false
         break;
     }
   }
@@ -81,20 +94,17 @@ export class MenuPage {
     category:"Dish",
     image_path:"",
   }
-  DrawerOpen = false;
-  UploadModalOpen = false;
+  
 
   DisplayItemInfo(ItemInfo:any) {
     this.DrawerOpen = true,
     this.SelectedItemInfo = ItemInfo
   }
+
+  
   
   async OpenUploadModel(){
-    this.UploadModalOpen = true
-  }
-  
-  async UploadMenuItem(){
-    console.log()
+    this.InsertModalOpen = true
   }
 
   async LoadProducts(Category:any = null){

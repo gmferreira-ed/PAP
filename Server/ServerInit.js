@@ -45,16 +45,16 @@ async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
 
 // STORAGE SETUP
 
-const MenuThumbnailStorage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'Server/images/menu-thumbnails'); 
   },
   filename: (req, file, cb) => {
-    cb(null, path.extname(file.filename) + Date.now());
+    cb(null, Date.now()+"_"+file.originalname); // Unique filename
   }
 });
 
-const UploadToMenuThumbnails = multer({ MenuThumbnailStorage });
+const upload = multer({ storage });
 
 
 
@@ -68,12 +68,14 @@ const UploadToMenuThumbnails = multer({ MenuThumbnailStorage });
 Server.use("/images", express.static('Server/images'))
 
 
-Server.post('/images/menu-thumbnails', UploadToMenuThumbnails.single('thumbnail'), async (req, res) => {
+Server.post('/images/menu-thumbnails', upload.single('thumbnail'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
-    res.json({ url: `http://localhost:3000/uploads/${req.file.filename}` });
+    const FileName = req.file.filename
+    const FileUrl = `http://localhost:3000/images/menu-thumbnails/${FileName}`
+    res.json({ url: FileUrl, filename:FileName });
   } catch (err) {
     console.warn(err);
     
@@ -95,6 +97,22 @@ Server.get('/menu', async (req, res) => {
     }
     const [rows] = await restaurant.promise().query(SQLQuery);
 
+    res.send(rows)
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// MENU
+Server.post('/menu', async (req, res) => {
+  try {
+    const body = req.body
+
+    var SQLQuery = `INSERT INTO menu (\`product\`, \`price\`, \`category\`, \`image_path\`, \`active\`) 
+    VALUES ('${body.product}', '${body.price}', '${body.category}', '${body.image_path}', '${1}')`;
+
+
+    const [rows] = await restaurant.promise().query(SQLQuery);
     res.send(rows)
 
   } catch (err) {

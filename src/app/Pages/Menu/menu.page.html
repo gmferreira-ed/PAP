@@ -58,26 +58,28 @@
     </nz-drawer>
 
     <!-- ITEM SUBMISSION MODAL -->
-    <nz-modal 
-    [(nzVisible)]="UploadModalOpen" 
+    <nz-modal
+    [(nzVisible)]="InsertModalOpen" 
+    [nzOkLoading]="IsInsertingItem"
     nzTitle="Create menu item" 
 
-    (nzOnCancel)="UploadModalOpen = false" 
+    (nzOnCancel)="InsertModalOpen = false" 
     nzCancelText="Cancel"
 
-    (nzOnOk)="UploadMenuItem()"
+    (nzOnOk)="InsertMenuItem()"
     nzOkText="Insert"
 
     nzWidth = "50em"
     nzClosable = false
     nzCentered
     >
+        <!-- INSERT FORM -->
         <ng-container *nzModalContent>
-            <form id="menu-insert-form" nz-form nzLayout="vertical" >
+            <form #InsertionForm="ngForm" nz-form nzLayout="vertical" >
                 <nz-form-item>
                     <nz-form-label>Item Name</nz-form-label>
                     <nz-form-control >
-                        <input nz-input name="itemname"  id="itemname" placeholder="Ex: Hamburger"/>
+                        <input nz-input [(ngModel)]="InsertItemname" name="itemname"  id="itemname" placeholder="Ex: Hamburger"/>
                     </nz-form-control>
                 </nz-form-item>
 
@@ -86,7 +88,8 @@
                     <nz-form-item style="margin-right: 20px;">
                         <nz-form-label>Category</nz-form-label>
                         <nz-form-control nzSpan="25">
-                            <nz-select  nzShowSearch nzAllowClear nzPlaceHolder="Select a category">
+                            <nz-select [(ngModel)]="InsertItemCategory" name="itemcategory"
+                            nzShowSearch nzAllowClear nzPlaceHolder="Select a category">
                                 @for (Category of CurrentCategories(); track Category) {
                                 <nz-option [nzLabel]="Category" [nzValue]="Category"></nz-option>
                                 }
@@ -98,7 +101,8 @@
                         <nz-form-label>Price</nz-form-label>
                         <nz-form-control nzSpan="25">
                             <nz-input-group nzSuffix="$" >
-                                <input type="number" nz-input placeholder="0.00"/>
+                                <input [(ngModel)]="InsertItemPrice" name="itemprice"
+                                 type="number" nz-input placeholder="0.00"/>
                             </nz-input-group>
                         </nz-form-control>
                     </nz-form-item>
@@ -123,7 +127,7 @@
                             nzLimit = 1
                         >
                         @if (!SelectedThumbnailUrl) {
-                            <span class="upload-icon" nz-icon [nzType]="LoadingThumbnail ? 'loading' : 'plus'"></span>
+                            <nz-icon class="upload-icon"  [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
                             <div class="ant-upload-text">Upload</div>
                           } @else {
                             <img [src]="SelectedThumbnailUrl" style="width: 100%" />
@@ -131,10 +135,11 @@
                         </nz-upload>
                     </nz-form-control>
                 </nz-form-item>
-                
-                
             </form>
+
         </ng-container>
+
+        
     </nz-modal>
 
     

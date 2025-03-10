@@ -1,4 +1,4 @@
-import { NG_EVENT_PLUGINS } from "@taiga-ui/event-plugins";
+
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -19,7 +19,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes),
     provideHttpClient(),
-    NG_EVENT_PLUGINS, 
     importProvidersFrom(FormsModule),
     { provide: NZ_I18N, useValue: en_US }
 
