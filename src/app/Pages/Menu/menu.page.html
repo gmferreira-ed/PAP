@@ -1,0 +1,53 @@
+<page-layout>
+    <label class="title">Menu</label>
+    <div class="separator" style="margin-bottom:20px"></div>
+
+    <div class="row-layout">
+        <nz-segmented [nzOptions]="CurrentCategories()" (nzValueChange)="LoadProducts($event)"></nz-segmented>
+
+       
+        <nz-input-group style="width: 10em; margin-left:5px">
+            <input type="text" nz-input placeholder="Add Category" />
+        </nz-input-group>
+      
+    </div>
+
+    <div class="menu-container">
+        <div class="menu-items">
+            @for (MenuItem of CurrentMenuList(); track MenuItem.product_id) {
+                <div class="menu-item" (click)="DisplayItemInfo(MenuItem)">
+                    <img src="Images/Dish.png" class="menu-item-image">
+                    <label class="menu-item-title">{{MenuItem.product}}</label>
+                    <label class="menu-item-price">{{MenuItem.price | currency}}</label>
+                    <div>
+                        <button nz-button nzType="primary" nzShape="circle">
+                            <nz-icon nzType="eye" />
+                        </button>
+                    </div>
+                </div>
+            }
+            <div class="menu-item">
+                <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)"/>
+            </div>
+        </div>
+
+        <nz-drawer #MenuItemInfo
+            [nzClosable]="true"
+            [nzVisible]="DrawerOpen"
+            nzWidth="35em"
+            nzPlacement="right"
+            nzTitle="Item Info"
+            (nzOnClose)="DrawerOpen = false"
+            >
+            <div class="menu-item-info-display" *nzDrawerContent>
+                <img src="Images/Dish.png" class="menu-item-image">
+                <label class="menu-item-title">{{SelectedItemInfo.product}}</label>
+                <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
+                <label class="menu-item-price">{{SelectedItemInfo.price | currency}}</label>
+                <nz-skeleton></nz-skeleton>
+            </div>
+        </nz-drawer>
+    </div>
+
+    
+</page-layout>

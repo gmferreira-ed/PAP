@@ -1,12 +1,11 @@
 import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
+import path from 'path'
 
 const Server = express();
 Server.use(cors())
-Server.use(express.json());
-
-
+Server.use(express.json())
 
 // SQL AND DATABASE SETUP
 const restaurant = mysql.createPool({
@@ -30,7 +29,6 @@ async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
     LIMIT ${PageSize} OFFSET ${(PageNumber - 1)*PageSize}`
   }
 
-  console.log(SQLQuery)
   const [rows] = await restaurant.promise().query(SQLQuery);
 
   const PagesSQLQuery = `SELECT CEIL(COUNT(*) / ${PageSize}) AS total_pages FROM users;`
@@ -50,10 +48,35 @@ async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
 Server.get('/menu', async (req, res) => {
   try {
     const query = req.query
+    const category = query.category
     
-    var result = await GetTablePage("menu", query.page, 5)
-    res.send(result)
+    var SQLQuery = `SELECT * FROM menu`
 
+    if (category){
+      SQLQuery = SQLQuery+' WHERE `category`="'+category+'"'
+    }
+    const [rows] = await restaurant.promise().query(SQLQuery);
+
+    res.send(rows)
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+Server.get('/menu/categories', async (req, res) => {
+  try {
+    var SQLQuery = `SELECT * FROM menu_categories`
+    const [rows] = await restaurant.promise().query(SQLQuery);
+    res.send(rows)
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+Server.post('/menu/categories', async (req, res) => {
+  try {
+    var SQLQuery = `SELECT * FROM menu_categories`
+    const [rows] = await restaurant.promise().query(SQLQuery);
+    res.send(rows)
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -89,9 +112,6 @@ Server.get('/get', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
-
 Server.post('/set', async (req, res) => {
   try {
     const body = req.body
@@ -148,6 +168,8 @@ Server.post('/set', async (req, res) => {
   }
 });
 
+Server.use(express.static('../src'));
+Server.use("/images", express.static('images'))
 
 Server.get("/", function(request, response){
   response.send("DinnerSync API main page")
