@@ -16,7 +16,10 @@
         <div class="menu-items">
             @for (MenuItem of CurrentMenuList(); track MenuItem.product_id) {
                 <div class="menu-item" (click)="DisplayItemInfo(MenuItem)">
-                    <img src="Images/Dish.png" class="menu-item-image">
+                    <img 
+                    [src]="ThumbnailsUrl+MenuItem.image_path"
+                    onerror="this.src='Images/Dish.png'"
+                    class="menu-item-image">
                     <label class="menu-item-title">{{MenuItem.product}}</label>
                     <label class="menu-item-price">{{MenuItem.price | currency}}</label>
                     <div>
@@ -26,28 +29,113 @@
                     </div>
                 </div>
             }
-            <div class="menu-item">
+            <div class="menu-item" (click)="OpenUploadModel()">
                 <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)"/>
             </div>
         </div>
-
-        <nz-drawer #MenuItemInfo
-            [nzClosable]="true"
-            [nzVisible]="DrawerOpen"
-            nzWidth="35em"
-            nzPlacement="right"
-            nzTitle="Item Info"
-            (nzOnClose)="DrawerOpen = false"
-            >
-            <div class="menu-item-info-display" *nzDrawerContent>
-                <img src="Images/Dish.png" class="menu-item-image">
-                <label class="menu-item-title">{{SelectedItemInfo.product}}</label>
-                <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
-                <label class="menu-item-price">{{SelectedItemInfo.price | currency}}</label>
-                <nz-skeleton></nz-skeleton>
-            </div>
-        </nz-drawer>
     </div>
+
+
+    <!-- MENU ITEM SIDE BAR -->
+    <nz-drawer #MenuItemInfo
+        [nzClosable]="true"
+        [nzVisible]="DrawerOpen"
+        nzWidth="35em"
+        nzPlacement="right"
+        nzTitle="Item Info"
+        (nzOnClose)="DrawerOpen = false"
+        >
+        <div class="menu-item-info-display" *nzDrawerContent>
+            <img 
+            [src]="ThumbnailsUrl+SelectedItemInfo.image_path" 
+            onerror="this.src='Images/Dish.png'" class="menu-item-image"
+            >
+            <label class="menu-item-title">{{SelectedItemInfo.product}}</label>
+            <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
+            <label class="menu-item-price">{{SelectedItemInfo.price | currency}}</label>
+            <nz-skeleton></nz-skeleton>
+        </div>
+    </nz-drawer>
+
+    <!-- ITEM SUBMISSION MODAL -->
+    <nz-modal 
+    [(nzVisible)]="UploadModalOpen" 
+    nzTitle="Create menu item" 
+
+    (nzOnCancel)="UploadModalOpen = false" 
+    nzCancelText="Cancel"
+
+    (nzOnOk)="UploadMenuItem()"
+    nzOkText="Insert"
+
+    nzWidth = "50em"
+    nzClosable = false
+    nzCentered
+    >
+        <ng-container *nzModalContent>
+            <form id="menu-insert-form" nz-form nzLayout="vertical" >
+                <nz-form-item>
+                    <nz-form-label>Item Name</nz-form-label>
+                    <nz-form-control >
+                        <input nz-input name="itemname"  id="itemname" placeholder="Ex: Hamburger"/>
+                    </nz-form-control>
+                </nz-form-item>
+
+                
+                <nz-form-item>
+                    <nz-form-item style="margin-right: 20px;">
+                        <nz-form-label>Category</nz-form-label>
+                        <nz-form-control nzSpan="25">
+                            <nz-select  nzShowSearch nzAllowClear nzPlaceHolder="Select a category">
+                                @for (Category of CurrentCategories(); track Category) {
+                                <nz-option [nzLabel]="Category" [nzValue]="Category"></nz-option>
+                                }
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+
+                <nz-form-item>
+                        <nz-form-label>Price</nz-form-label>
+                        <nz-form-control nzSpan="25">
+                            <nz-input-group nzSuffix="$" >
+                                <input type="number" nz-input placeholder="0.00"/>
+                            </nz-input-group>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-form-item>
+
+
+                <!-- MENU THUMBNAIL UPLOADING -->
+                <nz-form-item >
+                    <nz-form-label>Thumbnail</nz-form-label>
+                    
+                    <nz-form-control nzXs >
+                        <nz-upload
+                            class="avatar-uploader"
+
+                            [nzAction]="ThumbnailsUrl"
+                            [nzHeaders]="{ }"
+
+                            nzName="thumbnail"
+                            nzListType="picture-card"
+                            [nzShowUploadList]="false"
+                            (nzChange)="ChangeSelectedImage($event)"
+                            nzLimit = 1
+                        >
+                        @if (!SelectedThumbnailUrl) {
+                            <span class="upload-icon" nz-icon [nzType]="LoadingThumbnail ? 'loading' : 'plus'"></span>
+                            <div class="ant-upload-text">Upload</div>
+                          } @else {
+                            <img [src]="SelectedThumbnailUrl" style="width: 100%" />
+                          }
+                        </nz-upload>
+                    </nz-form-control>
+                </nz-form-item>
+                
+                
+            </form>
+        </ng-container>
+    </nz-modal>
 
     
 </page-layout>

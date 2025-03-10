@@ -1,7 +1,10 @@
-import express from 'express';
-import mysql from 'mysql2';
-import cors from 'cors';
-import path from 'path'
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const multer = require('multer');
+
+const path = require('path');
+const mysql = require('mysql2')
+const cors = require('cors')
 
 const Server = express();
 Server.use(cors())
@@ -40,11 +43,46 @@ async function GetTablePage(Table, PageNumber, PageSize, OrderBy){
 }
 
 
+// STORAGE SETUP
 
+const MenuThumbnailStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'Server/images/menu-thumbnails'); 
+  },
+  filename: (req, file, cb) => {
+    cb(null, path.extname(file.filename) + Date.now());
+  }
+});
+
+const UploadToMenuThumbnails = multer({ MenuThumbnailStorage });
 
 
 
 // ENDPOINTS
+
+
+
+
+
+// IMAGES
+Server.use("/images", express.static('Server/images'))
+
+
+Server.post('/images/menu-thumbnails', UploadToMenuThumbnails.single('thumbnail'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    res.json({ url: `http://localhost:3000/uploads/${req.file.filename}` });
+  } catch (err) {
+    console.warn(err);
+    
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// MENU
 Server.get('/menu', async (req, res) => {
   try {
     const query = req.query
@@ -63,6 +101,10 @@ Server.get('/menu', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
+// MENU CATEGORIES
 Server.get('/menu/categories', async (req, res) => {
   try {
     var SQLQuery = `SELECT * FROM menu_categories`
@@ -82,6 +124,9 @@ Server.post('/menu/categories', async (req, res) => {
   }
 });
 
+
+
+// USERS
 Server.get('/users', async (req, res) => {
   try {
     const query = req.query
@@ -168,8 +213,7 @@ Server.post('/set', async (req, res) => {
   }
 });
 
-Server.use(express.static('../src'));
-Server.use("/images", express.static('images'))
+
 
 Server.get("/", function(request, response){
   response.send("DinnerSync API main page")

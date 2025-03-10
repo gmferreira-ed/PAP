@@ -17,6 +17,24 @@ export class MenuService {
         return await Result.json()
     }
 
+    async InsertMenuItem(name:string, category:string, price:number){
+      const UsersUrl = new URL("http://localhost:3000/menu");
+      
+      const Result = await fetch(UsersUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          product: name,
+          category: category,
+          price: price,
+          active: true
+        })
+      })
+      return await Result.json()
+  }
+
     async GetCategories(category:any = null){
       const UsersUrl = new URL("http://localhost:3000/menu/categories");
       UsersUrl.searchParams.append('category', category);
