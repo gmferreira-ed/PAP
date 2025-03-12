@@ -1,0 +1,174 @@
+
+:root {
+  --handle-size:8px;
+  --grid-color:rgb(255,255,255,0.1)
+}
+
+.grid {
+  display: grid;
+
+  background-repeat: calc(100, 100);
+
+
+  background-position: 0 0;
+  background-size: 5%5%;
+  background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px), 
+  linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px)
+}
+
+body {
+  background-color: black;
+}
+
+.BoardContainer{
+  display: block;
+  border: 1px solid white;
+}
+
+.selection-box {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0);
+
+  top: 0px;
+  left: 0px;
+  position: absolute;
+  color: white;
+  display: none;
+
+  pointer-events: none;
+  z-index: 5;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+
+.dragger {
+  width: var(--handle-size);
+  height: var(--handle-size);
+  background-color: rgb(255,255,255,1);
+
+  cursor: grab;
+  pointer-events: all;
+  color: white;
+
+  /* Allows positioning on the board */
+  border: 1px solid white;
+  position: absolute;
+}
+
+.size-handle-top{
+  top: calc(var(--handle-size)/-2 - 1px);
+  left: calc(var(--handle-size)/-2 + 50% - 1px);
+}
+.size-handle-bottom{
+  top: calc(var(--handle-size)/-2 - 1px + 100%);
+  left: calc(var(--handle-size)/-2 + 50% - 1px);
+}
+.size-handle-left{
+  top: calc(var(--handle-size)/-2 - 1px + 50%);
+  left: calc(var(--handle-size)/-2 - 1px);
+}
+.size-handle-right{
+  top: calc(var(--handle-size)/-2 - 1px + 50%);
+  left: calc(var(--handle-size)/-2 + 100% );
+}
+
+.rotate-handle{
+  width: calc(var(--handle-size)/2);
+  height: calc(var(--handle-size)/2);
+
+  cursor:ew-resize;
+  top: calc(var(--handle-size)/-2 - 1px + 100% + 35px);
+  left: calc(var(--handle-size)/-2 + 50% - 1px);
+}
+
+
+/* COMPONENTS  */
+.Component {
+  width: 100px;
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0);
+
+  color: white;
+  text-align: center;
+
+  cursor: pointer;
+  display: inline-block;
+  float: none;
+  position: absolute;
+
+  top: 0px;
+  left: 0px;
+
+  user-select: none;
+}
+.Table {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255,255,255,0);
+
+  color: white;
+  text-align: center;
+
+  /* Allows positioning on the board */
+  border: 1px solid white;
+  border-radius: 5px;
+
+  user-select: none;
+}
+
+
+
+
+
+
+.list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 70px;
+
+}
+
+
+.list-item {
+  width: 100%;
+  height: 70px;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1, 1;
+}
+
+
+.component-context-menu {
+  width: 20%;
+  height: 15%;
+  background-color: rgb(31, 31, 31);
+  border-radius: 5px;
+
+  display: none;
+  justify-content: left;
+  flex-direction: column;
+
+  position: absolute;
+}
+
+.context-button {
+  background-color: rgb(31, 31, 31);
+  border-radius: 5px;
+  border: 0cm;
+
+  text-align: left;
+  color: beige;
+  
+  padding-left: 40px;
+  height: 40px;
+  width:100%;
+}
+
+.context-button:hover {
+  background-color: rgb(51, 51, 51); 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
+}
