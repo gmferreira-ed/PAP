@@ -2,14 +2,16 @@
     <label class="title">Menu</label>
     <div class="separator" style="margin-bottom:20px"></div>
 
+    <!-- CATEGORY SELECTION -->
     <div class="row-layout">
-        <nz-segmented [nzOptions]="CurrentCategories()" (nzValueChange)="LoadProducts($event)"></nz-segmented>
-
-       
+        <nz-segmented 
+            [nzOptions]="CurrentCategories()" 
+            (nzValueChange)="LoadProducts($event)"
+            ngModel="1">
+        </nz-segmented>
         <nz-input-group style="width: 10em; margin-left:5px">
             <input type="text" nz-input placeholder="Add Category" />
         </nz-input-group>
-      
     </div>
 
     <div class="menu-container">
@@ -53,6 +55,17 @@
             <label class="menu-item-title">{{SelectedItemInfo.product}}</label>
             <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
             <label class="menu-item-price">{{SelectedItemInfo.price | currency}}</label>
+            <nz-row style="gap:10px">
+                <button nz-button nzType="primary" nzShape="circle">
+                    <nz-icon nzType="edit" nzTheme="fill" />
+                </button>
+                <button nz-button nzType="dashed" nzShape="circle">
+                    <nz-icon nzType="stop" nzTheme="fill" />
+                </button>
+                <button nz-button nzDanger nzType="primary" nzShape="circle">
+                    <nz-icon nzType="delete" nzTheme="fill" />
+                </button>
+            </nz-row>
             <nz-skeleton></nz-skeleton>
         </div>
     </nz-drawer>

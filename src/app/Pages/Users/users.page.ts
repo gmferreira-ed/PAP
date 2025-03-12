@@ -3,16 +3,19 @@ import { UsersService } from '../../Services/users.service';
 import { NgStyle } from '@angular/common';
 import { PageLayout } from '../../Components/page-layout/page-layout.component';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'users-page',
-  imports: [PageLayout, NgStyle, NzPaginationModule],
+  imports: [PageLayout, NgStyle, NzPaginationModule, RouterModule],
   templateUrl: './users.page.html',
   styleUrl: './users.page.css'
 })
 
 export class UsersPage {
   
+    UserPfpUrl = "http://localhost:3000/images/profile-pictures/"
+
     UsersList = []
     userService = inject(UsersService)
     CurrentUserList = signal<any[]>([])

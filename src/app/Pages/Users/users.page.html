@@ -20,8 +20,11 @@
 
         <tbody>
             @for (UserInfo of CurrentUserList(); track UserInfo.userid) {
-                <tr class="profile" >
-                    <td>a</td>
+                <tr class="profile" routerLink="/profile" >
+                    <img class="profile-pfp"
+                    [src]="UserPfpUrl+UserInfo.username+'.png'"
+                    onerror="this.src='Images/Profile.png'"
+                    >
                     <td>{{UserInfo.username}}</td>
                     <td>{{UserInfo.userid}}</td>
                     <td>{{UserInfo.email}}</td>
@@ -48,6 +51,6 @@
     nzShowSizeChanger
     ></nz-pagination>
     <div class="button-container" admin-component>
-        <button class="button1" onclick='Redirect("register.php")'>Add User</button>
+        <button class="button1" routerLink='/register'>Add User</button>
     </div>
 </page-layout>

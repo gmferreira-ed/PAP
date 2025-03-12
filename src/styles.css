@@ -454,6 +454,12 @@ img{
   height: 50px;
 }
 
+.profile-pfp{
+  object-fit:contain;
+  height: 40px;
+  aspect-ratio: 1 / 1;
+}
+
 /* PROMPT */
 .prompt-overlay {
   position: fixed;

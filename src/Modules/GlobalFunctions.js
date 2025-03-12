@@ -1,7 +1,4 @@
-function Redirect(Page) {
-    window.location.href = Page;
-}
-  
+
 function ShowLoader() {
 
       const overlay = document.createElement('div');

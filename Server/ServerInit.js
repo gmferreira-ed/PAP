@@ -62,8 +62,6 @@ const upload = multer({ storage });
 
 
 
-
-
 // IMAGES
 Server.use("/images", express.static('Server/images'))
 
@@ -103,7 +101,8 @@ Server.get('/menu', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// MENU
+
+
 Server.post('/menu', async (req, res) => {
   try {
     const body = req.body
@@ -132,15 +131,15 @@ Server.get('/menu/categories', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-Server.post('/menu/categories', async (req, res) => {
-  try {
-    var SQLQuery = `SELECT * FROM menu_categories`
-    const [rows] = await restaurant.promise().query(SQLQuery);
-    res.send(rows)
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// Server.post('/menu/categories', async (req, res) => {
+//   try {
+//     var SQLQuery = `SELECT * FROM menu_categories`
+//     const [rows] = await restaurant.promise().query(SQLQuery);
+//     res.send(rows)
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 
 
