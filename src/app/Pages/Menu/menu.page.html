@@ -4,15 +4,25 @@
 
     <!-- CATEGORY SELECTION -->
     <div class="row-layout">
+        <nz-input-group *ngIf="InsertInputVisible; else suffixIconButton"  style="max-width: 13em; margin-left:5px"  nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input type="text" nz-input placeholder="Add Category" [(ngModel)]="CategoryToInsert" 
+            (keydown.enter)="InsertCategory($event)" />
+        </nz-input-group>
+
         <nz-segmented 
             [nzOptions]="CurrentCategories()" 
-            (nzValueChange)="LoadProducts($event)"
-            ngModel="1">
+            (nzValueChange)="LoadMenuItems($event)"
+            >
         </nz-segmented>
-        <nz-input-group style="width: 10em; margin-left:5px">
-            <input type="text" nz-input placeholder="Add Category" />
-        </nz-input-group>
     </div>
+
+    
+    <ng-template #suffixIconButton>
+        <button nz-button nzType="primary" nzSearch (click)="InsertCategory($event)" style="margin-right: 5px;">
+            <nz-icon nzType="plus" />
+        </button>
+    </ng-template>
+
 
     <div class="menu-container">
         <div class="menu-items">
@@ -22,6 +32,7 @@
                     [src]="ThumbnailsUrl+MenuItem.image_path"
                     onerror="this.src='Images/Dish.png'"
                     class="menu-item-image">
+                    
                     <label class="menu-item-title">{{MenuItem.product}}</label>
                     <label class="menu-item-price">{{MenuItem.price | currency}}</label>
                     <div>
@@ -62,7 +73,7 @@
                 <button nz-button nzType="dashed" nzShape="circle">
                     <nz-icon nzType="stop" nzTheme="fill" />
                 </button>
-                <button nz-button nzDanger nzType="primary" nzShape="circle">
+                <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()">
                     <nz-icon nzType="delete" nzTheme="fill" />
                 </button>
             </nz-row>
@@ -127,17 +138,20 @@
                     <nz-form-label>Thumbnail</nz-form-label>
                     
                     <nz-form-control nzXs >
-                        <nz-upload
+                        <nz-upload 
+                            nzName="thumbnail"
                             class="avatar-uploader"
 
                             [nzAction]="ThumbnailsUrl"
-                            [nzHeaders]="{ }"
-
-                            nzName="thumbnail"
-                            nzListType="picture-card"
                             [nzShowUploadList]="false"
-                            (nzChange)="ChangeSelectedImage($event)"
+
+                            nzSize="4000"
+                            nzAccept="image/*"
+                            nzFileType="image"
+                            nzListType="picture-card"
                             nzLimit = 1
+
+                            (nzChange)="ChangeSelectedImage($event)"
                         >
                         @if (!SelectedThumbnailUrl) {
                             <nz-icon class="upload-icon"  [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />

@@ -1,5 +1,5 @@
 const express = require('express');
-const fileUpload = require('express-fileupload');
+//const fileUpload = require('express-fileupload');
 const multer = require('multer');
 
 const path = require('path');
@@ -76,7 +76,6 @@ Server.post('/images/menu-thumbnails', upload.single('thumbnail'), async (req, r
     res.json({ url: FileUrl, filename:FileName });
   } catch (err) {
     console.warn(err);
-    
     res.status(500).json({ error: err.message });
   }
 });
@@ -98,6 +97,7 @@ Server.get('/menu', async (req, res) => {
     res.send(rows)
 
   } catch (err) {
+    console.warn(err)
     res.status(500).json({ error: err.message });
   }
 });
@@ -115,9 +115,29 @@ Server.post('/menu', async (req, res) => {
     res.send(rows)
 
   } catch (err) {
+    console.warn(err.message)
     res.status(500).json({ error: err.message });
   }
 });
+
+Server.post('/menu/delete', async (req, res) => {
+  try {
+    const body = req.body
+    
+    var SQLQuery = "DELETE FROM `menu` WHERE product="+`"${body.product}"`
+    
+
+    const [rows] = await restaurant.promise().query(SQLQuery);
+    res.send(rows)
+
+    
+  } catch (err) {
+    console.warn(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 
 
@@ -131,16 +151,40 @@ Server.get('/menu/categories', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// Server.post('/menu/categories', async (req, res) => {
-//   try {
-//     var SQLQuery = `SELECT * FROM menu_categories`
-//     const [rows] = await restaurant.promise().query(SQLQuery);
-//     res.send(rows)
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
+Server.post('/menu/categories', async (req, res) => {
+  try {
+    const body = req.body
 
+    var SQLQuery = `INSERT INTO menu_categories 
+    VALUES ('NULL', '${body.category}')`;
+    
+
+
+    const [rows] = await restaurant.promise().query(SQLQuery);
+    res.send(rows)
+
+    
+  } catch (err) {
+    console.warn(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+Server.post('/menu/categories/delete', async (req, res) => {
+  try {
+    const body = req.body
+    
+    var SQLQuery = "DELETE FROM `menu_categories` WHERE category="+body.category
+    
+
+    const [rows] = await restaurant.promise().query(SQLQuery);
+    res.send(rows)
+
+    
+  } catch (err) {
+    console.warn(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 // USERS
