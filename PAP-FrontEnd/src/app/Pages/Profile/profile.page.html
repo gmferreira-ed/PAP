@@ -1,0 +1,41 @@
+<page-layout>
+    <div class="profile-layout" id="profile-layout">
+        <h1 style="margin-left:10px;">Profile</h1>
+
+        <div class="profile-row" id="profile-row">
+            <div class="pfp" style="height:90%; padding:10px; margin-right:20px; width:150px">
+                <img src='.$pfp.'>
+            </div>
+            <div class="profile-collumn">
+                <div style="margin-bottom:50px;" class="profile-collumn">
+                    <div class="profile-row">
+                        <h2  id="fullname" style="margin-bottom:2px;" editable>'.$profileinfo["fullname"].'</h2>
+                        <img id="edit-profile" onclick=Edit() src="../Images/Icons/edit.svg" class="nav-button-icon" manager-component>
+                        <img id="deactivate-profile" onclick=Deactivate() src="../Images/Icons/deactivate.svg" class="nav-button-icon" admin-component>
+                    </div>
+                    <label class="caption"></label>
+                </div>
+
+
+                <div class="profile-row" style="gap:20px">
+                    <div class="profile-collumn">
+                        <label class="smallh">Email</label>
+                        <label id="email" class="lightweight" editable></label>
+                    </div>
+
+                    <div class="profile-collumn">
+                        <label class="smallh">Phone Number</label>
+                        <label id="phone" class="lightweight" editable></label>
+                    </div>
+                    
+                    <div class="profile-collumn">
+                        <label class="smallh">Join Date</label>
+                        <label class="lightweight"></label>
+                    </div>
+                </div>
+
+                <div class="separator" style="margin-top:40px;margin-bottom:20px"></div>
+            </div>
+        </div>
+    </div>
+</page-layout>

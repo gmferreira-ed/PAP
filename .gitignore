@@ -1,3 +1,6 @@
-node_modules/
-.angular/
+PAP-FrontEnd/node_modules
+PAP-FrontEnd/.angular
+PAP-FrontEnd/desktop.ini
+
+PAP-BackEnd/node_modules
 desktop.ini/
