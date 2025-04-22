@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Launch All",
+      "configurations": ["Launch Frontend", "Launch Backend"]
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Launch Frontend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/PAP-FrontEnd",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Launch Backend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/PAP-BackEnd",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

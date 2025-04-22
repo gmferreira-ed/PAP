@@ -3,5 +3,5 @@
       "./Servidor"
     ],
     "ext": "ts",
-    "exec": "ts-node --files Servidor/Inicializar.ts"
+    "exec": "ts-node --files Servidor/ServerInit.ts"
   }
