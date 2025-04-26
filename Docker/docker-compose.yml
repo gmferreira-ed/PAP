@@ -25,6 +25,7 @@ services:
       - "8080:80"
 
   node:
+    image: node:lts
     container_name: nodejs
     restart: always
     environment:
