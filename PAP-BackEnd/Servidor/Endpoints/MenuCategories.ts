@@ -1,7 +1,7 @@
 
 import express from 'express'
 const Router = express.Router();
-import { Database } from '../Globals.ts'
+import { Database } from '../Globals'
 
 Router.get('/menu/categories', async (req, res) => {
     var SQLQuery = `SELECT * FROM menu_categories`

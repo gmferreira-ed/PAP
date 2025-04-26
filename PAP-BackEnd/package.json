@@ -5,7 +5,8 @@
     "main": "ServerInit.js",
     "type": "commonjs",
     "scripts": {
-        "start": "nodemon",
+        "build": "tsc --project tsconfig.json",
+        "start": "node build/ServerInit.js",
         "dev": "nodemon"
     },
     "keywords": [],

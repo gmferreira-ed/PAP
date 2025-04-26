@@ -15,6 +15,7 @@ services:
 
   phpmyadmin:
     image: arm64v8/phpmyadmin:5.2
+    container_name: phpmyadmin
     restart: always
     depends_on:
       - db
@@ -26,7 +27,7 @@ services:
 
   node:
     image: node:lts
-    container_name: nodejs
+    container_name: node
     restart: always
     environment:
       - NODE_ENV=production

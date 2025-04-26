@@ -6,7 +6,7 @@ import session from 'express-session'
 const MySQLStore = require('express-mysql-session')(session)
 
 import fs from 'fs'
-import { Database } from './Globals.ts'
+import { Database } from './Globals'
 
 
 

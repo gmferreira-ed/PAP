@@ -35,6 +35,13 @@ async function GetTablePage(Table: string, PageNumber: number, PageSize: number,
     return { Rows: rows, Pages: TotalPages }
 }
 
+function ErrorResponse(errorcode: any, error: any, response: Response) {
+  const ErrorMessage = typeof (error) == 'string' ? error : error.message
+  response.statusMessage = ErrorMessage
+  response.status(errorcode)
+  response.send({ error: ErrorMessage })
+}
+
 
 function HandleEndpointFunction(EndpointFunction:AsyncEndpoint, DisplayServerError:boolean=false) {
 
@@ -56,5 +63,5 @@ function HandleEndpointFunction(EndpointFunction:AsyncEndpoint, DisplayServerErr
   
 
 export {
-    Database, GetTablePage, HandleEndpointFunction
+    Database, GetTablePage, HandleEndpointFunction, ErrorResponse
 };

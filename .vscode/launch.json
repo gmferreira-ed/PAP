@@ -3,12 +3,12 @@
   "compounds": [
     {
       "name": "Launch All",
-      "configurations": ["Launch Frontend", "Launch Backend"]
+      "configurations": ["Start Frontend", "Dev Backend"]
     }
   ],
   "configurations": [
     {
-      "name": "Launch Frontend",
+      "name": "Start Frontend",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/PAP-FrontEnd",
@@ -16,14 +16,35 @@
       "runtimeArgs": ["run", "start"],
       "console": "integratedTerminal"
     },
+
+
+    
     {
-      "name": "Launch Backend",
+      "name": "Dev Backend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/PAP-BackEnd",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Build Backend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/PAP-BackEnd",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "build"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Start Backend",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/PAP-BackEnd",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start"],
       "console": "integratedTerminal"
-    }
+    },
   ]
 }

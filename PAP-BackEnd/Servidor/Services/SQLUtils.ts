@@ -1,7 +1,10 @@
-function QueryArray(ExpectedColumns, RequestData){
-    const Columns = []
-    const Values = []
-    const Placeholders = []
+
+import type { Request as Request } from 'express';
+
+function QueryArray(ExpectedColumns:string[] , RequestData:Request['body'] ){
+    const Columns:string[] = []
+    const Values:string[]  = []
+    const Placeholders:string[]  = []
     
     ExpectedColumns.forEach((Column) => {
       if (RequestData.hasOwnProperty(Column)) {
@@ -15,10 +18,10 @@ function QueryArray(ExpectedColumns, RequestData){
   }
   
 
-function BuildDeleteQuery(TargetTable, ExpectedColumns, RequestData, ConditionKeys) {
+function BuildDeleteQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body'], ConditionKeys:string[]) {
     const [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
 
-    const Conditions = []
+    const Conditions:string[] = []
     ConditionKeys.forEach((Key) => {
         Conditions.push(Key)
         Values.push(RequestData[Key])
@@ -33,9 +36,10 @@ function BuildDeleteQuery(TargetTable, ExpectedColumns, RequestData, ConditionKe
 }
 
 
-function BuildUpdateQuery(TargetTable, ExpectedColumns, RequestData, ConditionKeys) {
+function BuildUpdateQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body'], ConditionKeys:string[]) {
     const [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
-    const Conditions = []
+    const Conditions:string[] = []
+    
     ConditionKeys.forEach((Key) => {
         Conditions.push(Key)
         Values.push(RequestData[Key])
@@ -49,7 +53,7 @@ function BuildUpdateQuery(TargetTable, ExpectedColumns, RequestData, ConditionKe
     return [Query, Values]
 }
 
-function BuildInsertQuery(TargetTable, ExpectedColumns, RequestData) {
+function BuildInsertQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body']) {
 
     const [Columns, Values, Placeholders] = QueryArray(ExpectedColumns, RequestData)
     const Query = `INSERT INTO \`${TargetTable}\` (${Columns.join(', ')}) VALUES (${Placeholders.join(',')})`;
@@ -58,8 +62,7 @@ function BuildInsertQuery(TargetTable, ExpectedColumns, RequestData) {
     return [Query, Values]
 }
 
-
-module.exports = {
+export default {
     BuildUpdateQuery,
     BuildInsertQuery,
     BuildDeleteQuery,

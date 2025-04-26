@@ -1,7 +1,7 @@
 
 import express from 'express'
 const Router = express.Router();
-import { Database, HandleEndpointFunction, GetTablePage } from '../Globals.ts'
+import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
 
 
 /**

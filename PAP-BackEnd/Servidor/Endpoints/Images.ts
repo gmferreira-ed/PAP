@@ -2,7 +2,7 @@
 import multer from 'multer'
 import express from 'express'
 const Router = express.Router();
-import { Database, HandleEndpointFunction } from '../Globals.ts'
+import { Database, HandleEndpointFunction } from '../Globals'
 
 
 

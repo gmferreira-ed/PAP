@@ -1,13 +1,15 @@
 {
-    "compilerOptions": {
-      "target": "ES2024",
-      "module": "node18",
-      "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true,
-      "outDir": "build",
-      "strict": true,
-      "noEmit":true,
-      "allowImportingTsExtensions": true,
-    },
-    "include": ["Servidor", "types"]
-  }
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "build",
+    "rootDir": ".",
+    "strict": true,
+  },
+  "include": ["./**/*.ts", "intranet/**/*"]
+}
