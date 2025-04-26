@@ -27,6 +27,7 @@ services:
 
   node:
     image: node:lts
+    working_dir: /home/node/app
     container_name: node
     restart: always
     environment:
@@ -35,6 +36,6 @@ services:
       - db
     command: sh -c "npm install && npm start"
     volumes:
-      - ../PAP-BackEnd/:/home/node/ap
+      - ../PAP-BackEnd/:/home/node/app
     ports:
       - '3000:3000'
