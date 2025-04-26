@@ -34,7 +34,7 @@ services:
       - NODE_ENV=production
     depends_on:
       - db
-    command: sh -c "npm install && npm start"
+    command: sh -c "npm install && npm build && npm start"
     volumes:
       - ../PAP-BackEnd/:/home/node/app
     ports:
