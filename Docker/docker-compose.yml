@@ -14,7 +14,7 @@ services:
       - ./mysql-volume:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.2
+    image: arm64v8/phpmyadmin:5.2
     restart: always
     depends_on:
       - db
