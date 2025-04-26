@@ -10,7 +10,6 @@ Router.get('/menu/categories', async (req, res) => {
 })
 
 
-
 Router.post('/menu/categories', async (req, res) => {
 
     const body = req.body
