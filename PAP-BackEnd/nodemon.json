@@ -1,7 +1,7 @@
 {
     "watch": [
-      "./Servidor"
+      "./src"
     ],
     "ext": "ts",
-    "exec": "ts-node --files Servidor/ServerInit.ts"
+    "exec": "ts-node --files src/ServerInit.ts"
   }

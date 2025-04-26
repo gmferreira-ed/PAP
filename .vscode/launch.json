@@ -4,7 +4,7 @@
     {
       "name": "Launch All",
       "configurations": ["Start Frontend", "Dev Backend"]
-    }
+    },
   ],
   "configurations": [
     {
@@ -16,8 +16,6 @@
       "runtimeArgs": ["run", "start"],
       "console": "integratedTerminal"
     },
-
-
     
     {
       "name": "Dev Backend",
@@ -28,23 +26,18 @@
       "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal"
     },
+
     {
-      "name": "Build Backend",
+      "name": "Simulate Docker",
       "type": "node",
       "request": "launch",
-      "cwd": "${workspaceFolder}/PAP-BackEnd",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "build"],
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Start Backend",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/PAP-BackEnd",
-      "runtimeExecutable": "npm",
+      
+      "cwd": "${workspaceFolder}/PAP-BackEnd/",
       "runtimeArgs": ["run", "start"],
-      "console": "integratedTerminal"
+
+      "preLaunchTask": "Build Backend",  // Add this line
+      "console": "integratedTerminal",
     },
   ]
 }
