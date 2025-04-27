@@ -4,14 +4,6 @@ const Router = express.Router();
 import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
 
 
-/**
- * @openapi
- * /api/users:
- *   get:
- *     summary: Retrieve a list of JSONPlaceholder users
- *     description: Retrieve a list of users from JSONPlaceholder. Can be used to populate a list of fake users when prototyping or testing an API.
-*/
-
 Router.get('/users', async (req, res) => {
     const query = req.query
 

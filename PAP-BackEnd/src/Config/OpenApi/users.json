@@ -1,0 +1,26 @@
+{
+    "/api/users": {
+        "get": {
+            "summary": "Get all menu categories",
+            "description": "Retrieves all categories from the menu_categories table.",
+            "tags": [
+                "Users"
+            ],
+            "responses": {
+                "200": {
+                    "description": "A list of menu categories.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

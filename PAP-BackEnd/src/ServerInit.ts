@@ -7,6 +7,7 @@ import fs from 'fs'
 import express from 'express'
 import session from 'express-session'
 import expressmysqlsession from "express-mysql-session";
+import swaggerExpress from 'swagger-ui-express';
 
 import { Database } from './Globals'
 import Configs from './Config/EnviromentConfigs'
@@ -17,7 +18,7 @@ const MySQLStore = expressmysqlsession(session as any)
 // SESSION SETUP
 const SessionDBOptions = {
   host: Configs.DB_Host,
-  port:Configs.DB_Port,
+  port: Configs.DB_Port,
 
   user: Configs.DB_Password,
   password: Configs.DB_Password,
@@ -52,40 +53,66 @@ Server.use(SessionMiddleware)
 // ENDPOINTS SETUP
 const EndpointsFolder = path.join(__dirname, './Endpoints/');
 fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
-    const EndpointRouter = require(EndpointsFolder + Endpoint);
-    Server.use('/api/', EndpointRouter)
-    //console.log(EndpointRouter)
+  const EndpointRouter = require(EndpointsFolder + Endpoint);
+  Server.use('/api/', EndpointRouter)
+  //console.log(EndpointRouter)
 });
 
 
 
 // API DOCS
-import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerExpress from 'swagger-ui-express';
 
-console.log(EndpointsFolder)
-const swaggerSpec = swaggerJSDoc({
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Express API for JSONPlaceholder',
-      version: '1.0.0',
-      description:
-        'This is a REST API application made with Express. It retrieves data from JSONPlaceholder.',
+const swaggerSpec = {
+  swagger: '2.0',
+  info: {
+    title: 'DinnerLink API',
+    version: '2.3.1',
+    description: 'Express REST API application for DinnerLink, for all your restaurant needs',
+    termsOfService: 'http://www.dinnerlink.com/terms/',
+    contact: {
+      name: 'DinnerLink Support',
+      email: 'support@dinnerlink.com',
+      url: 'http://www.dinnerlink.com/contact'
     },
+    license: {
+      name: 'MIT',
+      url: 'https://opensource.org/licenses/MIT'
+    }
   },
+  host: "localhost:3000",
+  basePath: "/api",
+  tags: [
+    {
+      name: "Menu",
+      description: "Access to the restaurant's menu"
+    },
+    {
+      name: "Users",
+      description: "All restaurant-related users, from customers to staff"
+    },
+    {
+      name: "Images",
+      description: "Images for profiles and menu items"
+    },
+  ],
+  schemes: ["https", "http"],
+  paths: {}
+}
 
-  
-  apis: [EndpointsFolder+"*"],
-});
 
-//console.log(swaggerSpec)
+// API SPECS SETUP
+const API_Specs = path.join(__dirname, './Config/OpenApi/'); console.log(API_Specs)
+
+fs.readdirSync(API_Specs).forEach((EndpointSpec: string) => {
+  const ParsedSpec = JSON.parse(fs.readFileSync(API_Specs + EndpointSpec, 'utf-8'));
+  Object.assign(swaggerSpec.paths, ParsedSpec);
+})
 
 Server.use('/api-docs', swaggerExpress.serve, swaggerExpress.setup(swaggerSpec));
 
 
 
-
+// START SERVER
 Server.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
 });

@@ -36,7 +36,7 @@ Router.post('/menu', HandleEndpointFunction(async (req, res) => {
 
 }));
 
-Router.post('/menu/delete', HandleEndpointFunction(async (Request, Response) => {
+Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
 
     const body = Request.body
 
@@ -47,6 +47,7 @@ Router.post('/menu/delete', HandleEndpointFunction(async (Request, Response) => 
     Response.send(rows)
 
 
-}));
+}))
+
 
 module.exports = Router

@@ -1,0 +1,82 @@
+{
+    "/menu/categories": {
+        "get": {
+            "summary": "Get all menu categories",
+            "description": "Retrieves all categories from the menu_categories table.",
+            "tags": [
+                "Menu", "Categories"
+            ],
+            "responses": {
+                "200": {
+                    "description": "A list of menu categories.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "post": {
+            "summary": "Create a new menu category",
+            "description": "Inserts a new category into the menu_categories table.",
+            "tags": [
+                "Menu", "Categories"
+            ],
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "category": {
+                                    "type": "string",
+                                    "example": "Appetizers"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Successfully added a category."
+                }
+            }
+        },
+        "delete": {
+            "summary": "Delete a menu category",
+            "description": "Deletes a category from the menu_categories table.",
+            "tags": [
+                "Menu", "Categories"
+            ],
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "category": {
+                                    "type": "string",
+                                    "example": "Appetizers"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Successfully deleted the category."
+                }
+            }
+        }
+    }
+}

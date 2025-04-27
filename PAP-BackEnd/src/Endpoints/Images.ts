@@ -18,56 +18,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-/**
- * @openapi
- * /images/{image}:
- *   get:
- *     summary: Get an image by filename/path
- *     description: This endpoint allows you to upload a menu thumbnail image and retrieve its URL.
- *     tags:
- *       - Images
- *     responses:
- *       200:
- *         description: Image
- *         content: Image
- *       400:
- *         description: No file uploaded
- *       500:
- *         description: Internal server error
- */
 Router.use("/images", express.static('Server/images'))
 
-
-/**
- * @openapi
- * /images/menu-thumbnails:
- *   post:
- *     summary: Upload a menu thumbnail image
- *     description: This endpoint allows you to upload a menu thumbnail image and retrieve its URL.
- *     operationId: uploadMenuThumbnail
- *     tags:
- *       - Images
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               thumbnail:
- *                 type: string
- *                 format: binary
- * 
- *     responses:
- *       200:
- *         description: Image URL and filename
- *         content:
- *           
- *       400:
- *         description: No file uploaded
- *       500:
- *         description: Internal server error
- */
 
 // Image MENU POST
 Router.post('/images/menu-thumbnails', upload.single('thumbnail'), HandleEndpointFunction(async (req, res) => {
@@ -85,6 +37,5 @@ Router.post('/images/menu-thumbnails', upload.single('thumbnail'), HandleEndpoin
         res.status(500).json({ error: err.message });
     }
 }))
-
 
 module.exports = Router;
