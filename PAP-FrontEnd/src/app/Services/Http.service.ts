@@ -46,6 +46,7 @@ export class HttpService {
         if (Response.ok) {
           resolve(Result)
         } else {
+          if (ErrorSuffix)
           this.MessageService.error(`${ErrorSuffix}\n${Result.error}`)
           resolve(false)
         }

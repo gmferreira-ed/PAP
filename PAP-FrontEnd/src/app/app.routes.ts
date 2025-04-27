@@ -9,20 +9,24 @@ import { StocksPage } from './Pages/Stock/stocks.page';
 import { ProfilePage } from './Pages/Profile/profile.page';
 import { LoginPage } from './Pages/Login/login.page';
 import { RegisterPage } from './Pages/Register/register.page';
+import { PageAuthGuard } from './Services/Page-Auth.guard';
 
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomePage },
-    { path: 'users', component: UsersPage },
-    { path: 'menu', component: MenuPage },
+    { path: 'home', component: HomePage, canActivate: [PageAuthGuard] },
+    { path: 'users', component: UsersPage, canActivate: [PageAuthGuard] },
+    { path: 'menu', component: MenuPage, canActivate: [PageAuthGuard] },
 
-    { path: 'profile', component: ProfilePage },
-    { path: 'login', component: LoginPage },
-    { path: 'register', component: RegisterPage },
+    { path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard] },
+    { path: 'calendar', component: CalendarPage, canActivate: [PageAuthGuard] },
+    { path: 'finances', component: FinancesPage, canActivate: [PageAuthGuard] },
+    { path: 'stocks', component: StocksPage, canActivate: [PageAuthGuard] },
 
-    { path: 'settings', component: SettingsPage },
-    { path: 'calendar', component: CalendarPage },
-    { path: 'finances', component: FinancesPage },
-    { path: 'stocks', component: StocksPage },
+    { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
+    { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
+
+
+    { path: 'profile/', component: ProfilePage, canActivate: [PageAuthGuard] },
+    { path: 'profile/:user', component: ProfilePage, canActivate: [PageAuthGuard] },
 ];

@@ -31,7 +31,7 @@ export const PageAuthGuard: CanActivateChildFn = async (route, state) => {
   }
   
   if (!IgnoreRedirect){
-    router.navigate(['/unauthorized']);
+    router.navigate(['/login']);
   }
   return false;
 };

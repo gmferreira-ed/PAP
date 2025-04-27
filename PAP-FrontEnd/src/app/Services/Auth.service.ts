@@ -50,7 +50,7 @@ export class AuthService {
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    const AuthSuccess = await this.HttpService.MakeRequest(AuthURL, 'POST', 'Failed to authenticate. Please try again')
+    const AuthSuccess = await this.HttpService.MakeRequest(AuthURL, 'POST')
 
 
     if (AuthSuccess) {
@@ -160,7 +160,7 @@ export class AuthService {
         return [true]
       }
     } else if (RouteData['NoLogin']) {
-      return [true]
+      return [true, true]
     }
 
 

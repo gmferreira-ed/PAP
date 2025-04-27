@@ -1,48 +1,55 @@
-<div class = "container">
-    <div class="login-container">
-        <label class="title" style="margin-top: 45px;">Welcome back</label>
-        <label style=" margin-bottom:30px" class="smallcaption">Log in to continue</label>
+<img src="Backgrounds/Background2.jpg" class="background-image" style="filter: brightness(80%);">
 
-        <div class="separator" style=" width:60%"></div>
-    
-
+<div class="login-container">
+    <div class="image-section">
+        <img src="Images/Background2.jpg" class="image-background">
+    </div>
 
 
-        <form class="form-container" action="../php/login-redirect.php" method="POST" onsubmit="return VerificarValores()">
+    <div class="login-section">
+        <br>
 
-        
-        <div class="form-col">
-            <label class="field-header">Username</label>
-            <div class="row-layout">
-                <img src="../Images/Icons/profile.svg" style="width:27px;height:27px">
-                <input class="login-input" type="text" id="username" name="username" required>
-            </div>
+        <div class="row-layout wrap center">
+            <img class="login-image" src="Images/Icons/group.svg">
+            <label class="title" style="color: rgb(50, 50, 50);">Welcome back</label>
         </div>
 
-        <div class="form-col" style="margin-top:25px">
-            <label class="field-header">Palavra-passe*</label>
-            <div class="row-layout">
-                <img src="../Images/Icons/lock.svg" style="width:27px;height:27px">
-                <input  class="login-input"  type="password" id="password" name="password" placeholder="Enter your password" required>      
-            </div>
-        </div>
+        <nz-divider></nz-divider>
 
-    
-        <div style="width:100%; margin-bottom:30px">
-            <div class="smallh" style="text-align:right; font-size: 12px; margin-right:10px">Forgot Password?</div>
-        </div>
+        <form nz-form [formGroup]="LoginForm" class="login-form">
+            <nz-form-item>
+                <nz-form-control>
+                    <nz-input-group class="login-input" nzPrefixIcon="user">
+                        <input type="text" nz-input formControlName="username" placeholder="Username" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-control>
+                    <nz-input-group class="login-input" nzPrefixIcon="lock">
+                        <input type="password" nz-input formControlName="password" placeholder="Password" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
 
-
-        <button type="submit" class="login-button">LOGIN</button>
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
+            <a class="login-form-forgot">Forgot password</a>
         </form>
 
-    
+        <nz-divider nzPlain nzText="Or"></nz-divider>
 
-        <div class="separator" style="margin-top:50px; width:40%"></div>
+        <div class="row-layout" style="gap: 5px;">
+            <div class="login-option">
+                <img src="Icons/Google.svg" class="login-option-icon">
+            </div>
+            <div class="login-option">
+                <img src="Icons/Microsoft.svg" class="login-option-icon">
+            </div>
+        </div>
 
-        <label class="smallcaption" style="margin-top:5px">Don't an account?</label>
-        <label style="margin-bottom:5px;margin-top:5px" class="link2" routerLink='/register'>SIGN UP</label>
+        <nz-divider></nz-divider>
 
+        <label class="smallcaption">Don't have an account?</label>
+        <label class="link2" routerLink='/register'>SIGN UP</label>
     </div>
 </div>
-
