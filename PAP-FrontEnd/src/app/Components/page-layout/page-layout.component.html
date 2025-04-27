@@ -1,56 +1,43 @@
-<script src="././GlobalFunctions.js"></script>
-<script src="././initializer.js" defer></script>
 
 
+<div class="navbar">
+    <ul nz-menu nzTheme="dark">
+        <li nz-menu-item nzMatchRouter="/home" routerLink="/home">
+            <nz-icon nzType="mail" />
+            <span>Home</span>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="/finances" routerLink="/finances">
+            <img src="Images/Icons/finances.svg" class="nav-button-icon">
+            <span>Finances</span>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="/menu" routerLink="/menu">
+            <img src="Images/Icons/menu.svg" class="nav-button-icon">
+            <span>Menu</span>
+        </li>
 
 
-<div class="navbar" id="side-navbar">
-    <div class="navbar-icon" style="margin-left:10px">
-        <img  src="Images/RestroLink.png">
-    </div>
-    <button class="navbar-button"  routerLink='/home' >
-        <img src="Images/Icons/home.svg" class="nav-button-icon" >
-        <span class="nav-button-label">Home</span>
-    </button>
-    <span class="separator"></span>
-    <button class="navbar-button"  routerLink='/finances'>
-        <img src="Images/Icons/finances.svg" class="nav-button-icon">
-        <span class="nav-button-label">Finances</span>
-    </button>
-
-    
-    
-    <button class="navbar-button"  routerLink='/calendar'>
-        <img src="Images/Icons/calendar.svg" class="nav-button-icon">
-        <span class="nav-button-label">Calendar</span>
-    </button>
+        <li nz-menu-item nzMatchRouter="/stocks" routerLink="/stocks">
+            <img src="Images/Icons/stocks.svg" class="nav-button-icon">
+            <span>Stocks</span>
+        </li>
 
 
-    <button class="navbar-button"  routerLink='/menu'>
-        <img src="Images/Icons/menu.svg" class="nav-button-icon">
-        <span class="nav-button-label">Menu</span>
-    </button>
+        <li nz-menu-item nzMatchRouter="/users" routerLink="/users">
+            <img src="Images/Icons/account.svg" class="nav-button-icon">
+            <span>Users</span>
+        </li>
 
-    <button class="navbar-button"  routerLink='/stocks'>
-        <img src="Images/Icons/stocks.svg" class="nav-button-icon">
-        <span class="nav-button-label">Stocks</span>
-    </button>
-
-    <span class="separator"></span>
-    
-    <button class="navbar-button" routerLink='/users'>
-        <img src="Images/Icons/group.svg" class="nav-button-icon">
-        <span class="nav-button-label">Users</span>
-    </button>
-    
-    <button class="navbar-button" routerLink='/settings'>
-        <img src="Images/Icons/settings.svg" class="nav-button-icon">
-        <span class="nav-button-label">Settings</span>
-    </button>
+        <li nz-menu-item nzMatchRouter="/settings" routerLink="/settings">
+            <nz-icon nzType="setting" />
+            <span>Settings</span>
+        </li>
+    </ul>
 </div>
 
 <div class="container">
     <ng-content>
-        
+
     </ng-content>
 </div>

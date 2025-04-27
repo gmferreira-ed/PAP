@@ -1,0 +1,13 @@
+<button nz-button nzType="text" nzShape="circle" expander-button [class.selected]="Open" 
+(click)="Toggle(); ManualOpen = !ManualOpen">
+<!-- (mouseenter)="Open=true" (mouseleave)="MouseLeave()" -->
+    @if (Open){
+        <nz-icon nzType="close" nzTheme="outline" />
+    }@else{
+        <nz-icon nzType="menu" nzTheme="outline" />
+    }
+</button>
+
+<div class="content right independent" [class.open]="Open">
+    <ng-content></ng-content>
+</div>

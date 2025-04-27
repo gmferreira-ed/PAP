@@ -1,0 +1,40 @@
+:host{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #00000004;
+    border-radius: 10px;
+}
+
+.option{
+    color: white;
+    background-color: #00000004;
+
+    cursor: pointer;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    height: 25px;
+
+    
+    width: 50px;
+
+    user-select: none;
+    transition: all 0.5s;
+
+    &.selected{
+        pointer-events: none;
+        color: black;
+        background-color: white;
+    }
+}
+
+.option.disabled{
+    opacity: 0.5;
+    &.deep-disable{
+    cursor: not-allowed;
+    }
+}

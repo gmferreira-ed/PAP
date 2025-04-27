@@ -58,7 +58,7 @@ export class MenuService {
       category: Category,
     })
 
-    return await Result.json()
+    return Result
   }
 
   async InsertCategory(Category:String) {
@@ -66,7 +66,7 @@ export class MenuService {
       category: Category,
     })
 
-    return await Result.json()
+    return Result
   }
 
   async GetCategories(category: any = null) {
@@ -78,6 +78,6 @@ export class MenuService {
     const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', 'Failed to load categories')
     
     this.LoadingCategories = false
-    return await Result.json()
+    return Result
   }
 }

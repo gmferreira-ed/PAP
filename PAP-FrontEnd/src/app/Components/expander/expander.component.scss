@@ -1,0 +1,101 @@
+:host {
+    display: flex;
+    position: relative;
+
+    &.bottom,
+    &.top {
+        flex-direction: column;
+    }
+}
+
+
+
+
+.content {
+    display: flex;
+
+    &.bottom,
+    &.top {
+        flex-direction: column;
+    }
+
+    gap: 5px;
+
+    pointer-events: none;
+    left: 0;
+    top: 0;
+
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+
+    transition: opacity 0.3s ease, margin 0.3s ease, left 0.3s ease, rotate 0.3s linear;
+
+    z-index: 5;
+}
+
+.selected{
+    rotate: 180deg;
+}
+
+::ng-deep .content {
+
+    &.independent {
+        position: absolute;
+
+        &.right {
+            height: auto;
+            left: 100%;
+        }
+
+        &.bottom {
+            width: auto;
+        }
+    }
+
+    &.right:not(.open) {
+        .ant-btn {
+            margin-left: -20px;
+        }
+    }
+
+    &.bottom:not(.open) {
+        .ant-btn {
+            margin-top: -20px;
+        }
+    }
+
+    &.top:not(.open) {
+        .ant-btn {
+            margin-bottom: -20px;
+        }
+    }
+}
+
+:host {
+    .ant-btn {
+        color: white;
+    }
+}
+
+.open {
+    opacity: 1;
+    pointer-events: all;
+
+    &.right {
+        width: calc-size(auto, size);
+        left: calc(100% + 5px);
+    }
+
+    &.bottom {
+        height: calc-size(auto, size);
+        top: calc(100% + 5px);
+    }
+
+    &.top {
+        height: calc-size(auto, size);
+        top: calc(-200% - 5px);
+    }
+}
+
+

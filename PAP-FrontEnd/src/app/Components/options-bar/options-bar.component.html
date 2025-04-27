@@ -1,0 +1,15 @@
+@if (!Loading){
+    @for (Option of Options; track $index){
+        <div
+        (click)="ChangeSelection(Option)"
+        [class.selected]="SelectedOption == Option.value"
+        [class.disabled]="!Option.active"
+        [class.deep-disable]="!Option.active && UnselectableDisabledOptions"
+        nz-tooltip [nzTooltipTitle]="!Option.active && (Option.status != '' && Option.status || 'Disabled') || ''"
+        class="option">
+            {{Option.label}}
+        </div>
+    }
+}
+<ng-content>
+</ng-content>

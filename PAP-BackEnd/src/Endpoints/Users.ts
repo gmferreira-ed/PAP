@@ -4,7 +4,7 @@ const Router = express.Router();
 import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
 
 
-Router.get('/users', async (req, res) => {
+Router.get('/users', HandleEndpointFunction(async (req, res) => {
     const query = req.query
 
     const page = parseInt(query.page as string)  || 1
@@ -14,7 +14,6 @@ Router.get('/users', async (req, res) => {
 
     var result = await GetTablePage("users", page, pagesize)
     res.send(result)
-
-});
+}))
 
 module.exports = Router

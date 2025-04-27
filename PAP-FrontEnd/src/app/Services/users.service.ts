@@ -1,18 +1,21 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { HttpService } from './Http.service';
+import { AppSettings } from './AppSettings';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
 
-  constructor(private http:HttpClient){}
+  HttpService = inject(HttpService)
+  UsersURL = AppSettings.APIUrl+'users'
 
   async GetUsers(PageNumber:any, PageSize:any){
-      const UsersUrl = new URL("http://localhost:3000/users");
+      const UsersUrl = new URL(this.UsersURL);
       UsersUrl.searchParams.append('page', PageNumber);
       UsersUrl.searchParams.append('pagesize', PageSize);
-      const Result = await fetch(UsersUrl)
-      return await Result.json()
+
+      const Users = await this.HttpService.MakeRequest(UsersUrl, 'GET', 'Could not fetch users')
+      return Users
   }
 }
