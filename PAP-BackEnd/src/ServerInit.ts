@@ -1,20 +1,27 @@
 const path = require('path');
 const cors = require('cors')
-import express from 'express'
-
-import session from 'express-session'
-const MySQLStore = require('express-mysql-session')(session)
+const dotenv = require('dotenv')
 
 import fs from 'fs'
-import { Database } from './Globals'
 
+import express from 'express'
+import session from 'express-session'
+import expressmysqlsession from "express-mysql-session";
+
+import { Database } from './Globals'
+import Configs from './Config/EnviromentConfigs'
+
+const MySQLStore = expressmysqlsession(session as any)
 
 
 // SESSION SETUP
 const SessionDBOptions = {
-  host: 'localhost',
-  user: 'root',
-  password: '',
+  host: Configs.DB_Host,
+  port:Configs.DB_Port,
+
+  user: Configs.DB_Password,
+  password: Configs.DB_Password,
+
   database: 'sessions',
 };
 
@@ -35,6 +42,7 @@ const Server = express();
 Server.use(cors())
 Server.use(express.json())
 Server.use(express.urlencoded({ extended: true }))
+
 Server.use(SessionMiddleware)
 //Server.use(PermissionsService.PermissionsMiddleware);
 
@@ -71,7 +79,7 @@ const swaggerSpec = swaggerJSDoc({
   apis: [EndpointsFolder+"*"],
 });
 
-console.log(swaggerSpec)
+//console.log(swaggerSpec)
 
 Server.use('/api-docs', swaggerExpress.serve, swaggerExpress.setup(swaggerSpec));
 

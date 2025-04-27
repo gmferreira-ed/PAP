@@ -1,7 +1,9 @@
 PAP-FrontEnd/node_modules
 PAP-FrontEnd/.angular
 PAP-FrontEnd/desktop.ini
+PAP-FrontEnd/.env
 
 PAP-BackEnd/node_modules
 PAP-BackEnd/build
+PAP-BackEnd/.env
 desktop.ini/

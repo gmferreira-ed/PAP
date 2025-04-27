@@ -1,15 +1,20 @@
 const mysql = require('mysql2')
 
 import { Request, Response, NextFunction, RequestHandler } from 'express';
+import EnviromentConfigs from './Config/EnviromentConfigs';
 
 
 // SQL AND DATABASE SETUP
 const Database = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'restaurante',
-});
+  host: EnviromentConfigs.DB_Host,
+  port:EnviromentConfigs.DB_Port,
+
+  user: EnviromentConfigs.DB_User,
+  password: EnviromentConfigs.DB_Password,
+  
+  database: 'restaurante',
+})
+
 
 
 async function GetTablePage(Table: string, PageNumber: number, PageSize: number, OrderBy: string = "") {

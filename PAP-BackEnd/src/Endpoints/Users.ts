@@ -15,8 +15,8 @@ import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
 Router.get('/users', async (req, res) => {
     const query = req.query
 
-    const page = parseInt(query.page as string) 
-    let pagesize = parseInt(query.pagesize as string) 
+    const page = parseInt(query.page as string)  || 1
+    let pagesize = parseInt(query.pagesize as string)  || 5
     
     pagesize = Math.min(pagesize, 50)
 
