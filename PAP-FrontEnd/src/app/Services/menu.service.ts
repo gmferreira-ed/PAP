@@ -1,90 +1,83 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+
+import { inject, Injectable } from '@angular/core';
+import { HttpService } from './Http.service';
+import { AppSettings } from './AppSettings';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuService {
 
-  constructor(private http: HttpClient) { }
+  HttpService = inject(HttpService)
+
+  FailedMenuItems = false
+
+  LoadingMenuItems = true
+  LoadingCategories = true
+
+  MenuURL = AppSettings.APIUrl+"menu/"
+  CategoriesURL = this.MenuURL+"categories"
 
   async GetMenuItems(category: any = null) {
-    const UsersUrl = new URL("http://localhost:3000/menu");
+    this.LoadingMenuItems = true
+
+    const MenuURL = new URL (this.MenuURL)
     if (category != "All" && category) {
-      UsersUrl.searchParams.append('category', category);
+      MenuURL.searchParams.append('category', category);
     }
-    const Result = await fetch(UsersUrl)
-    return await Result.json()
+    const Result = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
+
+    this.LoadingMenuItems = false
+    return Result
   }
 
   async DeleteMenuItem(ProductName:string) {
-    const UsersDeleteURL = new URL("http://localhost:3000/menu/delete");
-    const Result = await fetch(UsersDeleteURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', 
-      },
-      body: JSON.stringify({
-        product: ProductName,
-      })
+    const Result = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to delete menu item',{
+      product: ProductName,
     })
-    return await Result.json()
+    return Result
   }
 
 
 
   async InsertMenuItem(name: string, category: string, price: number, filename: any) {
-    const UsersUrl = new URL("http://localhost:3000/menu");
-
-    const Result = await fetch(UsersUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', 
-      },
-      body: JSON.stringify({
-        product: name,
-        category: category,
-        price: price,
-        image_path: filename,
-        active: true
-      })
+    
+    const Result = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to insert menu item',{
+      product: name,
+      category: category,
+      price: price,
+      image_path: filename,
+      active: true
     })
-    return await Result.json()
+
+    return Result
   }
 
   async DeleteCategory(Category:String) {
-    const CategoriesUrl = new URL("http://localhost:3000/menu/categories/delete");
-    const Result = await fetch(CategoriesUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', 
-      },
-      body: JSON.stringify({
-        category: Category,
-      })
+    const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'DELETE', 'Failed to delete category',{
+      category: Category,
     })
+
     return await Result.json()
   }
 
   async InsertCategory(Category:String) {
-    const CategoriesUrl = new URL("http://localhost:3000/menu/categories");
-    const Result = await fetch(CategoriesUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', 
-      },
-      body: JSON.stringify({
-        category: Category,
-      })
+    const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'POST', 'Failed to insert category',{
+      category: Category,
     })
 
     return await Result.json()
   }
 
   async GetCategories(category: any = null) {
-    const CategoriesUrl = new URL("http://localhost:3000/menu/categories");
+    this.LoadingCategories = true
+
+    const CategoriesUrl = new URL(this.CategoriesURL);
     CategoriesUrl.searchParams.append('category', category);
-    const Result = await fetch(CategoriesUrl)
+    
+    const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', 'Failed to load categories')
+    
+    this.LoadingCategories = false
     return await Result.json()
   }
 }

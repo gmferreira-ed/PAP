@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { UsersService } from '../../Services/users.service';
+import { UsersService } from '../../Services/Users.service';
 import { NgStyle } from '@angular/common';
 import { PageLayout } from '../../Components/page-layout/page-layout.component';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';

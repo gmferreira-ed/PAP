@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { MenuService } from '../../Services/menu.service';
+import { MenuService } from '../../Services/Menu.service';
 import { PageLayout } from '../../Components/page-layout/page-layout.component';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 

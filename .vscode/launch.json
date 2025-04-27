@@ -3,7 +3,11 @@
   "compounds": [
     {
       "name": "Launch All",
-      "configurations": ["Start Frontend", "Dev Backend"]
+      "configurations": ["Start Frontend", "Dev Backend"],
+      "presentation": {
+        "group": "",
+        "order": 1
+      }
     },
   ],
   "configurations": [
@@ -14,7 +18,10 @@
       "cwd": "${workspaceFolder}/PAP-FrontEnd",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "presentation": {
+        "order": 3
+      }
     },
     
     {
@@ -24,7 +31,10 @@
       "cwd": "${workspaceFolder}/PAP-BackEnd",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "presentation": {
+        "order": 2
+      }
     },
 
     {
@@ -38,6 +48,9 @@
 
       "preLaunchTask": "Build Backend",  // Add this line
       "console": "integratedTerminal",
+      "presentation": {
+        "order": 3
+      }
     },
   ]
 }
