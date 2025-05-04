@@ -1,0 +1,14 @@
+.circle {
+  width: 20%;
+  aspect-ratio: 1/1;
+  margin: auto;
+  border-radius: 100%;
+}
+
+.profile-pfp {
+  object-fit: contain;
+  height: 35px;
+  aspect-ratio: 1 / 1;
+  margin-right: 10px;
+}
+

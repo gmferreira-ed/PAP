@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { PageLayout } from '../../Components/page-layout/page-layout.component';
 
 @Component({
-  selector: 'home-page',
+  selector: 'receipts-page',
   imports: [PageLayout],
-  templateUrl: './home.page.html',
-  styleUrl: './home.page.css'
+  templateUrl: './receipts.page.html',
+  styleUrl: './receipts.page.css'
 })
-export class HomePage {}
+export class ReceiptsPage {}
 

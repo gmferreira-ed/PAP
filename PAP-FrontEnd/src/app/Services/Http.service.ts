@@ -19,7 +19,7 @@ export class HttpService {
 
 
 
-  async MakeRequest(RequestURL: URL | string, Method: string = "GET", ErrorSuffix: string = "", Body?: any, Headers: HeadersInit = this.DefaultHeaders, JSONBody: boolean = true): Promise<Boolean | any> {
+  async MakeRequest(RequestURL: URL | string, Method: string = "GET", ErrorSuffix: string = "", Body?: any, Headers: HeadersInit = this.DefaultHeaders, JSONBody: boolean = true): Promise<[Boolean | any, string?]> {
     return new Promise(async (resolve, reject) => {
       if (JSONBody) {
         Body = JSON.stringify(Body)
@@ -44,15 +44,15 @@ export class HttpService {
 
         var Result = await Response.json()
         if (Response.ok) {
-          resolve(Result)
+          resolve([Result])
         } else {
           if (ErrorSuffix)
           this.MessageService.error(`${ErrorSuffix}\n${Result.error}`)
-          resolve(false)
+          resolve([false, Result.error])
         }
       }).catch((Error: Error) => {
         this.MessageService.error(`Could not connect to the server. Please try again later`)
-        resolve(false)
+        resolve([false, 'Connection error'])
       })
     })
   }

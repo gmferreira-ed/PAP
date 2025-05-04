@@ -18,9 +18,8 @@ const MySQLStore = expressmysqlsession(session as any)
 // SESSION SETUP
 const SessionDBOptions = {
   host: Configs.DB_Host,
-  port: Configs.DB_Port,
 
-  user: Configs.DB_Password,
+  user: Configs.DB_User,
   password: Configs.DB_Password,
 
   database: 'sessions',
@@ -62,56 +61,6 @@ fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
 });
 
 
-
-// API DOCS
-
-const swaggerSpec = {
-  swagger: '2.0',
-  info: {
-    title: 'DinnerLink API',
-    version: '2.3.1',
-    description: 'Express REST API application for DinnerLink, for all your restaurant needs',
-    termsOfService: 'http://www.dinnerlink.com/terms/',
-    contact: {
-      name: 'DinnerLink Support',
-      email: 'support@dinnerlink.com',
-      url: 'http://www.dinnerlink.com/contact'
-    },
-    license: {
-      name: 'MIT',
-      url: 'https://opensource.org/licenses/MIT'
-    }
-  },
-  host: "localhost:3000",
-  basePath: "/api",
-  tags: [
-    {
-      name: "Menu",
-      description: "Access to the restaurant's menu"
-    },
-    {
-      name: "Users",
-      description: "All restaurant-related users, from customers to staff"
-    },
-    {
-      name: "Images",
-      description: "Images for profiles and menu items"
-    },
-  ],
-  schemes: ["https", "http"],
-  paths: {}
-}
-
-
-// API SPECS SETUP
-const API_Specs = path.join(__dirname, './Config/OpenApi/'); console.log(API_Specs)
-
-fs.readdirSync(API_Specs).forEach((EndpointSpec: string) => {
-  const ParsedSpec = JSON.parse(fs.readFileSync(API_Specs + EndpointSpec, 'utf-8'));
-  Object.assign(swaggerSpec.paths, ParsedSpec);
-})
-
-Server.use('/api-docs', swaggerExpress.serve, swaggerExpress.setup(swaggerSpec));
 
 
 

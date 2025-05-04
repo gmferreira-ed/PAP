@@ -7,7 +7,7 @@ import { Database, HandleEndpointFunction } from '../Globals'
 
 Router.get('/menu/categories', HandleEndpointFunction(async (req, res) => {
     var SQLQuery = `SELECT * FROM menu_categories`
-    const [rows] = await Database.promise().query(SQLQuery);
+    const [rows] = await Database.query(SQLQuery);
     res.send(rows)
 }))
 
@@ -19,7 +19,7 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
     var SQLQuery = `INSERT INTO menu_categories (category) VALUES ('${body.category}')`;
 
-    const [rows] = await Database.promise().query(SQLQuery);
+    const [rows] = await Database.query(SQLQuery);
     res.send(rows)
 
 }))
@@ -31,7 +31,7 @@ Router.delete('/menu/categories', HandleEndpointFunction(async (req, res) => {
     var SQLQuery = "DELETE FROM `menu_categories` WHERE category=" + body.category
 
 
-    const [rows] = await Database.promise().query(SQLQuery);
+    const [rows] = await Database.query(SQLQuery);
     res.send(rows)
 }))
 

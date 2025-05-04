@@ -50,14 +50,14 @@ export class AuthService {
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    const AuthSuccess = await this.HttpService.MakeRequest(AuthURL, 'POST')
+    const [AuthResponse] = await this.HttpService.MakeRequest(AuthURL, 'POST')
 
 
-    if (AuthSuccess) {
-      const User = AuthSuccess.user
-      const EndpointPermissions = AuthSuccess.endpoint_permissions
+    if (AuthResponse) {
+      const User = AuthResponse.user
+      const EndpointPermissions = AuthResponse.endpoint_permissions
 
-      console.log("Logged in successfully")
+      console.log("Logged in successfully as", User)
 
       this.EndpointPermissions = EndpointPermissions
       return [User, EndpointPermissions]

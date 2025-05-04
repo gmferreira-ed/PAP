@@ -25,14 +25,14 @@ export class MenuService {
     if (category != "All" && category) {
       MenuURL.searchParams.append('category', category);
     }
-    const Result = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
+    const [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
 
     this.LoadingMenuItems = false
     return Result
   }
 
   async DeleteMenuItem(ProductName:string) {
-    const Result = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to delete menu item',{
+    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to delete menu item',{
       product: ProductName,
     })
     return Result
@@ -42,7 +42,7 @@ export class MenuService {
 
   async InsertMenuItem(name: string, category: string, price: number, filename: any) {
     
-    const Result = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to insert menu item',{
+    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to insert menu item',{
       product: name,
       category: category,
       price: price,
@@ -54,7 +54,7 @@ export class MenuService {
   }
 
   async DeleteCategory(Category:String) {
-    const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'DELETE', 'Failed to delete category',{
+    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'DELETE', 'Failed to delete category',{
       category: Category,
     })
 
@@ -62,7 +62,7 @@ export class MenuService {
   }
 
   async InsertCategory(Category:String) {
-    const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'POST', 'Failed to insert category',{
+    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'POST', 'Failed to insert category',{
       category: Category,
     })
 
@@ -75,7 +75,7 @@ export class MenuService {
     const CategoriesUrl = new URL(this.CategoriesURL);
     CategoriesUrl.searchParams.append('category', category);
     
-    const Result = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', 'Failed to load categories')
+    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', 'Failed to load categories')
     
     this.LoadingCategories = false
     return Result

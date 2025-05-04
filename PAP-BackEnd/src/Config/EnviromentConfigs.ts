@@ -1,6 +1,5 @@
 interface AppConfig {
     DB_Host: string
-    DB_Port: number
     DB_User: string
     DB_Password: string
 }
@@ -13,18 +12,16 @@ const config: Record<string, AppConfig> = {
 
     // APP CONFIGS
     production: {
-        DB_Host: 'dinnerlink',
-        DB_Port: 3306,
-        DB_User: 'gabs',
-        DB_Password: '1907',
+        DB_Host: 'localhost',
+        DB_User: 'root',
+        DB_Password: '',
     },
 
     // Development configs
     development: {
-        DB_Host: 'dinnerlink',
-        DB_Port: 3306,
-        DB_User: 'gabs',
-        DB_Password: '1907',
+        DB_Host: 'localhost',
+        DB_User: 'root',
+        DB_Password: '',
     },
 };
 

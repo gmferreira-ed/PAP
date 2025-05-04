@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './Pages/Home/home.page';
 import { UsersPage } from './Pages/Users/users.page';
 import { MenuPage } from './Pages/Menu/menu.page';
 import { SettingsPage } from './Pages/Settings/settings.page';
@@ -10,13 +9,17 @@ import { ProfilePage } from './Pages/Profile/profile.page';
 import { LoginPage } from './Pages/Login/login.page';
 import { RegisterPage } from './Pages/Register/register.page';
 import { PageAuthGuard } from './Services/Page-Auth.guard';
+import { DashboardPage } from './Pages/Dashboard/dashboard.page';
+import { ReceiptsPage } from './Pages/Receipts/receipts.page';
 
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomePage, canActivate: [PageAuthGuard] },
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'users', component: UsersPage, canActivate: [PageAuthGuard] },
     { path: 'menu', component: MenuPage, canActivate: [PageAuthGuard] },
+
+    { path: 'dashboard', component: DashboardPage, canActivate: [PageAuthGuard] },
+    { path: 'receipts', component: ReceiptsPage, canActivate: [PageAuthGuard] },
 
     { path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard] },
     { path: 'calendar', component: CalendarPage, canActivate: [PageAuthGuard] },
@@ -28,5 +31,5 @@ export const routes: Routes = [
 
 
     { path: 'profile/', component: ProfilePage, canActivate: [PageAuthGuard] },
-    { path: 'profile/:user', component: ProfilePage, canActivate: [PageAuthGuard] },
+    { path: 'profile/:username', component: ProfilePage, canActivate: [PageAuthGuard] },
 ];

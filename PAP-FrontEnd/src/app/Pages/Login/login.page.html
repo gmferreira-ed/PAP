@@ -16,7 +16,7 @@
 
         <nz-divider></nz-divider>
 
-        <form nz-form [formGroup]="LoginForm" class="login-form">
+        <form nz-form [formGroup]="LoginForm" class="login-form" (ngSubmit)="Login()">
             <nz-form-item>
                 <nz-form-control>
                     <nz-input-group class="login-input" nzPrefixIcon="user">
@@ -32,7 +32,7 @@
                 </nz-form-control>
             </nz-form-item>
 
-            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'" [nzLoading]="LoggingIn" [disabled]="LoginForm.invalid">Log in</button>
             <a class="login-form-forgot">Forgot password</a>
         </form>
 

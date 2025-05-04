@@ -15,7 +15,7 @@ export class UsersService {
       UsersUrl.searchParams.append('page', PageNumber);
       UsersUrl.searchParams.append('pagesize', PageSize);
 
-      const Users = await this.HttpService.MakeRequest(UsersUrl, 'GET', 'Could not fetch users')
+      const [Users] = await this.HttpService.MakeRequest(UsersUrl, 'GET', 'Could not fetch users')
       return Users
   }
 }

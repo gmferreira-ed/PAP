@@ -16,4 +16,14 @@ Router.get('/users', HandleEndpointFunction(async (req, res) => {
     res.send(result)
 }))
 
+Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
+
+    const targetuser = req.params.user
+
+    const UserQuery = `SELECT * FROM users WHERE username=?`
+    const [UserInfo] = await Database.execute<any[]>(UserQuery, [targetuser])
+
+    res.send(UserInfo[0])
+}))
+
 module.exports = Router

@@ -12,6 +12,5 @@ type User = {
     country: string
     postalcode: string
     
-    created:number,
     active: boolean
   }

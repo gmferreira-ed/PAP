@@ -7,7 +7,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 
 var EndpointPermissions = new SimpleCache(async function () {
   const PermissionsQuery = `SELECT * FROM endpoint_permissions ep JOIN permission_levels pl ON ep.permission_name = pl.permission_name`
-  const [Result] = await Database.promise().query(PermissionsQuery);
+  const [Result] = await Database.query(PermissionsQuery);
 
   return Object.fromEntries(
     Result.map((Data:any) => [`${Data.method}/${Data.endpoint}`, {
@@ -20,7 +20,7 @@ var EndpointPermissions = new SimpleCache(async function () {
 
 async function GetUserPermissions(User:string){
   const UserPermissionsQuery = `SELECT * FROM permission_profiles pp JOIN permission_levels pl ON pp.permission_name = pl.permission_name WHERE user = ?`
-  const [permission_profiles] = await Database.promise().execute(UserPermissionsQuery, [User]);
+  const [permission_profiles] = await Database.execute(UserPermissionsQuery, [User]);
 
   let UserPermissions = permission_profiles[0]
     if (!UserPermissions){

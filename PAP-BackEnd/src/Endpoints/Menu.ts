@@ -16,7 +16,7 @@ Router.get('/menu', HandleEndpointFunction(async (req, res) => {
     if (category) {
         SQLQuery = SQLQuery + ' WHERE `category`="' + category + '"'
     }
-    const [rows] = await Database.promise().query(SQLQuery);
+    const [rows] = await Database.query(SQLQuery);
 
     res.send(rows)
 
@@ -30,7 +30,7 @@ Router.post('/menu', HandleEndpointFunction(async (req, res) => {
       VALUES ('${body.product}', '${body.price}', '${body.category}', '${body.image_path}', '${1}')`;
 
 
-    const [rows] = await Database.promise().query(SQLQuery);
+    const [rows] = await Database.query(SQLQuery);
     res.send(rows)
 
 
@@ -43,7 +43,7 @@ Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
     var SQLQuery = "DELETE FROM `menu` WHERE product=" + `"${body.product}"`
 
 
-    const [rows] = await Database.promise().query(SQLQuery);
+    const [rows] = await Database.query(SQLQuery);
     Response.send(rows)
 
 

@@ -46,7 +46,7 @@ export class PermissionsService {
 
   async LoadPermissionLevels() {
     const PermLevelsURL = new URL('permission-levels', AppSettings.APIUrl)
-    let PermissionLevels = await this.HttpService.MakeRequest(PermLevelsURL, 'GET', 'Failed to fetch permission levels')
+    let [PermissionLevels] = await this.HttpService.MakeRequest(PermLevelsURL, 'GET', 'Failed to fetch permission levels')
 
     if (PermissionLevels) {
       PermissionLevels = PermissionLevels.map((PermissionData: any) => ({

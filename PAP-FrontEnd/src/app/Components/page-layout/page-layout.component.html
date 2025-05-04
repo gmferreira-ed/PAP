@@ -1,10 +1,22 @@
-
-
 <div class="navbar">
-    <ul nz-menu nzTheme="dark">
-        <li nz-menu-item nzMatchRouter="/home" routerLink="/home">
-            <nz-icon nzType="mail" />
-            <span>Home</span>
+    <ul nz-menu nzTheme="dark" nzMode="inline">
+        <li nz-submenu nzTitle="Home" nzIcon="mail" [nzOpen]="true">
+            <ul>
+                <li nz-menu-item>
+                    <img src="Icons/dashboard.svg" class="nav-button-icon">
+                    <span>Dashboard</span>
+                </li>
+
+                <li nz-menu-item>
+                    <img src="Icons/receipt_long.svg" class="nav-button-icon">
+                    <span>Receipts</span>
+                </li>
+            </ul>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="/calendar" routerLink="/calendar">
+            <img src="Images/Icons/calendar.svg" class="nav-button-icon">
+            <span>Calendar</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/finances" routerLink="/finances">
@@ -23,6 +35,7 @@
             <span>Stocks</span>
         </li>
 
+        <div class="menu-divider"></div>
 
         <li nz-menu-item nzMatchRouter="/users" routerLink="/users">
             <img src="Images/Icons/account.svg" class="nav-button-icon">

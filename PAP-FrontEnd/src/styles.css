@@ -1,5 +1,8 @@
 /* VARIABLES*/
 
+:root{
+  --topbar-size: 6em;
+}
 app-root {
   display: flex;
   flex-direction: column;
@@ -10,33 +13,16 @@ app-root {
 
 /* LAYOUTS AND CONTAINERS*/
 
-.profile-layout {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  background-color: rgb(255, 255, 255);
-  border-radius: 10px;
-  width: 100%;
-  padding: 15px;
-}
-
-.profile-row {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
-.profile-collumn {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
 
 .row-layout {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 5px;
+}
+
+.flex{
+  display: flex;
 }
 .wrap {
   flex-wrap: wrap;
@@ -153,34 +139,6 @@ app-root {
 
 
 
-
-/* TABLES */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: transparent;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 10px;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-  background-color: rgb(75, 75, 75, 0);
-}
-
-th {
-  background-color: rgb(0, 0, 0);
-  color: white;
-  font-weight: 200;
-
-}
-
-tr {
-  border-bottom: 1px solid rgb(255, 255, 255, 0.2);
-}
-
 caption {
   font-size: 1.5em;
   margin: 10px 0;
@@ -234,6 +192,10 @@ caption {
   margin-right: 5px;
 }
 
+.dark {
+  filter: brightness(0%);
+}
+
 .code-input-layout {
   display: flex;
   gap: 10px;
@@ -261,26 +223,16 @@ caption {
   margin: none;
 }
 
-.circle {
-  width: 40%;
-  aspect-ratio: 1/1;
-  margin: auto;
-  border-radius: 100%;
-}
 
-.pfp {
-  width: 50px;
-  height: 50px;
-  margin: auto;
-  border-radius: 100%;
-}
+
+
 
 .separator {
   width: 90%;
   background-color: rgb(150, 150, 150, 0.5);
   margin-top: 5px;
   margin-bottom: 5px;
-  height: 1px;
+  height: 0.5px;
 }
 
 
@@ -289,11 +241,7 @@ caption {
   height: 50px;
 }
 
-.profile-pfp {
-  object-fit: contain;
-  height: 40px;
-  aspect-ratio: 1 / 1;
-}
+
 
 /* PROMPT */
 .prompt-overlay {

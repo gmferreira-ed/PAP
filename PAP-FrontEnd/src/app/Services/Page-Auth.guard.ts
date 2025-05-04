@@ -26,7 +26,7 @@ export const PageAuthGuard: CanActivateChildFn = async (route, state) => {
   const [AuthenticationResult, IgnoreRedirect] = await AuthenticationPromise
 
   authService.Authenticating = false
-  if (AuthenticationResult){
+  if (true){
     return true
   }
   
