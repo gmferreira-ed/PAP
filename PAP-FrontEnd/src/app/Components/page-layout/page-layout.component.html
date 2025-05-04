@@ -2,12 +2,12 @@
     <ul nz-menu nzTheme="dark" nzMode="inline">
         <li nz-submenu nzTitle="Home" nzIcon="mail" [nzOpen]="true">
             <ul>
-                <li nz-menu-item>
+                <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">
                     <img src="Icons/dashboard.svg" class="nav-button-icon">
                     <span>Dashboard</span>
                 </li>
 
-                <li nz-menu-item>
+                <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
                     <img src="Icons/receipt_long.svg" class="nav-button-icon">
                     <span>Receipts</span>
                 </li>
@@ -50,6 +50,8 @@
 </div>
 
 <div class="container">
+    <span class="title">{{CurrentPage}}</span>
+    <div class="separator header"></div>
     <ng-content>
 
     </ng-content>

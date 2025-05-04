@@ -1,10 +1,6 @@
 <page-layout>
 
 
-    <label class="title">Users</label>
-    <div class="separator" style="margin-bottom:20px"></div>
-
-
     <nz-table style="width: 100%;" [nzBordered]="true" [nzShowPagination]="true" [nzData]="UsersList"
         [nzLoading]="LoadingUsers" [nzTotal]="PageCount" [(nzPageSize)]="PageSize" [(nzPageIndex)]="PageNumber"
         [nzPageSizeOptions]="[10,20,50,100]" [nzShowSizeChanger]="true" [nzFrontPagination]="false"
