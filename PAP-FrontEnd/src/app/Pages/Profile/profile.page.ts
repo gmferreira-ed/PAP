@@ -14,7 +14,7 @@ import { DatePipe } from '@angular/common';
 export class ProfilePage {
   User = signal<User | null>(null)
 
-  UserPfpUrl = "http://localhost:3000/images/profile-pictures/"
+  UserImagesURL = AppSettings.UserImagesURL
 
   Router = inject(Router)
   ActiveRoute = inject(ActivatedRoute)

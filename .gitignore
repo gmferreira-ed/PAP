@@ -4,6 +4,8 @@ PAP-FrontEnd/desktop.ini
 PAP-FrontEnd/.env
 
 PAP-BackEnd/node_modules
+PAP-BackEnd/src/Uploads/menu-thumbnails/**
+PAP-BackEnd/src/Uploads/users/**
 PAP-BackEnd/build
 PAP-BackEnd/.env
 desktop.ini/

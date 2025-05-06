@@ -90,7 +90,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
   // For example, angular uses the main endpoint, in this case /app, to fetch assets (Ex: /app/favicon.ico)
   // Instead of checking if the route contains "app" or unprotecting each asset /app provides, i added support to wildcard routes
   if (!EndpointData){
-    const MotherRoute = Route.split('/').slice(0, 2).join('/')+'/*'
+    const MotherRoute = Route.split('/').slice(0, 3).join('/')+'/*'
     if (Permissions[MotherRoute]?.Unprotected){
       return [true]
     }

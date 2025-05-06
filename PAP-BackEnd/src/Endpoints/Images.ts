@@ -3,8 +3,11 @@ import multer from 'multer'
 import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
+import path from 'path';
+import  fs  from 'fs';
 
 
+const UploadsFolder = path.join(__dirname, "../Uploads")
 
 // STORAGE SETUP
 const storage = multer.diskStorage({
@@ -17,8 +20,32 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+/**
+ * @displayname "Images"
+ * @path /images/*
+ * @method GET
+ * @summary "Views an uploaded image
+ * @unprotected true
+ */
+const UsersFolder = UploadsFolder+'/users/'
+const Extensions = ['.jpg', '.jpeg', '.png', '.webp'];
 
-Router.use("/images", express.static('Server/images'))
+console.log(UsersFolder)
+Router.get("/images/users/:user", (Request, Response) => {
+    const user = Request.params.user
+    
+    for (const ext of Extensions) {
+        const caminho = path.join(UsersFolder, `${user}${ext}`);
+        const Existe = fs.existsSync(caminho)
+
+        if (Existe) {
+            Response.sendFile(caminho);
+            return
+        }
+    }
+
+    Response.status(404).send('Image not found');
+})
 
 
 // Image MENU POST

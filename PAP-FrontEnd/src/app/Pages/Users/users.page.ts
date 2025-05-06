@@ -6,6 +6,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { Router, RouterModule } from '@angular/router';
 import { UsersService } from '../../Services/users.service';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { AppSettings } from '../../Services/AppSettings';
 
 @Component({
   selector: 'users-page',
@@ -19,7 +20,7 @@ export class UsersPage {
     userService = inject(UsersService)
     router = inject(Router)
   
-    UserPfpUrl = "http://localhost:3000/images/profile-pictures/"
+    UserImagesURL = AppSettings.UserImagesURL
 
     LoadingUsers = false
     UsersList:User[] = []

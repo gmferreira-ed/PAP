@@ -22,10 +22,8 @@ import { MenuService } from '../../Services/menu.service';
 
 @Component({
   selector: 'menu-page',
-  imports: [PageLayout, CurrencyPipe, NzSegmentedModule, 
-    NzInputModule, NzButtonModule,NzDrawerModule, NzInputNumberModule,
-    NzSkeletonModule, NzFloatButtonModule, NzModalModule, NzFormModule, NzSelectModule, NzRadioModule,
-    NzUploadModule, NzIconModule, FormsModule, ReactiveFormsModule, CommonModule
+  imports: [PageLayout, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,NzDrawerModule,
+    NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule,NzUploadModule, NzIconModule, FormsModule, CommonModule
    ],
   templateUrl: './menu.page.html',
   styleUrl: './menu.page.css'
@@ -185,6 +183,8 @@ export class MenuPage {
 
     this.CurrentCategories.set(ConvertedResult);
   }
+
+
   ngOnInit(){
     this.LoadMenuItems()
     this.LoadCategories()

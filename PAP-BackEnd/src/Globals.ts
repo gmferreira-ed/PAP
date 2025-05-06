@@ -75,7 +75,7 @@ const EndpointMatches:{[key: string]:string} = {
   DELETE: 'CREATE',
 }
 
-const EndpointRegex = /([^/])$/
+const EndpointRegex = '^(.*[^/*])$'
 
 
 export {

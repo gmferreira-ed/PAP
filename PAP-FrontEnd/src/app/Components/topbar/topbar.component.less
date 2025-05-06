@@ -7,15 +7,50 @@
     box-shadow: 0px 3px 8px 5px rgba(0,0,0,0.5);
     z-index: 10;
 
+    justify-content: space-between;
     align-items: center;
     padding: 1.5em;
 
-    &.centered{
+    
+}
+
+.section{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    flex: 1;
+
+    &.left{
+        justify-content: start;
+    }
+    &.center{
         justify-content: center;
+    }
+    &.right{
+        justify-content: end;
     }
 }
 
 .logo{
     object-fit: cover;
     height: 100%;
+}
+
+.user{
+    color: white;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.user-pfp{
+    height: 100%;
+    border-radius: 100px;
+    aspect-ratio: 1 / 1;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.pfp-image{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }

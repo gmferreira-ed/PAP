@@ -21,7 +21,7 @@
             <tr style="cursor: pointer;" (click)="ViewProfile(UserInfo)">
 
                 <td>
-                    <img class="profile-pfp" [src]="UserPfpUrl+UserInfo.username+'.png'"
+                    <img class="profile-pfp" [src]="UserImagesURL+UserInfo.username+'.png'"
                         onerror="this.src='Images/Profile.png'">
                     <label>{{UserInfo.username}}</label>
                 </td>
