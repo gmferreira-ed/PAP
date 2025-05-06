@@ -33,7 +33,7 @@ export class LoginPage {
 
     const [LoginResult, LoginError] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/login', 'POST', 'Failed to log in', this.LoginForm.value)
     if (LoginResult){
-      this.router.navigate(['/home'])
+      this.router.navigate(['/dashboard'])
     }else{
       if (LoginError == 'Incorrect password'){
          this.LoginForm.get('password')?.reset()
@@ -50,7 +50,7 @@ export class LoginPage {
   ngOnInit() {
     const User = this.AuthService.User()
     if (User) {
-      this.router.navigate(['/home'])
+      this.router.navigate(['/dashboard'])
     }
   }
 }

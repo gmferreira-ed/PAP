@@ -18,8 +18,8 @@ function QueryArray(ExpectedColumns:string[] , RequestData:Request['body'] ){
   }
   
 
-function BuildDeleteQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body'], ConditionKeys:string[]) {
-    const [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
+function BuildDeleteQuery(TargetTable:string, RequestData:Request['body'], ConditionKeys:string[]) :[string,any[]] {
+    const [Columns, Values] = QueryArray([], RequestData)
 
     const Conditions:string[] = []
     ConditionKeys.forEach((Key) => {
@@ -36,7 +36,7 @@ function BuildDeleteQuery(TargetTable:string, ExpectedColumns:string[], RequestD
 }
 
 
-function BuildUpdateQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body'], ConditionKeys:string[]) {
+function BuildUpdateQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body'], ConditionKeys:string[]) :[string,any[]] {
     const [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
     const Conditions:string[] = []
     
@@ -53,7 +53,7 @@ function BuildUpdateQuery(TargetTable:string, ExpectedColumns:string[], RequestD
     return [Query, Values]
 }
 
-function BuildInsertQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body']) {
+function BuildInsertQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body']) :[string,any[]] {
 
     const [Columns, Values, Placeholders] = QueryArray(ExpectedColumns, RequestData)
     const Query = `INSERT INTO \`${TargetTable}\` (${Columns.join(', ')}) VALUES (${Placeholders.join(',')})`;

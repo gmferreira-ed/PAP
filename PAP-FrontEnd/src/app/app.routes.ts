@@ -15,8 +15,18 @@ import { ReceiptsPage } from './Pages/Receipts/receipts.page';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: 'users', component: UsersPage, canActivate: [PageAuthGuard] },
-    { path: 'menu', component: MenuPage, canActivate: [PageAuthGuard] },
+    {
+        path: 'users', component: UsersPage, canActivate: [PageAuthGuard], data: {
+            ViewEndpoint: 'api/users',
+            CreateEndpoint: 'api/users',
+            UpdateEndpoint: 'api/users',
+        }
+    },
+    { path: 'menu', component: MenuPage, canActivate: [PageAuthGuard],  data: {
+        ViewEndpoint: 'api/menu',
+        CreateEndpoint: 'api/menu',
+        UpdateEndpoint: 'api/menu',
+    }},
 
     { path: 'dashboard', component: DashboardPage, canActivate: [PageAuthGuard] },
     { path: 'receipts', component: ReceiptsPage, canActivate: [PageAuthGuard] },

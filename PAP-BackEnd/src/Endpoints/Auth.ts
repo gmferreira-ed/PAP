@@ -4,6 +4,13 @@ const Router = express.Router();
 import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
 
 
+/**
+ * @displayname "Authentication"
+ * @path /auth
+ * @method POST
+ * @summary "Authenticates in the application"
+ * @unprotected true
+ */
 Router.post('/auth', HandleEndpointFunction(async (req, res) => {
 
     const user = req.session.user
@@ -15,6 +22,13 @@ Router.post('/auth', HandleEndpointFunction(async (req, res) => {
     }
 }))
 
+/**
+ * @displayname "Login"
+ * @path /auth/login
+ * @method POST
+ * @summary "Authenticates in the application"
+ * @unprotected true
+ */
 Router.post('/auth/login', HandleEndpointFunction(async (req, res) => {
 
     const user = req.session.user
@@ -42,6 +56,13 @@ Router.post('/auth/login', HandleEndpointFunction(async (req, res) => {
     }
 }))
 
+/**
+ * @displayname "Logout"
+ * @path /auth/logout
+ * @method POST
+ * @summary "Logs a user out
+ * @unprotected true
+ */
 Router.post('/auth/logout', HandleEndpointFunction(async (req, res) => {
 
     const user = req.session.user

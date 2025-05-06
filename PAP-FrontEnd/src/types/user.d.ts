@@ -1,7 +1,9 @@
 type User = {
     username: string
+    fullname:string
     email: string
 
+    role:string
     permission_level:number
 
     userid:number,

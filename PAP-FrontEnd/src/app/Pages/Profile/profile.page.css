@@ -38,3 +38,26 @@
   flex-direction: column;
   flex: 1;
 }
+
+
+.username{
+  font-size: 14x;
+  color: rgb(100, 100, 100);
+}
+
+.fullname{
+  font-size: 24px;
+  color: rgb(0, 0, 0);
+
+}
+
+.role{
+  font-size: 14px;
+  color: rgb(150, 150, 150);
+}
+
+.info-label{
+  font-size: 16px;
+  font-weight:500;
+  color: rgb(0, 0, 0);
+}

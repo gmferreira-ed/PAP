@@ -1,69 +1,125 @@
 
-import { Database, ErrorResponse } from '../Globals'
+import GlobalConfigs from '../Config/GlobalConfigs';
+import { Database, ErrorResponse, EndpointsAttributes, EndpointMatches, EndpointRegex } from '../Globals'
 import SimpleCache from "./SimpleCache"
 
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
 
-var EndpointPermissions = new SimpleCache(async function () {
-  const PermissionsQuery = `SELECT * FROM endpoint_permissions ep JOIN permission_levels pl ON ep.permission_name = pl.permission_name`
-  const [Result] = await Database.query(PermissionsQuery);
 
-  return Object.fromEntries(
-    Result.map((Data:any) => [`${Data.method}/${Data.endpoint}`, {
-      permission_name:Data.permission_name,
-      permission_level:Data.permission_level,
-      user_bypass:Data.user_bypass,
-    }])
-  );
+
+var EndpointsData = new SimpleCache(async function ():Promise<Endpoints> {
+
+  const StartTime = Date.now()
+  const PermissionsQuery = `SELECT * FROM role_permissions ep`
+  const [EndpointPermissionProfiles] = await Database.query<any>(PermissionsQuery);
+
+  const EndpointPermissionsObject: Record<string, string[]> = {};
+
+EndpointPermissionProfiles.forEach((info: any) => {
+  const id = `${info.method}/${info.endpoint}`;
+
+  if (!EndpointPermissionsObject[id]) {
+    EndpointPermissionsObject[id] = [];
+  }
+
+  EndpointPermissionsObject[id].push(info.role);
+});
+
+
+  const FinalResult:Endpoints = {}
+
+  for (const [EndpointID, EndpointAttributes] of Object.entries(EndpointsAttributes)) {
+
+    const EndpointDBPermissions = EndpointPermissionsObject[EndpointID]
+    let EndpointInfo:EndpointData = FinalResult[EndpointID]
+
+    if (!EndpointInfo){
+      EndpointInfo = {
+        ID: EndpointID,
+        DisplayName: EndpointAttributes.DisplayName,
+        Category: EndpointAttributes.Category || 'General',
+        TypeLabel: EndpointAttributes.TypeLabel,
+        Unprotected: EndpointAttributes.Unprotected,
+        Permissions: [],
+        Summary: EndpointAttributes.Summary,
+      }
+      FinalResult[EndpointID] = EndpointInfo
+    }
+
+    if (EndpointDBPermissions){
+      EndpointInfo.Permissions = EndpointDBPermissions
+    }
+
+  }
+
+  if (GlobalConfigs.BenchmarkingMode)
+    console.log(`Took ${Date.now() - StartTime} ms to fetch endpoint permissions`)
+
+  //console.log(FinalResult)
+  return FinalResult
 }, 15)
 
-async function GetUserPermissions(User:string){
-  const UserPermissionsQuery = `SELECT * FROM permission_profiles pp JOIN permission_levels pl ON pp.permission_name = pl.permission_name WHERE user = ?`
-  const [permission_profiles] = await Database.execute(UserPermissionsQuery, [User]);
+
+
+
+async function GetUserPermissions(User: User | string) {
+  const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE users.username = ?`
+  const [permission_profiles] = await Database.execute<any>(UserPermissionsQuery, [User]);
+
 
   let UserPermissions = permission_profiles[0]
-    if (!UserPermissions){
-        UserPermissions = {
-            permission_level:1,
-            permission_name:"user"
-        }
+  if (!UserPermissions) {
+    UserPermissions = {
+      permission_level: 1,
+      role: "user"
     }
+  }
 
   return UserPermissions
 }
 
-async function CheckPermissions(Route:string, Request:Request, ParamUser?:string) {
+async function CheckPermissions(Route: string, Request: Request, ParamUser?: string) {
 
-  const User = ParamUser || Request.session?.user
+  const User = (ParamUser || Request.session.user) as string
 
-  const Permissions = await EndpointPermissions.Get()
-  const RequiredPermission = Permissions[Route]
+  const Permissions:Endpoints = await EndpointsData.Get()
+  const EndpointData = Permissions[Route]
+
+  // Support /* to include all endpoints after it
+  // For example, angular uses the main endpoint, in this case /app, to fetch assets (Ex: /app/favicon.ico)
+  // Instead of checking if the route contains "app" or unprotecting each asset /app provides, i added support to wildcard routes
+  if (!EndpointData){
+    const MotherRoute = Route.split('/').slice(0, 2).join('/')+'/*'
+    if (Permissions[MotherRoute]?.Unprotected){
+      return [true]
+    }
+  }
 
 
   // By default, anyone has permissions
-  if (!RequiredPermission || RequiredPermission.permission_level == 1) {
-    //console.log('Ignoring endpoint permissions check for',Route)
+  if (EndpointData?.Unprotected) {
     return [true]
+  }else if (!EndpointData){
+    console.error("Missing permissions data on",Route)
+    return [false, 502, 'This endpoint has missing permissions data.']
   }
 
 
   if (User) {
     try {
 
-      const UserBypass = RequiredPermission.user_bypass == 1
+      //const UserBypass = RequiredPermission?.user_bypass == 1
       const UserPermProfile = await GetUserPermissions(User)
 
       // Has Required level
-      if (UserPermProfile.permission_level >= RequiredPermission.permission_level){
-        return [true]
+      const IsGlobal = EndpointData.Permissions.includes('User')
+      const IsAdmin = UserPermProfile.administrator
+
+      if (EndpointData.Permissions.includes(UserPermProfile.role) || IsGlobal || IsAdmin) {
+        return [true, IsGlobal]
       }
 
-      // Endpoint has user bypass attribute
-      const ModifiedUser = Request.body?.user || Request.query?.user || Request.params?.user
-      if (UserBypass && User == ModifiedUser){
-        return [true]
-      }
       // Deny access
       return [false, 401, 'Unauthorized']
     } catch (error) {
@@ -77,24 +133,31 @@ async function CheckPermissions(Route:string, Request:Request, ParamUser?:string
 
 
 
-async function PermissionsMiddleware(request:Request, response:Response, next:NextFunction):Promise<any>{
-  const Route = `${request.method}${request.path}/`;
+async function PermissionsMiddleware(request: Request, response: Response, next: NextFunction): Promise<any> {
+  const StartTS = Date.now()
+
+  const MethodMatch = EndpointMatches[request.method]
+  const Route = `${MethodMatch}${request.path}`.replace(EndpointRegex, '$1/')
 
   const Session = request.session
-  
+
   //console.log(User, Route, Session.id)
 
   const [HasAccess, ErrorCode, Error] = await CheckPermissions(Route, request)
-  if (HasAccess){
+
+  if (GlobalConfigs.BenchmarkingMode) {
+    //console.log(`Permissions middleware took ${Date.now()-StartTS}ms`);
+  }
+  if (HasAccess) {
     next()
-  }else{
+  } else {
     ErrorResponse(ErrorCode, Error, response)
   }
   return HasAccess
 }
 
-export default  {
+export default {
   PermissionsMiddleware: PermissionsMiddleware,
-  EndpointPermissions: EndpointPermissions,
+  EndpointsData: EndpointsData,
   GetUserPermissions: GetUserPermissions,
 }

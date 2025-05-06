@@ -55,7 +55,7 @@ export class AuthService {
 
     if (AuthResponse) {
       const User = AuthResponse.user
-      const EndpointPermissions = AuthResponse.endpoint_permissions
+      const EndpointPermissions = AuthResponse.role_permissions
 
       console.log("Logged in successfully as", User)
 

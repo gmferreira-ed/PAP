@@ -7,6 +7,7 @@ import EnviromentConfigs from './Config/EnviromentConfigs';
 // SQL AND DATABASE SETUP
 const Database = mysql.createPool({
   host: EnviromentConfigs.DB_Host,
+  port: EnviromentConfigs.DB_PORT,
 
   user: EnviromentConfigs.DB_User,
   password: EnviromentConfigs.DB_Password,
@@ -65,7 +66,21 @@ function HandleEndpointFunction(EndpointFunction: AsyncEndpoint, DisplayServerEr
 }
 
 
+let EndpointsAttributes:{[EndpointID: string]: EndpointAttributes} = {}
+
+const EndpointMatches:{[key: string]:string} = {
+  GET: 'VIEW',
+  PATCH: 'UPDATE',
+  POST: 'CREATE',
+  DELETE: 'CREATE',
+}
+
+const EndpointRegex = /([^/])$/
+
 
 export {
-  Database, GetTablePage, HandleEndpointFunction, ErrorResponse
+  Database, GetTablePage, HandleEndpointFunction, ErrorResponse,
+  EndpointsAttributes,
+  EndpointRegex,
+  EndpointMatches,
 };

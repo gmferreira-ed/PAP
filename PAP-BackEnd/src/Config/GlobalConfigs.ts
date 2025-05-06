@@ -1,6 +1,7 @@
 
 interface GlobalConfigs {
     UseMockLogin:boolean,
+    BenchmarkingMode?:boolean
 }
 
 const DevMode = !process.env.NODE_ENV

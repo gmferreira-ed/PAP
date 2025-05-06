@@ -5,7 +5,13 @@ import { Database, HandleEndpointFunction } from '../Globals'
 
 
 
-// MENU
+/**
+ * @displayname "Menu"
+ * @path /menu
+ * @method GET
+ * @summary "View menu"
+ * @unprotected true
+ */
 Router.get('/menu', HandleEndpointFunction(async (req, res) => {
 
     const query = req.query
@@ -22,7 +28,12 @@ Router.get('/menu', HandleEndpointFunction(async (req, res) => {
 
 }));
 
-
+/**
+ * @displayname "Menu Items"
+ * @path /menu
+ * @method POST
+ * @summary "Create/Delete items on the menu"
+ */
 Router.post('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
@@ -36,6 +47,12 @@ Router.post('/menu', HandleEndpointFunction(async (req, res) => {
 
 }));
 
+/**
+ * @displayname "Menu Items"
+ * @path /menu
+ * @method DELETE
+ * @summary "Create/Delete items on the menu"
+ */
 Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
 
     const body = Request.body

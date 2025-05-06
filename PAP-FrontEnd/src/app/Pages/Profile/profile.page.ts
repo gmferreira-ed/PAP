@@ -22,7 +22,11 @@ export class ProfilePage {
 
   async ngOnInit() {
     const UserToSearch = this.ActiveRoute.snapshot.paramMap.get('username')
-    const [UserInfo] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users/' + UserToSearch, 'GET', 'Failed to fetch user info')
+
+    const UsersURL = new URL('users',AppSettings.APIUrl )
+    UsersURL.searchParams.append('user', UserToSearch || '')
+
+    const [UserInfo] = await this.HttpService.MakeRequest(UsersURL, 'GET', 'Failed to fetch user info')
 
     if (UserInfo) {
       this.User.set(UserInfo)

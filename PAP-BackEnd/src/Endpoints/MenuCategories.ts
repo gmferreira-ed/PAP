@@ -4,7 +4,13 @@ const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
 
 
-
+/**
+ * @displayname "Menu Categories"
+ * @path /menu/categories
+ * @method GET
+ * @summary "View categories"
+ * @unprotected true
+ */
 Router.get('/menu/categories', HandleEndpointFunction(async (req, res) => {
     var SQLQuery = `SELECT * FROM menu_categories`
     const [rows] = await Database.query(SQLQuery);
@@ -12,7 +18,11 @@ Router.get('/menu/categories', HandleEndpointFunction(async (req, res) => {
 }))
 
 
-
+/**
+ * @displayname "Menu Categories"
+ * @path /menu/categories
+ * @method POST
+ */
 Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
     const body = req.body
@@ -24,7 +34,12 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
 }))
 
-
+/**
+ * @displayname "Menu Categories"
+ * @path /menu/categories
+ * @method DELETE
+ * @summary "Create/Delete categories"
+ */
 Router.delete('/menu/categories', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
