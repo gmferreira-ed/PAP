@@ -1,7 +1,8 @@
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Topbar } from './Components/topbar/topbar.component';
+import { ThemeService } from './Services/Theme.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,5 @@ import { Topbar } from './Components/topbar/topbar.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+  ThemeService = inject(ThemeService)
 }

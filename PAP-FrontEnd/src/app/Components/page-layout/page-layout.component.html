@@ -1,5 +1,5 @@
 <div class="navbar">
-    <ul nz-menu nzTheme="dark" nzMode="inline">
+    <ul nz-menu [nzTheme]="this.ThemeService.Theme()" nzMode="inline">
         <li nz-submenu nzTitle="Home" nzIcon="mail" [nzOpen]="true">
             <ul>
                 <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">

@@ -173,15 +173,20 @@ export class MenuPage {
 
   async LoadMenuItems(Category:any = null){
     let MenuItemResult = await this.MenuService.GetMenuItems(Category)
-    this.CurrentMenuList.set(MenuItemResult)
+    if (MenuItemResult){
+      this.CurrentMenuList.set(MenuItemResult)
+    }
   }
   async LoadCategories(){
       
     let CategoriesResult = await this.MenuService.GetCategories()
-    let ConvertedResult = Object.keys(CategoriesResult).map(key => (CategoriesResult[key].category))
-    ConvertedResult.unshift("All")
 
-    this.CurrentCategories.set(ConvertedResult);
+    if (CategoriesResult){
+      let ConvertedResult = Object.keys(CategoriesResult).map(key => (CategoriesResult[key].category))
+      ConvertedResult.unshift("All")
+  
+      this.CurrentCategories.set(ConvertedResult);
+    }
   }
 
 

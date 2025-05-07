@@ -19,6 +19,7 @@ export class LoginPage {
 
   HttpService = inject(HttpService)
   AuthService = inject(AuthService)
+
   router = inject(Router)
   LoggingIn = false
 

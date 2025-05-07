@@ -6,7 +6,8 @@
 }
 
 .profile-pfp {
-  object-fit: contain;
+  object-fit: cover;
+  border-radius: 100px;
   height: 35px;
   aspect-ratio: 1 / 1;
   margin-right: 10px;

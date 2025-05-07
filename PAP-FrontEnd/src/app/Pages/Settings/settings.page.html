@@ -1,2 +1,16 @@
 <page-layout>
+
+    <h1>Appearance</h1>
+    <div class="themes-container">
+        @for (Theme of Themes; track $index){
+        <div class="theme-card">
+            <div class="row vcenter">
+                <input class="radio" type="radio" (ngModelChange)="ThemeService.setTheme(Theme.key)" [(ngModel)]="ThemeService.Theme"
+                    [value]="Theme.key">
+                    <br>
+                <label class="header">{{Theme.DisplayName}}</label>
+            </div>
+        </div>
+        }
+    </div>
 </page-layout>

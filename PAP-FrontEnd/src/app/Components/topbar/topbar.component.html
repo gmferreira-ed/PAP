@@ -5,8 +5,9 @@
     <div class="section right">
         <label class="user">{{User()}}</label>
         <div class="user-pfp">
-            <img class="pfp-image" [src]="UserImagesURL+User()" onerror="this.src='Images/Icons/account.svg'">
-
+            @if (User()){
+                <img class="pfp-image" [src]="UserImagesURL+User()" onerror="this.src='Images/Icons/account.svg'">
+            }
         </div>
 
     </div>
