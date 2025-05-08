@@ -13,17 +13,17 @@
 
             <div class="profile-row">
                 <div class="profile-collumn">
-                    <label class="info-label">Email</label>
+                    <label class="info-label">{{'Email' | translate }}</label>
                     <label id="email">{{User()?.email}}</label>
                 </div>
 
                 <div class="profile-collumn">
-                    <label class="info-label">Phone Number</label>
+                    <label class="info-label">{{'Phone Number' | translate }}</label>
                     <label id="phone">{{User()?.phone}}</label>
                 </div>
 
                 <div class="profile-collumn">
-                    <label class="info-label">Join Date</label>
+                    <label class="info-label">{{'Join Date' | translate }}</label>
                     <label>{{User()?.created | date: 'longDate'}}</label>
                 </div>
             </div>

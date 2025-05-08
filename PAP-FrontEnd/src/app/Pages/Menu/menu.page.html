@@ -3,7 +3,7 @@
     <!-- CATEGORY SELECTION -->
     <div class="row-layout">
         <nz-input-group *ngIf="InsertInputVisible; else suffixIconButton"  style="max-width: 13em; margin-left:5px"  nzSearch [nzAddOnAfter]="suffixIconButton">
-            <input type="text" nz-input placeholder="Add Category" [(ngModel)]="CategoryToInsert" 
+            <input type="text" nz-input [placeholder]="'Add Category' | translate" [(ngModel)]="CategoryToInsert" 
             (keydown.enter)="InsertCategory($event)" />
         </nz-input-group>
 
@@ -53,7 +53,7 @@
         [nzVisible]="DrawerOpen"
         nzWidth="35em"
         nzPlacement="right"
-        nzTitle="Item Info"
+        [nzTitle]="'Item Info' | translate"
         (nzOnClose)="DrawerOpen = false"
         >
         <div class="menu-item-info-display" *nzDrawerContent>
@@ -83,7 +83,7 @@
     <nz-modal
     [(nzVisible)]="InsertModalOpen" 
     [nzOkLoading]="IsInsertingItem"
-    nzTitle="Create menu item" 
+    [nzTitle]="'Create menu item' | translate" 
 
     (nzOnCancel)="InsertModalOpen = false" 
     nzCancelText="Cancel"
@@ -99,7 +99,7 @@
         <ng-container *nzModalContent>
             <form #InsertionForm="ngForm" nz-form nzLayout="vertical" >
                 <nz-form-item>
-                    <nz-form-label>Item Name</nz-form-label>
+                    <nz-form-label>{{'Item Name' | translate}}</nz-form-label>
                     <nz-form-control >
                         <input nz-input [(ngModel)]="InsertItemname" name="itemname"  id="itemname" placeholder="Ex: Hamburger"/>
                     </nz-form-control>
@@ -108,10 +108,10 @@
                 
                 <nz-form-item>
                     <nz-form-item style="margin-right: 20px;">
-                        <nz-form-label>Category</nz-form-label>
+                        <nz-form-label>{{'Category' | translate}}</nz-form-label>
                         <nz-form-control nzSpan="25">
                             <nz-select [(ngModel)]="InsertItemCategory" name="itemcategory"
-                            nzShowSearch nzAllowClear nzPlaceHolder="Select a category">
+                            nzShowSearch nzAllowClear [nzPlaceHolder]="'Select a category' | translate">
                                 @for (Category of CurrentCategories(); track Category) {
                                 <nz-option [nzLabel]="Category" [nzValue]="Category"></nz-option>
                                 }
@@ -120,7 +120,7 @@
                     </nz-form-item>
 
                 <nz-form-item>
-                        <nz-form-label>Price</nz-form-label>
+                        <nz-form-label>{{'Price' | translate}}</nz-form-label>
                         <nz-form-control nzSpan="25">
                             <nz-input-group nzSuffix="$" >
                                 <input [(ngModel)]="InsertItemPrice" name="itemprice"
@@ -133,7 +133,7 @@
 
                 <!-- MENU THUMBNAIL UPLOADING -->
                 <nz-form-item >
-                    <nz-form-label>Thumbnail</nz-form-label>
+                    <nz-form-label>{{'Thumbnail' | translate}}</nz-form-label>
                     
                     <nz-form-control nzXs >
                         <nz-upload 
@@ -148,12 +148,12 @@
                             nzFileType="image"
                             nzListType="picture-card"
                             nzLimit = 1
-
+                            text
                             (nzChange)="ChangeSelectedImage($event)"
                         >
                         @if (!SelectedThumbnailUrl) {
                             <nz-icon class="upload-icon"  [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
-                            <div class="ant-upload-text">Upload</div>
+                            <div class="ant-upload-text">{{'Upload' | translate}}</div>
                           } @else {
                             <img [src]="SelectedThumbnailUrl" style="width: 100%" />
                           }

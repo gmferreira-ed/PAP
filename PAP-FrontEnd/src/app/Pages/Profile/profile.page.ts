@@ -4,10 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { DatePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'profile-page',
-  imports: [PageLayout, DatePipe],
+  imports: [PageLayout, DatePipe, TranslateModule],
   templateUrl: './profile.page.html',
   styleUrl: './profile.page.css'
 })

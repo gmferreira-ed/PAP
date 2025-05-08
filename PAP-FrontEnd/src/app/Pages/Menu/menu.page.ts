@@ -18,11 +18,12 @@ import { NzUploadFile, NzUploadModule, NzUploadXHRArgs } from 'ng-zorro-antd/upl
 import { NzMessageService } from 'ng-zorro-antd/message';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MenuService } from '../../Services/menu.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'menu-page',
-  imports: [PageLayout, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,NzDrawerModule,
+  imports: [PageLayout, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,NzDrawerModule, TranslateModule,
     NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule,NzUploadModule, NzIconModule, FormsModule, CommonModule
    ],
   templateUrl: './menu.page.html',

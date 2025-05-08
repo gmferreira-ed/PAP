@@ -7,10 +7,11 @@ import { Router, RouterModule } from '@angular/router';
 import { UsersService } from '../../Services/users.service';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AppSettings } from '../../Services/AppSettings';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'users-page',
-  imports: [PageLayout, NgStyle, NzTableModule, RouterModule, NzButtonModule],
+  imports: [PageLayout, NgStyle, NzTableModule, RouterModule, NzButtonModule, TranslateModule],
   templateUrl: './users.page.html',
   styleUrl: './users.page.css'
 })

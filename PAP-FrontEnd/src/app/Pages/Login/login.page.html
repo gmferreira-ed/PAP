@@ -11,7 +11,7 @@
 
         <div class="row-layout wrap center">
             <img class="login-image" src="Images/Icons/group.svg">
-            <label class="title">Welcome back</label>
+            <label class="title">{{'Welcome back'| translate}}</label>
         </div>
 
         <nz-divider></nz-divider>
@@ -20,23 +20,25 @@
             <nz-form-item>
                 <nz-form-control>
                     <nz-input-group class="login-input" nzPrefixIcon="user">
-                        <input type="text" nz-input formControlName="username" placeholder="Username" />
+                        <input type="text" nz-input formControlName="username" [placeholder]="'Username' | translate" />
                     </nz-input-group>
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
                 <nz-form-control>
                     <nz-input-group class="login-input" nzPrefixIcon="lock">
-                        <input type="password" nz-input formControlName="password" placeholder="Password" />
+                        <input type="password" nz-input formControlName="password" [placeholder]="'Password' | translate" />
                     </nz-input-group>
                 </nz-form-control>
             </nz-form-item>
 
-            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'" [nzLoading]="LoggingIn" [disabled]="LoginForm.invalid">Log in</button>
-            <a class="login-form-forgot">Forgot password</a>
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'" [nzLoading]="LoggingIn" [disabled]="LoginForm.invalid">
+                {{'Log in' | translate}}
+            </button>
+            <a class="login-form-forgot">{{'Forgot password' | translate}}</a>
         </form>
 
-        <nz-divider nzPlain nzText="Or"></nz-divider>
+        <nz-divider nzPlain [nzText]="'Or' | translate"></nz-divider>
 
         <div class="row-layout" style="gap: 5px;">
             <div class="login-option">
@@ -49,7 +51,7 @@
 
         <nz-divider></nz-divider>
 
-        <label class="smallcaption">Don't have an account?</label>
-        <label class="link2" routerLink='/register'>SIGN UP</label>
+        <label class="smallcaption">{{"Don't have an account?" | translate}}</label>
+        <label class="link2" routerLink='/register'>{{"SIGN UP"| translate}}</label>
     </div>
 </div>

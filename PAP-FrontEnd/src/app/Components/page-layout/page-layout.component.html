@@ -4,53 +4,53 @@
             <ul>
                 <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">
                     <img src="Icons/dashboard.svg" class="nav-button-icon">
-                    <span>Dashboard</span>
+                    <span>{{'Dashboard' | translate}}</span>
                 </li>
 
                 <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
                     <img src="Icons/receipt_long.svg" class="nav-button-icon">
-                    <span>Receipts</span>
+                    <span>{{'Receipts' | translate}}</span>
                 </li>
             </ul>
         </li>
 
         <li nz-menu-item nzMatchRouter="/calendar" routerLink="/calendar">
             <img src="Images/Icons/calendar.svg" class="nav-button-icon">
-            <span>Calendar</span>
+            <span>{{'Calendar' | translate}}</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/finances" routerLink="/finances">
             <img src="Images/Icons/finances.svg" class="nav-button-icon">
-            <span>Finances</span>
+            <span>{{'Finances' | translate}}</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/menu" routerLink="/menu">
             <img src="Images/Icons/menu.svg" class="nav-button-icon">
-            <span>Menu</span>
+            <span>{{'Menu' | translate}}</span>
         </li>
 
 
         <li nz-menu-item nzMatchRouter="/stocks" routerLink="/stocks">
             <img src="Images/Icons/stocks.svg" class="nav-button-icon">
-            <span>Stocks</span>
+            <span>{{'Stocks' | translate}}</span>
         </li>
 
         <div class="menu-divider"></div>
 
         <li nz-menu-item nzMatchRouter="/users" routerLink="/users">
             <img src="Images/Icons/account.svg" class="nav-button-icon">
-            <span>Users</span>
+            <span>{{'Users' | translate}}</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/settings" routerLink="/settings">
             <nz-icon nzType="setting" />
-            <span>Settings</span>
+            <span>{{'Settings' | translate}}</span>
         </li>
     </ul>
 </div>
 
 <div class="container">
-    <span class="title">{{CurrentPage}}</span>
+    <span class="title">{{CurrentPage | translate}}</span>
     <div class="separator header"></div>
     <ng-content>
 
