@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { PageLayout } from '../../Components/page-layout/page-layout.component';
+import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { ThemeService } from '../../Services/Theme.service';
 import { FormsModule } from '@angular/forms';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
@@ -7,7 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'settings-page',
-  imports: [PageLayout, FormsModule, NzRadioModule, TranslateModule],
+  imports: [PageLayoutComponent, FormsModule, NzRadioModule, TranslateModule],
   templateUrl: './settings.page.html',
   styleUrl: './settings.page.css'
 })

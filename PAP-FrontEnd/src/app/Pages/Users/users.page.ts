@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { PageLayout } from '../../Components/page-layout/page-layout.component';
+import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { Router, RouterModule } from '@angular/router';
 import { UsersService } from '../../Services/users.service';
@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'users-page',
-  imports: [PageLayout, NgStyle, NzTableModule, RouterModule, NzButtonModule, TranslateModule],
+  imports: [PageLayoutComponent, NgStyle, NzTableModule, RouterModule, NzButtonModule, TranslateModule],
   templateUrl: './users.page.html',
   styleUrl: './users.page.css'
 })

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { PageLayout } from '../../Components/page-layout/page-layout.component';
+import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'profile-page',
-  imports: [PageLayout, DatePipe, TranslateModule],
+  imports: [PageLayoutComponent, DatePipe, TranslateModule],
   templateUrl: './profile.page.html',
   styleUrl: './profile.page.css'
 })

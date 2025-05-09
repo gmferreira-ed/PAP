@@ -1,0 +1,83 @@
+<page-layout #PageLayout>
+    <div class="editor-layout">
+
+        <div class="sidebar component-list">
+            @for (ComponentInfo of GlobalUtils.ObjectInfo(LayoutConfigs.Components); track $index){
+
+                @let ComponentType = ComponentInfo.Key;
+                @let PseudoComponent = NewComponent(ComponentType);
+
+                <div class="component-info">
+                    <h3>{{GlobalUtils.FormatName(ComponentInfo.Key)}}</h3>
+                    <div [class]="'component '+ComponentInfo.Key"
+                    [style.width]="PseudoComponent.Size.X +'px'"
+                    [style.height]="PseudoComponent.Size.Y +'px'" 
+                    [style.left]="PseudoComponent.Position.X +'px'"
+                    [style.top]="PseudoComponent.Position.Y +'px'" 
+                    [style.cursor]="'pointer'"
+                    
+                    (click)="AddComponent(NewComponent(ComponentType))">
+
+                    <img class="background" [src]="LayoutConfigs.Components[ComponentType]?.Image"></div>
+                </div>
+            }
+        </div>
+
+
+        <div #MainContainer class="main-container">
+            <div class="background image" style="background-image: url('Backgrounds/Wood2.jpg');"></div>
+            <div class="background grid" [style.background-size]="Snapping + 'px '+Snapping + 'px'"></div>
+            <div class="viewport">
+                @for (Component of Components; track $index){
+                <div [class]="'component '+Component.Type" 
+
+                    [style.width]="Component.Size.X +'px'"
+                    [style.height]="Component.Size.Y +'px'" 
+                    [style.left]="Component.Position.X +'px'"
+                    [style.top]="Component.Position.Y +'px'" 
+
+                    [style]="'background-image: '+LayoutConfigs.Components[Component.Type]?.Image"
+
+                    (mousedown)="DragStart(Component)"
+                    (mouseup)="ShowHandles(Component)"
+                    (contextmenu)="ShowOptions($event, Component)"
+
+                    [class.selected]="SelectedComponent == Component">
+                    <img class="background" [src]="LayoutConfigs.Components[Component.Type]?.Image">
+
+                    @if (SelectedComponent == Component){
+                    <div class="selection-box">
+                        @for (Handle of Handles; track $index){
+                        <div [class]="'dragger ' + Handle"></div>
+                        }
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        
+        @if (ShowProperties){
+        <div class="sidebar properties">
+            @if (SelectedComponent){
+                <h2>{{GlobalUtils.FormatName(SelectedComponent.Type)}}</h2>
+                <h3>Properties</h3>
+                
+                <div>
+                    <h4>Position</h4>
+                    <label>X: {{SelectedComponent.Position.X}}</label>
+                    <label>Y: {{SelectedComponent.Position.Y}}</label>
+                </div>
+
+                <div>
+                    <h4>Size</h4>
+                    <label>X: {{SelectedComponent.Size.X}}</label>
+                    <label>Y: {{SelectedComponent.Size.Y}}</label>
+                </div>
+            }@else {
+            }
+        </div>
+        }
+    </div>
+</page-layout>

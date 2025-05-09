@@ -11,6 +11,7 @@ import { RegisterPage } from './Pages/Register/register.page';
 import { PageAuthGuard } from './Services/Page-Auth.guard';
 import { DashboardPage } from './Pages/Dashboard/dashboard.page';
 import { ReceiptsPage } from './Pages/Receipts/receipts.page';
+import { RestaurantLayout } from './Components/layout/layout.component';
 
 
 export const routes: Routes = [
@@ -40,6 +41,7 @@ export const routes: Routes = [
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
 
 
+    { path: 'layout', component: RestaurantLayout, canActivate: [PageAuthGuard] },
     { path: 'profile/', component: ProfilePage, canActivate: [PageAuthGuard] },
     { path: 'profile/:username', component: ProfilePage, canActivate: [PageAuthGuard] },
 ];

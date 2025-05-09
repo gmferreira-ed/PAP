@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { PageLayout } from '../../Components/page-layout/page-layout.component';
+import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 
 @Component({
   selector: 'receipts-page',
-  imports: [PageLayout],
+  imports: [PageLayoutComponent],
   templateUrl: './receipts.page.html',
   styleUrl: './receipts.page.css'
 })

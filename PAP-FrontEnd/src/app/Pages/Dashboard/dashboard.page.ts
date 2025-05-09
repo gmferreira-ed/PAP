@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { PageLayout } from '../../Components/page-layout/page-layout.component';
+import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 
 @Component({
   selector: 'dashboard-page',
-  imports: [PageLayout],
+  imports: [PageLayoutComponent],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.css'
 })

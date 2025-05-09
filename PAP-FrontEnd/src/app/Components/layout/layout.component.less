@@ -1,0 +1,187 @@
+::ng-deep:root {
+    --handle-size: 10px;
+    --grid-color: rgba(0, 0, 0, 0.1);
+}
+
+
+// Sidebar
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: var(--secondary-color-2);
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px 1px color-mix(in srgb, var(--shadow-color), transparent 50%);
+
+}
+
+.properties {
+    flex: 1;
+}
+.component-list{
+    gap: 20px;
+
+    .component{
+        position: relative;
+    }
+}
+
+// Layout of the component itself
+.editor-layout {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 90%;
+    gap: 20px;
+    
+}
+
+// Contains the layout
+.main-container {
+    position: relative;
+    overflow: hidden;
+    width: 60%;
+}
+
+// Contains the components
+.viewport{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+// Backgrounds (Image and grid)
+.background {
+
+    display: grid;
+    background-repeat: repeat;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+
+    &.grid {
+        background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+            linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+        border-right: 1px solid var(--grid-color);
+        border-bottom: 1px solid var(--grid-color);
+    }
+
+    &.image{
+        background-size: 100px 100px;
+        opacity: 0.8;
+    }
+}
+
+
+
+// SELECTION BOX
+
+.selection-box {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+
+    top: 0px;
+    left: 0px;
+    position: absolute;
+
+    z-index: 5;
+
+    border: 1px dashed var(--primary-color);
+}
+
+
+.dragger {
+    width: var(--handle-size);
+    height: var(--handle-size);
+    background-color: var(--primary-color);
+
+    cursor: grab;
+    pointer-events: all;
+
+    border: 0.5px solid var(--secondary-color);
+    border-radius: 2px;
+    position: absolute;
+
+
+    &.top {
+        top: calc(var(--handle-size)/-2 - 1px);
+        left: calc(var(--handle-size)/-2 + 50% - 1px);
+        cursor: s-resize;
+    }
+
+    &.bottom {
+        top: calc(var(--handle-size)/-2 - 1px + 100%);
+        left: calc(var(--handle-size)/-2 + 50% - 1px);
+        cursor: s-resize;
+    }
+
+    &.left {
+        top: calc(var(--handle-size)/-2 - 1px + 50%);
+        left: calc(var(--handle-size)/-2 - 1px);
+        cursor: e-resize;
+    }
+
+    &.right {
+        top: calc(var(--handle-size)/-2 - 1px + 50%);
+        left: calc(var(--handle-size)/-2 + 100%);
+        cursor: e-resize;
+    }
+
+    &.top-left {
+        top: calc(var(--handle-size)/-2 - 1px);
+        left: calc(var(--handle-size)/-2 - 1px);
+        cursor: nw-resize;
+    }
+    &.top-right {
+        top: calc(var(--handle-size)/-2 - 1px);
+        left: calc(var(--handle-size)/-2 + 100%);
+        cursor: ne-resize;
+    }
+    &.bottom-left {
+        top: calc(var(--handle-size)/-2 - 1px + 100%);
+        left: calc(var(--handle-size)/-2 - 1px);
+        cursor: sw-resize;
+    }
+    &.bottom-right {
+        top: calc(var(--handle-size)/-2 - 1px + 100%);
+        left: calc(var(--handle-size)/-2 + 100%);
+        cursor: se-resize;
+    }
+}
+
+
+
+// COMPONENTS
+
+
+.component {
+    position: absolute;
+    background-color: #c4c4c4;
+    box-shadow: 2px -2px 7px 4px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    cursor: move;
+
+    &.selected {
+        box-shadow: 0px 0px 20px 10px var(--shadow-color);
+    }
+}
+
+
+
+.Table {
+    border-radius: 5px;
+
+    border: 1px solid rgba(100, 100, 0, 0.1);
+}
+
+.RoundTable {
+    border-radius: 105px;
+
+    border: 1px solid rgba(100, 100, 0, 0.1);
+}
