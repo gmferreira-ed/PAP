@@ -1,7 +1,10 @@
 
 import express from 'express'
+import multer from 'multer'
 const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
+import SQLUtils from '../Services/SQLUtils';
+import path from 'path';
 
 
 
@@ -19,12 +22,15 @@ Router.get('/menu', HandleEndpointFunction(async (req, res) => {
 
     var SQLQuery = `SELECT * FROM menu`
 
+    const Values = []
     if (category) {
-        SQLQuery = SQLQuery + ' WHERE `category`="' + category + '"'
+        SQLQuery = SQLQuery + ' WHERE `category`=?'
+        Values.push(category)
     }
-    const [rows] = await Database.query(SQLQuery);
+    const [MenuItems] = await Database.execute(SQLQuery, Values);
 
-    res.send(rows)
+
+    res.send(MenuItems)
 
 }));
 
@@ -34,18 +40,44 @@ Router.get('/menu', HandleEndpointFunction(async (req, res) => {
  * @method POST
  * @summary "Create/Delete items on the menu"
  */
-Router.post('/menu', HandleEndpointFunction(async (req, res) => {
+Router.post('/menu',  HandleEndpointFunction(async (req, res) => {
+
+
+    const body = req.body
+    body.active = body.active == 'true' ? 1 : 0
+    
+    const [InsertQuery, Values] = SQLUtils.BuildInsertQuery('menu', [
+        'name', 
+        'price', 
+        'category', 
+        'active', 
+    ], body)
+
+    const [Result] = await Database.execute(InsertQuery, Values);
+
+
+    res.send()
+
+}));
+
+/**
+ * @displayname "Menu Items"
+ * @path /menu
+ * @method PATCH
+ * @summary "Change menu items information"
+ */
+Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
-    var SQLQuery = `INSERT INTO menu (\`product\`, \`price\`, \`category\`, \`image_path\`, \`active\`) 
-      VALUES ('${body.product}', '${body.price}', '${body.category}', '${body.image_path}', '${1}')`;
+    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category'], body, ['name'])
 
 
-    const [rows] = await Database.query(SQLQuery);
+    const [rows] = await Database.execute(SQLQuery, Values);
     res.send(rows)
 
 
 }));
+
 
 /**
  * @displayname "Menu Items"
@@ -57,10 +89,10 @@ Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
 
     const body = Request.body
 
-    var SQLQuery = "DELETE FROM `menu` WHERE product=" + `"${body.product}"`
+    var SQLQuery = "DELETE FROM `menu` WHERE name=?"
 
 
-    const [rows] = await Database.query(SQLQuery);
+    const [rows] = await Database.execute(SQLQuery, [body.name]);
     Response.send(rows)
 
 

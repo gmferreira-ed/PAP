@@ -4,10 +4,12 @@ const dotenv = require('dotenv')
 
 import fs from 'fs'
 
-import express, { Router } from 'express'
+import express, { NextFunction, Router } from 'express'
 import session from 'express-session'
 import expressmysqlsession from "express-mysql-session";
 import { parse as CommentParser } from 'comment-parser'
+
+import multer from 'multer'
 
 import { EndpointMatches, EndpointRegex, EndpointsAttributes } from './Globals'
 import Configs from './Config/EnviromentConfigs'
@@ -38,14 +40,16 @@ const SessionMiddleware = session({
 })
 
 
+
 // MIDDLEWARE SETUP
 const Server = express();
 Server.use(cors({
-  origin: ['http://localhost:4200', 'http://localhost:3000'],
+  origin: ['http://localhost:5000', 'http://localhost:7000'],
   credentials: true,
 }))
 Server.use(express.json())
 Server.use(express.urlencoded({ extended: true }))
+
 
 Server.use(SessionMiddleware)
 Server.use(PermissionsService.PermissionsMiddleware);
@@ -91,6 +95,8 @@ fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
 
 
 // START SERVER
-Server.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+Server.listen(7000, async () => {
+  console.log('Server running on http://localhost:7000');
+  const EndpointsData=  await PermissionsService.EndpointsData.Get()
+  //console.log(EndpointsData)
 });

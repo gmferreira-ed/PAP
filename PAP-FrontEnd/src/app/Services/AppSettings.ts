@@ -1,7 +1,7 @@
 import { isDevMode } from '@angular/core';
 
 export class AppSettings {
-    static HostURL = "http://localhost:3000/"
+    static HostURL = "http://localhost:7000/"
     static APIUrl = this.HostURL+"api/"
 
     static ImagesURL = this.APIUrl+'images/'

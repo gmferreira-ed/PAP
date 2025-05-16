@@ -1,171 +1,179 @@
+
+<loading-screen [IsLoading]="LoadingMenu" [Fullscreen]="true"></loading-screen>
 <page-layout>
+
+    
 
     <!-- CATEGORY SELECTION -->
     <div class="row-layout">
-        <nz-input-group *ngIf="InsertInputVisible; else suffixIconButton"  style="max-width: 13em; margin-left:5px"  nzSearch [nzAddOnAfter]="suffixIconButton">
-            <input type="text" nz-input [placeholder]="'Add Category' | translate" [(ngModel)]="CategoryToInsert" 
-            (keydown.enter)="InsertCategory($event)" />
-        </nz-input-group>
-
-        <nz-segmented 
-            [nzOptions]="CurrentCategories()" 
-            (nzValueChange)="LoadMenuItems($event)"
-            >
+        <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true" style="margin-right: 5px;">
+            <nz-icon nzType="menu" />
+        </button>
+        <nz-segmented (nzValueChange)="LoadMenuItems($event)">
+            <label nz-segmented-item [nzValue]="'All'">{{'All' | translate}}</label>
+            @for (Category of Categories; track $index){
+            <label nz-segmented-item [nzValue]="Category">{{Category}}</label>
+            }
         </nz-segmented>
     </div>
 
-    
-    <ng-template #suffixIconButton>
-        <button nz-button nzType="primary" nzSearch (click)="InsertCategory($event)" style="margin-right: 5px;">
-            <nz-icon nzType="plus" />
-        </button>
-    </ng-template>
-
-
     <div class="menu-container">
         <div class="menu-items">
-            @for (MenuItem of CurrentMenuList(); track MenuItem.product_id) {
-                <div class="menu-item" (click)="DisplayItemInfo(MenuItem)">
-                    <img 
-                    [src]="ThumbnailsUrl+MenuItem.image_path"
-                    onerror="this.src='Images/Dish.png'"
-                    class="menu-item-image">
-                    
-                    <label class="menu-item-title">{{MenuItem.product}}</label>
-                    <label class="menu-item-price">{{MenuItem.price | currency}}</label>
-                    <div>
-                        <button nz-button nzType="primary" nzShape="circle">
-                            <nz-icon nzType="eye" />
-                        </button>
-                    </div>
+            @for (MenuItem of CurrentMenuList(); track $index) {
+            <div class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
+                <img [src]="ThumbnailsUrl+MenuItem.name" onerror="this.src='Images/Dish.png'"
+                    class="menu-item-image-container">
+
+                <label class="menu-item-title">{{MenuItem.name}}</label>
+                <label class="menu-item-price">{{MenuItem.price | currency}}</label>
+                <div>
+                    <button nz-button nzType="primary" nzShape="circle">
+                        <nz-icon nzType="eye" />
+                    </button>
                 </div>
+            </div>
             }
             <div class="menu-item" (click)="OpenUploadModel()">
-                <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)"/>
+                <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)" />
             </div>
         </div>
     </div>
-
-
-    <!-- MENU ITEM SIDE BAR -->
-    <nz-drawer #MenuItemInfo
-        [nzClosable]="true"
-        [nzVisible]="DrawerOpen"
-        nzWidth="35em"
-        nzPlacement="right"
-        [nzTitle]="'Item Info' | translate"
-        (nzOnClose)="DrawerOpen = false"
-        >
-        <div class="menu-item-info-display" *nzDrawerContent>
-            <img 
-            [src]="ThumbnailsUrl+SelectedItemInfo.image_path" 
-            onerror="this.src='Images/Dish.png'" class="menu-item-image"
-            >
-            <label class="menu-item-title">{{SelectedItemInfo.product}}</label>
-            <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
-            <label class="menu-item-price">{{SelectedItemInfo.price | currency}}</label>
-            <nz-row style="gap:10px">
-                <button nz-button nzType="primary" nzShape="circle">
-                    <nz-icon nzType="edit" nzTheme="fill" />
-                </button>
-                <button nz-button nzType="dashed" nzShape="circle">
-                    <nz-icon nzType="stop" nzTheme="fill" />
-                </button>
-                <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()">
-                    <nz-icon nzType="delete" nzTheme="fill" />
-                </button>
-            </nz-row>
-            <nz-skeleton></nz-skeleton>
-        </div>
-    </nz-drawer>
-
-    <!-- ITEM SUBMISSION MODAL -->
-    <nz-modal
-    [(nzVisible)]="InsertModalOpen" 
-    [nzOkLoading]="IsInsertingItem"
-    [nzTitle]="'Create menu item' | translate" 
-
-    (nzOnCancel)="InsertModalOpen = false" 
-    nzCancelText="Cancel"
-
-    (nzOnOk)="InsertMenuItem()"
-    nzOkText="Insert"
-
-    nzWidth = "50em"
-    nzClosable = false
-    nzCentered
-    >
-        <!-- INSERT FORM -->
-        <ng-container *nzModalContent>
-            <form #InsertionForm="ngForm" nz-form nzLayout="vertical" >
-                <nz-form-item>
-                    <nz-form-label>{{'Item Name' | translate}}</nz-form-label>
-                    <nz-form-control >
-                        <input nz-input [(ngModel)]="InsertItemname" name="itemname"  id="itemname" placeholder="Ex: Hamburger"/>
-                    </nz-form-control>
-                </nz-form-item>
-
-                
-                <nz-form-item>
-                    <nz-form-item style="margin-right: 20px;">
-                        <nz-form-label>{{'Category' | translate}}</nz-form-label>
-                        <nz-form-control nzSpan="25">
-                            <nz-select [(ngModel)]="InsertItemCategory" name="itemcategory"
-                            nzShowSearch nzAllowClear [nzPlaceHolder]="'Select a category' | translate">
-                                @for (Category of CurrentCategories(); track Category) {
-                                <nz-option [nzLabel]="Category" [nzValue]="Category"></nz-option>
-                                }
-                            </nz-select>
-                        </nz-form-control>
-                    </nz-form-item>
-
-                <nz-form-item>
-                        <nz-form-label>{{'Price' | translate}}</nz-form-label>
-                        <nz-form-control nzSpan="25">
-                            <nz-input-group nzSuffix="$" >
-                                <input [(ngModel)]="InsertItemPrice" name="itemprice"
-                                 type="number" nz-input placeholder="0.00"/>
-                            </nz-input-group>
-                        </nz-form-control>
-                    </nz-form-item>
-                </nz-form-item>
-
-
-                <!-- MENU THUMBNAIL UPLOADING -->
-                <nz-form-item >
-                    <nz-form-label>{{'Thumbnail' | translate}}</nz-form-label>
-                    
-                    <nz-form-control nzXs >
-                        <nz-upload 
-                            nzName="thumbnail"
-                            class="avatar-uploader"
-
-                            [nzAction]="ThumbnailsUrl"
-                            [nzShowUploadList]="false"
-
-                            nzSize="4000"
-                            nzAccept="image/*"
-                            nzFileType="image"
-                            nzListType="picture-card"
-                            nzLimit = 1
-                            text
-                            (nzChange)="ChangeSelectedImage($event)"
-                        >
-                        @if (!SelectedThumbnailUrl) {
-                            <nz-icon class="upload-icon"  [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
-                            <div class="ant-upload-text">{{'Upload' | translate}}</div>
-                          } @else {
-                            <img [src]="SelectedThumbnailUrl" style="width: 100%" />
-                          }
-                        </nz-upload>
-                    </nz-form-control>
-                </nz-form-item>
-            </form>
-
-        </ng-container>
-
-        
-    </nz-modal>
-
-    
 </page-layout>
+
+
+<!-- MENU ITEM SIDE MENU -->
+<nz-drawer #MenuItemInfo [nzClosable]="true" [nzVisible]="DrawerOpen" nzWidth="40em" nzPlacement="right"
+    [nzTitle]="'Item Info' | translate" (nzOnClose)="DrawerOpen = false">
+    <div class="menu-item-info-display" *nzDrawerContent>
+        <div class="menu-item-image-container">
+            <img [src]="FileSelector.Files[0]?.imagebase64 || ThumbnailsUrl+SelectedItemInfo.name" onerror="this.src='Images/Dish.png'"
+                class="menu-item-image">
+            <div class="overlay invisible">
+                <file-select #FileSelector [override]="true" UploadDisplayMode="none">
+                    <label>{{'Edit Image' | translate}}</label>
+                    <nz-icon nzType="edit"></nz-icon>
+                </file-select>
+            </div>
+        </div>
+
+        <label class="menu-item-title">{{SelectedItemInfo.name}}</label>
+        <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
+        <label class="menu-item-price" [style.text-decoration]="!SelectedItemInfo.active ? 'line-through' : ''">{{SelectedItemInfo.price | currency}}</label>
+        @if (!SelectedItemInfo.active){
+            <label class="menu-item-category">{{'Inactive' | translate}}</label>
+        }
+        <nz-row style="gap:10px">
+            <button nz-button nzType="primary" nzShape="circle" nz-tooltip [nzTooltipTitle]="'Edit product info' | translate">
+                <nz-icon nzType="edit" nzTheme="fill" />
+            </button>
+            <button nz-button nzType="dashed" nzShape="circle" (click)="PromptToggleItemActive()" nz-tooltip [nzTooltipTitle]="'Toggle product availability' | translate">
+                <nz-icon nzType="stop" nzTheme="fill" />
+            </button>
+            <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()" nz-tooltip [nzTooltipTitle]="'Delete product' | translate">
+                <nz-icon nzType="delete" nzTheme="fill" />
+            </button>
+        </nz-row>
+
+        <br>
+
+        <nz-skeleton></nz-skeleton>
+    </div>
+</nz-drawer>
+
+
+<!-- CATEGORIES MODAL -->
+<nz-modal [(nzVisible)]="CategoriesModalVisible" nzOkText="" [nzTitle]="'Categories' | translate"
+    (nzOnCancel)="CategoriesModalVisible = false" nzCancelText="Close" nzCentered [nzFooter]="null">
+    <ng-container *nzModalContent>
+        <div style="text-align: center;">
+
+            <div cdkDropList class="list">
+                @for (Category of Categories; track $index){
+                <div class="list-item">
+                    <label>{{Category}}</label>
+                    <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)">
+                        <nz-icon nzType="delete"></nz-icon>
+                    </button>
+                </div>
+                }
+            </div>
+
+            <button nz-button nzType="default" nzShape="round" style="width: 80%; margin-top: 10px;"
+                (click)="CategoryInsertVisible = true">
+                <nz-icon nzType="plus" />
+                {{'Add Category' | translate}}
+            </button>
+
+        </div>
+
+    </ng-container>
+</nz-modal>
+
+<nz-modal nzDraggable [nzVisible]="CategoryInsertVisible" [nzTitle]="'Insert new category' | translate" nzCentered
+    nzCancelText="Close" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false">
+    <ng-container *nzModalContent>
+        <input #CategoryInput [(ngModel)]="CategoryToInsert" nz-input placeholder="New Category Name">
+    </ng-container>
+</nz-modal>
+
+<!-- ITEM SUBMISSION MODAL -->
+<nz-modal [(nzVisible)]="InsertModalOpen" [nzOkLoading]="IsInsertingItem" [nzTitle]="'Create menu item' | translate"
+    (nzOnCancel)="InsertModalOpen = false" nzCancelText="Cancel" (nzOnOk)="InsertMenuItem()" nzOkText="Insert"
+    [nzOkDisabled]="ItemCreationForm.invalid" nzClosable=false nzCentered>
+    <!-- INSERT FORM -->
+    <ng-container *nzModalContent>
+        <form [formGroup]="ItemCreationForm" nz-form nzLayout="horizontal">
+            <nz-form-item>
+                <nz-form-control>
+                    <nz-form-label>{{'Item Name' | translate}}</nz-form-label>
+                    <input nz-input formControlName="product" placeholder="Ex: Hamburger" />
+                </nz-form-control>
+            </nz-form-item>
+
+
+            <nz-form-item nzGutter="20">
+                <nz-form-control>
+                    <nz-form-label>{{'Category' | translate}}</nz-form-label>
+                    <nz-select formControlName="category" nzShowSearch nzAllowClear
+                        [nzPlaceHolder]="'Select a category' | translate">
+                        @for (Category of Categories; track Category) {
+                        <nz-option [nzLabel]="Category" [nzValue]="Category"></nz-option>
+                        }
+                    </nz-select>
+                </nz-form-control>
+
+                <nz-form-control>
+                    <nz-form-label>{{'Price' | translate}}</nz-form-label>
+                    <nz-input-group nzSuffix="$">
+                        <input formControlName="price" type="number" nz-input placeholder="0.00" />
+                    </nz-input-group>
+                </nz-form-control>
+
+                <nz-form-control style="display: flex; align-items: bottom;">
+                    <nz-form-label>Active</nz-form-label>
+                    <nz-input-group>
+                        <nz-switch formControlName="active"></nz-switch>
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+
+
+            <!-- MENU THUMBNAIL UPLOADING -->
+            <nz-form-item>
+
+                <nz-form-control>
+                    <nz-form-label>{{'Thumbnail' | translate}}</nz-form-label>
+                    <file-select [(Files)]="MenuThumbnails">
+                        @if (!SelectedThumbnailUrl) {
+                        <nz-icon class="upload-icon" [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
+                        <div class="ant-upload-text">Upload</div>
+                        } @else {
+                        <img [src]="SelectedThumbnailUrl" style="width: 100%" />
+                        }
+                    </file-select>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+
+    </ng-container>
+</nz-modal>

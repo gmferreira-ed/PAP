@@ -1,0 +1,37 @@
+@let NoDisplay = UploadDisplayMode == 'none';
+
+@if (!NoDisplay){
+    @for (File of Files; track $index){
+        <div [class.file-block]="!override" (click)="FileInput.click()">
+                
+            <img [src]="File.imagebase64" class="uploaded-image"/>
+            @if (FailedUploads[File.uid]){
+                <label class="error">Failed to upload</label>
+            }@else if (Uploading){
+                <div [style.z-index]="1" style="padding: 5px;" class="overlay">
+                    <label class="uploading-label">Uploading...</label>
+                    <progress-viewer [Progress]="UploadsProgress[File.uid] || 0"></progress-viewer>
+                </div>
+            }
+
+            <div class="overlay options" (click)="$event.stopPropagation()">
+                <button class="button round danger" (click)="DestroyFile(File)">
+                    <icon type="trash"></icon>
+                </button>
+            </div>
+
+            <input #FileInput [name]="InputName" type="file" accept="image/*" (change)="OnFilesChange($event, File)" [multiple]="Multiple" />
+        </div>
+    }
+}
+
+@if (Files.length == 0 || Multiple || NoDisplay){
+    <div class="file-block" [class.override]="override" (click)="FileInput.click()">
+            
+        <ng-content></ng-content>
+            
+        <input #FileInput [name]="InputName" type="file" accept="image/*" (change)="OnFilesChange($event)" [multiple]="Multiple" />
+    </div>
+}
+
+

@@ -22,47 +22,14 @@ interface Option {
 
 export class OptionsBar {
 
-  private _Options:Option[] = []
+  @Input() Visible = false
 
-   @Input() 
-   get Options(): Option[]{
-    return this._Options
-   }
-   set Options(NewOptions:Option[]){
-      this._Options = NewOptions
-      this.OptionsChanged.emit(NewOptions)
-   }
+  OnMouseEnter () {
+    this.Visible = true
+  }
 
-   // VARIABLES
-
-   @Input() Loading = false
-   @Input() SelectedOption:any = null
-   @Input() UnselectableDisabledOptions:any = true
-
-   // EVENTS
-   
-   @Output() OptionsChanged = new EventEmitter();     
-   @Output() SelectionChanged = new EventEmitter();      
-   
-   
-   // METHODS
-
-   SelectFirstValidOption():boolean|Option{
-    for (let Option of this.Options){
-        if (Option.active){
-          this.SelectedOption = Option
-          return Option
-        }
-    }
-    return false
-   }
-
-   ChangeSelection(TargetOption:any){
-    if (TargetOption.active || !this.UnselectableDisabledOptions){
-      TargetOption.selected = true
-      this.SelectedOption = TargetOption
-      this.SelectionChanged.emit(TargetOption.value)
-    }
-   }
+  OnMouseLeave () {
+    this.Visible = false
+  }
 }
 

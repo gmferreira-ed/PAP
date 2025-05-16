@@ -86,6 +86,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
   const Permissions:Endpoints = await EndpointsData.Get()
   const EndpointData = Permissions[Route]
 
+
   // Support /* to include all endpoints after it
   // For example, angular uses the main endpoint, in this case /app, to fetch assets (Ex: /app/favicon.ico)
   // Instead of checking if the route contains "app" or unprotecting each asset /app provides, i added support to wildcard routes
@@ -116,9 +117,11 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
       const IsGlobal = EndpointData.Permissions.includes('User')
       const IsAdmin = UserPermProfile.administrator
 
+
       if (EndpointData.Permissions.includes(UserPermProfile.role) || IsGlobal || IsAdmin) {
         return [true, IsGlobal]
       }
+
 
       // Deny access
       return [false, 401, 'Unauthorized']
@@ -127,6 +130,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
       return [false, 502, 'Internal server error']
     }
   } else {
+    console.warn('No login')
     return [false, 401, 'No login']
   }
 }
@@ -137,8 +141,11 @@ async function PermissionsMiddleware(request: Request, response: Response, next:
   const StartTS = Date.now()
 
   const MethodMatch = EndpointMatches[request.method]
-  const Route = `${MethodMatch}${request.path}`.replace(EndpointRegex, '$1/')
 
+  let Route = `${MethodMatch}${request.path}`
+  if (Route.endsWith('/')) {
+    Route = Route.slice(0, -1);
+  }
   const Session = request.session
 
   //console.log(User, Route, Session.id)

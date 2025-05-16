@@ -1,27 +1,28 @@
 
 import type { Request as Request } from 'express';
 
-function QueryArray(ExpectedColumns:string[] , RequestData:Request['body'] ){
-    const Columns:string[] = []
-    const Values:string[]  = []
-    const Placeholders:string[]  = []
-    
-    ExpectedColumns.forEach((Column) => {
-      if (RequestData.hasOwnProperty(Column)) {
-        Columns.push(`\`${Column}\``); 
-        Values.push(RequestData[Column]); 
-        Placeholders.push('?')
-      }
-    });
-  
-    return [Columns, Values, Placeholders] 
-  }
-  
+function QueryArray(ExpectedColumns: string[], RequestData: Request['body']) {
+    const Columns: string[] = []
+    const Values: string[] = []
+    const Placeholders: string[] = []
 
-function BuildDeleteQuery(TargetTable:string, RequestData:Request['body'], ConditionKeys:string[]) :[string,any[]] {
+    ExpectedColumns.forEach((Column) => {
+        const CorrespondingValue = RequestData[Column]
+        if (CorrespondingValue != undefined && CorrespondingValue != null) {
+            Columns.push(`\`${Column}\``);
+            Values.push(RequestData[Column]);
+            Placeholders.push('?')
+        }
+    });
+
+    return [Columns, Values, Placeholders]
+}
+
+
+function BuildDeleteQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
     const [Columns, Values] = QueryArray([], RequestData)
 
-    const Conditions:string[] = []
+    const Conditions: string[] = []
     ConditionKeys.forEach((Key) => {
         Conditions.push(Key)
         Values.push(RequestData[Key])
@@ -31,15 +32,16 @@ function BuildDeleteQuery(TargetTable:string, RequestData:Request['body'], Condi
     const Query = `DELETE FROM ${TargetTable} WHERE ${WhereClause}`;
 
 
-    console.log(Query, Values)
     return [Query, Values]
 }
 
 
-function BuildUpdateQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body'], ConditionKeys:string[]) :[string,any[]] {
+function BuildUpdateQuery(TargetTable: string, ExpectedColumns: string[], RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
+
+
     const [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
-    const Conditions:string[] = []
-    
+    const Conditions: string[] = []
+
     ConditionKeys.forEach((Key) => {
         Conditions.push(Key)
         Values.push(RequestData[Key])
@@ -49,16 +51,14 @@ function BuildUpdateQuery(TargetTable:string, ExpectedColumns:string[], RequestD
     const WhereClause = Conditions.map(Key => `${Key}=?`).join(" AND ")
     const Query = `UPDATE ${TargetTable} SET ${SetClause} WHERE ${WhereClause}`;
 
-    console.log(Query, Values)
     return [Query, Values]
 }
 
-function BuildInsertQuery(TargetTable:string, ExpectedColumns:string[], RequestData:Request['body']) :[string,any[]] {
+function BuildInsertQuery(TargetTable: string, ExpectedColumns: string[], RequestData: Request['body']): [string, any[]] {
 
     const [Columns, Values, Placeholders] = QueryArray(ExpectedColumns, RequestData)
     const Query = `INSERT INTO \`${TargetTable}\` (${Columns.join(', ')}) VALUES (${Placeholders.join(',')})`;
 
-    console.log(Query, Values)
     return [Query, Values]
 }
 

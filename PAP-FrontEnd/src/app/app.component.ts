@@ -22,7 +22,7 @@ export class AppComponent {
     private translate: TranslateService) {
       translate.setDefaultLang('en');
       
-    const LanguageCode = localStorage.getItem('language') || 'pt'
+    const LanguageCode = localStorage.getItem('language') || 'en'
     translate.use(LanguageCode);
 
     translate.addLangs(this.ThemeService.Languages);

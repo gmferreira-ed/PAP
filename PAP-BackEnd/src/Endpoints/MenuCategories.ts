@@ -43,10 +43,10 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 Router.delete('/menu/categories', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
-    var SQLQuery = "DELETE FROM `menu_categories` WHERE category=" + body.category
+    var SQLQuery = "DELETE FROM `menu_categories` WHERE category=?"
 
 
-    const [rows] = await Database.query(SQLQuery);
+    const [rows] = await Database.execute(SQLQuery, [body.category]);
     res.send(rows)
 }))
 

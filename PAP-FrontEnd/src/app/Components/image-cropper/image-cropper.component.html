@@ -1,0 +1,11 @@
+<div #CropperContainer class="cropper-container">
+    <div class="cropper-selector" (mousedown)="StartDrag($event)" (wheel)="ChangeZoom($event)">
+    </div>
+    @if (EditingImage){
+    <img crossorigin="anonymous" #EditableImage [src]="EditingImage" class="selected-image" draggable="false"
+        [style.left]="ImageX+'px'" [style.top]="ImageY+'px'" [style.width]="Zoom*100+'%'"
+        [style.height]="Zoom*100+'%'" />
+    }
+</div>
+<br>
+<label>Output Size: 400 x 400</label>
