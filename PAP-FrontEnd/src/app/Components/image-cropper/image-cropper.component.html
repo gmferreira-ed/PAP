@@ -3,7 +3,8 @@
     </div>
     @if (EditingImage){
     <img crossorigin="anonymous" #EditableImage [src]="EditingImage" class="selected-image" draggable="false"
-        [style.left]="ImageX+'px'" [style.top]="ImageY+'px'" [style.width]="Zoom*100+'%'"
+        [style.left]="ImageX+'px'" [style.top]="ImageY+'px'" 
+        [style.width]="Zoom*100+'%'"
         [style.height]="Zoom*100+'%'" />
     }
 </div>

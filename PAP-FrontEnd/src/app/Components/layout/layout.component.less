@@ -3,28 +3,41 @@
     --grid-color: rgba(0, 0, 0, 0.1);
 }
 
+:host {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+}
+
 
 // Sidebar
-.sidebar{
+.sidebar {
     display: flex;
     flex-direction: column;
     gap: 10px;
 
     box-sizing: border-box;
     padding: 10px;
-    background-color: var(--secondary-color-2);
-    border-radius: 3px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
     box-shadow: 0px 0px 5px 1px color-mix(in srgb, var(--shadow-color), transparent 50%);
 
+}
+
+.components-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .properties {
     flex: 1;
 }
-.component-list{
+
+.component-list {
     gap: 20px;
 
-    .component{
+    .component {
         position: relative;
     }
 }
@@ -37,7 +50,6 @@
     width: 100%;
     height: 90%;
     gap: 20px;
-    
 }
 
 // Contains the layout
@@ -45,13 +57,16 @@
     position: relative;
     overflow: hidden;
     width: 60%;
+    border-radius: 1%;
+    height: 100%;
 }
 
 // Contains the components
-.viewport{
+.viewport {
     position: absolute;
     width: 100%;
     height: 100%;
+    cursor: grab;
 }
 
 // Backgrounds (Image and grid)
@@ -71,8 +86,7 @@
         border-bottom: 1px solid var(--grid-color);
     }
 
-    &.image{
-        background-size: 100px 100px;
+    &.image {
         opacity: 0.8;
     }
 }
@@ -105,8 +119,10 @@
     pointer-events: all;
 
     border: 0.5px solid var(--secondary-color);
-    border-radius: 2px;
+    border-radius: inherit;
     position: absolute;
+
+    aspect-ratio: 1 / 1;
 
 
     &.top {
@@ -138,20 +154,106 @@
         left: calc(var(--handle-size)/-2 - 1px);
         cursor: nw-resize;
     }
+
     &.top-right {
         top: calc(var(--handle-size)/-2 - 1px);
         left: calc(var(--handle-size)/-2 + 100%);
         cursor: ne-resize;
     }
+
     &.bottom-left {
         top: calc(var(--handle-size)/-2 - 1px + 100%);
         left: calc(var(--handle-size)/-2 - 1px);
         cursor: sw-resize;
     }
+
     &.bottom-right {
         top: calc(var(--handle-size)/-2 - 1px + 100%);
         left: calc(var(--handle-size)/-2 + 100%);
         cursor: se-resize;
+    }
+}
+
+// Context menu
+.context-menu {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    position: fixed ;
+
+    background-color: rgba(25, 25, 25);
+    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5);
+    min-width: 150px;
+
+    z-index: 10;
+}
+
+
+.editor-settings{
+    display: flex;
+    height: 70px;
+    width: 100%;
+    background-color: var(--secondary-color);
+    box-shadow: 0px 0px 5px 1px color-mix(in srgb, var(--shadow-color), transparent 50%);
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding: 5px;
+    padding-left: 15px;
+
+    .section{
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+       
+    }
+
+    .action{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        button{
+            height: 90%;
+            border-radius: 10px;
+        }
+        label{
+            font-size: 10px;
+        }
+    }
+}
+
+::ng-deep .ant-input-number-input{
+    height: 100%;
+}
+
+.context-menu-item {
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+
+    width: 100%;
+    height: 40px;
+
+    padding: 10px;
+
+    background-color: rgba(25, 25, 25);
+    color: white;
+    border: none;
+    border-radius: inherit;
+
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, rgba(25, 25, 25), white 15%);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
     }
 }
 
@@ -165,7 +267,6 @@
     background-color: #c4c4c4;
     box-shadow: 2px -2px 7px 4px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
-    cursor: move;
 
     &.selected {
         box-shadow: 0px 0px 20px 10px var(--shadow-color);
@@ -175,7 +276,7 @@
 
 
 .Table {
-    border-radius: 5px;
+    border-radius: 5%;
 
     border: 1px solid rgba(100, 100, 0, 0.1);
 }
@@ -184,4 +285,9 @@
     border-radius: 105px;
 
     border: 1px solid rgba(100, 100, 0, 0.1);
+}
+
+.Wall {
+    box-shadow: none;
+    background-color: rgb(55, 55, 55);
 }

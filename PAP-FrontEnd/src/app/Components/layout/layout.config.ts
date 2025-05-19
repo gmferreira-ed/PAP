@@ -1,3 +1,5 @@
+import { Vector2 } from "../../../types/vector"
+
 const LayoutConfigs: any = {
 
     Components: {
@@ -6,8 +8,11 @@ const LayoutConfigs: any = {
         },
         RoundTable: {
             Image: 'Backgrounds/Wood.jpg',
-            FollowRatio: true,
-        }
+        },
+        Wall: {
+            Size: new Vector2(20, 5),
+            MinSize: new Vector2(5, 5)
+        },
     }
 }
 

@@ -1,54 +1,156 @@
-<page-layout #PageLayout>
-    <div class="editor-layout">
-
-        <div class="sidebar component-list">
-            @for (ComponentInfo of GlobalUtils.ObjectInfo(LayoutConfigs.Components); track $index){
-
-                @let ComponentType = ComponentInfo.Key;
-                @let PseudoComponent = NewComponent(ComponentType);
-
-                <div class="component-info">
-                    <h3>{{GlobalUtils.FormatName(ComponentInfo.Key)}}</h3>
-                    <div [class]="'component '+ComponentInfo.Key"
-                    [style.width]="PseudoComponent.Size.X +'px'"
-                    [style.height]="PseudoComponent.Size.Y +'px'" 
-                    [style.left]="PseudoComponent.Position.X +'px'"
-                    [style.top]="PseudoComponent.Position.Y +'px'" 
-                    [style.cursor]="'pointer'"
-                    
-                    (click)="AddComponent(NewComponent(ComponentType))">
-
-                    <img class="background" [src]="LayoutConfigs.Components[ComponentType]?.Image"></div>
-                </div>
-            }
+@if (EditMode){
+    <div class="editor-settings">
+        <div class="section">
+            <label>Snapping</label>
+            <div class="row fill">
+                <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;"
+                [nzMin]="0" [nzMax]="10" [nzStep]="1" [(ngModel)]="Snapping"></nz-input-number>
+                <nz-slider  style="flex: 1"
+                [nzMin]="0" [nzMax]="10" [nzStep]="1" [(ngModel)]="Snapping"></nz-slider>
+            </div>
         </div>
 
+        <div class="separator vertical"></div>
 
-        <div #MainContainer class="main-container">
-            <div class="background image" style="background-image: url('Backgrounds/Wood2.jpg');"></div>
-            <div class="background grid" [style.background-size]="Snapping + 'px '+Snapping + 'px'"></div>
-            <div class="viewport">
+        <div class="action">
+            <button class="button" [disabled]="CurrentHistoryIndex == -1" (click)="NavigateHistory(-1)">
+                <icon type="undo"></icon>
+            </button>
+            <label>Undo</label>
+        </div>
+
+        <div class="action">
+            <button class="button" [disabled]="CurrentHistoryIndex == History.length-1" (click)="NavigateHistory(1)">
+                <icon type="redo"></icon>
+            </button>
+            <label>Redo</label>
+        </div>
+        
+        <div class="separator vertical"></div>
+
+                <div class="action">
+            <button class="button" (click)="CenterLayout()">
+                <icon type="locate"></icon>
+            </button>
+            <label>Center</label>
+        </div>
+
+        <div class="action">
+            <button class="button" (click)="ChangeZoom(undefined, -100)">
+                <icon type="zoom-in"></icon>
+            </button>
+            <label>Zoom In</label>
+        </div>
+
+        <div class="action">
+            <button class="button" (click)="ChangeZoom(undefined, 100)">
+                <icon type="zoom-out"></icon>
+            </button>
+            <label>Zoom Out</label>
+        </div>
+
+        <div class="action">
+            <button class="button" (click)="GridVisible = !GridVisible">
+                <icon type="grid"></icon>
+            </button>
+            <label>Grid</label>
+        </div>
+        
+        <div class="separator vertical"></div>
+
+        <div class="action">
+            <button class="button" (click)="ExportLayout()">
+                <icon type="export"></icon>
+            </button>
+            <label>Export</label>
+        </div>
+
+        <div class="action">
+            <button class="button" (click)="FileSelector.click()">
+                <icon type="import"></icon>
+            </button>
+            <label>Import</label>
+            <input #FileSelector type="file" id="fileInput" style="display: none" accept=".dl" (change)="ImportLayout($event)">
+        </div>
+        
+        <div class="separator vertical"></div>
+
+        <div class="action">
+            <button class="button" (click)="ClearLayout()">
+                <icon type="brush-cleaning"></icon>
+            </button>
+            <label>Clear Layout</label>
+        </div>
+
+        <div class="action">
+            <button class="button">
+                <icon type="circle-help"></icon>
+            </button>
+            <label>Help</label>
+        </div>
+    </div>
+}
+
+<div class="editor-layout">
+
+    @if (EditMode){
+    <div class="sidebar component-list">
+        @for (ComponentInfo of GlobalUtils.ObjectInfo(LayoutConfigs.Components); track $index){
+
+        @let ComponentType = ComponentInfo.Key;
+        @let PseudoComponent = NewComponent(ComponentType, true);
+
+        <div class="component-info">
+            <h3>{{GlobalUtils.FormatName(ComponentInfo.Key)}}</h3>
+            <div [class]="'component '+ComponentInfo.Key" [style.width]="PseudoComponent.Size.X*Scaling +'px'"
+                [style.height]="PseudoComponent.Size.Y*Scaling +'px'" [style.left]="PseudoComponent.Position.X +'px'"
+                [style.top]="PseudoComponent.Position.Y +'px'" [style.cursor]="'pointer'"
+                (click)="AddComponent(NewComponent(ComponentType))">
+
+                @if (LayoutConfigs.Components[ComponentType]?.Image){
+                <img class="background" [src]="LayoutConfigs.Components[ComponentType]?.Image">
+                }
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+    <div #MainContainer class="main-container" (wheel)="ChangeZoom($event)" (contextmenu)="OnContextMenu($event)">
+
+        <loading-screen [IsLoading]="LoadingLayout"></loading-screen>
+
+        <!-- VIEWPORT -->
+        <div class="viewport" #Viewport [style.width]="Zoom*DefaultViewportSize.X+'px'"
+            [style.height]="Zoom*DefaultViewportSize.Y+'px'" [style.top]="ViewportY+'px'" [style.left]="ViewportX+'px'"
+            (mousedown)="LayoutDragStart($event)">
+
+            <!-- BACKGROUND -->
+            <div class="background image" style="background-image: url('Backgrounds/Wood2.jpg');"
+                [style.background-size]="100*Zoom + 'px '+100*Zoom + 'px'"></div>
+
+            <!-- GRID -->
+             @if (GridVisible){
+                <div class="background grid" [style.background-size]="Snapping*Zoom + 'px '+Snapping*Zoom + 'px'"></div>
+             }
+
+            <!-- COMPONENTS -->
+            <div class="components-container">
                 @for (Component of Components; track $index){
-                <div [class]="'component '+Component.Type" 
-
-                    [style.width]="Component.Size.X +'px'"
-                    [style.height]="Component.Size.Y +'px'" 
-                    [style.left]="Component.Position.X +'px'"
-                    [style.top]="Component.Position.Y +'px'" 
-
-                    [style]="'background-image: '+LayoutConfigs.Components[Component.Type]?.Image"
-
-                    (mousedown)="DragStart(Component)"
-                    (mouseup)="ShowHandles(Component)"
-                    (contextmenu)="ShowOptions($event, Component)"
-
-                    [class.selected]="SelectedComponent == Component">
+                <div [class]="'component '+Component.Type" [style.width]="Component.Size.X*Zoom +'px'"
+                    [style.height]="Component.Size.Y*Zoom +'px'" [style.left]="Component.Position.X*Zoom +'px'"
+                    [style.top]="Component.Position.Y*Zoom +'px'" (mousedown)="DragStart($event, Component)"
+                    (mouseup)="ShowHandles(Component)" [class.selected]="SelectedComponent == Component"
+                    [style.cursor]="EditMode ? 'move' : 'pointer'">
+                    @if (LayoutConfigs.Components[Component.Type]?.Image){
                     <img class="background" [src]="LayoutConfigs.Components[Component.Type]?.Image">
+                    }
 
-                    @if (SelectedComponent == Component){
+                    @if (SelectedComponent == Component && EditMode){
                     <div class="selection-box">
                         @for (Handle of Handles; track $index){
-                        <div [class]="'dragger ' + Handle"></div>
+                        <div [class]="'dragger ' + Handle" #Handle (mousedown)="ResizeStart($event, Component, Handle)">
+                        </div>
                         }
                     </div>
                     }
@@ -56,28 +158,42 @@
                 }
             </div>
         </div>
+    </div>
 
-        
-        @if (ShowProperties){
-        <div class="sidebar properties">
-            @if (SelectedComponent){
-                <h2>{{GlobalUtils.FormatName(SelectedComponent.Type)}}</h2>
-                <h3>Properties</h3>
-                
-                <div>
-                    <h4>Position</h4>
-                    <label>X: {{SelectedComponent.Position.X}}</label>
-                    <label>Y: {{SelectedComponent.Position.Y}}</label>
-                </div>
 
-                <div>
-                    <h4>Size</h4>
-                    <label>X: {{SelectedComponent.Size.X}}</label>
-                    <label>Y: {{SelectedComponent.Size.Y}}</label>
-                </div>
-            }@else {
-            }
+    @if (ShowProperties && EditMode){
+    <div class="sidebar properties">
+        @if (SelectedComponent){
+        <h2>{{GlobalUtils.FormatName(SelectedComponent.Type)}}</h2>
+        <h3>Properties</h3>
+
+        <div>
+            <h4>Position</h4>
+            <label>X: {{SelectedComponent.Position.X}}</label>
+            <label> | Y: {{SelectedComponent.Position.Y}}</label>
         </div>
+
+        <div>
+            <h4>Size</h4>
+            <label>X: {{SelectedComponent.Size.X}}</label>
+            <label> | Y: {{SelectedComponent.Size.Y}}</label>
+        </div>
+        }@else {
         }
     </div>
-</page-layout>
+    }
+</div>
+
+@if (ContextMenuVisible){
+<div class="context-menu" [style.left]="DragStartMousePosition.X+'px'" [style.top]="DragStartMousePosition.Y+'px'">
+    <button class="context-menu-item" [disabled]="!SelectedComponent"
+        (click)="DeleteComponent(SelectedComponent!)">Delete</button>
+    <button class="context-menu-item" [disabled]="!SelectedComponent" (click)="CopySelectedComponent()">Copy</button>
+    <button class="context-menu-item" [disabled]="!SelectedComponent" (click)="CutSelectedComponent()">Cut</button>
+    <button class="context-menu-item" [disabled]="!HasClipboardContent"
+        (click)="PasteClipboardComponent($event)">Paste</button>
+    @if (SelectedComponent){
+    <button class="context-menu-item" (click)="DuplicateComponent(SelectedComponent)">Duplicate</button>
+    }
+</div>
+}
