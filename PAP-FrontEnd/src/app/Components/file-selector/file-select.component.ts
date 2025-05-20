@@ -3,20 +3,12 @@ import { ProgressComponent } from '../progress/progress.component';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IconsModule } from '../icon/icon.component';
+import { UFile } from '../../../types/ufile';
 
 type UploadsProgress = { [key: string]: number }
 type Images = { [key: string]:  string | null}
 type FailedUploads = { [key: string]: boolean }
 
-class UFile extends File {
-  uid: string
-  imagebase64: string|null|ArrayBuffer = null
-
-  constructor(File: File) {
-    super([File], File.name, { type: File.type });
-    this.uid = File.name + Date.now()
-  }
-}
 
 
 @Component({

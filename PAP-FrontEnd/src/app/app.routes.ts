@@ -13,6 +13,7 @@ import { DashboardPage } from './Pages/Dashboard/dashboard.page';
 import { ReceiptsPage } from './Pages/Receipts/receipts.page';
 import { RestaurantLayout } from './Components/layout/layout.component';
 import { LayoutEditorPage } from './Pages/LayoutEditor/layout-editor.page';
+import { CheckoutPage } from './Pages/Checkout/checkout.page';
 
 
 export const routes: Routes = [
@@ -37,6 +38,7 @@ export const routes: Routes = [
     { path: 'calendar', component: CalendarPage, canActivate: [PageAuthGuard] },
     { path: 'finances', component: FinancesPage, canActivate: [PageAuthGuard] },
     { path: 'stocks', component: StocksPage, canActivate: [PageAuthGuard] },
+    { path: 'checkout', component: CheckoutPage, canActivate: [PageAuthGuard] },
 
     { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },

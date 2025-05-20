@@ -14,6 +14,7 @@ import multer from 'multer'
 import { EndpointMatches, EndpointRegex, EndpointsAttributes } from './Globals'
 import Configs from './Config/EnviromentConfigs'
 import PermissionsService from './Services/PermissionsService';
+import SQLUtils from './Services/SQLUtils';
 
 const MySQLStore = expressmysqlsession(session as any)
 
@@ -92,11 +93,12 @@ fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
 });
 
 
-
-
 // START SERVER
 Server.listen(7000, async () => {
   console.log('Server running on http://localhost:7000');
-  const EndpointsData=  await PermissionsService.EndpointsData.Get()
+
+
+
+  //const EndpointsData=  await PermissionsService.EndpointsData.Get()
   //console.log(EndpointsData)
 });

@@ -28,6 +28,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
+import { UFile } from '../../../types/ufile';
 
 
 @Component({
@@ -59,6 +60,7 @@ export class MenuPage {
   LoadingThumbnail = false
   SelectedThumbnailUrl = ''
   InsertItemThumbnailFileName = ''
+  CurrentCategory = ''
 
   // OBJECTS
 
@@ -71,6 +73,7 @@ export class MenuPage {
     name: "None",
     price: 0,
     category: "Dish",
+    ImageURL: "",
     image_path: "",
     active: true,
   }
@@ -105,9 +108,15 @@ export class MenuPage {
     const ProductPrice = Number(FormValues.price!)
     const ProductCategory = FormValues.category!
 
+    this.ItemCreationForm.disable()
 
     await this.MenuService.InsertMenuItem(ProductName, ProductCategory, ProductPrice, FormValues.active!, this.MenuThumbnails[0])
-    await this.LoadMenuItems()
+    await this.LoadMenuItems(this.CurrentCategory)
+
+    this.MenuThumbnails = []
+
+    this.ItemCreationForm.enable()
+    this.ItemCreationForm.reset()
 
     this.IsInsertingItem = false
     this.InsertModalOpen = false
@@ -130,6 +139,15 @@ export class MenuPage {
 
     } else {
       this.MessageService.error("Your category must have 3 or more characters")
+    }
+  }
+
+
+  async ChangeProductImage(Product:any, Files:UFile[]){
+    const File = Files[0]
+    if (File){
+      await this.MenuService.SetImage(Product.name, File)
+      Product.ImageURL = File.imagebase64
     }
   }
 
@@ -198,6 +216,10 @@ export class MenuPage {
 
   async LoadMenuItems(Category: any = null) {
     this.LoadingMenu = true
+    
+    const CategoryToSet = Category != 'All' ? Category : 'Dish'
+    this.ItemCreationForm.get('category')?.setValue(CategoryToSet)
+
     let MenuItemResult:any[] = await this.MenuService.GetMenuItems(Category)
     if (MenuItemResult) {
       this.CurrentMenuList.set(MenuItemResult)

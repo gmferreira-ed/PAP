@@ -54,7 +54,7 @@ import { IconsModule } from "../icon/icon.component";
 
 @Component({
   selector: 'restaurant-layout',
-  imports: [LoadingScreen, NzInputNumberModule, NzSliderModule, NzGridModule, FormsModule, NzDividerComponent, IconsModule],
+  imports: [LoadingScreen, NzInputNumberModule, NzSliderModule, NzGridModule, FormsModule, IconsModule],
 
   templateUrl: 'layout.component.html',
   styleUrl: 'layout.component.less'

@@ -9,7 +9,7 @@
         <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true" style="margin-right: 5px;">
             <nz-icon nzType="menu" />
         </button>
-        <nz-segmented (nzValueChange)="LoadMenuItems($event)">
+        <nz-segmented (nzValueChange)="LoadMenuItems($event)" [(ngModel)]="CurrentCategory">
             <label nz-segmented-item [nzValue]="'All'">{{'All' | translate}}</label>
             @for (Category of Categories; track $index){
             <label nz-segmented-item [nzValue]="Category">{{Category}}</label>
@@ -21,7 +21,7 @@
         <div class="menu-items">
             @for (MenuItem of CurrentMenuList(); track $index) {
             <div class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
-                <img [src]="ThumbnailsUrl+MenuItem.name" onerror="this.src='Images/Dish.png'"
+                <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'"
                     class="menu-item-image-container">
 
                 <label class="menu-item-title">{{MenuItem.name}}</label>
@@ -46,10 +46,10 @@
     [nzTitle]="'Item Info' | translate" (nzOnClose)="DrawerOpen = false">
     <div class="menu-item-info-display" *nzDrawerContent>
         <div class="menu-item-image-container">
-            <img [src]="FileSelector.Files[0]?.imagebase64 || ThumbnailsUrl+SelectedItemInfo.name" onerror="this.src='Images/Dish.png'"
+            <img [src]="FileSelector.Files[0]?.imagebase64 || SelectedItemInfo.ImageURL" onerror="this.src='Images/Dish.png'"
                 class="menu-item-image">
             <div class="overlay invisible">
-                <file-select #FileSelector [override]="true" UploadDisplayMode="none">
+                <file-select #FileSelector [override]="true" UploadDisplayMode="none" (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
                     <label>{{'Edit Image' | translate}}</label>
                     <nz-icon nzType="edit"></nz-icon>
                 </file-select>

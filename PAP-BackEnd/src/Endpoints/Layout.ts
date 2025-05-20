@@ -45,6 +45,7 @@ Router.post('/layout',  HandleEndpointFunction(async (req, res) => {
         'componentid',
     ], body)
 
+
     const [Result] = await Database.execute<any>(InsertQuery, Values);
 
     res.send({id:Result?.insertId})

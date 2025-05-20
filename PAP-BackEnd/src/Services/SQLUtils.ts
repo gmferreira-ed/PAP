@@ -1,19 +1,34 @@
 
 import type { Request as Request } from 'express';
 
-function QueryArray(ExpectedColumns: string[], RequestData: Request['body']) {
-    const Columns: string[] = []
-    const Values: string[] = []
+function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | any[]): [string[], any[], string[]] {
+    const Columns: string[] = ExpectedColumns.map(col => `\`${col}\``);
+    const Values: any[] = []
     const Placeholders: string[] = []
 
-    ExpectedColumns.forEach((Column) => {
-        const CorrespondingValue = RequestData[Column]
-        if (CorrespondingValue != undefined && CorrespondingValue != null) {
-            Columns.push(`\`${Column}\``);
-            Values.push(RequestData[Column]);
-            Placeholders.push('?')
-        }
-    });
+    const DataArray = Array.isArray(RequestData) ? RequestData : [RequestData];
+
+
+    for (const Data of DataArray) {
+        const rowPlaceholders: string[] = [];
+
+
+        ExpectedColumns.forEach((Column) => {
+            const CorrespondingValue = Data[Column]
+            if (CorrespondingValue != undefined && CorrespondingValue != null) { 
+                Values.push(Data[Column]);
+            }else{
+                Values.push(null);
+            }
+            rowPlaceholders.push('?')
+
+        })
+
+
+        if (rowPlaceholders.length > 0)
+            Placeholders.push(`(${rowPlaceholders.join(', ')})`);
+    }
+
 
     return [Columns, Values, Placeholders]
 }
@@ -57,7 +72,7 @@ function BuildUpdateQuery(TargetTable: string, ExpectedColumns: string[], Reques
 function BuildInsertQuery(TargetTable: string, ExpectedColumns: string[], RequestData: Request['body']): [string, any[]] {
 
     const [Columns, Values, Placeholders] = QueryArray(ExpectedColumns, RequestData)
-    const Query = `INSERT INTO \`${TargetTable}\` (${Columns.join(', ')}) VALUES (${Placeholders.join(',')})`;
+    const Query = `INSERT INTO \`${TargetTable}\` (${Columns.join(', ')}) VALUES ${Placeholders.join(',')}`;
 
     return [Query, Values]
 }

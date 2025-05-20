@@ -17,6 +17,7 @@ img {
 
   --secondary-color: rgb(250, 250, 250);
   --secondary-color-2: rgb(240, 240, 240);
+  --secondary-color-3: rgb(225, 225, 225);
   --secondary-brightness: 20%;
 
   --shadow-color: rgba(0, 0, 0, 0.3);
@@ -81,8 +82,10 @@ img {
   .ant-upload,
   .ant-pagination-item,
   .ant-select-selector,
-  button:not(.ant-btn-primary) {
-    background-color: var(--secondary-color) !important;
+  button:not(.ant-btn-primary):not(.ant-switch),
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+  .ant-radio-button-wrapper {
+    background: var(--secondary-color);
 
     .anticon {
       color: var(--primary-color);
@@ -95,6 +98,7 @@ img {
   .ant-table,
   .ant-table-thead,
   tr,
+  .ant-switch:not(.ant-switch-checked),
   .ant-table-cell-row-hover {
     color: var(--primary-color);
     background-color: color-mix(in srgb, var(--secondary-color), white 10%) !important;
@@ -127,6 +131,12 @@ img {
   /* HOVER SELECTED */
   .ant-segmented-item-selected:hover {
     color: color-mix(in srgb, var(--secondary-color), transparent 20%);
+  }
+
+  // DISABLED
+  .ant-btn-primary[disabled]{
+    background: var(--primary-color-2);
+    opacity: 0.5;
   }
 
   /* DIVIDER */
@@ -187,15 +197,19 @@ div {
   min-width: 32px;
   text-align: center;
   justify-content: center;
+  align-items:center;
   border: none;
 
   cursor: pointer;
 
   box-sizing: border-box;
-  padding: 2.5px;
-  padding-left: 0;
-  padding-right: 0;
+
+  padding: 8px;
+  border-radius: 5px;
+
+  .block {
   aspect-ratio: 1 / 1;
+  }
   
   &:disabled{
     opacity: 0.5;
@@ -302,6 +316,18 @@ div {
 
 .fill {
   flex: 1;
+}
+
+.self-bottom{
+  align-self: bottom;
+}
+
+.right {
+  justify-content: end;
+}
+
+.bottom{
+  align-items: end;
 }
 
 .form-row {

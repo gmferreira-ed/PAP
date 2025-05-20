@@ -1,0 +1,75 @@
+<page-layout>
+    <div class="container">
+        <div class="product-select">
+            <nz-input-group style="margin-bottom:10px;" nzSearch [nzAddOnAfter]="suffixIconButton">
+                <input type="text" nz-input placeholder="Search for a product" />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+                <button nz-button nzType="primary" nzSearch><nz-icon nzType="search" /></button>
+            </ng-template>
+
+            <!-- CATEGORIES -->
+            <nz-radio-group nzButtonStyle="solid" [(ngModel)]="SelectedCategory" (ngModelChange)="LoadProducts()">
+                <label nz-radio-button nzValue="All">All</label>
+                @for (Category of Categories ; track $index){
+                <label nz-radio-button [nzValue]="Category.category">{{Category.category}}</label>
+                }
+            </nz-radio-group>
+
+            <div class="products">
+                @for (Product of Products; track $index){
+                <div class="product" (click)="AddToOrder(Product)">
+                    <img [src]="MenuImagesURL+Product.name">
+                    <label>{{Product.name}}</label>
+                    <div class="overlay invisible">
+                        <icon type="circle-arrow-right" size="40" [strokewidth]="0.5"></icon>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
+
+
+        <div class="order">
+            <h1>Order</h1>
+            <div class="order-products">
+                @for (Product of OrderProducts; track $index){
+                <div class="order-product">
+                    <img [src]="MenuImagesURL+Product.name" decoding="async" loading="lazy">
+                    <div style="display: flex; flex-direction: column;">
+                        <label>{{Product.amount}}x - {{Product.name}}</label>
+                        <label class="price">{{Product.amount * Product.price | currency}}</label>
+                    </div>
+
+                    <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DecreaseOrderItem(Product)">
+                        <nz-icon nzType="delete"></nz-icon>
+                    </button>
+
+                    <div class="actions">
+
+
+                        <button nz-button nzType="text" nzShape="circle" nzSize="large" (click)="RemoveOrderItem(Product)">
+                            <nz-icon nzType="close"></nz-icon>
+                        </button>
+                    </div>
+                </div>
+                }@empty {
+                <label>No items to display</label>
+                }
+            </div>
+
+            <div class="order-options">
+                <label class="total">TOTAL - {{CalculateTotal() | currency}}</label>
+
+                <div class="flex right">
+                    <button nz-button class="button finish-button" [nzLoading]="CheckingOut" (click)="Checkout()">
+                        Finish
+                        <icon type="circle-arrow-right" size="25"></icon>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</page-layout>

@@ -11,6 +11,9 @@ type User = {
     city: string
     country: string
     postalcode: string
+
+    administrator:boolean
+    role:string
     
     active: boolean
   }

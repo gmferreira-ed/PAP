@@ -63,7 +63,7 @@ EndpointPermissionProfiles.forEach((info: any) => {
 
 
 
-async function GetUserPermissions(User: User | string) {
+async function GetUserData(User: User | string):Promise<User> {
   const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE users.username = ?`
   const [permission_profiles] = await Database.execute<any>(UserPermissionsQuery, [User]);
 
@@ -111,14 +111,14 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
     try {
 
       //const UserBypass = RequiredPermission?.user_bypass == 1
-      const UserPermProfile = await GetUserPermissions(User)
+      const UserData = await GetUserData(User)
 
       // Has Required level
       const IsGlobal = EndpointData.Permissions.includes('User')
-      const IsAdmin = UserPermProfile.administrator
+      const IsAdmin = UserData.administrator
 
 
-      if (EndpointData.Permissions.includes(UserPermProfile.role) || IsGlobal || IsAdmin) {
+      if (EndpointData.Permissions.includes(UserData.role) || IsGlobal || IsAdmin) {
         return [true, IsGlobal]
       }
 
@@ -166,5 +166,5 @@ async function PermissionsMiddleware(request: Request, response: Response, next:
 export default {
   PermissionsMiddleware: PermissionsMiddleware,
   EndpointsData: EndpointsData,
-  GetUserPermissions: GetUserPermissions,
+  GetUserData: GetUserData,
 }

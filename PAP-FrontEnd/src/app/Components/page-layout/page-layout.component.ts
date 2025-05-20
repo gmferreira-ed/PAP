@@ -5,10 +5,11 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { ThemeService } from '../../Services/Theme.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { IconsModule } from '../icon/icon.component';
 
 @Component({
   selector: 'page-layout',
-  imports: [RouterLink, NzMenuModule, NzIconModule, NzDividerModule, TranslateModule],
+  imports: [RouterLink, NzMenuModule, NzIconModule, NzDividerModule, TranslateModule, IconsModule],
   templateUrl: './page-layout.component.html',
   styleUrl: './page-layout.component.css'
 })

@@ -18,6 +18,7 @@ export class MenuService {
   LoadingCategories = true
 
   MenuURL = AppSettings.APIUrl + "menu"
+  ImagesURL = AppSettings.ImagesURL + "menu/"
   CategoriesURL = this.MenuURL + "/categories"
 
   async GetMenuItems(category: any = null) {
@@ -27,8 +28,12 @@ export class MenuService {
     if (category != "All" && category) {
       MenuURL.searchParams.append('category', category);
     }
-    const [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
+    let [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
 
+    if (Array.isArray(Result)){
+      for (const MenuItem of Result)
+        MenuItem.ImageURL = this.ImagesURL+MenuItem.name
+    } 
     this.LoadingMenuItems = false
 
     return Result
@@ -45,17 +50,21 @@ export class MenuService {
   }
 
 
+  async SetImage(product:string, File:File){
+      const FileData = new FormData();
+      FileData.append('name', product)
+      FileData.append('image', File);
+
+      const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', 'Failed to upload menu item image', FileData)
+      return UploadResult
+  }
 
   async InsertMenuItem(name: string, category: string, price: number, active: boolean | string, File?: File) {
 
 
     var UploadResult: any = true
     if (File) {
-      const FileData = new FormData();
-      FileData.append('name', name)
-      FileData.append('image', File);
-
-      [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', 'Failed to upload menu item image', FileData)
+      UploadResult = await this.SetImage(name, File)
     }
 
     if (UploadResult) {
