@@ -19,25 +19,38 @@ export class HttpService {
 
 
 
-  async MakeRequest(RequestURL: URL | string, Method: string = "GET", ErrorSuffix: string = "", Body?: any): Promise<[Boolean | any, string?]> {
+  async MakeRequest(RequestURL: URL | string, Method: string = "GET", ErrorSuffix: string = "", Data?: any): Promise<[Boolean | any, string?]> {
     return new Promise(async (resolve, reject) => {
 
 
       let RequestHeaders: any = undefined
 
-      const FormDataBody = (Body instanceof FormData)
-      const EncodedBody = (Body instanceof URLSearchParams)
-      const JSONBody = !EncodedBody && !FormDataBody
-      if (JSONBody) {
-        Body = JSON.stringify(Body)
-        RequestHeaders = { 'Content-Type': 'application/json' }
-      } else if (EncodedBody) {
-        RequestHeaders = { 'Content-Type': 'application/x-www-form-urlencoded' }
-      }
+
 
 
       if (typeof (RequestURL) == 'string') {
         RequestURL = new URL(RequestURL)
+      }
+
+      if (Method == 'GET' && Data) {
+
+        // Convert object to search params
+        for (const [key, value] of Object.entries(Data)) {
+          RequestURL.searchParams.append(key, String(value))
+        }
+        Data = undefined
+      } else {
+
+        // Convert body type
+        const FormDataBody = (Data instanceof FormData)
+        const EncodedBody = (Data instanceof URLSearchParams)
+        const JSONBody = !EncodedBody && !FormDataBody
+        if (JSONBody) {
+          Data = JSON.stringify(Data)
+          RequestHeaders = { 'Content-Type': 'application/json' }
+        } else if (EncodedBody) {
+          RequestHeaders = { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }
       }
 
       // PURPOSITAL DELAY TESTS
@@ -50,7 +63,7 @@ export class HttpService {
         headers: RequestHeaders,
         method: Method,
         credentials: 'include',
-        body: Body,
+        body: Data,
 
         //PARSING
       }).then(async (Response) => {
@@ -66,7 +79,7 @@ export class HttpService {
           Result = await Response.blob()
         }
 
-        
+
         if (Response.ok) {
           resolve([Result])
         } else {

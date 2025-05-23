@@ -9,8 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "build",
-    "rootDir": "src",
     "strict": true,
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "../shared/**/*.ts"]
 }

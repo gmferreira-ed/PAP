@@ -1,7 +1,7 @@
 
 import GlobalConfigs from '../Config/GlobalConfigs';
 import { Database, ErrorResponse, EndpointsAttributes, EndpointMatches, EndpointRegex } from '../Globals'
-import SimpleCache from "./SimpleCache"
+import SimpleCache from "../../../shared/SimpleCache"
 
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 

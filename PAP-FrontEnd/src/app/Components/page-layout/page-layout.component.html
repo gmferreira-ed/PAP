@@ -1,37 +1,23 @@
 <div class="navbar">
     <ul nz-menu [nzTheme]="this.ThemeService.Theme()" nzMode="inline">
-        <li nz-submenu nzTitle="Home" nzIcon="mail" [nzOpen]="true">
-            <ul>
-                <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">
-                    <img src="Icons/dashboard.svg" class="nav-button-icon">
-                    <span>{{'Dashboard' | translate}}</span>
-                </li>
-
-                <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
-                    <img src="Icons/receipt_long.svg" class="nav-button-icon">
-                    <span>{{'Receipts' | translate}}</span>
-                </li>
-            </ul>
+        <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">
+            <img src="Icons/dashboard.svg" class="nav-button-icon">
+            <span>{{'Dashboard' | translate}}</span>
         </li>
 
-        <li nz-menu-item nzMatchRouter="/checkout" routerLink="/checkout">
+        <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
+            <img src="Icons/receipt_long.svg" class="nav-button-icon">
+            <span>{{'Receipts' | translate}}</span>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="/orders" routerLink="/orders">
             <img src="Icons/checkout.svg" class="nav-button-icon">
-            <span>{{'Checkout' | translate}}</span>
+            <span>{{'Orders' | translate}}</span>
         </li>
 
-        <li nz-menu-item nzMatchRouter="/calendar" routerLink="/calendar">
+        <li nz-menu-item nzMatchRouter="/reservations" routerLink="/reservations">
             <img src="Images/Icons/calendar.svg" class="nav-button-icon">
-            <span>{{'Calendar' | translate}}</span>
-        </li>
-
-        <li nz-menu-item nzMatchRouter="/finances" routerLink="/finances">
-            <img src="Images/Icons/finances.svg" class="nav-button-icon">
-            <span>{{'Finances' | translate}}</span>
-        </li>
-
-        <li nz-menu-item nzMatchRouter="/menu" routerLink="/menu">
-            <img src="Images/Icons/menu.svg" class="nav-button-icon">
-            <span>{{'Menu' | translate}}</span>
+            <span>{{'Reservations' | translate}}</span>
         </li>
 
 
@@ -40,7 +26,18 @@
             <span>{{'Stocks' | translate}}</span>
         </li>
 
+        <li nz-menu-item nzMatchRouter="/analytics" routerLink="/analytics">
+            <img src="Icons/chart-line.svg" class="nav-button-icon">
+            <span>{{'Analytics' | translate}}</span>
+        </li>
+
+
         <div class="menu-divider"></div>
+
+        <li nz-menu-item nzMatchRouter="/menu" routerLink="/menu">
+            <img src="Images/Icons/menu.svg" class="nav-button-icon">
+            <span>{{'Menu' | translate}}</span>
+        </li>
 
         <li nz-menu-item nzMatchRouter="/users" routerLink="/users">
             <img src="Images/Icons/account.svg" class="nav-button-icon">

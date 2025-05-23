@@ -1,94 +1,94 @@
 @if (EditMode){
-    <div class="editor-settings">
-        <div class="section">
-            <label>Snapping</label>
-            <div class="row fill">
-                <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;"
-                [nzMin]="0" [nzMax]="10" [nzStep]="1" [(ngModel)]="Snapping"></nz-input-number>
-                <nz-slider  style="flex: 1"
-                [nzMin]="0" [nzMax]="10" [nzStep]="1" [(ngModel)]="Snapping"></nz-slider>
-            </div>
-        </div>
-
-        <div class="separator vertical"></div>
-
-        <div class="action">
-            <button class="button" [disabled]="CurrentHistoryIndex == -1" (click)="NavigateHistory(-1)">
-                <icon type="undo"></icon>
-            </button>
-            <label>Undo</label>
-        </div>
-
-        <div class="action">
-            <button class="button" [disabled]="CurrentHistoryIndex == History.length-1" (click)="NavigateHistory(1)">
-                <icon type="redo"></icon>
-            </button>
-            <label>Redo</label>
-        </div>
-        
-        <div class="separator vertical"></div>
-
-                <div class="action">
-            <button class="button" (click)="CenterLayout()">
-                <icon type="locate"></icon>
-            </button>
-            <label>Center</label>
-        </div>
-
-        <div class="action">
-            <button class="button" (click)="ChangeZoom(undefined, -100)">
-                <icon type="zoom-in"></icon>
-            </button>
-            <label>Zoom In</label>
-        </div>
-
-        <div class="action">
-            <button class="button" (click)="ChangeZoom(undefined, 100)">
-                <icon type="zoom-out"></icon>
-            </button>
-            <label>Zoom Out</label>
-        </div>
-
-        <div class="action">
-            <button class="button" (click)="GridVisible = !GridVisible">
-                <icon type="grid"></icon>
-            </button>
-            <label>Grid</label>
-        </div>
-        
-        <div class="separator vertical"></div>
-
-        <div class="action">
-            <button class="button" (click)="ExportLayout()">
-                <icon type="export"></icon>
-            </button>
-            <label>Export</label>
-        </div>
-
-        <div class="action">
-            <button class="button" (click)="FileSelector.click()">
-                <icon type="import"></icon>
-            </button>
-            <label>Import</label>
-            <input #FileSelector type="file" id="fileInput" style="display: none" accept=".dl" (change)="ImportLayout($event)">
-        </div>
-        
-        <div class="separator vertical"></div>
-
-        <div class="action">
-            <button class="button" (click)="ClearLayout()">
-                <icon type="brush-cleaning"></icon>
-            </button>
-            <label>Clear Layout</label>
-        </div>
-
-        <div class="action">
-            <button class="button">
-                <icon type="circle-help"></icon>
-            </button>
-            <label>Help</label>
+<div class="editor-settings">
+    <div class="section">
+        <label>Snapping</label>
+        <div class="row fill">
+            <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;" [nzMin]="0" [nzMax]="10" [nzStep]="1"
+                [(ngModel)]="Snapping"></nz-input-number>
+            <nz-slider style="flex: 1" [nzMin]="0" [nzMax]="10" [nzStep]="1" [(ngModel)]="Snapping"></nz-slider>
         </div>
     </div>
+
+    <div class="separator vertical"></div>
+
+    <div class="action">
+        <button class="button block" [disabled]="CurrentHistoryIndex == -1" (click)="NavigateHistory(-1)">
+            <icon type="undo"></icon>
+        </button>
+        <label>Undo</label>
+    </div>
+
+    <div class="action">
+        <button class="button block" [disabled]="CurrentHistoryIndex == History.length-1" (click)="NavigateHistory(1)">
+            <icon type="redo"></icon>
+        </button>
+        <label>Redo</label>
+    </div>
+
+    <div class="separator vertical"></div>
+
+    <div class="action">
+        <button class="button block" (click)="CenterLayout()">
+            <icon type="locate"></icon>
+        </button>
+        <label>Center</label>
+    </div>
+
+    <div class="action">
+        <button class="button block" (click)="ChangeZoom(undefined, -100)">
+            <icon type="zoom-in"></icon>
+        </button>
+        <label>Zoom In</label>
+    </div>
+
+    <div class="action">
+        <button class="button block" (click)="ChangeZoom(undefined, 100)">
+            <icon type="zoom-out"></icon>
+        </button>
+        <label>Zoom Out</label>
+    </div>
+
+    <div class="action">
+        <button class="button block" (click)="ToggleGrid()">
+            <icon type="grid"></icon>
+        </button>
+        <label>Grid</label>
+    </div>
+
+    <div class="separator vertical"></div>
+
+    <div class="action">
+        <button class="button block" (click)="ExportLayout()">
+            <icon type="export"></icon>
+        </button>
+        <label>Export</label>
+    </div>
+
+    <div class="action">
+        <button class="button block" (click)="FileSelector.click()">
+            <icon type="import"></icon>
+        </button>
+        <label>Import</label>
+        <input #FileSelector type="file" id="fileInput" style="display: none" accept=".dl"
+            (change)="ImportLayout($event)">
+    </div>
+
+    <div class="separator vertical"></div>
+
+    <div class="action block">
+        <button class="button" (click)="ClearLayout()">
+            <icon type="brush-cleaning"></icon>
+        </button>
+        <label>Clear Layout</label>
+    </div>
+
+    <div class="action block">
+        <button class="button">
+            <icon type="circle-help"></icon>
+        </button>
+        <label>Help</label>
+    </div>
+</div>
 }
 
 <div class="editor-layout">
@@ -120,6 +120,16 @@
 
         <loading-screen [IsLoading]="LoadingLayout"></loading-screen>
 
+
+        <!-- NON-EDIT ACTIONS -->
+        @if (!EditMode){
+        <floating-container style="right: 0px;">
+            <button nz-button nzType="default" routerLink="/layout-editor">
+                <nz-icon nzType="edit"></nz-icon>
+            </button>
+        </floating-container>
+        }
+
         <!-- VIEWPORT -->
         <div class="viewport" #Viewport [style.width]="Zoom*DefaultViewportSize.X+'px'"
             [style.height]="Zoom*DefaultViewportSize.Y+'px'" [style.top]="ViewportY+'px'" [style.left]="ViewportX+'px'"
@@ -130,9 +140,10 @@
                 [style.background-size]="100*Zoom + 'px '+100*Zoom + 'px'"></div>
 
             <!-- GRID -->
-             @if (GridVisible){
-                <div class="background grid" [style.background-size]="Snapping*Zoom + 'px '+Snapping*Zoom + 'px'"></div>
-             }
+            @if (GridVisible){
+            <div class="background grid" [style.background-size]="Snapping*Zoom + 'px '+Snapping*Zoom + 'px'"></div>
+            }
+
 
             <!-- COMPONENTS -->
             <div class="components-container">
@@ -144,6 +155,36 @@
                     [style.cursor]="EditMode ? 'move' : 'pointer'">
                     @if (LayoutConfigs.Components[Component.Type]?.Image){
                     <img class="background" [src]="LayoutConfigs.Components[Component.Type]?.Image">
+                    }
+
+                    @if (Component.Type == 'Table' || Component.Type == 'RoundTable'){
+                    <label class="table-number" [style.font-size]="4*Zoom+'px'">
+                        {{'Table' | translate}} {{Component.tableid}}
+                    </label>
+
+                    @let Table = Component.tableid != null ? Tables[Component.tableid] : undefined;
+                    @let TableStatus = Table && StatusDisplayNames[Table.status];
+
+                    @if (TableStatus){
+                        @if (!EditMode && Zoom>3){
+                            <label [class]="'table-status '+Table?.status" [style.font-size]="2.5*Zoom+'px'">
+                                {{TableStatus}}
+                                <br>
+                                {{Table.time | date:'HH:mm:ss':'UTC'}}
+                            </label>
+                        }
+                        @if (!EditMode && Zoom>2){
+                            <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-50%, 50%);">
+                                <div class="clock" style="width: 20px; height: 20px;">
+                                    <span class="hour"></span>
+                                    <span class="min"></span>
+                                    <span class="circel"></span>
+                                </div>
+                            </floating-container>
+                        }
+                    }
+                    
+
                     }
 
                     @if (SelectedComponent == Component && EditMode){

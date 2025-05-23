@@ -12,6 +12,7 @@ const Database = mysql.createPool({
   user: EnviromentConfigs.DB_User,
   password: EnviromentConfigs.DB_Password,
 
+  timezone: 'Z',
   database: 'restaurant',
 
 }).promise()

@@ -1,6 +1,20 @@
 <page-layout>
+    <loading-screen [Fullscreen]="true"
+        [IsLoading]="LoadingProducts || CheckingOut || ProcessingOrder"></loading-screen>
     <div class="container">
+        @if (SelectedTable){
         <div class="product-select">
+
+
+
+            <div class="flex row" style="margin-bottom: 5px;">
+                <button nz-button nzType="default" (click)="LeaveOrder()" nzSize="large">
+                    <nz-icon nzType="arrow-left"></nz-icon>
+                </button>
+                <label style="font-weight: 700; font-size: 30px; margin-left: 5px;">{{'Table' | translate}}
+                    {{SelectedTable}}</label>
+            </div>
+
             <nz-input-group style="margin-bottom:10px;" nzSearch [nzAddOnAfter]="suffixIconButton">
                 <input type="text" nz-input placeholder="Search for a product" />
             </nz-input-group>
@@ -10,7 +24,7 @@
 
             <!-- CATEGORIES -->
             <nz-radio-group nzButtonStyle="solid" [(ngModel)]="SelectedCategory" (ngModelChange)="LoadProducts()">
-                <label nz-radio-button nzValue="All">All</label>
+                <label nz-radio-button nzValue="All">{{'All' | translate}}</label>
                 @for (Category of Categories ; track $index){
                 <label nz-radio-button [nzValue]="Category.category">{{Category.category}}</label>
                 }
@@ -33,13 +47,14 @@
 
         <div class="order">
             <h1>Order</h1>
+            <label class="small-caption">ID:{{OrderInfo?.order_id}}</label>
             <div class="order-products">
                 @for (Product of OrderProducts; track $index){
                 <div class="order-product">
                     <img [src]="MenuImagesURL+Product.name" decoding="async" loading="lazy">
                     <div style="display: flex; flex-direction: column;">
-                        <label>{{Product.amount}}x - {{Product.name}}</label>
-                        <label class="price">{{Product.amount * Product.price | currency}}</label>
+                        <label>{{Product.quantity}}x - {{Product.name}}</label>
+                        <label class="price">{{Product.quantity * Product.price | currency}}</label>
                     </div>
 
                     <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DecreaseOrderItem(Product)">
@@ -49,27 +64,85 @@
                     <div class="actions">
 
 
-                        <button nz-button nzType="text" nzShape="circle" nzSize="large" (click)="RemoveOrderItem(Product)">
+                        <button nz-button nzType="text" nzShape="circle" nzSize="large"
+                            (click)="RemoveOrderItem(Product)">
                             <nz-icon nzType="close"></nz-icon>
                         </button>
                     </div>
                 </div>
                 }@empty {
-                <label>No items to display</label>
+                <label>{{'No items to display' | translate}}</label>
                 }
             </div>
 
             <div class="order-options">
-                <label class="total">TOTAL - {{CalculateTotal() | currency}}</label>
+                <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | currency}}</label>
 
-                <div class="flex right">
-                    <button nz-button class="button finish-button" [nzLoading]="CheckingOut" (click)="Checkout()">
-                        Finish
+                <div class="flex center">
+                    <button nz-button class="button finish-button view" style="gap: 5px;" [nzLoading]="CheckingOut"
+                        (click)="CancelOrder()">
+
+                        <icon type="trash" size="25"></icon>
+                        {{'Cancel' | translate}}
+
+                    </button>
+
+                    <button class="button finish-button" (click)="Checkout()" style="gap: 5px;"
+                        [disabled]="OrderProducts.length < 1 || CheckingOut">
+                        {{'Checkout' | translate}}
                         <icon type="circle-arrow-right" size="25"></icon>
                     </button>
                 </div>
             </div>
 
         </div>
+
+        }
+
+        @else{
+
+        <div class="action-card" style="width: 100%;">
+            <div class="flex space-between">
+                <label class="title">{{'Table Select' | translate}}</label>
+                <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType" (ngModelChange)="SelectionViewChanged()">
+                    <label nz-radio-button nzValue="Layout">Layout</label>
+                    <label nz-radio-button nzValue="Grid">Grid</label>
+                </nz-radio-group>
+            </div>
+
+            <br>
+            @if (ViewType == 'Layout'){
+            <restaurant-layout style="width: 100%; height: 100%;"
+                (ComponentSelected)="SelectTable($event.tableid)"></restaurant-layout>
+            }@else {
+            <div class="tables">
+                @for (Table of ToArray(Tables);track $index){
+                <div [class]="'table '+Table.status" (click)="SelectTable(Table.tableid)">
+                    <icon type="table" size="100%" [fill]="true"></icon>
+
+                    {{'Table' | translate}} {{Table.tableid}}
+                    @if (Table.status){
+                        <label style="font-size: 14px; color: rgb(176, 207, 0);">
+                            {{Table.time | date:'HH:mm:ss':'UTC'}}
+                        </label>
+                    }
+                    <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-60%, 60%);">
+                        @if (Table.status == 'ongoing'){
+                        <div class="clock" style="width: 25px; height: 25px;">
+                            <span class="hour"></span>
+                            <span class="min"></span>
+                            <span class="circel"></span>
+                        </div>
+                        }@else {
+
+                        }
+                    </floating-container>
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        }
     </div>
 </page-layout>

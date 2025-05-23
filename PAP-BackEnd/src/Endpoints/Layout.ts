@@ -26,29 +26,58 @@ Router.get('/layout', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
+ * @displayname "Tables"
+ * @path /tables
+ * @method GET
+ * @summary "View restaurant tables"
+ * @unprotected true
+ */
+Router.get('/tables', HandleEndpointFunction(async (req, res) => {
+
+    var LayoutQuery = `SELECT layout.*, orders.order_id, orders.status, orders.created_at FROM layout
+    LEFT JOIN orders ON orders.tableid = layout.tableid AND status='ongoing'
+     WHERE type='table' or type='roundtable'`
+
+    const [Tables] = await Database.query<any>(LayoutQuery);
+
+    res.send(Tables)
+
+}));
+
+
+/**
  * @displayname "Edit Layout"
  * @path /layout
  * @method POST
  * @summary "Edit the restaurant layout"
  */
-Router.post('/layout',  HandleEndpointFunction(async (req, res) => {
+Router.post('/layout', HandleEndpointFunction(async (req, res) => {
 
 
     const body = req.body
-    
+    body.tableid = null
+    if (body.type == 'Table' || body.type == 'RoundTable') {
+
+        const [HighestID] = await Database.query<any[]>("SELECT MAX(tableid) as tableid FROM layout");
+        body.tableid = (HighestID[0].tableid || 0) + 1
+
+        console.log(HighestID)
+    }
+
     const [InsertQuery, Values] = SQLUtils.BuildInsertQuery('layout', [
-        'top', 
-        'left', 
-        'width', 
-        'height', 
-        'type', 
+        'top',
+        'left',
+        'width',
+        'height',
+        'type',
         'componentid',
+        'tableid',
     ], body)
 
 
     const [Result] = await Database.execute<any>(InsertQuery, Values);
 
-    res.send({id:Result?.insertId})
+    res.send({ id: Result?.insertId, tableid:body.tableid  })
 
 }));
 
@@ -58,23 +87,23 @@ Router.post('/layout',  HandleEndpointFunction(async (req, res) => {
  * @method POST
  * @summary "Edit the restaurant layout"
  */
-Router.post('/layout/import',  HandleEndpointFunction(async (req, res) => {
+Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 
 
     const body = req.body
-    
+
     const [InsertQuery, Values] = SQLUtils.BuildInsertQuery('layout', [
-        'top', 
-        'left', 
-        'width', 
-        'height', 
-        'type', 
+        'top',
+        'left',
+        'width',
+        'height',
+        'type',
         'componentid',
     ], body)
 
     const [Result] = await Database.execute<any>(InsertQuery, Values);
 
-    res.send({id:Result?.insertId})
+    res.send({ id: Result?.insertId })
 
 }));
 
@@ -109,8 +138,8 @@ Router.delete('/layout', HandleEndpointFunction(async (Request, Response) => {
 
     var SQLQuery = "DELETE FROM `layout` "
     var Values = []
-    
-    if (!body.clear){
+
+    if (!body.clear) {
         SQLQuery += 'WHERE componentid=?'
         Values.push(body.componentid)
     }

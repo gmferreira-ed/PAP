@@ -15,9 +15,9 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
 
         ExpectedColumns.forEach((Column) => {
             const CorrespondingValue = Data[Column]
-            if (CorrespondingValue != undefined && CorrespondingValue != null) { 
+            if (CorrespondingValue != undefined && CorrespondingValue != null) {
                 Values.push(Data[Column]);
-            }else{
+            } else {
                 Values.push(null);
             }
             rowPlaceholders.push('?')
@@ -33,40 +33,59 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
     return [Columns, Values, Placeholders]
 }
 
+function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: string[]):[string|undefined, any[]] {
+    const Conditions: string[] = []
+    const Values: any[] = []
+
+    ConditionKeys.forEach((Key) => {
+        const Val = RequestData[Key]
+        if (Val != undefined) {
+            Conditions.push(Key)
+            Values.push(RequestData[Key])
+        }
+    })
+    let WhereClause:string|undefined = Conditions.map(Key => `${Key}=?`).join(" AND ")
+    if (WhereClause == '')
+        WhereClause = undefined
+    else
+        WhereClause = ' WHERE '+WhereClause
+
+    return [WhereClause, Values]
+}
+
+function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
+    let [Columns, Values] = QueryArray([], RequestData)
+
+
+    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
+    const Query = `SELECT * FROM ${TargetTable} ${WhereClause}`;
+
+    return [Query, [...Values, ...WClauseValues]]
+}
 
 function BuildDeleteQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
-    const [Columns, Values] = QueryArray([], RequestData)
+    let [Columns, Values] = QueryArray([], RequestData)
 
-    const Conditions: string[] = []
-    ConditionKeys.forEach((Key) => {
-        Conditions.push(Key)
-        Values.push(RequestData[Key])
-    })
-
-    const WhereClause = Conditions.map(Key => `${Key}=?`).join(" AND ")
-    const Query = `DELETE FROM ${TargetTable} WHERE ${WhereClause}`;
+    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
+    const Query = `DELETE FROM ${TargetTable} ${WhereClause}`;
 
 
-    return [Query, Values]
+    return [Query, [...Values, ...WClauseValues]]
 }
 
 
 function BuildUpdateQuery(TargetTable: string, ExpectedColumns: string[], RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
 
 
-    const [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
-    const Conditions: string[] = []
+    let [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
 
-    ConditionKeys.forEach((Key) => {
-        Conditions.push(Key)
-        Values.push(RequestData[Key])
-    })
-
+    
+    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
     const SetClause = Columns.map(col => `${col}=?`).join(", ")
-    const WhereClause = Conditions.map(Key => `${Key}=?`).join(" AND ")
-    const Query = `UPDATE ${TargetTable} SET ${SetClause} WHERE ${WhereClause}`;
 
-    return [Query, Values]
+    const Query = `UPDATE ${TargetTable} SET ${SetClause} ${WhereClause}`;
+
+    return [Query, [...Values, ...WClauseValues]]
 }
 
 function BuildInsertQuery(TargetTable: string, ExpectedColumns: string[], RequestData: Request['body']): [string, any[]] {
@@ -81,4 +100,5 @@ export default {
     BuildUpdateQuery,
     BuildInsertQuery,
     BuildDeleteQuery,
+    BuildSelectQuery,
 }

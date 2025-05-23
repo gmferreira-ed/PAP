@@ -13,18 +13,20 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 class LayoutComponent {
   Type: string = 'RoundTable';
 
-  Size: Vector2 = new Vector2(10, 10)
+  Size: Vector2 = new Vector2(15, 15)
   MinSize: Vector2 = new Vector2(0, 0)
 
   Position: Vector2 = new Vector2(0, 0);
 
   id: number | string | null = null
+  tableid: number | string | null = null
   processing: boolean = false
+
 
   constructor(Type: string = 'RoundTable') {
     this.Type = Type;
     this.MinSize = new Vector2(this.Size.X / 2, this.Size.Y / 2)
-    this.id =  Date.now()
+    this.id = Date.now()
 
     const ComponentConfigs = LayoutConfigs.Components[Type]
     if (ComponentConfigs) {
@@ -51,10 +53,19 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzDividerComponent } from 'ng-zorro-antd/divider';
 import { IconsModule } from "../icon/icon.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { FloatingContainer } from "../floating-container/floating-container";
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { RouterModule } from '@angular/router';
+import { OrdersService } from '../../Services/Orders.service';
+import { Table } from '../../../../../shared/table';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'restaurant-layout',
-  imports: [LoadingScreen, NzInputNumberModule, NzSliderModule, NzGridModule, FormsModule, IconsModule],
+  imports: [LoadingScreen, NzInputNumberModule, NzSliderModule, NzGridModule, FormsModule, NzIconModule, IconsModule, TranslateModule,
+    RouterModule, NzButtonModule, FloatingContainer, DatePipe],
 
   templateUrl: 'layout.component.html',
   styleUrl: 'layout.component.less'
@@ -74,15 +85,20 @@ export class RestaurantLayout {
   @Input() LoadingLayout: boolean = true
   @Input() EditMode: boolean = false
 
+  @Output() ComponentSelected = new EventEmitter();
+
   ContextMenuVisible = false
   HasClipboardContent = false
 
 
   // Config
   @Input() Snapping: number = 5
-  @Input() GridVisible: boolean = true
+  @Input() GridVisible: boolean = localStorage.getItem('gridvisible') != 'true' ? false : true
 
-
+  ToggleGrid() {
+    this.GridVisible = !this.GridVisible
+    localStorage.setItem('gridvisible', String(this.GridVisible))
+  }
 
   // DOM Elements
   @ViewChild('PageLayout', { read: PageLayoutComponent }) PageLayout!: PageLayoutComponent;
@@ -94,6 +110,7 @@ export class RestaurantLayout {
 
   // Services
   MessageService = inject(NzMessageService)
+  OrdersService = inject(OrdersService)
   HttpService = inject(HttpService)
   Renderer = inject(Renderer2)
 
@@ -102,6 +119,11 @@ export class RestaurantLayout {
   // Variables
   Handles: any = ['top', 'bottom', 'left', 'right']
   RatioHandles: any = ['top-left', 'bottom-right', 'bottom-left', 'top-right']
+  Tables: Record<any, Table> = {}
+
+  StatusDisplayNames: { [key: string]: string } = {
+    ongoing: 'Occupied'
+  }
 
 
   //Imports
@@ -119,6 +141,7 @@ export class RestaurantLayout {
   }
 
 
+  // Viewport variables
   Scaling = 5
   Zoom = 1 * this.Scaling
   MaxZoom = 5 * this.Scaling
@@ -205,6 +228,7 @@ export class RestaurantLayout {
     SavedCompomentState.Position = new Vector2(Component.Position.X, Component.Position.Y)
     SavedCompomentState.Size = new Vector2(Component.Size.X, Component.Size.Y)
     SavedCompomentState.id = Component.id
+    SavedCompomentState.tableid = Component.tableid
     return SavedCompomentState
   }
 
@@ -455,7 +479,11 @@ export class RestaurantLayout {
   // Start dragging
   DragStart(Event: MouseEvent, Component: LayoutComponent) {
     const DragStartSucess = this.ComponentInteract(Event, Component)
-    this.SelectedComponent = Component
+    if ((this.EditMode || Component.Type == 'Table' || Component.Type == 'RoundTable') && DragStartSucess) {
+
+      this.SelectedComponent = Component
+      this.ComponentSelected.emit(Component)
+    }
 
     if (DragStartSucess && this.EditMode)
       this.DraggingComponent = Component
@@ -514,15 +542,15 @@ export class RestaurantLayout {
 
 
   // DUPLICATE
-  DuplicateComponent(TargetComponent?: LayoutComponent, IgnoreTrack:boolean=false) {
+  DuplicateComponent(TargetComponent?: LayoutComponent, IgnoreTrack: boolean = false) {
     if (TargetComponent) {
       const DuplicatedComponent = new LayoutComponent();
       DuplicatedComponent.Type = TargetComponent.Type;
       DuplicatedComponent.Size = new Vector2(TargetComponent.Size.X, TargetComponent.Size.Y)
       DuplicatedComponent.Position = new Vector2(TargetComponent.Position.X, TargetComponent.Position.Y)
-      if (!IgnoreTrack){
-          this.AddComponent(DuplicatedComponent)
-      }else{
+      if (!IgnoreTrack) {
+        this.AddComponent(DuplicatedComponent)
+      } else {
         this.Components.push(DuplicatedComponent)
       }
       this.SelectedComponent = DuplicatedComponent;
@@ -540,12 +568,12 @@ export class RestaurantLayout {
     if (ParsedComponent && ParsedComponent.Type) {
       const NewComp = new LayoutComponent()
       NewComp.Type = ParsedComponent.Type
-      NewComp.Size = { ...ParsedComponent.Size }
+      NewComp.Size = new Vector2(ParsedComponent.Size.X, ParsedComponent.Size.Y)
 
       if (MouseEvent) {
 
       } else {
-        NewComp.Position = { ...ParsedComponent.Position }
+        NewComp.Position = new Vector2(ParsedComponent.Position.X, ParsedComponent.Position.Y)
       }
       this.AddComponent(NewComp)
       this.SelectedComponent = NewComp;
@@ -634,6 +662,7 @@ export class RestaurantLayout {
 
     if (CreateResult) {
       component.id = Number(CreateResult.id)
+      component.tableid = Number(CreateResult.tableid)
 
       if (!IgnoreTrack)
         this.TrackHistory('create', component)
@@ -749,7 +778,7 @@ export class RestaurantLayout {
           const OldLayout = this.CloneLayout(this.Components)
 
           this.Components = []
-          for (const Component of LayoutData){
+          for (const Component of LayoutData) {
             this.DuplicateComponent(Component, true)
             this.Components.push()
           }
@@ -779,6 +808,7 @@ export class RestaurantLayout {
         Component.Position = new Vector2(ComponentData.left, ComponentData.top)
         Component.Size = new Vector2(ComponentData.width, ComponentData.height)
         Component.id = ComponentData.componentid
+        Component.tableid = ComponentData.tableid
         this.Components.push(Component)
       }
 
@@ -798,6 +828,10 @@ export class RestaurantLayout {
 
   async ngOnInit() {
     this.LoadLayout()
+
+    // Listen to tables change and update the record according to it
+    this.Tables = await this.OrdersService.Tables.Get()
   }
+
 }
 
