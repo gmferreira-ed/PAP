@@ -2,7 +2,7 @@
 import express, { response } from 'express'
 import multer from 'multer'
 const Router = express.Router();
-import { Database, HandleEndpointFunction } from '../Globals'
+import { Database, HandleEndpointFunction, OrdersWebsocket } from '../Globals'
 import SQLUtils from '../Services/SQLUtils';
 import path from 'path';
 import PermissionsService from '../Services/PermissionsService';
@@ -133,6 +133,7 @@ Router.delete('/orders', HandleEndpointFunction(async (req, res) => {
 
 
     const body = req.body
+    const order_id = body.order_id
 
     const SelectQuery = `SELECT * FROM order_items WHERE order_id=?`
     const [OrderProducts] = await Database.execute<any[]>(SelectQuery, [body.order_id])
@@ -147,6 +148,8 @@ Router.delete('/orders', HandleEndpointFunction(async (req, res) => {
         const DeleteQuery = `DELETE FROM orders WHERE order_id=?`
         const [DeleteResult] = await Database.execute(DeleteQuery, [body.order_id])
     }
+
+    OrdersWebsocket.SendGlobalMessage('update', { order_id: order_id })
 
 
     res.send({deleted:Deleted})
@@ -166,6 +169,7 @@ Router.post('/checkout', HandleEndpointFunction(async (req, res) => {
 
     const CheckoutResult = await CheckoutOrder(body.products)
 
+    OrdersWebsocket.SendGlobalMessage('update', { order_id: order_id })
     res.send({ result: CheckoutResult })
 }));
 

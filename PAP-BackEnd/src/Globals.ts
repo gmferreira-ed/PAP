@@ -2,6 +2,8 @@ import mysql from 'mysql2'
 
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import EnviromentConfigs from './Config/EnviromentConfigs';
+import WebsocketService from './Services/WebsocketService';
+import { ExpressWebSocketServer } from './Types/websocket';
 
 
 // SQL AND DATABASE SETUP
@@ -80,8 +82,10 @@ const EndpointMatches:{[key: string]:string} = {
 const EndpointRegex = '^(.*[^/*])$'
 
 
+const OrdersWebsocket = new ExpressWebSocketServer('/orders')
 export {
   Database, GetTablePage, HandleEndpointFunction, ErrorResponse,
+  OrdersWebsocket,
   EndpointsAttributes,
   EndpointRegex,
   EndpointMatches,

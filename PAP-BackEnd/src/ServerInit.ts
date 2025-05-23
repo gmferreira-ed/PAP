@@ -1,6 +1,7 @@
 const path = require('path');
 const cors = require('cors')
 const dotenv = require('dotenv')
+const http = require('http')
 
 import fs from 'fs'
 
@@ -15,6 +16,7 @@ import { EndpointMatches, EndpointRegex, EndpointsAttributes } from './Globals'
 import Configs from './Config/EnviromentConfigs'
 import PermissionsService from './Services/PermissionsService';
 import SQLUtils from './Services/SQLUtils';
+import WebSocketService from './Services/WebsocketService';
 
 const MySQLStore = expressmysqlsession(session as any)
 
@@ -93,8 +95,11 @@ fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
 });
 
 
+const HttpServer = http.createServer(Server)
+WebSocketService.Connect(HttpServer, SessionMiddleware)
+
 // START SERVER
-Server.listen(7000, async () => {
+HttpServer.listen(7000, async () => {
   console.log('Server running on http://localhost:7000');
 
 
