@@ -124,9 +124,14 @@
         <!-- NON-EDIT ACTIONS -->
         @if (!EditMode){
         <floating-container style="right: 0px;">
-            <button nz-button nzType="default" routerLink="/layout-editor">
-                <nz-icon nzType="edit"></nz-icon>
+            <button nz-button nzType="default" (click)="CenterLayout()">
+                <icon type="locate"></icon>
             </button>
+            @if (!SelectionMode){
+                <button nz-button nzType="default" routerLink="/layout-editor">
+                    <nz-icon nzType="edit"></nz-icon>
+                </button>
+            }
         </floating-container>
         }
 
@@ -165,7 +170,7 @@
                     @let Table = Component.tableid != null ? Tables[Component.tableid] : undefined;
                     @let TableStatus = Table && StatusDisplayNames[Table.status];
 
-                    @if (TableStatus){
+                    @if (TableStatus && !SelectionMode){
                         @if (!EditMode && Zoom>3){
                             <label [class]="'table-status '+Table?.status" [style.font-size]="2.5*Zoom+'px'">
                                 {{TableStatus}}

@@ -6,7 +6,7 @@
         <div class="product-select">
 
 
-
+            <!-- GO BACK BUTTON -->
             <div class="flex row" style="margin-bottom: 5px;">
                 <button nz-button nzType="default" (click)="LeaveOrder()" nzSize="large">
                     <nz-icon nzType="arrow-left"></nz-icon>
@@ -15,6 +15,7 @@
                     {{SelectedTable}}</label>
             </div>
 
+            <!-- SEARCH -->
             <nz-input-group style="margin-bottom:10px;" nzSearch [nzAddOnAfter]="suffixIconButton">
                 <input type="text" nz-input placeholder="Search for a product" />
             </nz-input-group>
@@ -30,9 +31,10 @@
                 }
             </nz-radio-group>
 
+            <!-- PRODUCTS -->
             <div class="products">
                 @for (Product of Products; track $index){
-                <div class="product" (click)="AddToOrder(Product)">
+                <div class="product" (click)="AddToOrder(Product)" [class.disabled]="Product.active == 0">
                     <img [src]="MenuImagesURL+Product.name">
                     <label>{{Product.name}}</label>
                     <div class="overlay invisible">
@@ -113,7 +115,7 @@
             <br>
             @if (ViewType == 'Layout'){
             <restaurant-layout style="width: 100%; height: 100%;"
-                (ComponentSelected)="SelectTable($event.tableid)"></restaurant-layout>
+                (TableSelected)="SelectTable($event.tableid)"></restaurant-layout>
             }@else {
             <div class="tables">
                 @for (Table of ToArray(Tables);track $index){

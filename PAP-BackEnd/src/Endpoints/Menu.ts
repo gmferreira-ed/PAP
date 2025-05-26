@@ -69,6 +69,7 @@ Router.post('/menu',  HandleEndpointFunction(async (req, res) => {
 Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
+
     var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category'], body, ['name'])
 
 

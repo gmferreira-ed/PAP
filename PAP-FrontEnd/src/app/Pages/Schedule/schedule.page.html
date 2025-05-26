@@ -1,0 +1,218 @@
+<page-layout>
+    <div class="flex" style="width: 100%; height: 90%; gap:10px">
+        <main class="calendar">
+
+            @let DaysToDisplay = ViewType == 'Day' ? 1 : 3;
+            @let DaysArray = [].constructor(DaysToDisplay);
+
+            <header class="topbar">
+                <div class="section left">
+                    @if (ViewType != 'All'){<icon type="calendar" style="margin-right: 5px;"></icon>}
+                    <label class="month">
+                        @if (ViewType != 'All'){
+                        {{CurrentDate | date:'fullDate'}}
+                        }@else {
+                        {{'All Reservations' | translate}}
+                        }
+                    </label>
+                </div>
+                <div class="section right">
+                    <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType">
+                        <label nz-radio-button nzValue="Day">{{'Day' | translate}}</label>
+                        <label nz-radio-button nzValue="Week">{{'Week' | translate}}</label>
+                        <label nz-radio-button nzValue="Month">{{'Month' | translate}}</label>
+                        <label nz-radio-button nzValue="All">{{'All' | translate}}</label>
+                    </nz-radio-group>
+                </div>
+            </header>
+
+            <!-- TIMELINE VIEW -->
+            @if (ViewType == 'Day' || ViewType == 'Week'){
+
+            <header class="days">
+                <section class="hours collumn"></section>
+                <div class="section center">
+                    @for (DayN of DaysArray; track $index){
+                    @let DayDate = DateFromDay($index);
+                    <div class="day" (click)="CurrentDate = DayDate">
+                        <label class="number"
+                            [class.active]="DayDate.getDate() == CurrentDate.getDate()">{{DayDate.getDate()}}</label>
+                        <label class="name">
+                            {{DayDate.toLocaleDateString(undefined, { weekday: 'long' })}}
+                        </label>
+                    </div>
+                    }
+                </div>
+            </header>
+
+            <div class="schedule-container">
+                <section class="hours collumn">
+
+                    @for (Time of GetTimeIntervals(); track $index){
+                    <div class="interval-hour">
+                        <label>
+                            {{Time | date: 'HH:mm'}}
+                        </label>
+                        <div class="line"></div>
+                    </div>
+                    }
+                </section>
+                <section class="schedule">
+                    @for (DayN of DaysArray; track $index){
+                    @let DayDate = DateFromDay($index);
+                    <div class="collumn fill">
+                        @for (Time of GetTimeIntervals(); track $index){
+                        <div class="interval">
+                        </div>
+                        }
+                    </div>
+                    }
+                </section>
+            </div>
+
+
+            <!-- MONTH VIEW -->
+            }@else if (ViewType == 'Month') {
+            <div class="month-container">
+                @for (Day of GetMonthDays(); track $index){
+                <div class="day-block" (click)="CurrentDate = Day">
+                    <label class="day-number">
+                        {{Day.getDate()}}
+                    </label>
+                </div>
+                }
+            </div>
+            }
+
+
+            <!-- ALL VIEW -->
+            @else {
+
+            }
+        </main>
+
+
+        <section class="action-card" style="flex: 1;">
+            <div class="row space-between" style="align-items: start;">
+                <h2>Today</h2>
+                <button nz-button (click)="ReservationsModalVisible = true">
+                    {{'Book Reservation ' | translate}}<nz-icon nzType="plus"></nz-icon>
+                </button>
+            </div>
+            <div class="separator"></div>
+            @for (Reservation of ToArray(this.Reservations); track $index){
+            @if (IsSameDate(Reservation.Date, CurrentDate)){
+            whoa a reservation
+            }
+            }@empty {
+            <no-data>{{'No reservations scheduled for today' | translate}}</no-data>
+            }
+        </section>
+    </div>
+</page-layout>
+
+
+<!-- RESERVATION BOOKING MODAL -->
+<nz-modal nzDraggable [nzVisible]="ReservationsModalVisible" [nzTitle]="'Book New Reservation' | translate" nzCentered
+    nzWidth="50%" nzCancelText="Cancel" (nzOnOk)="BookReservation()" (nzOnCancel)="ReservationsModalVisible = false">
+
+    <ng-container *nzModalContent>
+        <form [formGroup]="ReservationForm" nz-form nzLayout="vertical">
+
+            <div class="row" style="gap:30px">
+                <nz-form-item>
+                    <nz-form-label>Table ID</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-group nzSearch [nzAddOnAfter]="SearchSuffix">
+                            <input nz-input formControlName="tableid" nzSize="large" placeholder="Table ID" />
+                        </nz-input-group>
+                    </nz-form-control>
+                    <ng-template #SearchSuffix>
+                        <button nz-button nzType="primary" nzSearch (click)="TableSelectVisible = true">
+                            <nz-icon nzType="appstore" />
+                        </button>
+                    </ng-template>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label>Guest Count</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count" nzSize="large"
+                            placeholder="Ex: 1" />
+                    </nz-form-control>
+                </nz-form-item>
+
+            </div>
+
+            <div class="row" style="gap:30px"> 
+                <nz-form-item>
+                    <nz-form-label>Date</nz-form-label>
+                    <nz-form-control>
+                        <nz-date-picker nz-input formControlName="date" nzSize="large"></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label>Time</nz-form-label>
+                    <nz-form-control>
+                        <nz-time-picker nzFormat="HH:mm" formControlName="time" nzSize="large"></nz-time-picker>
+                    </nz-form-control>
+                </nz-form-item>
+
+            </div>
+
+
+
+
+            <h3>Customer</h3>
+            <div style="width: 80%; ">
+                <div class="row" style="gap:30px">
+                    <nz-form-item>
+                        <nz-form-label>Name</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="name" nzSize="large" placeholder="Name" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>Phone</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="phone" nzSize="large" placeholder="Phone Number" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+                <nz-form-item>
+                    <nz-form-label>Email</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="email" nzSize="large" placeholder="Email" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <nz-form-item>
+                <nz-form-label>Notes</nz-form-label>
+                <nz-form-control>
+                    <textarea nz-input formControlName="notes" rows="3" placeholder="Additional notes"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-control>
+                    <button nz-button nzType="primary" [disabled]="ReservationForm.invalid">Submit</button>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+
+    </ng-container>
+</nz-modal>
+
+<nz-modal nzOkText="" nzCancelText="Close" [nzVisible]="TableSelectVisible" nzTitle="Select Table" nzCentered
+    nzWidth="70%">
+
+    <ng-container *nzModalContent>
+        <restaurant-layout style="height: 50vh;" [SelectionMode]="true" (TableSelected)="OnTableSelected($event)">
+
+        </restaurant-layout>
+    </ng-container>
+</nz-modal>

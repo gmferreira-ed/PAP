@@ -84,8 +84,9 @@ export class RestaurantLayout {
   @Input() DraggingViewport: boolean = false
   @Input() LoadingLayout: boolean = true
   @Input() EditMode: boolean = false
+  @Input() SelectionMode: boolean = false
 
-  @Output() ComponentSelected = new EventEmitter();
+  @Output() TableSelected = new EventEmitter();
 
   ContextMenuVisible = false
   HasClipboardContent = false
@@ -482,7 +483,7 @@ export class RestaurantLayout {
     if ((this.EditMode || Component.Type == 'Table' || Component.Type == 'RoundTable') && DragStartSucess) {
 
       this.SelectedComponent = Component
-      this.ComponentSelected.emit(Component)
+      this.TableSelected.emit(Component)
     }
 
     if (DragStartSucess && this.EditMode)

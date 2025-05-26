@@ -2,11 +2,14 @@
 import type { Request as Request } from 'express';
 
 function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | any[]): [string[], any[], string[]] {
-    const Columns: string[] = ExpectedColumns.map(col => `\`${col}\``);
+    const IsArray = Array.isArray(RequestData)
+    const DataArray = IsArray ? RequestData : [RequestData];
+
+
+
+    const Columns: string[] = IsArray ? ExpectedColumns.map(col => `\`${col}\``) : []
     const Values: any[] = []
     const Placeholders: string[] = []
-
-    const DataArray = Array.isArray(RequestData) ? RequestData : [RequestData];
 
 
     for (const Data of DataArray) {
@@ -15,13 +18,16 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
 
         ExpectedColumns.forEach((Column) => {
             const CorrespondingValue = Data[Column]
-            if (CorrespondingValue != undefined && CorrespondingValue != null) {
+            if (CorrespondingValue != undefined) {
                 Values.push(Data[Column]);
-            } else {
+                rowPlaceholders.push('?')
+                if (!IsArray) {
+                    Columns.push(Column)
+                }
+            } else if (IsArray) {
                 Values.push(null);
+                rowPlaceholders.push('?')
             }
-            rowPlaceholders.push('?')
-
         })
 
 
@@ -33,7 +39,7 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
     return [Columns, Values, Placeholders]
 }
 
-function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: string[]):[string|undefined, any[]] {
+function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: string[]): [string | undefined, any[]] {
     const Conditions: string[] = []
     const Values: any[] = []
 
@@ -44,21 +50,26 @@ function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: stri
             Values.push(RequestData[Key])
         }
     })
-    let WhereClause:string|undefined = Conditions.map(Key => `${Key}=?`).join(" AND ")
+    let WhereClause: string | undefined = Conditions.map(Key => `${Key}=?`).join(" AND ")
     if (WhereClause == '')
         WhereClause = undefined
     else
-        WhereClause = ' WHERE '+WhereClause
+        WhereClause = ' WHERE ' + WhereClause
 
     return [WhereClause, Values]
 }
 
-function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
+function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[], Limit?: number): [string, any[]] {
     let [Columns, Values] = QueryArray([], RequestData)
 
 
     const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
-    const Query = `SELECT * FROM ${TargetTable} ${WhereClause}`;
+    let Query = `SELECT * FROM ${TargetTable} ${WhereClause}`;
+
+    if (Limit){
+        Query += 'LIMIT ?'
+        Values.push(Limit)
+    }
 
     return [Query, [...Values, ...WClauseValues]]
 }
@@ -79,7 +90,7 @@ function BuildUpdateQuery(TargetTable: string, ExpectedColumns: string[], Reques
 
     let [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
 
-    
+
     const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
     const SetClause = Columns.map(col => `${col}=?`).join(", ")
 

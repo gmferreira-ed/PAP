@@ -39,11 +39,12 @@ Router.post('/auth/login', HandleEndpointFunction(async (req, res) => {
         const password = req.body.password
 
         const UserQuery = `SELECT password FROM users WHERE username = ?`
-        const [Result] = await Database.execute<any[]>(UserQuery, [username])
+        const [Result] = await Database.execute<any>(UserQuery, [username])
 
         if (Result[0]) {
             if (Result[0].password == password) {
                 req.session.user = username
+                req.session.userid = Result.userid
                 res.send({ username: username })
             } else {
                 res.status(404).send({ error: 'Incorrect password' })

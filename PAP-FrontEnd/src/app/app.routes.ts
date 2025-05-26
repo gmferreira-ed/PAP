@@ -3,7 +3,6 @@ import { UsersPage } from './Pages/Users/users.page';
 import { MenuPage } from './Pages/Menu/menu.page';
 import { SettingsPage } from './Pages/Settings/settings.page';
 import { CalendarPage } from './Pages/Calendar/calendar.page';
-import { FinancesPage } from './Pages/Finances/finances.page';
 import { StocksPage } from './Pages/Stock/stocks.page';
 import { ProfilePage } from './Pages/Profile/profile.page';
 import { LoginPage } from './Pages/Login/login.page';
@@ -14,6 +13,7 @@ import { ReceiptsPage } from './Pages/Receipts/receipts.page';
 import { RestaurantLayout } from './Components/layout/layout.component';
 import { LayoutEditorPage } from './Pages/LayoutEditor/layout-editor.page';
 import { CheckoutPage } from './Pages/Checkout/checkout.page';
+import { SchedulePage } from './Pages/Schedule/schedule.page';
 
 
 export const routes: Routes = [
@@ -36,7 +36,7 @@ export const routes: Routes = [
 
     { path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard] },
     { path: 'calendar', component: CalendarPage, canActivate: [PageAuthGuard] },
-    { path: 'finances', component: FinancesPage, canActivate: [PageAuthGuard] },
+    { path: 'reservations', component: SchedulePage, canActivate: [PageAuthGuard] },
     { path: 'stocks', component: StocksPage, canActivate: [PageAuthGuard] },
     { path: 'orders', component: CheckoutPage, canActivate: [PageAuthGuard] },
     { path: 'checkout/:table', component: CheckoutPage, canActivate: [PageAuthGuard] },

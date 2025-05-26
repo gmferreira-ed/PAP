@@ -9,6 +9,7 @@ body {
 
 img {
   pointer-events: none;
+  object-fit: cover;
 }
 
 .theme-light {
@@ -431,6 +432,13 @@ body.cursor-grabbing *:hover {
   cursor: grabbing !important;
 }
 
+// NG ZORRO OVERRIDES
+.ant-btn:not(.ant-btn-circle), .ant-input-wrapper, .ant-input-group, .ant-input, .ant-picker, .ant-input-number, .ant-input-number-handler-wrap {
+  border-radius: 10px;
+}
+.ant-input-wrapper{
+  overflow: hidden;
+}
 
 
 /* CORE ITEMS */
@@ -548,7 +556,8 @@ body.cursor-grabbing *:hover {
 
 .separator {
   width: 90%;
-  background-color: rgb(150, 150, 150, 0.3);
+  background-color: var(--primary-color);
+  opacity: 0.2;
   margin-top: 5px;
   margin-bottom: 5px;
   height: 0.5px;
