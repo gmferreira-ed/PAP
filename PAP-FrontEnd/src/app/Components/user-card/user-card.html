@@ -1,0 +1,7 @@
+@if (UserData){
+    <img class="user-pfp" [src]="UserImagesURL+UserData.username">
+    <div class="user-info">
+        <label class="fullname">{{UserData.fullname}}</label>
+        <label class="username">{{UserData.username}}</label>
+    </div>
+}

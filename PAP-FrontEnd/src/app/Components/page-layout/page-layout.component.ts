@@ -23,10 +23,14 @@ export class PageLayoutComponent {
   ActiveRoute = inject(ActivatedRoute)
 
 
-  Capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1);
+  FormatTitle(value: string): string {
+    const SplitTitle = value.split('-')
+    const CapitalizedWords = SplitTitle.map(word =>
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    );
+    return CapitalizedWords.join(' ')
   }
 
-  CurrentPage = this.Capitalize(this.Router.url.split('/')[1])
+  CurrentPage = this.FormatTitle(this.Router.url.split('/')[1])
 
 }

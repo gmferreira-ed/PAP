@@ -1,11 +1,12 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, HostBinding, Input, input } from '@angular/core';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 @Component({
-  selector: 'loading-screen',
-  imports: [NzSpinModule],
+    selector: 'loading-screen',
+    imports: [NzSpinModule, NgTemplateOutlet],
 
-  templateUrl: 'loading-screen.component.html',
-  styleUrl: 'loading-screen.component.less'
+    templateUrl: 'loading-screen.component.html',
+    styleUrl: 'loading-screen.component.less'
 })
 
 
@@ -14,7 +15,15 @@ export class LoadingScreen {
     @Input() IsLoading = false
     @Input() Unselectable = false
     @Input() Fullscreen = false
-    @Input() LoaderStyle: "Modern" = "Modern"
+    @Input() ShowContainer = false
+    @Input() LoaderStyle: "Squares" | "ThinkingDots" | "Spinner" = "Squares"
+
+    @Input() ShowBackground = true;
+
+    @HostBinding('class.nobackground')
+    get NoBackground(): boolean {
+        return !this.ShowBackground
+    }
 
     @HostBinding('class') get Classes(): string {
         const classes = [

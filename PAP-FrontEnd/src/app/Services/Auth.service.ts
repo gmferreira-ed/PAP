@@ -3,10 +3,14 @@ import { AppSettings } from './AppSettings';
 import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot } from '@angular/router';
 import { HttpService } from './Http.service';
 
-const Methods = ['GET', 'POST', 'PATCH', 'DELETE']
-type Method = typeof Methods[number]
+const PermissionTypes = ['GET', 'POST', 'PATCH', 'DELETE']
+type PermissionType = typeof PermissionTypes[number]
 
-
+type PagePermissions = {
+  CanView?: boolean,
+  CanUpdate?: boolean,
+  CanCreate?: boolean,
+}
 
 @Injectable({
   providedIn: 'root'
@@ -16,25 +20,31 @@ export class AuthService {
 
   router = inject(Router)
   HttpService = inject(HttpService)
-  User = signal<User | undefined>(undefined)
+  User = signal<string | null>(null)
+  UserPermissions: any = {}
   IsPageAdmin = signal<boolean>(false)
   AccessibleRoutes: any = []
   EndpointPermissions: any = []
 
-  Methods = Methods
+  PagePermissions: PagePermissions = {}
+  PermissionTypes = PermissionTypes
 
-  GetEndpointIdentifier(Endpoint: string, Method: Method) {
+  GetEndpointIdentifier(Endpoint: string, PermissionType: PermissionType) {
     const NormalizedEndpoint = Endpoint.replace(/^\/+/, '') + '/';
-    return `${Method}/api/${NormalizedEndpoint}`
+    return `${PermissionType}/${NormalizedEndpoint}`
   }
 
-  HasEndpointPermission(Endpoint: string, method: Method) {
-    const EndpointID = this.GetEndpointIdentifier(Endpoint, method)
-    
-    const EndpointPermissions = this.EndpointPermissions[EndpointID]
-    const UserPermissionLevel = this.User()?.permission_level || 0
+  HasEndpointPermission(Endpoint: string, PermissionType: PermissionType) {
+    const EndpointID = this.GetEndpointIdentifier(Endpoint, PermissionType)
 
-    if (EndpointPermissions && EndpointPermissions.permission_level <= UserPermissionLevel) {
+    const UserPerms = this.UserPermissions
+    const EndpointInfo = this.EndpointPermissions[EndpointID]
+    const EndpointPermissions = EndpointInfo?.Permissions
+    const IsAdmin = UserPerms.administrator == 1
+
+
+    const IsGlobal = EndpointPermissions?.includes('User')
+    if (IsGlobal || EndpointPermissions?.includes(UserPerms.permission_name) || EndpointInfo?.Unprotected || IsAdmin) {
       return true
     } else {
       return false
@@ -45,24 +55,22 @@ export class AuthService {
     if (!Path) {
       Path = this.router.url
     }
-    return this.AccessibleRoutes[Path]
+    return this.AccessibleRoutes[Path]?.CanView
   }
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    const [AuthResponse] = await this.HttpService.MakeRequest(AuthURL, 'POST')
+    const [AuthSuccess] = await this.HttpService.MakeRequest(AuthURL, 'POST', 'Failed to authenticate. Please try again')
 
 
-    if (AuthResponse) {
-      const User = AuthResponse.user
-      const EndpointPermissions = AuthResponse.role_permissions
+    if (AuthSuccess) {
+      const User = AuthSuccess.user
+      const EndpointPermissions = AuthSuccess.role_permissions
 
-      console.log("Logged in successfully as", User)
-
+   
+      console.log(AuthSuccess)
       this.EndpointPermissions = EndpointPermissions
       return [User, EndpointPermissions]
-
-
     } else if (!ActivateRoute.data['NoLogin']) {
       this.router.navigate(['/login'])
     }
@@ -88,79 +96,72 @@ export class AuthService {
 
   Authenticating: boolean | Promise<any> = false
 
+
+
   async Authenticate(CurrentPage: ActivatedRouteSnapshot, State: RouterStateSnapshot): Promise<[boolean, boolean?]> {
 
 
     const [User, EndpointPermissions, IgnoreRedirect] = await this.Login(CurrentPage)
     const RouteData = CurrentPage.data
 
+    const NoLogin = RouteData['NoLogin']
     // Load permissions data
-    if (User) {
+    if (User && !NoLogin) {
       this.User.set(User)
 
-      const Routes: { [key: string]: Route } = this.GetAllRoutes(this.router.config[0].children)
+      const Routes: { [key: string]: Route } = this.GetAllRoutes(this.router.config)
 
-      const CurrentPagePath = CurrentPage.url[0].path
-      const CurrentPageURL = State.url
-      //const ProtectedRoutes = this.router.config[0].children
+      const CurrentPageURL = this.getTemplatePath(CurrentPage)
+      //console.log(CurrentPageURL)
 
-      const UserPermissionLevel:number = User.permission_level
-      
-      for (const [RouterPath, RouterInfo] of Object.entries(Routes)) {
+      const AuthURL = new URL(`role-permissions/user`, AppSettings.APIUrl)
 
-        const RouterURL = RouterInfo.path
-        const RouterData = RouterInfo.data
-        const AccessEndpoint = RouterData && RouterData['AccessEndpoint']
+      const [UserPermissions] = await this.HttpService.MakeRequest(AuthURL, 'GET', 'Failed to load user permissions. Please try again')
 
+      if (UserPermissions) {
+        this.UserPermissions = UserPermissions
 
-        if (AccessEndpoint) {
-          const AccessEndpointPath = "GET/" + AccessEndpoint + "/"
-          const EndpointPermission = EndpointPermissions[AccessEndpointPath]
+        // LOAD OTHER PAGE PERMISSIONS
+        for (const [RouterPath, RouterInfo] of Object.entries(Routes)) {
 
-          // if (EndpointPermission){
-          //   console.log(AccessEndpointPath, UserPermissions.permission_level , EndpointPermission.permission_level)
-          // }
+          const RouterURL = RouterInfo.path
+          const RouterData = RouterInfo.data
 
-          if (!EndpointPermission || UserPermissionLevel >= EndpointPermission.permission_level) {
+          if (RouterData) {
+            const ViewEndpoint = RouterData['ViewEndpoint']
+            const CreateEndpoint = RouterData['CreateEndpoint']
+            const UpdateEndpoint = RouterData['UpdateEndpoint']
 
-            let IsAdmin = false
-            const AdminEndpoint = RouterData['AdminEndpoint']
-            if (AdminEndpoint) {
-              const AdminEndpointPath = "POST/" + AdminEndpoint + "/"
-              const AdminEndpointPermission = EndpointPermissions[AdminEndpointPath]
-
-              //console.log(AdminEndpointPath, AdminEndpointPermission)
-              if (AdminEndpointPermission && UserPermissionLevel >= AdminEndpointPermission.permission_level) {
-                IsAdmin = true
-              }
-            }
+            const CanView = (!ViewEndpoint && !CreateEndpoint) || (ViewEndpoint && this.HasEndpointPermission(ViewEndpoint, 'VIEW'))
+            const CanCreate = CreateEndpoint && this.HasEndpointPermission(CreateEndpoint, 'CREATE')
+            const CanUpdate = UpdateEndpoint && this.HasEndpointPermission(UpdateEndpoint, 'UPDATE')
 
             this.AccessibleRoutes[RouterPath] = {
-              IsAdmin: IsAdmin
+              CanView: CanView || CanCreate, // Allow access in case there is only a create endpoint
+              CanCreate: CanCreate,
+              CanUpdate: CanUpdate
             }
-          }
-        } else {
-          this.AccessibleRoutes[RouterPath] = {
+          } else {
+            this.AccessibleRoutes[RouterPath] = { CanView: true }
           }
         }
-      }
 
-      const CurrentPageData = this.AccessibleRoutes[CurrentPageURL]
+        // CHECK CURRENT PAGE ACCESS
+        if (CurrentPageURL) {
+          const CurrentPageData = this.AccessibleRoutes[CurrentPageURL]
+          this.PagePermissions = CurrentPageData
 
-      //    console.log(this.AccessibleRoutes)
+          if (CurrentPageData && CurrentPageData.CanView) {
+            //console.log("User has endpoint access")
+            return [true]
+          } else {
+            return [false]
+          }
 
-      if (CurrentPageData) {
-        if (CurrentPageData.IsAdmin) {
-          this.IsPageAdmin.set(true)
-          console.log("ADMIN VIEW")
-        } else {
-          this.IsPageAdmin.set(false)
         }
-        console.log("User has endpoint access")
-        return [true]
       }
-    } else if (RouteData['NoLogin']) {
-      return [true, true]
+    } else if (NoLogin) {
+      return [true]
     }
 
 
@@ -168,7 +169,19 @@ export class AuthService {
     return [false, IgnoreRedirect]
   }
 
+  private getTemplatePath(route: ActivatedRouteSnapshot): string {
+    const segments: string[] = [];
 
+    while (route) {
+      if (route.routeConfig?.path) {
+        segments.unshift(route.routeConfig.path);
+      }
+      route = route.parent!;
+    }
+
+    return '/'+segments.join('/');
+  }
+  
 
   constructor() { }
 }

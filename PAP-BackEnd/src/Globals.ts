@@ -21,8 +21,15 @@ const Database = mysql.createPool({
 
 
 
-async function GetTablePage(Table: string, PageNumber: number, PageSize: number, OrderBy: string = "") {
-  var SQLQuery = `SELECT * FROM ${Table}`
+async function GetPaginatedResult(Table: string, SQLQuery:string, SQLValues:any, 
+  PageNumber?: number|string, 
+  PageSize?: number|string, 
+  OrderBy?: string)
+:Promise<PaginatedResult> {
+
+
+  PageSize = PageSize ? Number(PageSize) : 25
+  PageNumber = PageNumber ? Number(PageNumber) : 1
 
   PageSize = Math.min(PageSize, 100)
 
@@ -34,12 +41,12 @@ async function GetTablePage(Table: string, PageNumber: number, PageSize: number,
       LIMIT ${PageSize} OFFSET ${(PageNumber - 1) * PageSize}`
   }
 
-  const [rows] = await Database.query(SQLQuery);
+  const [rows] = await Database.execute<any[]>(SQLQuery,SQLValues);
 
-  const PagesSQLQuery = `SELECT CEIL(COUNT(*) / ${PageSize}) AS total_pages FROM users;`
-  let [TotalPages] = await Database.query<any[]>(PagesSQLQuery);
+  const PagesSQLQuery = `SELECT CEIL(COUNT(*) / ${PageSize}) AS total_pages FROM ${Table};`
+  let [CountResult] = await Database.query<any[]>(PagesSQLQuery);
 
-  TotalPages = TotalPages[0].total_pages
+  const TotalPages:number = CountResult[0].total_pages
 
   return { Rows: rows, Pages: TotalPages }
 }
@@ -74,7 +81,7 @@ let EndpointsAttributes:{[EndpointID: string]: EndpointAttributes} = {}
 
 const EndpointMatches:{[key: string]:string} = {
   GET: 'VIEW',
-  PATCH: 'UPDATE',
+  PATCH: 'EDIT',
   POST: 'CREATE',
   DELETE: 'CREATE',
 }
@@ -84,7 +91,7 @@ const EndpointRegex = '^(.*[^/*])$'
 
 const OrdersWebsocket = new ExpressWebSocketServer('/orders')
 export {
-  Database, GetTablePage, HandleEndpointFunction, ErrorResponse,
+  Database, GetPaginatedResult, HandleEndpointFunction, ErrorResponse,
   OrdersWebsocket,
   EndpointsAttributes,
   EndpointRegex,

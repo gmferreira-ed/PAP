@@ -8,7 +8,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 
 
 
-var EndpointsData = new SimpleCache(async function ():Promise<Endpoints> {
+var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
 
   const StartTime = Date.now()
   const PermissionsQuery = `SELECT * FROM role_permissions ep`
@@ -16,25 +16,25 @@ var EndpointsData = new SimpleCache(async function ():Promise<Endpoints> {
 
   const EndpointPermissionsObject: Record<string, string[]> = {};
 
-EndpointPermissionProfiles.forEach((info: any) => {
-  const id = `${info.method}/${info.endpoint}`;
+  EndpointPermissionProfiles.forEach((info: any) => {
+    const id = `${info.method}/${info.endpoint}`;
 
-  if (!EndpointPermissionsObject[id]) {
-    EndpointPermissionsObject[id] = [];
-  }
+    if (!EndpointPermissionsObject[id]) {
+      EndpointPermissionsObject[id] = [];
+    }
 
-  EndpointPermissionsObject[id].push(info.role);
-});
+    EndpointPermissionsObject[id].push(info.role);
+  });
 
 
-  const FinalResult:Endpoints = {}
+  const FinalResult: Endpoints = {}
 
   for (const [EndpointID, EndpointAttributes] of Object.entries(EndpointsAttributes)) {
 
     const EndpointDBPermissions = EndpointPermissionsObject[EndpointID]
-    let EndpointInfo:EndpointData = FinalResult[EndpointID]
+    let EndpointInfo = FinalResult[EndpointID]
 
-    if (!EndpointInfo){
+    if (!EndpointInfo) {
       EndpointInfo = {
         ID: EndpointID,
         DisplayName: EndpointAttributes.DisplayName,
@@ -47,7 +47,7 @@ EndpointPermissionProfiles.forEach((info: any) => {
       FinalResult[EndpointID] = EndpointInfo
     }
 
-    if (EndpointDBPermissions){
+    if (EndpointDBPermissions) {
       EndpointInfo.Permissions = EndpointDBPermissions
     }
 
@@ -63,7 +63,7 @@ EndpointPermissionProfiles.forEach((info: any) => {
 
 
 
-async function GetUserData(User: User | string):Promise<User> {
+async function GetUserData(User: User | string): Promise<User> {
   const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE users.username = ?`
   const [permission_profiles] = await Database.execute<any>(UserPermissionsQuery, [User]);
 
@@ -83,16 +83,16 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
 
   const User = (ParamUser || Request.session.user) as string
 
-  const Permissions:Endpoints = await EndpointsData.Get()
+  const Permissions: Endpoints = await EndpointsData.Get()
   const EndpointData = Permissions[Route]
 
 
   // Support /* to include all endpoints after it
   // For example, angular uses the main endpoint, in this case /app, to fetch assets (Ex: /app/favicon.ico)
   // Instead of checking if the route contains "app" or unprotecting each asset /app provides, i added support to wildcard routes
-  if (!EndpointData){
-    const MotherRoute = Route.split('/').slice(0, 3).join('/')+'/*'
-    if (Permissions[MotherRoute]?.Unprotected){
+  if (!EndpointData) {
+    const MotherRoute = Route.split('/').slice(0, 3).join('/') + '/*'
+    if (Permissions[MotherRoute]?.Unprotected) {
       return [true]
     }
   }
@@ -101,8 +101,8 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
   // By default, anyone has permissions
   if (EndpointData?.Unprotected) {
     return [true]
-  }else if (!EndpointData){
-    console.error("Missing permissions data on",Route)
+  } else if (!EndpointData) {
+    console.error("Missing permissions data on", Route)
     return [false, 502, 'This endpoint has missing permissions data.']
   }
 
@@ -163,8 +163,35 @@ async function PermissionsMiddleware(request: Request, response: Response, next:
   return HasAccess
 }
 
+let HardCodedAdmins = ['gmferreira']
+async function GetUserPermissions(User: User | string) {
+  const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE username = ?`
+  const [permission_profiles] = await Database.execute<any>(UserPermissionsQuery, [User]);
+
+
+  let UserPermissions = permission_profiles[0]
+  if (!UserPermissions) {
+    UserPermissions = {
+      permission_level: 1,
+      permission_name: "user"
+    }
+  }
+
+  if (HardCodedAdmins.includes(User.toString())) {
+    UserPermissions = {
+      permission_level: 99999,
+      permission_name: 'Admin',
+      administrator: true,
+    }
+  }
+
+  return UserPermissions
+}
+
+
 export default {
   PermissionsMiddleware: PermissionsMiddleware,
   EndpointsData: EndpointsData,
   GetUserData: GetUserData,
+  GetUserPermissions: GetUserPermissions
 }

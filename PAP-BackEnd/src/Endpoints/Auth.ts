@@ -1,7 +1,8 @@
 
 import express from 'express'
 const Router = express.Router();
-import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
+import { Database, HandleEndpointFunction } from '../Globals'
+import PermissionsService from '../Services/PermissionsService';
 
 
 /**
@@ -16,7 +17,9 @@ Router.post('/auth', HandleEndpointFunction(async (req, res) => {
     const user = req.session.user
 
     if (user) {
-        res.send({ user: user })
+        const EndpointPerms = await PermissionsService.EndpointsData.Get()
+
+        res.send({ user: user, role_permissions:EndpointPerms })
     } else {
         res.status(401).send({ error: 'No login' })
     }

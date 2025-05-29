@@ -1,51 +1,56 @@
 <div class="navbar">
     <ul nz-menu [nzTheme]="this.ThemeService.Theme()" nzMode="inline">
         <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">
-            <img src="Icons/dashboard.svg" class="nav-button-icon">
+             <icon type="dashboard" [fill]="true"></icon>
             <span>{{'Dashboard' | translate}}</span>
         </li>
 
-        <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
-            <img src="Icons/receipt_long.svg" class="nav-button-icon">
-            <span>{{'Receipts' | translate}}</span>
-        </li>
-
         <li nz-menu-item nzMatchRouter="/orders" routerLink="/orders">
-            <img src="Icons/checkout.svg" class="nav-button-icon">
+             <icon type="checkout" [fill]="true"></icon>
             <span>{{'Orders' | translate}}</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/reservations" routerLink="/reservations">
-            <img src="Images/Icons/calendar.svg" class="nav-button-icon">
+             <icon type="calendar"></icon>
             <span>{{'Reservations' | translate}}</span>
         </li>
 
 
         <li nz-menu-item nzMatchRouter="/stocks" routerLink="/stocks">
-            <img src="Images/Icons/stocks.svg" class="nav-button-icon">
+             <icon type="stocks" [fill]="true"></icon>
             <span>{{'Stocks' | translate}}</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/analytics" routerLink="/analytics">
-            <img src="Icons/chart-line.svg" class="nav-button-icon">
+             <icon type="chart-line"></icon>
             <span>{{'Analytics' | translate}}</span>
+        </li>
+
+        <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
+             <icon type="receipt_long" [fill]="true"></icon>
+            <span>{{'Receipts' | translate}}</span>
         </li>
 
 
         <div class="menu-divider"></div>
 
         <li nz-menu-item nzMatchRouter="/menu" routerLink="/menu">
-            <img src="Images/Icons/menu.svg" class="nav-button-icon">
+             <icon type="menu" [fill]="true"></icon>
             <span>{{'Menu' | translate}}</span>
         </li>
 
         <li nz-menu-item nzMatchRouter="/users" routerLink="/users">
-            <img src="Images/Icons/account.svg" class="nav-button-icon">
+             <icon type="account" [fill]="true"></icon>
             <span>{{'Users' | translate}}</span>
         </li>
 
+        <li nz-menu-item nzMatchRouter="/role-management" routerLink="/role-management">
+             <icon type="shield"></icon>
+            <span>{{'Role Management' | translate}}</span>
+        </li>
+
         <li nz-menu-item nzMatchRouter="/settings" routerLink="/settings">
-            <nz-icon nzType="setting" />
+             <icon type="settings" [fill]="true"></icon>
             <span>{{'Settings' | translate}}</span>
         </li>
     </ul>

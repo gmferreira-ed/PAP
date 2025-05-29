@@ -5,6 +5,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Location } from '@angular/common';
 import { AuthService } from '../../Services/Auth.service';
 import { AppSettings } from '../../Services/AppSettings';
+import { HttpService } from '../../Services/Http.service';
 
 @Component({
   selector: 'topbar',
@@ -16,10 +17,21 @@ export class Topbar {
   MenuCollapsed = false
 
   UserImagesURL = AppSettings.UserImagesURL
-  
+
+  Router = inject(Router)
   location = inject(Location)
   AuthService = inject(AuthService)
+  HttpService = inject(HttpService)
 
   User = this.AuthService.User
   currentpage = this.location.path()
+
+  async Logout() {
+    const LogoutSucess = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/logout', 'POST', 'Failed to logout')
+    if (LogoutSucess) {
+      this.Router.navigate(['/login']).then(()=>{
+        window.location.reload()
+      })
+    }
+  }
 }

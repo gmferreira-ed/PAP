@@ -55,7 +55,7 @@ export class HttpService {
 
       // PURPOSITAL DELAY TESTS
       const RequestDelay = AppSettings.RequestDelay
-      if (RequestDelay && RequestDelay > 0 && !RequestURL.pathname.includes('auth') && (!RequestURL.pathname.includes('permission-profiles') || Method != 'GET')) {
+      if (RequestDelay && RequestDelay > 0 && !RequestURL.pathname.includes('auth') && (!RequestURL.pathname.includes('role-permissions/user') || Method != 'GET')) {
         await this.wait(RequestDelay)
       }
 

@@ -23,7 +23,7 @@ export class IconsModule {
   @Input() fill:boolean|string = false
   @Input() strokewidth:number = 2
   @Input() color:string = 'currentcolor'
-  @Input() size:string = '16px'
+  @Input() size:string = '18px'
 
 
 

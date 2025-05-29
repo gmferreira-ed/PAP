@@ -3,12 +3,20 @@
         <img class='logo' src="Images/RestroLink.png">
     </div>
     <div class="section right">
-        <label class="user">{{User()}}</label>
-        <div class="user-pfp">
-            @if (User()){
+        @if (User()){
+            <label class="user">{{User()}}</label>
+            <div class="user-pfp">
                 <img class="pfp-image" [src]="UserImagesURL+User()" onerror="this.src='Images/Icons/account.svg'">
-            }
-        </div>
 
+            </div>
+            <div class="dropdown">
+                <div class="option" [routerLink]="'/profile/'+User()">
+                    Profile
+                </div>
+                <div class="option" (click)="Logout()">
+                    Logout
+                </div>
+            </div>
+        }
     </div>
 </div>

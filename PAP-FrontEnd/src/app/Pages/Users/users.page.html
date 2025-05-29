@@ -1,18 +1,24 @@
 <page-layout>
 
 
-    <nz-table style="width: 100%;" [nzBordered]="true" [nzShowPagination]="true" [nzData]="UsersList"
-        [nzLoading]="LoadingUsers" [nzTotal]="PageCount" [(nzPageSize)]="PageSize" [(nzPageIndex)]="PageNumber"
+    <nz-table style="width: 100%;"  nzAlign="left"
+    
+        [nzData]="UsersList"
+        [nzLoading]="LoadingUsers" 
+       
+
+        [nzShowPagination]="true" 
+        [nzTotal]="PageCount" [(nzPageSize)]="PageSize" [(nzPageIndex)]="PageNumber"
         [nzPageSizeOptions]="[10,20,50,100]" [nzShowSizeChanger]="true" [nzFrontPagination]="false"
+
         (nzPageIndexChange)="LoadPage()" (nzPageSizeChange)="LoadPage()">
         <thead>
             <tr>
                 <th>{{'Name'| translate}}</th>
-                <th>{{'ID'| translate}}</th>
+                <th>{{'Role'| translate}}</th>
                 <th>{{'Email'| translate}}</th>
                 <th>{{'Phone'| translate}}</th>
-                <th>{{'Adress'| translate}}</th>
-                <th>{{'Status'| translate}}</th>
+                <th>{{'Active'| translate}}</th>
             </tr>
         </thead>
 
@@ -23,14 +29,14 @@
                 <td>
                     <img class="profile-pfp" [src]="UserImagesURL+UserInfo.username"
                         onerror="this.src='Images/Profile.png'">
-                    <label>{{UserInfo.username}}</label>
+                    <label>{{UserInfo.fullname}}</label>
                 </td>
-                <td>{{UserInfo.userid}}</td>
+                <td>{{UserInfo.role}}</td>
                 <td>{{UserInfo.email}}</td>
                 <td>{{UserInfo.phone}}</td>
-                <td>{{UserInfo.adress}} {{UserInfo.city}} {{UserInfo.country}} {{UserInfo.postalcode}}</td>
+                <!-- <td>{{UserInfo.adress}} {{UserInfo.city}} {{UserInfo.country}} {{UserInfo.postalcode}}</td> -->
                 <td>
-                    <div class="circle" [ngStyle]="{'background-color': UserInfo.active ? 'green' : 'red'}"></div>
+                    <div class="circle" [ngStyle]="{'background-color': UserInfo.active ? 'rgb(0,180,0)' : 'rgb(220,0,0)'}"></div>
                 </td>
             </tr>
             }

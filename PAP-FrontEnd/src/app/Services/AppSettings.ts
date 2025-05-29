@@ -7,5 +7,5 @@ export class AppSettings {
     static ImagesURL = this.APIUrl+'images/'
     static UserImagesURL = this.ImagesURL+'users/'
     
-    static RequestDelay = false && isDevMode() ? 1 : 0
+    static RequestDelay = isDevMode() ? 0.5 : 0
 }

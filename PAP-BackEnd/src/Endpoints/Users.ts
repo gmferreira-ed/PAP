@@ -1,7 +1,8 @@
 
 import express from 'express'
 const Router = express.Router();
-import { Database, HandleEndpointFunction, GetTablePage } from '../Globals'
+import { Database, HandleEndpointFunction, GetPaginatedResult } from '../Globals'
+import SQLUtils from '../Services/SQLUtils';
 
 
 /**
@@ -21,7 +22,9 @@ Router.get('/users', HandleEndpointFunction(async (req, res) => {
 
         pagesize = Math.min(pagesize, 50)
 
-        var result = await GetTablePage("users", page, pagesize)
+        const [UsersQuery] = SQLUtils.BuildSelectQuery('users', {}, [])
+
+        var result = await GetPaginatedResult("users",UsersQuery,[], page, pagesize)
         res.send(result)
     } else {
         const UserQuery = `SELECT * FROM users WHERE username=?`

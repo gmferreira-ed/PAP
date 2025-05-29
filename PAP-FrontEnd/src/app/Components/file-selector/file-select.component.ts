@@ -29,6 +29,7 @@ export class FileSelectComponent {
   UploadsProgress: UploadsProgress = {}
 
   @Input() Multiple: boolean = false
+  @Input() disabled: boolean = false
   @Input() UploadDisplayMode: 'self' | 'none' = 'self'
   @Input() InputName: string = 'image'
 

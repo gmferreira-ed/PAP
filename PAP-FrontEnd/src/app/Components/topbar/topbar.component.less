@@ -1,55 +1,103 @@
-
-.topbar{
+.topbar {
     display: flex;
     width: 100vw;
     height: var(--topbar-size);
     background-color: #000d18;
-    box-shadow: 0px 3px 8px 5px rgba(0,0,0,0.5);
+    box-shadow: 0px 3px 8px 5px rgba(0, 0, 0, 0.5);
     z-index: 50;
 
     justify-content: space-between;
     align-items: center;
     padding: 1.5em;
 
-    
+
 }
 
-.section{
+.section {
     display: flex;
+    position: relative;
     align-items: center;
     height: 100%;
     flex: 1;
 
-    &.left{
+    &.left {
         justify-content: start;
     }
-    &.center{
+
+    &.center {
         justify-content: center;
     }
-    &.right{
+
+    &.right {
         justify-content: end;
+
+        &:hover {
+            .dropdown {
+                opacity: 1;
+            }
+        }
     }
 }
 
-.logo{
+.dropdown {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 8px;
+
+    min-width: 150px;
+    min-height: 50px;
+
+    background-color: var(--secondary-color);
+    box-shadow: 0px 0px 5px 1px var(--shadow-color);
+
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+
+    right: 0;
+    top: calc(100%);
+    z-index: 51;
+
+    
+    .option {
+        height: 40px;
+        padding: 10px;
+        align-items: center;
+
+        border-radius: inherit;
+
+        background-color: var(--secondary-color);
+        border-bottom: 1px solid var(--secondary-color-3);
+
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--secondary-color-2);
+        }
+    }
+
+}
+
+.logo {
     object-fit: cover;
     height: 100%;
 }
 
-.user{
+.user {
     color: white;
     font-size: 14px;
     margin-right: 10px;
 }
 
-.user-pfp{
+.user-pfp {
     height: 100%;
     border-radius: 100px;
     aspect-ratio: 1 / 1;
     border: 1.5px solid rgba(255, 255, 255, 0.5);
 }
 
-.pfp-image{
+.pfp-image {
     height: 100%;
     width: 100%;
     object-fit: cover;

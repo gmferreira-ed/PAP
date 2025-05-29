@@ -1,8 +1,13 @@
-
-<loading-screen [IsLoading]="LoadingMenu" [Fullscreen]="true"></loading-screen>
 <page-layout>
 
-    
+
+    <loading-screen 
+        [IsLoading]="LoadingMenu" 
+        [Fullscreen]="false" 
+        [ShowBackground]="true"
+        LoaderStyle="Spinner" 
+        [ShowContainer]="true">
+    </loading-screen>
 
     <!-- CATEGORY SELECTION -->
     <div class="row-layout">
@@ -21,8 +26,7 @@
         <div class="menu-items">
             @for (MenuItem of CurrentMenuList(); track $index) {
             <div class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
-                <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'"
-                    class="menu-item-image-container">
+                <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'" class="menu-item-image-container">
 
                 <label class="menu-item-title">{{MenuItem.name}}</label>
                 <label class="menu-item-price">{{MenuItem.price | currency}}</label>
@@ -46,10 +50,11 @@
     [nzTitle]="'Item Info' | translate" (nzOnClose)="DrawerOpen = false">
     <div class="menu-item-info-display" *nzDrawerContent>
         <div class="menu-item-image-container">
-            <img [src]="FileSelector.Files[0]?.imagebase64 || SelectedItemInfo.ImageURL" onerror="this.src='Images/Dish.png'"
-                class="menu-item-image">
+            <img [src]="FileSelector.Files[0]?.imagebase64 || SelectedItemInfo.ImageURL"
+                onerror="this.src='Images/Dish.png'" class="menu-item-image">
             <div class="overlay invisible">
-                <file-select #FileSelector [override]="true" UploadDisplayMode="none" (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
+                <file-select #FileSelector [override]="true" UploadDisplayMode="none"
+                    (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
                     <label>{{'Edit Image' | translate}}</label>
                     <nz-icon nzType="edit"></nz-icon>
                 </file-select>
@@ -58,18 +63,23 @@
 
         <label class="menu-item-title">{{SelectedItemInfo.name}}</label>
         <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
-        <label class="menu-item-price" [style.text-decoration]="!SelectedItemInfo.active ? 'line-through' : ''">{{SelectedItemInfo.price | currency}}</label>
+        <label class="menu-item-price"
+            [style.text-decoration]="!SelectedItemInfo.active ? 'line-through' : ''">{{SelectedItemInfo.price |
+            currency}}</label>
         @if (!SelectedItemInfo.active){
-            <label class="menu-item-category">{{'Inactive' | translate}}</label>
+        <label class="menu-item-category">{{'Inactive' | translate}}</label>
         }
         <nz-row style="gap:10px">
-            <button nz-button nzType="primary" nzShape="circle" nz-tooltip [nzTooltipTitle]="'Edit product info' | translate">
+            <button nz-button nzType="primary" nzShape="circle" nz-tooltip
+                [nzTooltipTitle]="'Edit product info' | translate">
                 <nz-icon nzType="edit" nzTheme="fill" />
             </button>
-            <button nz-button nzType="dashed" nzShape="circle" (click)="PromptToggleItemActive()" nz-tooltip [nzTooltipTitle]="'Toggle product availability' | translate">
+            <button nz-button nzType="dashed" nzShape="circle" (click)="PromptToggleItemActive()" nz-tooltip
+                [nzTooltipTitle]="'Toggle product availability' | translate">
                 <nz-icon nzType="stop" nzTheme="fill" />
             </button>
-            <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()" nz-tooltip [nzTooltipTitle]="'Delete product' | translate">
+            <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()" nz-tooltip
+                [nzTooltipTitle]="'Delete product' | translate">
                 <nz-icon nzType="delete" nzTheme="fill" />
             </button>
         </nz-row>
