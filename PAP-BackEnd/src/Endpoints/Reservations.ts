@@ -19,9 +19,17 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
 
     const Query = req.query
 
-    const Limit = Query.Limit ? Math.min(Number(Query.Limit), 250) : 250
+    const Values: any = [Query.StartDate]
+    var ReservationsQuery = 'SELECT * FROM reservations '
 
-    const [ReservationsQuery , Values] = SQLUtils.BuildSelectQuery('reservations', Query, [], Limit)
+    if (Query.EndDate && Query.EndDate != 'undefined') {
+        ReservationsQuery += ' WHERE DATE(`date`) BETWEEN DATE(?) AND DATE(?)';
+        Values.push(Query.EndDate)
+    } else if (Query.StartDate) {
+        ReservationsQuery += 'WHERE DATE(?) = DATE(`date`)'
+    }
+
+
 
     const [Reservations] = await Database.execute<any>(ReservationsQuery, Values)
 
@@ -35,14 +43,15 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
  * @method POST
  * @summary "Create/Cancel reservations"
  */
-Router.post('/reservations',  HandleEndpointFunction(async (req, res) => {
+Router.post('/reservations', HandleEndpointFunction(async (req, res) => {
 
     const Body = req.body
-    Body.creator_id = req.session.user
+    Body.creator_id = req.session.userid
 
     const [ReservationQuery, Values] = SQLUtils.BuildInsertQuery('reservations', [
         'tableid',
         'creator_id',
+        'date',
         'name',
         'email',
         'phone',
@@ -50,6 +59,8 @@ Router.post('/reservations',  HandleEndpointFunction(async (req, res) => {
         'reservation_time',
         'notes',
     ], Body)
+
+    const [Result] = await Database.execute(ReservationQuery, Values)
 
     res.send()
 
@@ -62,7 +73,7 @@ Router.post('/reservations',  HandleEndpointFunction(async (req, res) => {
  * @summary "Change reservations info"
  */
 Router.patch('/reservations', HandleEndpointFunction(async (req, res) => {
-    
+
 
 
 }));

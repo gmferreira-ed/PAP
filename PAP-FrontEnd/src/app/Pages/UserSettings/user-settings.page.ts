@@ -6,12 +6,12 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'settings-page',
+  selector: 'user-settings-page',
   imports: [PageLayoutComponent, FormsModule, NzRadioModule, TranslateModule],
-  templateUrl: './settings.page.html',
-  styleUrl: './settings.page.css'
+  templateUrl: './user-settings.page.html',
+  styleUrl: './user-settings.page.css'
 })
-export class SettingsPage {
+export class UserSettingsPage {
   ThemeService = inject(ThemeService)
   TranslateService = inject(TranslateService)
 

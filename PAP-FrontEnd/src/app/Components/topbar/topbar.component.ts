@@ -6,10 +6,11 @@ import { Location } from '@angular/common';
 import { AuthService } from '../../Services/Auth.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { HttpService } from '../../Services/Http.service';
+import { IconsModule } from '../icon/icon.component';
 
 @Component({
   selector: 'topbar',
-  imports: [RouterModule, NzMenuModule, NzIconModule],
+  imports: [RouterModule, NzMenuModule, IconsModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.less'
 })

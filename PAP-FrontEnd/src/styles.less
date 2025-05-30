@@ -64,8 +64,10 @@ img {
   --error-color: #EF5350;
   --warning-color: #FFCA28;
   --success-color: #66BB6A;
+}
 
-  //  TEXT COLORS
+body:not(.theme-light){
+    //  TEXT COLORS
   label,
   h1,
   h2,
@@ -106,7 +108,10 @@ img {
   .ant-select-selector,
   button:not(.ant-btn-primary):not(.ant-switch),
   .ant-select:not(.ant-select-customize-input) .ant-select-selector,
-  .ant-radio-button-wrapper {
+  .ant-radio-button-wrapper,
+  .ant-picker,
+  .ant-input-number-handler-wrap,
+  .ant-input-number {
     background: var(--secondary-color);
 
     .anticon {
@@ -172,10 +177,6 @@ img {
     background-color: color-mix(in srgb, var(--secondary-color), white 5%) !important;
 
   }
-}
-
-label {
-  color: var(--primary-color);
 }
 
 .ant-menu {
@@ -255,6 +256,10 @@ div {
   flex-direction: row;
   align-items: center;
   gap: 5px;
+}
+
+.fixed {
+  position: fixed;
 }
 
 .flex {
@@ -410,6 +415,7 @@ caption {
 
   display: flex;
   flex-direction: column;
+  position: relative;
 
   padding: 20px;
   border-radius: 10px;
@@ -424,6 +430,54 @@ caption {
     margin-bottom: 10px;
 
   }
+}
+
+.reservation-card{
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+
+  .table{
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .time_to{
+    opacity: 0.5;
+  }
+}
+
+.prompt {
+    display: flex;
+    flex-direction: column;
+
+    position: absolute;
+
+    background-color: var(--secondary-color);
+    box-shadow: 0px 0px 5px 1px var(--shadow-color);
+
+    padding: 10px;
+    border-radius: 3px;
+
+    min-width: 300px;
+    min-height: 100px;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+
+    z-index: 10;
+
+    &.visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .header {
+        font-size: 18px;
+        font-weight: 600;
+    }
 }
 
 

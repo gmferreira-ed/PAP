@@ -1,6 +1,7 @@
 .calendar {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     width: 75%;
     height: 100%;
@@ -17,6 +18,8 @@
         width: 100%;
 
         .month {
+            display: flex;
+            gap: 5px;
             font-size: 18px;
             font-weight: 500;
         }
@@ -103,7 +106,7 @@
         grid-template-rows: 120px;
         grid-auto-rows: 120px;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        
+
 
         overflow-x: none;
         overflow-y: auto;
@@ -112,13 +115,15 @@
         //border: 1px solid #CCCCCC;
 
         .day-block {
+            display: flex;
+            flex-direction: column;
             flex: 1;
 
 
             min-height: 100px;
             position: relative;
 
-            cursor:pointer;
+            cursor: pointer;
             background-color: var(--secondary-color);
 
             border-bottom: 1px solid #CCCCCC;
@@ -128,14 +133,26 @@
 
             transition: all 0.2s ease-out;
 
-            &:hover{
+            &:hover {
                 background-color: var(--accent-color-light);
             }
 
-            .day-number {
-                position: absolute;
-                left: 10px;
-                top: 10px;
+
+            .reservations {
+                overflow-y: auto;
+
+                &::-webkit-scrollbar {
+                    width: 6px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background-color: rgba(100, 100, 100, 0.5);
+                    border-radius: 3px;
+                }
             }
         }
     }
@@ -143,7 +160,9 @@
 
     .schedule-container {
         display: flex;
+        position: relative;
         overflow-y: auto;
+        margin-bottom: 20px;
 
         &::-webkit-scrollbar {
             width: 8px;
@@ -169,6 +188,40 @@
         display: flex;
         flex: 1;
 
+        .collumn {
+            position: relative;
+        }
+
+        .reservation {
+            display: flex;
+            align-items: center;
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            min-height: 35px;
+
+            padding: 5px;
+            border-radius: 15px;
+
+            background-color: var(--accent-color);
+            color: white;
+
+            cursor: pointer;
+
+            transition: opacity 0.2s linear, box-shadow 0.1s ease-out, transform 0.1s ease-out;
+            &:hover:not(.selected){
+                opacity: 0.8;
+            }
+
+            &.selected{
+                transform: scale(1.05);
+                box-shadow: 0px 0px 10px 5px color-mix(in srgb, var(--primary-color), transparent 50%);
+                z-index: 10;
+            }
+        }
 
     }
 
@@ -192,7 +245,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transform: translateY(50%);
+        transform: translateY(-50%);
     }
 
     .line {
@@ -205,5 +258,11 @@
     .interval {
         border-left: 1px solid color-mix(in srgb, var(--primary-color-2), transparent 50%);
         border-bottom: 1px solid color-mix(in srgb, var(--primary-color-2), transparent 50%);
+    }
+}
+
+.today-reservations{
+    .reservations{
+        height: 100%;
     }
 }

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { UsersPage } from './Pages/Users/users.page';
 import { MenuPage } from './Pages/Menu/menu.page';
-import { SettingsPage } from './Pages/Settings/settings.page';
+import { UserSettingsPage } from './Pages/UserSettings/user-settings.page';
 import { StocksPage } from './Pages/Stocks/stocks.page';
 import { ProfilePage } from './Pages/Profile/profile.page';
 import { LoginPage } from './Pages/Login/login.page';
@@ -13,6 +13,7 @@ import { LayoutEditorPage } from './Pages/LayoutEditor/layout-editor.page';
 import { CheckoutPage } from './Pages/Checkout/checkout.page';
 import { SchedulePage } from './Pages/Schedule/schedule.page';
 import { RoleManagementPage } from './Pages/RoleManager/role-manager.page';
+import { RestaurantSettingsPage } from './Pages/RestaurantSettings/restaurant-settings.page';
 
 
 export const routes: Routes = [
@@ -84,5 +85,7 @@ export const routes: Routes = [
     
     { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
-    { path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard] },
+
+    { path: 'user-settings', component: UserSettingsPage, canActivate: [PageAuthGuard] },
+    { path: 'restaurant-settings', component: RestaurantSettingsPage, canActivate: [PageAuthGuard] },
 ];

@@ -11,9 +11,15 @@
             </div>
             <div class="dropdown">
                 <div class="option" [routerLink]="'/profile/'+User()">
+                    <icon type="account" [fill]="true"></icon>
                     Profile
                 </div>
+                <div class="option" [routerLink]="'/user-settings'">
+                    <icon type="settings" [fill]="true"></icon>
+                    Settings
+                </div>
                 <div class="option" (click)="Logout()">
+                    <icon type="logout" [fill]="true"></icon>
                     Logout
                 </div>
             </div>

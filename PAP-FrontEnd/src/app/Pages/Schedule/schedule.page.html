@@ -1,6 +1,7 @@
 <page-layout>
     <div class="flex" style="width: 100%; height: 90%; gap:10px">
         <main class="calendar">
+            <loading-screen [IsLoading]="LoadingReservations"></loading-screen>
 
             @let DaysToDisplay = ViewType == 'Day' ? 1 : 3;
             @let DaysArray = [].constructor(DaysToDisplay);
@@ -8,16 +9,18 @@
             <header class="topbar">
                 <div class="section left">
                     @if (ViewType != 'All'){<icon type="calendar" style="margin-right: 5px;"></icon>}
-                    <label class="month">
+                    <div class="month">
                         @if (ViewType != 'All'){
-                        {{CurrentDate | date:'fullDate'}}
+                            <label>{{CurrentDate | date:'fullDate'}}</label>
+                            <button nz-button (click)="NavigateTime(-1, $event)"><nz-icon nzType="left"></nz-icon></button>
+                            <button nz-button (click)="NavigateTime(1, $event)"><nz-icon nzType="right"></nz-icon></button>
                         }@else {
-                        {{'All Reservations' | translate}}
+                            {{'All Reservations' | translate}}
                         }
-                    </label>
+                    </div>
                 </div>
                 <div class="section right">
-                    <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType">
+                    <nz-radio-group nzButtonStyle="solid" [ngModel]="ViewType" (ngModelChange)="SetView($event)">
                         <label nz-radio-button nzValue="Day">{{'Day' | translate}}</label>
                         <label nz-radio-button nzValue="Week">{{'Week' | translate}}</label>
                         <label nz-radio-button nzValue="Month">{{'Month' | translate}}</label>
@@ -30,11 +33,18 @@
             @if (ViewType == 'Day' || ViewType == 'Week'){
 
             <header class="days">
-                <section class="hours collumn"></section>
+                <!-- FILLER -->
+                <section class="hours collumn" style="justify-content: end;">
+                    @if (SheduleScroll <= 20){ <label style="transform: translateY(50%);">
+                        {{OpeningHours | date: 'HH:mm'}}
+                        </label>
+                        }
+                </section>
+
                 <div class="section center">
                     @for (DayN of DaysArray; track $index){
                     @let DayDate = DateFromDay($index);
-                    <div class="day" (click)="CurrentDate = DayDate">
+                    <div class="day" (click)="CurrentDate = DayDate; LoadReservations()">
                         <label class="number"
                             [class.active]="DayDate.getDate() == CurrentDate.getDate()">{{DayDate.getDate()}}</label>
                         <label class="name">
@@ -45,40 +55,140 @@
                 </div>
             </header>
 
-            <div class="schedule-container">
-                <section class="hours collumn">
+            <div class="schedule-container" #ScheduleContainer (scroll)="SheduleScroll = ScheduleContainer.scrollTop">
 
+
+                <!-- SIDE DAY TIMESTAMPS -->
+                <section class="hours collumn">
                     @for (Time of GetTimeIntervals(); track $index){
                     <div class="interval-hour">
+                        @if ($index != 0){
                         <label>
                             {{Time | date: 'HH:mm'}}
                         </label>
                         <div class="line"></div>
-                    </div>
-                    }
-                </section>
-                <section class="schedule">
-                    @for (DayN of DaysArray; track $index){
-                    @let DayDate = DateFromDay($index);
-                    <div class="collumn fill">
-                        @for (Time of GetTimeIntervals(); track $index){
-                        <div class="interval">
-                        </div>
                         }
                     </div>
                     }
                 </section>
-            </div>
 
+                <!-- INTERVAL COLLUMNS -->
+                <section class="schedule">
+                    @for (DayN of DaysArray; track $index){
+                        @let DayDate = DateFromDay($index);
+                        <div class="collumn fill" (click)="PromptBookReservation($event, DayDate)">
+
+                            <!-- TIME BLOCK -->
+                            @for (Time of GetTimeIntervals(); track $index){
+                                <div class="interval"></div>
+                            }
+
+                            <!-- RESERVATION -->
+                             @let MinFullContentWidth = ViewType=='Week' ? 33.3 : 10;
+                            @for (Reservation of Reservations; track $index){
+                                @if (IsSameDate(Reservation.date, DayDate)){
+                                    @let ReservationRect = GetReservationRect(Reservation);
+                                    @if (ReservationRect){
+                                        <div class="reservation"
+                                            [style.left]="ReservationRect.X+'%'"
+                                            [style.top]="ReservationRect.Y+'px'"
+                                            [style.width]="ReservationRect.Width+'%'"
+
+                                            [class.selected]="SelectedReservation?.id == Reservation.id"
+
+                                            (click)="PromptReservationInfo($event, Reservation)"
+                                            >
+                                            Table {{Reservation.tableid}}
+                                            @if (ReservationRect.Width!>=MinFullContentWidth){ - {{Reservation.date | date:'HH:mm'}} {{Reservation.X}}}
+                                        </div>
+                                    }
+                                }
+                        }
+                        </div>
+                    }
+                </section>
+
+                <!-- SCHEDULING PROMPT -->
+                <div class="prompt" #SchedulePrompt 
+                
+                [class.visible]="PromptingSchedule"
+                    
+                [style.top]="SchedulePromptTop+'px'" 
+                [style.left]="SchedulePromptLeft+'px'">
+                    <label class="header">Schedule Reservation</label>
+
+                    <form [formGroup]="ReservationForm" nz-form nzLayout="vertical" (ngSubmit)="BookReservation()">
+
+                        <div class="row" style="gap:30px">
+                            <nz-form-item>
+                                <nz-form-label>Table ID</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-group nzSearch [nzAddOnAfter]="SearchSuffix">
+                                        <input nz-input formControlName="tableid" placeholder="Table ID" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-label>Guest Count</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count" />
+                                </nz-form-control>
+                            </nz-form-item>
+
+                        </div>
+
+                        <div class="row" style="gap:30px">
+                            <nz-form-item>
+                                <nz-form-label>Date</nz-form-label>
+                                <nz-form-control>
+                                    <nz-date-picker nz-input formControlName="date"></nz-date-picker>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-label>Time</nz-form-label>
+                                <nz-form-control>
+                                    <nz-time-picker nzFormat="HH:mm" formControlName="time"></nz-time-picker>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+
+                        <nz-form-item>
+                            <nz-form-control>
+                                <a (click)="ReservationsModalVisible = true; PromptingSchedule = false">More details</a>
+                                <button style="float: right;" nz-button nzType="primary"
+                                    [disabled]="ReservationForm.invalid" [nzLoading]="BookingReservation">
+                                    Submit
+                                </button>
+                                <button nz-button style="float: right;  margin-right: 10px;"
+                                    (click)="PromptingSchedule=false" [disabled]="BookingReservation">
+                                    Cancel
+                                </button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </form>
+                </div>
+            </div>
 
             <!-- MONTH VIEW -->
             }@else if (ViewType == 'Month') {
             <div class="month-container">
                 @for (Day of GetMonthDays(); track $index){
-                <div class="day-block" (click)="CurrentDate = Day">
+                <div class="day-block" (click)="CurrentDate = Day; ViewType='Day'; LoadReservations()">
                     <label class="day-number">
                         {{Day.getDate()}}
                     </label>
+                    <div class="reservations">
+                        @for (Reservation of Reservations; track $index) {
+                            @if (Day.getDate() == Reservation.date.getDate() ){
+                                <div class="reservation">
+                                    <label class="table">{{'Table'|translate}} {{Reservation.tableid}}</label>
+                                    <label class="time"> - {{Reservation.date|date:'hh:mm'}}</label>
+                                </div>
+                            }
+                        }
+                    </div>
                 </div>
                 }
             </div>
@@ -92,7 +202,10 @@
         </main>
 
 
-        <section class="action-card" style="flex: 1;">
+        <!-- TODAY RESERVATIONS TAB -->
+        <section class="action-card today-reservations" style="flex: 1;">
+            <loading-screen [IsLoading]="LoadingTodayReservations" LoaderStyle="Spinner"></loading-screen>
+
             <div class="row space-between" style="align-items: start;">
                 <h2>Today</h2>
                 <button nz-button (click)="ReservationsModalVisible = true">
@@ -100,38 +213,61 @@
                 </button>
             </div>
             <div class="separator"></div>
-            @for (Reservation of ToArray(this.Reservations); track $index){
-            @if (IsSameDate(Reservation.Date, CurrentDate)){
-            whoa a reservation
-            }
-            }@empty {
-            <no-data>{{'No reservations scheduled for today' | translate}}</no-data>
-            }
+            <div class="reservations flex center">
+
+                <!-- TODAY's RESERVATIONS -->
+                @for (Reservation of TodayReservations; track $index){
+                    @if (Reservation.date.getTime() >= Today.getTime()){
+                        <div class="reservation-card">
+                            <label class="table">{{'Table'|translate}} {{Reservation.tableid}}</label>
+                            <div class="row space-between">
+                                <label class="guests">{{Reservation.guest_count}} {{'Guests'|translate}}</label>
+                                <label class="time_to">{{'In'|translate}} {{GetFormmatedTimeTo(Reservation.date)}}</label>
+                            </div>
+                        </div>
+                        <div class="separator"></div>
+                    }
+                }@empty {
+                    @if (!LoadingTodayReservations){
+                        <no-data>
+                            <label style="text-align: center;">{{'No reservations scheduled for today' | translate}}</label>
+                        </no-data>
+                    }
+                }
+            </div>
         </section>
     </div>
 </page-layout>
 
 
 <!-- RESERVATION BOOKING MODAL -->
-<nz-modal nzDraggable [nzVisible]="ReservationsModalVisible" [nzTitle]="'Book New Reservation' | translate" nzCentered
-    nzWidth="50%" nzCancelText="Cancel" (nzOnOk)="BookReservation()" (nzOnCancel)="ReservationsModalVisible = false">
+<nz-modal nzDraggable 
+
+    [nzVisible]="ReservationsModalVisible" 
+
+    [nzTitle]="'Book New Reservation' | translate" 
+    nzCentered
+    nzCancelText="Cancel" 
+    nzWidth="50%" 
+
+    [nzOkDisabled]="ReservationForm.invalid"
+    [nzCancelDisabled]="BookingReservation"
+    [nzOkLoading]="BookingReservation"
+
+    (nzOnOk)="BookReservation()" 
+    (nzOnCancel)="ReservationsModalVisible = false">
 
     <ng-container *nzModalContent>
-        <form [formGroup]="ReservationForm" nz-form nzLayout="vertical">
+        <form [formGroup]="ReservationForm" nz-form nzLayout="vertical" (ngSubmit)="BookReservation()">
 
             <div class="row" style="gap:30px">
                 <nz-form-item>
                     <nz-form-label>Table ID</nz-form-label>
                     <nz-form-control>
-                        <nz-input-group nzSearch [nzAddOnAfter]="SearchSuffix">
-                            <input nz-input formControlName="tableid" nzSize="large" placeholder="Table ID" />
+                        <nz-input-group nzSize="large" nzSearch [nzAddOnAfter]="SearchSuffix">
+                            <input nz-input formControlName="tableid" placeholder="Table ID" />
                         </nz-input-group>
                     </nz-form-control>
-                    <ng-template #SearchSuffix>
-                        <button nz-button nzType="primary" nzSearch (click)="TableSelectVisible = true">
-                            <nz-icon nzType="appstore" />
-                        </button>
-                    </ng-template>
                 </nz-form-item>
 
                 <nz-form-item>
@@ -144,7 +280,7 @@
 
             </div>
 
-            <div class="row" style="gap:30px"> 
+            <div class="row" style="gap:30px">
                 <nz-form-item>
                     <nz-form-label>Date</nz-form-label>
                     <nz-form-control>
@@ -196,19 +332,24 @@
                     <textarea nz-input formControlName="notes" rows="3" placeholder="Additional notes"></textarea>
                 </nz-form-control>
             </nz-form-item>
-
-            <nz-form-item>
-                <nz-form-control>
-                    <button nz-button nzType="primary" [disabled]="ReservationForm.invalid">Submit</button>
-                </nz-form-control>
-            </nz-form-item>
         </form>
 
     </ng-container>
 </nz-modal>
 
-<nz-modal nzOkText="" nzCancelText="Close" [nzVisible]="TableSelectVisible" nzTitle="Select Table" nzCentered
-    nzWidth="70%">
+
+<!-- TABLE SELECT MODAL -->
+<nz-modal 
+    [nzOkText]="null" 
+    nzCancelText="Close" 
+    [nzVisible]="TableSelectVisible" 
+
+    nzTitle="Select Table" 
+    nzCentered
+    nzDraggable
+    nzWidth="70%"
+    
+    (nzOnCancel)="TableSelectVisible=false">
 
     <ng-container *nzModalContent>
         <restaurant-layout style="height: 50vh;" [SelectionMode]="true" (TableSelected)="OnTableSelected($event)">
@@ -216,3 +357,42 @@
         </restaurant-layout>
     </ng-container>
 </nz-modal>
+
+
+<!-- RESERVATION DETAILS -->
+<div class="prompt fixed" 
+    [class.visible]="SelectedReservation"
+    [style.top]="ReservationPromptPosition.Y+'px'" 
+    [style.left]="ReservationPromptPosition.X+'px'"
+    >
+    @if (SelectedReservation){
+        <div class="row space-between">
+            <label class="header">{{'Table'|translate}} {{SelectedReservation.tableid}} {{'Reservation'|translate}} </label>
+            <button nz-button nzDanger (click)="CancelReservation(SelectedReservation)">
+                <!-- <nz-icon nzType="delete"></nz-icon> -->
+                    {{'Cancel' | translate}}
+            </button>
+        </div>
+        <div class="flex collumn space-between">
+            <div class="row space-between">
+                <label class="time">{{SelectedReservation.date | date:'hh:mm'}}</label>
+            </div>
+            <div class="row space-between">
+                <label class="guests">{{SelectedReservation.guest_count}} {{'Guests'|translate}}</label>
+                <label class="date">{{SelectedReservation.date | date:'dd/mm/yyyy'}}</label>
+            </div>
+        </div>
+    }
+</div>
+
+<ng-template #SearchSuffix>
+    <button nz-button 
+    nzType="primary" 
+    nzSearch 
+    [nzLoading]="TableSelectVisible"
+    (click)="TableSelectVisible = true" 
+    [disabled]="BookingReservation"
+    type="button">
+        <nz-icon nzType="appstore" />
+    </button>
+</ng-template>
