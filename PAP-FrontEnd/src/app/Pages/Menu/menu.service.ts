@@ -56,6 +56,10 @@ export class MenuService {
       FileData.append('image', File);
 
       const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', 'Failed to upload menu item image', FileData)
+
+      if (UploadResult){
+        this.MessageService.success('Successfully changed product image')
+      }
       return UploadResult
   }
 

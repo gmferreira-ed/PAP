@@ -1,5 +1,5 @@
 {
-    "name": "dinnerlink-server",
+    "name": "restrolink-server",
     "version": "1.0.0",
     "description": "A Node.js project for a restaurant management system",
     "main": "ServerInit.js",

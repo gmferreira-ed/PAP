@@ -1,6 +1,22 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 
+app.setName('RestroLink');
+
+const { ipcMain } = require('electron');
+const escpos = require('escpos');
+escpos.Network = require('escpos-network');
+
+const device = new escpos.Network('192.168.0.253', 6001);
+const printer = new escpos.Printer(device);
+
+device.open(function(error){
+  if(error) {
+    console.error('Printer connection failed:', error);
+    return;
+  }
+  console.log('Connected to printer')
+});
 
 function StartAppWindow() {
     const win = new BrowserWindow({

@@ -38,7 +38,7 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "reservations"
+ * @displayname "Reservations"
  * @path /reservations
  * @method POST
  * @summary "Create/Cancel reservations"

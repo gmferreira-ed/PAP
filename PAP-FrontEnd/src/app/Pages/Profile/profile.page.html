@@ -18,6 +18,9 @@
                         <nz-icon nzType="edit"></nz-icon>
                     </file-select>
                 </div>
+                @if (UploadingImage){
+                    <loading-screen LoaderStyle="Spinner" [IsLoading]="UploadingImage"></loading-screen>
+                }
             </div>
 
             <div class="profile-collumn" style="padding-left: 5px; justify-content: space-between;">
@@ -31,12 +34,12 @@
                                 Change Permissions
                             </button>
 
-                            <button nz-button nzDanger>
+                            <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus">
                                 <nz-icon nzType="user-delete" nzTheme="outline" />
                                 Deactivate User
                             </button>
                             }@else {
-                            <button nz-button class="row green border">
+                            <button nz-button class="row green border" (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus">
                                 <icon type="user-round-check"></icon>
                                 Activate User
                             </button>

@@ -116,7 +116,12 @@
     </div>
     }
 
-    <div #MainContainer class="main-container" (wheel)="ChangeZoom($event)" (contextmenu)="OnContextMenu($event)">
+    <div #MainContainer class="main-container" 
+    (wheel)="ChangeZoom($event)" 
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
+    (contextmenu)="OnContextMenu($event)">
 
         <loading-screen [IsLoading]="LoadingLayout"></loading-screen>
 
@@ -124,12 +129,12 @@
         <!-- NON-EDIT ACTIONS -->
         @if (!EditMode){
         <floating-container style="right: 0px;">
-            <button nz-button nzType="default" (click)="CenterLayout()">
+            <button class="button block" nzType="default" (click)="CenterLayout()">
                 <icon type="locate"></icon>
             </button>
             @if (!SelectionMode){
-                <button nz-button nzType="default" routerLink="/layout-editor">
-                    <nz-icon nzType="edit"></nz-icon>
+                <button class="button block" nzType="default" routerLink="/layout-editor">
+                    <icon type="pencil"></icon>
                 </button>
             }
         </floating-container>

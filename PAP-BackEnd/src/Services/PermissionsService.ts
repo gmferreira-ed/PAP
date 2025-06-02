@@ -115,7 +115,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
 
       // Has Required level
       const IsGlobal = EndpointData.Permissions.includes('User')
-      const IsAdmin = UserData.administrator
+      const IsAdmin = UserData.administrator && UserData.active
 
 
       if (EndpointData.Permissions.includes(UserData.role) || IsGlobal || IsAdmin) {

@@ -305,25 +305,34 @@ export class RestaurantLayout {
   }
 
   ChangeZoom(Event?: WheelEvent, DeltaY?: number) {
-    Event?.preventDefault()
+    Event?.preventDefault();
 
-    const ZoomDelta = 1 + ((Event?.deltaY || DeltaY!) / 1000) * -1
+    const ZoomDelta = 1 + ((Event?.deltaY || DeltaY!) / 1000) * -1;
 
-    const ContainerRect = this.MainContainer.nativeElement.getBoundingClientRect()
+    const ContainerRect = this.MainContainer.nativeElement.getBoundingClientRect();
+
+    const TargetZoom = Math.max(Math.min(this.Zoom * ZoomDelta, this.MaxZoom), 1);
+
+    const CenterX = ContainerRect.width / 2;
+    const CenterY = ContainerRect.height / 2;
+
+    const LayoutCenterX = (CenterX - this.ViewportX) / this.Zoom;
+    const LayoutCenterY = (CenterY - this.ViewportY) / this.Zoom;
 
 
-    const TargetZoom = Math.max(Math.min(this.Zoom * ZoomDelta, this.MaxZoom), 1)
-    const TrueZoomDelta = TargetZoom - this.Zoom
+    let newViewportX = CenterX - LayoutCenterX * TargetZoom;
+    let newViewportY = CenterY - LayoutCenterY * TargetZoom;
 
-    this.Zoom = TargetZoom
+
+    this.Zoom = TargetZoom;
 
     const [TargetX, TargetY] = this.ClampContainerPosition(
-      this.ViewportX - ContainerRect.width / 2 * TrueZoomDelta,
-      this.ViewportY - ContainerRect.height / 2 * TrueZoomDelta
-    )
+      newViewportX,
+      newViewportY
+    );
 
-    this.ViewportX = TargetX
-    this.ViewportY = TargetY
+    this.ViewportX = TargetX;
+    this.ViewportY = TargetY;
   }
 
 
@@ -761,7 +770,7 @@ export class RestaurantLayout {
     const url = URL.createObjectURL(DataBlob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "DinnerLink_Layout.dl";
+    a.download = "RestroLink_Layout.dl";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -796,6 +805,42 @@ export class RestaurantLayout {
 
       reader.readAsText(LayoutFile);
     }
+  }
+
+
+  // Mobile functions
+  private lastTouchDistance: number | null = null;
+
+  onTouchStart(event: TouchEvent) {
+    if (event.touches.length === 2) {
+      this.lastTouchDistance = this.getTouchDistance(event.touches);
+    }
+  }
+
+  onTouchMove(event: TouchEvent) {
+    if (event.touches.length === 2 && this.lastTouchDistance !== null) {
+      const newDistance = this.getTouchDistance(event.touches);
+      const delta = newDistance - this.lastTouchDistance;
+
+      // Simulate a wheel-like event
+      this.ChangeZoom(undefined, -delta); // Negate to match wheel direction
+
+      this.lastTouchDistance = newDistance;
+      event.preventDefault();
+    }
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    if (event.touches.length < 2) {
+      this.lastTouchDistance = null;
+    }
+  }
+
+  private getTouchDistance(touches: TouchList): number {
+    const [touch1, touch2] = [touches[0], touches[1]];
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
   }
 
   async LoadLayout() {

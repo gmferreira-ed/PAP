@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../Services/Auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { FormBuilder, FormControl, FormGroup, FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -12,7 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'login-page',
-  imports: [NzFormModule, ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzDividerModule, TranslateModule],
+  imports: [NzFormModule, ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzDividerModule, TranslateModule, RouterModule],
   templateUrl: './login.page.html',
   styleUrl: './login.page.less'
 })

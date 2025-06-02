@@ -40,6 +40,21 @@ Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
     res.send(UserInfo[0])
 }))
 
+/**
+ * @displayname "Users"
+ * @path /users
+ * @method PATCH
+ * @summary "Edit user info"
+ */
+Router.patch('/users', HandleEndpointFunction(async (req, res) => {
+    const userid = req.body.userid
+
+    const [UpdateQuery, Values] = SQLUtils.BuildUpdateQuery('users', ['active'], req.body, ['userid'])
+    const [UpdateResult] = await Database.execute(UpdateQuery, Values)
+
+    res.send()
+}))
+
 
 /**
  * @displayname "User Keycard"

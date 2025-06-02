@@ -19,6 +19,7 @@ import GlobalUtils from '../../Services/GlobalUtils';
 import { CardService } from '../../Services/Card.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { AtendanceViewer } from "../../Components/attendance/attendance";
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'profile-page',
@@ -39,11 +40,14 @@ export class ProfilePage {
   AuthService = inject(AuthService)
   HttpService = inject(HttpService)
   NotificationService = inject(NzNotificationService)
+  MessageService = inject(NzMessageService)
 
   CurrentUser = this.AuthService.User
 
   // States
   LoadingInfo = false
+  UploadingImage = false
+  TogglingUserStatus = false
 
   // Data
   UserEntries: any = []
@@ -53,14 +57,42 @@ export class ProfilePage {
   };
 
   async ChangeUserImage(Files: UFile[]) {
+    this.UploadingImage = true
+
     const File = Files[0]
     if (File) {
+      const FileData = new FormData();
+      FileData.append('image', File);
 
+      const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'users', 'POST', 
+        'Failed to upload user image', 
+        FileData
+      )
+
+      if (UploadResult){
+        this.MessageService.success('Successfully changed user image')
+      }
     }
+
+    this.UploadingImage = false
   }
 
-  async DeactivateUser() {
+  async ToggleUserStatus() {
+    this.TogglingUserStatus = true
 
+    const CurrentActive = this.User()!.active
+    const Action = CurrentActive ? 'deactivated' : 'activated'
+
+    const [ActiveToggleSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users', 'PATCH', 'Failed to deactivate user', {
+      userid: this.User()!.userid,
+      active: !CurrentActive
+    })
+    if (ActiveToggleSucess){
+      this.MessageService.success("Sucessfully "+Action+' user')
+      this.User()!.active = !CurrentActive
+    }
+    
+    this.TogglingUserStatus = false
   }
 
   async PromptCard() {

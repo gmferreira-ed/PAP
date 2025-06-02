@@ -3,6 +3,7 @@ import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
 import PermissionsService from '../Services/PermissionsService';
+import SQLUtils from '../Services/SQLUtils';
 
 
 /**
@@ -60,6 +61,50 @@ Router.post('/auth/login', HandleEndpointFunction(async (req, res) => {
         res.status(401).send({ error: 'Already logged in' })
     }
 }))
+
+/**
+ * @displayname "Sign Up"
+ * @path /auth/signup
+ * @method POST
+ * @summary "Creates an account and authenticates in the application"
+ * @unprotected true
+ */
+Router.post('/auth/signup', HandleEndpointFunction(async (req, res) => {
+
+    const user = req.session.user
+
+    if (!user) {
+        const UserInfo = req.body
+
+        const [UserCreateQuery, Values] = SQLUtils.BuildInsertQuery('users', [
+            'username', 'email', 'phone', 'fullname', 'birthdate', 'country', 'city', 'adress', 'postalcode', 'password'
+        ], UserInfo)
+        const [UserCreateResult] = await Database.execute(UserCreateQuery, Values)
+
+        res.send()
+    } else {
+        res.status(401).send({ error: 'Already logged in' })
+    }
+}))
+
+/**
+ * @displayname "Verify account"
+ * @path /auth/verify
+ * @method POST
+ * @summary "Creates an account and authenticates in the application"
+ * @unprotected true
+ */
+Router.post('/auth/verify', HandleEndpointFunction(async (req, res) => {
+
+    const user = req.session.user
+
+    if (!user) {
+        
+    } else {
+        res.status(401).send({ error: 'Already logged in' })
+    }
+}))
+
 
 /**
  * @displayname "Logout"

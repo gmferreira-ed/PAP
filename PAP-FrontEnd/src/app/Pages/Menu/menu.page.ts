@@ -8,13 +8,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-import { NzFloatButtonModule } from 'ng-zorro-antd/float-button'
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
-import { NzUploadFile, NzUploadModule, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MenuService } from './menu.service';
@@ -23,7 +19,6 @@ import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { FileSelectComponent } from "../../Components/file-selector/file-select.component";
 import { CdkDrag, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
-import { ProgressComponent } from '../../Components/progress/progress.component';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
@@ -33,9 +28,11 @@ import { UFile } from '../../../types/ufile';
 
 @Component({
   selector: 'menu-page',
-  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule, NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule,
+  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule, 
+    NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule,
     CdkDropList, NzToolTipModule,
-    NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule, NzUploadModule, NzIconModule, FormsModule, CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen],
+    NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule, NzIconModule, FormsModule,
+     CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen],
   templateUrl: './menu.page.html',
   styleUrl: './menu.page.less'
 })

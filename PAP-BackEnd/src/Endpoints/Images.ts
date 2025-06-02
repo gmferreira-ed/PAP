@@ -68,7 +68,12 @@ function FindImage(Folder: string, Name: string, Response: ExpressResponse): str
  */
 Router.get("/images/users/:user", (Request, Response) => {
     const user = Request.params.user
-    FindImage(UsersFolder, user, Response)
+    const FilePath = path.join(UsersFolder, `${user}.webp`);
+    if (fs.existsSync(FilePath)) {
+        Response.sendFile(FilePath)
+    } else {
+        Response.status(404).send()
+    }
 })
 
 Router.get("/images/menu/:product", (Request, Response) => {
@@ -96,7 +101,21 @@ Router.post('/images/users', UserImages.single('image'), HandleEndpointFunction(
         return
     }
 
-    await sharp(req.file.buffer).resize(800, 800).toFile(req.file.path);
+    const FilePath = req.file.path
+    const webpPath = FilePath.replace(/\.[^/.]+$/, '.webp');
+    const tempPath = webpPath + '-temp';
+
+    await sharp(FilePath)
+        .resize(600, 600)
+        .webp()
+        .toFile(tempPath);
+
+    await fsp.rename(tempPath, webpPath);
+
+    if (FilePath !== webpPath) {
+        await fsp.unlink(FilePath);
+    }
+
 
     res.json({ sucess: true });
 }))
