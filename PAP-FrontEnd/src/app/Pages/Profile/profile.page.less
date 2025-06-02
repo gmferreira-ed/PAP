@@ -24,6 +24,16 @@
   object-fit: cover;
 }
 
+.profile-page-layout{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  flex-wrap: wrap;
+
+  width: 100%;
+
+  gap: 20px;
+}
 .profile-layout {
   display: flex;
   flex-wrap: wrap;
@@ -77,4 +87,13 @@
   font-size: 16px;
   font-weight:500;
   color: var(--primary-color);
+}
+
+.card{
+  position: relative;
+  border-radius: 5%;
+  width: 70%;
+  height: 100%;
+  border: 2px solid var(--primary-color);
+  aspect-ratio: 2/1;
 }

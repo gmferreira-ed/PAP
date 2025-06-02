@@ -15,5 +15,6 @@ type User = {
     postalcode: string
     
     created:number,
+    card_id:number|null,
     active: boolean
   }

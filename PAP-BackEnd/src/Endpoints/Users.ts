@@ -17,14 +17,10 @@ Router.get('/users', HandleEndpointFunction(async (req, res) => {
 
     if (!targetuser) {
         // Paginated users
-        const page = parseInt(query.page as string) || 1
-        let pagesize = parseInt(query.pagesize as string) || 5
-
-        pagesize = Math.min(pagesize, 50)
 
         const [UsersQuery] = SQLUtils.BuildSelectQuery('users', {}, [])
 
-        var result = await GetPaginatedResult("users",UsersQuery,[], page, pagesize)
+        var result = await GetPaginatedResult("users",UsersQuery,[], query)
         res.send(result)
     } else {
         const UserQuery = `SELECT * FROM users WHERE username=?`
@@ -42,6 +38,38 @@ Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
     const [UserInfo] = await Database.execute<any[]>(UserQuery, [targetuser])
 
     res.send(UserInfo[0])
+}))
+
+
+/**
+ * @displayname "User Keycard"
+ * @path /users/keycard
+ * @method POST
+ * @summary ""
+ */
+Router.post('/users/keycard', HandleEndpointFunction(async (req, res) => {
+    const UserID = req.body.userid
+    const CardID = req.body.card_id
+
+    const CardSetQuery = `UPDATE users SET card_id=? WHERE userid=?`
+    const [CardSetResult] = await Database.execute(CardSetQuery, [CardID, UserID])
+
+    res.send()
+}))
+
+/**
+ * @displayname "User Keycard"
+ * @path /users/keycard
+ * @method DELETE
+ * @summary ""
+ */
+Router.delete('/users/keycard', HandleEndpointFunction(async (req, res) => {
+    const UserID = req.body.userid
+
+    const CardRemoveQuery = `UPDATE users SET card_id=NULL WHERE userid=?`
+    const [CardRemoveResult] = await Database.execute(CardRemoveQuery, [UserID])
+
+    res.send()
 }))
 
 module.exports = Router

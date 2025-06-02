@@ -1,0 +1,11 @@
+<ng-content>
+
+</ng-content>
+
+@if (!auto_collapse){
+<floating-container style="bottom: 0px; right: 0px;" (click)="Collapsed=!Collapsed">
+    <button class="button block" style="padding: 0px;">
+        <icon [type]="Collapsed ? 'arrow-right' : 'arrow-left'"></icon>
+    </button>
+</floating-container>
+}

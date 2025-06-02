@@ -212,11 +212,12 @@
             cursor: pointer;
 
             transition: opacity 0.2s linear, box-shadow 0.1s ease-out, transform 0.1s ease-out;
-            &:hover:not(.selected){
+
+            &:hover:not(.selected) {
                 opacity: 0.8;
             }
 
-            &.selected{
+            &.selected {
                 transform: scale(1.05);
                 box-shadow: 0px 0px 10px 5px color-mix(in srgb, var(--primary-color), transparent 50%);
                 z-index: 10;
@@ -261,8 +262,9 @@
     }
 }
 
-.today-reservations{
-    .reservations{
+.today-reservations {
+    .reservations {
+        flex-direction: column;
         height: 100%;
     }
 }

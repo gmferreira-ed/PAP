@@ -53,7 +53,7 @@ export class IconsModule {
         SVG.style.width = this.size
         SVG.style.height = this.size
         if (this.fill){
-          SVG.setAttribute('fill', 'currentColor');
+          SVG.setAttribute('fill', 'currentcolor');
         }
       }
     })

@@ -3,7 +3,7 @@
   "compounds": [
     {
       "name": "Launch All",
-      "configurations": ["Start Frontend", "Dev Backend"],
+      "configurations": ["Dev Frontend", "Dev Backend"],
       "presentation": {
         "group": "",
         "order": 1
@@ -12,7 +12,7 @@
   ],
   "configurations": [
     {
-      "name": "Start Frontend",
+      "name": "Dev Frontend",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/PAP-FrontEnd",
@@ -20,7 +20,7 @@
       "runtimeArgs": ["run", "start"],
       "console": "integratedTerminal",
       "presentation": {
-        "order": 3
+        "order": 2
       }
     },
     
@@ -33,23 +33,20 @@
       "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal",
       "presentation": {
-        "order": 2
+        "order": 3
       }
     },
 
     {
-      "name": "Simulate Docker",
+      "name": "Test Electron",
       "type": "node",
       "request": "launch",
+      "cwd": "${workspaceFolder}/PAP-FrontEnd",
       "runtimeExecutable": "npm",
-      
-      "cwd": "${workspaceFolder}/PAP-BackEnd/",
-      "runtimeArgs": ["run", "start"],
-
-      "preLaunchTask": "Build Backend",  // Add this line
+      "runtimeArgs": ["run", "electron"],
       "console": "integratedTerminal",
       "presentation": {
-        "order": 3
+        "order": 4
       }
     },
   ]

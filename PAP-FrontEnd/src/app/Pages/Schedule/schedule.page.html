@@ -213,8 +213,7 @@
                 </button>
             </div>
             <div class="separator"></div>
-            <div class="reservations flex center">
-
+            <div class="reservations flex">
                 <!-- TODAY's RESERVATIONS -->
                 @for (Reservation of TodayReservations; track $index){
                     @if (Reservation.date.getTime() >= Today.getTime()){
@@ -368,7 +367,7 @@
     @if (SelectedReservation){
         <div class="row space-between">
             <label class="header">{{'Table'|translate}} {{SelectedReservation.tableid}} {{'Reservation'|translate}} </label>
-            <button nz-button nzDanger (click)="CancelReservation(SelectedReservation)">
+            <button nz-button nzDanger (click)="DeleteReservation(SelectedReservation)" [nzLoading]="DeletingReservation">
                 <!-- <nz-icon nzType="delete"></nz-icon> -->
                     {{'Cancel' | translate}}
             </button>
@@ -379,7 +378,7 @@
             </div>
             <div class="row space-between">
                 <label class="guests">{{SelectedReservation.guest_count}} {{'Guests'|translate}}</label>
-                <label class="date">{{SelectedReservation.date | date:'dd/mm/yyyy'}}</label>
+                <label class="date">{{SelectedReservation.date | date:'dd/MM/yyyy'}}</label>
             </div>
         </div>
     }

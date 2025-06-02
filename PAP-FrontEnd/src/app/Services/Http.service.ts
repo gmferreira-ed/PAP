@@ -101,10 +101,13 @@ export class HttpService {
 
   // WEB SOCKETS
 
-  async ConnectToWebsocket(WebSocketURL: URL | string, Retry?: Boolean, RetryInterval: number = 5): Promise<WebSocket> {
+  async ConnectToWebsocket(WebSocketPath: URL | string, Retry?: Boolean, RetryInterval: number = 5)
+  : Promise<WebSocket & { OnMessage?: (Message: string, Data:any) => void }> {
+
     return new Promise(async (FinalResolve, FinalReject) => {
 
       let ConnectedWebsocket = null
+      const WebSocketURL = AppSettings.APIUrl + 'websocket/' + WebSocketPath
 
       while (!ConnectedWebsocket) {
         const ConnectionPromise: Promise<any> = new Promise((resolve, reject) => {
@@ -116,6 +119,15 @@ export class HttpService {
             if (NewWebsocket.readyState === WebSocket.OPEN) {
               console.log("Connected to socket", NewWebsocket.url)
               resolve(NewWebsocket)
+            }
+          }
+
+          NewWebsocket.onmessage = (msg) => {
+            try {
+              const MessageData = JSON.parse(msg.data);
+              (NewWebsocket as any).OnMessage?.(MessageData.message, MessageData.data);
+            } catch (e) {
+              console.warn('Received non-JSON message:', msg.data);
             }
           }
 

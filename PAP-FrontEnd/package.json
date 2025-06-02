@@ -2,9 +2,9 @@
   "name": "dinnerlink",
   "version": "0.1.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "dev": "ng serve",
+    "start": "npm run dev",
+    "electron": "electron .",
+    "dev": "concurrently -k \"ng serve\" \"wait-on http://localhost:5000 && npx electron .\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -24,8 +24,10 @@
     "@angular/router": "^19.1.0",
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
+    "lottie-web": "^5.13.0",
     "mysql2": "^3.12.0",
     "ng-zorro-antd": "^19.0.2",
+    "ngx-lottie": "^13.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -36,16 +38,19 @@
     "@angular/compiler-cli": "^19.1.0",
     "@types/jasmine": "~5.1.0",
     "@vendure/ngx-translate-extract": "^9.4.0",
+    "concurrently": "^9.1.2",
+    "electron": "^36.3.2",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "wait-on": "^8.0.3"
   },
   "description": "��#\u0000 \u0000R\u0000e\u0000s\u0000t\u0000a\u0000u\u0000r\u0000a\u0000n\u0000t\u0000L\u0000a\u0000y\u0000o\u0000u\u0000t\u0000\r\u0000 \u0000\r\u0000 \u0000T\u0000e\u0000s\u0000t\u0000",
-  "main": "Server/ServerInit.js",
+  "main": "electron-app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Exodation/PAP.git"

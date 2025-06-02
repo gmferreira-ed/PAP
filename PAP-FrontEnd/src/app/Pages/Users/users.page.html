@@ -24,21 +24,21 @@
 
         <tbody>
             @for (UserInfo of UsersList; track UserInfo.userid) {
-            <tr style="cursor: pointer;" (click)="ViewProfile(UserInfo)">
+                <tr style="cursor: pointer;" (click)="ViewProfile(UserInfo)">
 
-                <td>
-                    <img class="profile-pfp" [src]="UserImagesURL+UserInfo.username"
-                        onerror="this.src='Images/Profile.png'">
-                    <label>{{UserInfo.fullname}}</label>
-                </td>
-                <td>{{UserInfo.role}}</td>
-                <td>{{UserInfo.email}}</td>
-                <td>{{UserInfo.phone}}</td>
-                <!-- <td>{{UserInfo.adress}} {{UserInfo.city}} {{UserInfo.country}} {{UserInfo.postalcode}}</td> -->
-                <td>
-                    <div class="circle" [ngStyle]="{'background-color': UserInfo.active ? 'rgb(0,180,0)' : 'rgb(220,0,0)'}"></div>
-                </td>
-            </tr>
+                    <td>
+                        <img class="profile-pfp" [src]="UserImagesURL+UserInfo.username"
+                            onerror="this.src='Images/Profile.png'">
+                        <label>{{UserInfo.fullname}}</label>
+                    </td>
+                    <td>{{UserInfo.role}}</td>
+                    <td>{{UserInfo.email}}</td>
+                    <td>{{UserInfo.phone}}</td>
+                    <!-- <td>{{UserInfo.adress}} {{UserInfo.city}} {{UserInfo.country}} {{UserInfo.postalcode}}</td> -->
+                    <td>
+                        <div class="circle" [ngStyle]="{'background-color': UserInfo.active ? 'rgb(0,180,0)' : 'rgb(220,0,0)'}"></div>
+                    </td>
+                </tr>
             }
         </tbody>
     </nz-table>

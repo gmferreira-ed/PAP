@@ -1,5 +1,7 @@
 <page-layout>
-    <loading-screen [Fullscreen]="true"
+    <loading-screen
+        [ShowContainer]="true"
+        LoaderStyle="Spinner"
         [IsLoading]="LoadingProducts || CheckingOut || ProcessingOrder"></loading-screen>
     <div class="container">
         @if (SelectedTable){
@@ -118,28 +120,29 @@
                 (TableSelected)="SelectTable($event.tableid)"></restaurant-layout>
             }@else {
             <div class="tables">
+                <loading-screen [IsLoading]="this.OrdersService.LoadingTables" LoaderStyle="Spinner"></loading-screen>
                 @for (Table of ToArray(Tables);track $index){
-                <div [class]="'table '+Table.status" (click)="SelectTable(Table.tableid)">
-                    <icon type="table" size="100%" [fill]="true"></icon>
+                    <div [class]="'table '+Table.status" (click)="SelectTable(Table.tableid)">
+                        <icon type="table" size="100%" [fill]="true"></icon>
 
-                    {{'Table' | translate}} {{Table.tableid}}
-                    @if (Table.status){
-                        <label style="font-size: 14px; color: rgb(176, 207, 0);">
-                            {{Table.time | date:'HH:mm:ss':'UTC'}}
-                        </label>
-                    }
-                    <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-60%, 60%);">
-                        @if (Table.status == 'ongoing'){
-                        <div class="clock" style="width: 25px; height: 25px;">
-                            <span class="hour"></span>
-                            <span class="min"></span>
-                            <span class="circel"></span>
-                        </div>
-                        }@else {
-
+                        {{'Table' | translate}} {{Table.tableid}}
+                        @if (Table.status){
+                            <label style="font-size: 14px; color: rgb(176, 207, 0);">
+                                {{Table.time | date:'HH:mm:ss':'UTC'}}
+                            </label>
                         }
-                    </floating-container>
-                </div>
+                        <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-60%, 60%);">
+                            @if (Table.status == 'ongoing'){
+                                <div class="clock" style="width: 25px; height: 25px;">
+                                    <span class="hour"></span>
+                                    <span class="min"></span>
+                                    <span class="circel"></span>
+                                </div>
+                            }@else {
+
+                            }
+                        </floating-container>
+                    </div>
                 }
             </div>
             }

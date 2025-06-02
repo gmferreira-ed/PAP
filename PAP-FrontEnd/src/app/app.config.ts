@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
 import { provideRouter } from '@angular/router'
 import { routes } from './app.routes'
+import { provideLottieOptions } from 'ngx-lottie';
+import player from 'lottie-web';
 
 
 // NGX translate
@@ -33,6 +35,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideRouter(routes),
     importProvidersFrom(FormsModule),
+    provideLottieOptions({
+      player: () => player,
+    }),
     { provide: NZ_I18N, useValue: en_US }
 
   ]

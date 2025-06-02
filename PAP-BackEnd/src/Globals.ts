@@ -21,24 +21,24 @@ const Database = mysql.createPool({
 
 
 
-async function GetPaginatedResult(Table: string, SQLQuery:string, SQLValues:any, 
-  PageNumber?: number|string, 
-  PageSize?: number|string, 
+async function GetPaginatedResult(Table: string, SQLQuery:string, SQLValues:any, QueryParams: any, 
+  MaxPageSize: number = 100, 
   OrderBy?: string)
 :Promise<PaginatedResult> {
 
 
-  PageSize = PageSize ? Number(PageSize) : 25
-  PageNumber = PageNumber ? Number(PageNumber) : 1
+  let PageSize = QueryParams.page_size ? Number(QueryParams.page_size) : 25
+  let PageIndex= QueryParams.page ? Number(QueryParams.page) : 1
 
-  PageSize = Math.min(PageSize, 100)
+  PageSize = Math.min(PageSize, MaxPageSize)
 
+  
   if (OrderBy) {
     SQLQuery = SQLQuery + `\n${OrderBy}`
   }
-  if (PageNumber && PageNumber >= 1) {
+  if (PageIndex >= 1) {
     SQLQuery = SQLQuery + `
-      LIMIT ${PageSize} OFFSET ${(PageNumber - 1) * PageSize}`
+      LIMIT ${PageSize} OFFSET ${(PageIndex - 1) * PageSize}`
   }
 
   const [rows] = await Database.execute<any[]>(SQLQuery,SQLValues);

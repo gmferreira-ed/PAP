@@ -143,7 +143,9 @@ export class CheckoutPage {
 
 
 
-  async LoadProducts() {
+  async LoadProducts() { 
+    this.LoadingProducts = true
+    
     const Category = this.SelectedCategory != 'All' && this.SelectedCategory || undefined
     const Products = await this.MenuService.GetMenuItems(Category)
     if (Products) {

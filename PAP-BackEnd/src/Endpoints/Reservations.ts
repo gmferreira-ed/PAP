@@ -87,7 +87,10 @@ Router.patch('/reservations', HandleEndpointFunction(async (req, res) => {
  */
 Router.delete('/reservations', HandleEndpointFunction(async (Request, Response) => {
 
+    const DeleteQuery = 'DELETE FROM reservations WHERE id=?'
+    const [DeleteResult] = await Database.execute(DeleteQuery, [Request.body.reservation_id])
 
+    Response.send()
 }))
 
 

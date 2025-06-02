@@ -1,0 +1,34 @@
+<label class="title">
+    Attendance
+</label>
+<div class="collumn scroll">
+    @for (Entry of UserEntries; track $index){
+        <div [class]="'entry '+Entry.action">
+            <div class="collumn fill">
+                <div class="row space-between" style="gap: 0px;">
+                    <div class="row">
+                        <icon [type]="Entry.action"></icon>
+                        <label style="font-size: 16px; font-weight: 500;">{{Entry.action}}</label>
+                    </div>
+                    @if (!SelectedUser()){
+                        <div class="row">
+                            <label class="name">{{Entry.fullname}}</label>
+                            <img class="picture" [src]="UserImagesURL+Entry.username">
+                        </div>
+                    }
+                </div>
+                <div class="row space-between">
+                    <label>{{Entry.timestamp | date:'hh:mm'}}</label>
+                    <label>{{GetFormmatedTime(Entry.timestamp)}}</label>
+                </div>
+            </div>
+        </div>
+    }
+    @empty {
+        @if (!LoadingEntries){
+            <no-data>This user has no entries</no-data>
+        }@else {
+            <loading-screen [IsLoading]="LoadingEntries" LoaderStyle="Spinner"></loading-screen>
+        }
+    }
+</div>

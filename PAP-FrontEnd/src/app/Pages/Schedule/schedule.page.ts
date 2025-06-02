@@ -71,13 +71,14 @@ export class SchedulePage {
   PromptingSchedule = false
   BookingReservation = false
   ReservationsModalVisible = false
+  DeletingReservation = false
   TableSelectVisible = false
 
 
   // FORMS
   ReservationForm = new FormGroup({
     tableid: new FormControl<number | string | undefined>(undefined, [Validators.required]),
-    guest_count: new FormControl(1, [Validators.required, Validators.min(1)]),
+    guest_count: new FormControl('1', [Validators.required, Validators.min(1)]),
     date: new FormControl<Date | undefined>(undefined, [Validators.required]),
     time: new FormControl<Date | undefined>(undefined, [Validators.required]),
     name: new FormControl(undefined, []),
@@ -121,6 +122,9 @@ export class SchedulePage {
 
       this.MessageService.success("Sucessfully booked reservation")
       this.LoadReservations()
+      if (this.IsSameDate(FinalDate, this.Today)) {
+        this.LoadTodayReservations()
+      }
     }
 
     this.BookingReservation = false
@@ -173,6 +177,7 @@ export class SchedulePage {
     return {}
   }
 
+
   PromptBookReservation(Event: MouseEvent, DayDate: Date) {
     const ScheduleContainer = this.ScheduleContainer.nativeElement as HTMLElement
     const SchedulePrompt = this.SchedulePrompt.nativeElement as HTMLElement
@@ -220,8 +225,23 @@ export class SchedulePage {
 
 
   // CANCEL RESERVATION
-  CancelReservation(Reservation:any){
+  async DeleteReservation(Reservation: any) {
+    this.DeletingReservation = true
+    this.SelectedReservation = undefined
 
+    const [DeleteResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl+'reservations', 'DELETE', 'Failed to cancel reservation',{
+      reservation_id: Reservation.id
+    })
+
+    if (DeleteResult){
+      this.MessageService.success('Successfully canceled reservation')
+      this.LoadReservations()
+      if (this.IsSameDate(Reservation.date, this.Today)){
+        this.LoadTodayReservations()
+      }
+    }
+
+    this.DeletingReservation = false
   }
 
 
@@ -305,13 +325,13 @@ export class SchedulePage {
     this.LoadingTodayReservations = false
   }
 
-  NavigateTime(Amount:1|-1, Event:MouseEvent){
+  NavigateTime(Amount: 1 | -1, Event: MouseEvent) {
     Event.stopPropagation()
     const NewDate = new Date(this.CurrentDate)
-    if (this.ViewType == 'Month'){
-      NewDate.setMonth(NewDate.getMonth()+Amount)
-    }else{
-      NewDate.setDate(NewDate.getDate()+Amount)
+    if (this.ViewType == 'Month') {
+      NewDate.setMonth(NewDate.getMonth() + Amount)
+    } else {
+      NewDate.setDate(NewDate.getDate() + Amount)
     }
     this.CurrentDate = NewDate
     this.LoadReservations()

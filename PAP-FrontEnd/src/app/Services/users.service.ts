@@ -13,7 +13,7 @@ export class UsersService {
   async GetUsers(PageNumber:any, PageSize:any){
       const UsersUrl = new URL(this.UsersURL);
       UsersUrl.searchParams.append('page', PageNumber);
-      UsersUrl.searchParams.append('pagesize', PageSize);
+      UsersUrl.searchParams.append('page_size', PageSize);
 
       const [Users] = await this.HttpService.MakeRequest(UsersUrl, 'GET', 'Could not fetch users')
       return Users

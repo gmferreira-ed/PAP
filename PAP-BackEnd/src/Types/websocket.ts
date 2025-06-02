@@ -27,7 +27,7 @@ export class ExpressWebSocketServer {
     SendGlobalMessage(Message: string, Data?: any) {
         const MessageData = {
             message: Message,
-            Data: Data
+            data: Data
         }
         this.ClientSockets.forEach(ClientSocket => {
             const CanListen = this.ClientRecieveFilter(ClientSocket, MessageData)
@@ -41,7 +41,7 @@ export class ExpressWebSocketServer {
         const WebSocketServer: WebSocketServer = new WebSocketModule.Server({ noServer: true })
         this.Server = WebSocketServer
 
-        Path = "/websocket" + Path
+        Path = "/api/websocket" + Path
 
         WebsocketService.WebSocketServers[Path] = this
 
@@ -51,10 +51,10 @@ export class ExpressWebSocketServer {
 
 
 
-
-
         // On user connect
         WebSocketServer.on('connection', (Request: ExpressRequest, LocalSocket: ExpressWebSocket) => {
+
+            //console.log("WEBSOCKET CONNECTION")
 
             const User = Request.session.user
             LocalSocket.User = User
@@ -74,5 +74,11 @@ export class ExpressWebSocketServer {
 
              this.ClientSockets.add(LocalSocket);
         });
+
+        
+
+        WebSocketServer.on('wsClientError', (Error)=>{
+            console.error(Error)
+        })
     }
 }

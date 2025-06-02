@@ -11,7 +11,7 @@ import { Table } from '../../../../shared/table';
 export class OrdersService {
   HttpService = inject(HttpService)
 
-
+  LoadingTables = false
 
   Reservations = new SimpleCache(async (): Promise<Map<string, any>> => {
     const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations')
@@ -44,6 +44,8 @@ export class OrdersService {
 
   // Fetching tables
   Tables = new SimpleCache(async () => {
+    this.LoadingTables = true
+
     const [Tables] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'tables')
 
     const ConvertedTables = Object.fromEntries(
@@ -54,6 +56,7 @@ export class OrdersService {
       })
     )
 
+    this.LoadingTables = false
     return ConvertedTables
   }, 10)
 

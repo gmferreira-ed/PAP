@@ -1,60 +1,58 @@
-<div class="navbar">
-    <ul nz-menu [nzTheme]="this.ThemeService.Theme()" nzMode="inline">
-        <li nz-menu-item nzMatchRouter="/dashboard" routerLink="/dashboard">
-             <icon type="dashboard" [fill]="true"></icon>
-            <span>{{'Dashboard' | translate}}</span>
-        </li>
+<navbar>
+    <div class="navbar-item"  navbar-item routerLink="/dashboard">
+        <icon type="dashboard" [fill]="true"></icon>
+        <span>{{'Dashboard' | translate}}</span>
+    </div>
 
-        <li nz-menu-item nzMatchRouter="/orders" routerLink="/orders">
-             <icon type="checkout" [fill]="true"></icon>
-            <span>{{'Orders' | translate}}</span>
-        </li>
+    <div navbar-item routerLink="/orders">
+        <icon type="checkout" [fill]="true"></icon>
+        <span>{{'Orders' | translate}}</span>
+    </div>
 
-        <li nz-menu-item nzMatchRouter="/reservations" routerLink="/reservations">
-             <icon type="calendar"></icon>
-            <span>{{'Reservations' | translate}}</span>
-        </li>
-
-
-        <li nz-menu-item nzMatchRouter="/stocks" routerLink="/stocks">
-             <icon type="stocks" [fill]="true"></icon>
-            <span>{{'Stocks' | translate}}</span>
-        </li>
-
-        <li nz-menu-item nzMatchRouter="/analytics" routerLink="/analytics">
-             <icon type="chart-line"></icon>
-            <span>{{'Analytics' | translate}}</span>
-        </li>
-
-        <li nz-menu-item nzMatchRouter="/receipts" routerLink="/receipts">
-             <icon type="receipt_long" [fill]="true"></icon>
-            <span>{{'Receipts' | translate}}</span>
-        </li>
+    <div navbar-item routerLink="/reservations">
+        <icon type="calendar"></icon>
+        <span>{{'Reservations' | translate}}</span>
+    </div>
 
 
-        <div class="menu-divider"></div>
+    <div navbar-item routerLink="/stocks">
+        <icon type="stocks" [fill]="true"></icon>
+        <span>{{'Stocks' | translate}}</span>
+    </div>
 
-        <li nz-menu-item nzMatchRouter="/menu" routerLink="/menu">
-             <icon type="menu" [fill]="true"></icon>
-            <span>{{'Menu' | translate}}</span>
-        </li>
+    <div navbar-item routerLink="/analytics">
+        <icon type="chart-line"></icon>
+        <span>{{'Analytics' | translate}}</span>
+    </div>
 
-        <li nz-menu-item nzMatchRouter="/users" routerLink="/users">
-             <icon type="account" [fill]="true"></icon>
-            <span>{{'Users' | translate}}</span>
-        </li>
+    <div navbar-item routerLink="/receipts">
+        <icon type="receipt_long" [fill]="true"></icon>
+        <span>{{'Receipts' | translate}}</span>
+    </div>
 
-        <li nz-menu-item nzMatchRouter="/role-management" routerLink="/role-management">
-             <icon type="shield"></icon>
-            <span>{{'Role Management' | translate}}</span>
-        </li>
 
-        <li nz-menu-item nzMatchRouter="/restaurant-settings" routerLink="/restaurant-settings">
-             <icon type="settings" [fill]="true"></icon>
-            <span>{{'Settings' | translate}}</span>
-        </li>
-    </ul>
-</div>
+    <div class="separator" style="background-color: var(primary-color); align-self: center; opacity: 0.2;"></div>
+
+    <div navbar-item routerLink="/menu">
+        <icon type="menu" [fill]="true"></icon>
+        <span>{{'Menu' | translate}}</span>
+    </div>
+
+    <div navbar-item routerLink="/users">
+        <icon type="account" [fill]="true"></icon>
+        <span>{{'Users' | translate}}</span>
+    </div>
+
+    <div navbar-item routerLink="/role-management">
+        <icon type="shield"></icon>
+        <span>{{'Role Management' | translate}}</span>
+    </div>
+
+    <div navbar-item routerLink="/restaurant-settings">
+        <icon type="settings" [fill]="true"></icon>
+        <span>{{'Settings' | translate}}</span>
+    </div>
+</navbar>
 
 <div class="container" #PageContainer>
     <span class="title">{{CurrentPage | translate}}</span>

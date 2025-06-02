@@ -14,7 +14,10 @@ class WebSocketService {
     
     Connect(HttpServer: Http2SecureServer, SessionMiddleware: Function) {
 
+        //console.log("Websocket Service connected to http server")
+
         HttpServer.on('upgrade', (Request, Socket, Head) => {
+
             const ParsedURL = url.parse(Request.url, true)
             const Path = ParsedURL.pathname
             const QueryParams = ParsedURL.query
@@ -30,6 +33,7 @@ class WebSocketService {
 
                     if (ConnectionGuard && !ConnectionGuard(Request)) {
                         Socket.destroy();
+                        console.log("Failed to connect to websocket " + Path)
                         return;
                     }
                     TargetWebsocketServer.Server.handleUpgrade(Request, Socket, Head, (NewSocket) => {

@@ -72,7 +72,7 @@ router.get('/role-users', HandleEndpointFunction(async function (request, respon
     const Query = request.query
     const [UsersQuery, UsersQueryValues] = SQLUtils.BuildSelectQuery('users', Query, ['role'])
 
-    var Result = await GetPaginatedResult("users", UsersQuery, UsersQueryValues, Query.page as string, Query.pagesize as string)
+    var Result = await GetPaginatedResult("users", UsersQuery, UsersQueryValues, Query)
     response.send(Result)
 }))
 

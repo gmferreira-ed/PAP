@@ -33,8 +33,8 @@ import { UFile } from '../../../types/ufile';
 
 @Component({
   selector: 'menu-page',
-  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule, NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule, CdkDrag,
-    CdkDropList, CdkDragHandle, NzToolTipModule,
+  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule, NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule,
+    CdkDropList, NzToolTipModule,
     NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule, NzUploadModule, NzIconModule, FormsModule, CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen],
   templateUrl: './menu.page.html',
   styleUrl: './menu.page.less'
