@@ -3,7 +3,7 @@
   "compounds": [
     {
       "name": "Launch All",
-      "configurations": ["Dev Frontend", "Dev Backend"],
+      "configurations": ["Dev Frontend", "Dev Backend", "Dev Electron"],
       "presentation": {
         "group": "",
         "order": 1
@@ -17,7 +17,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}/PAP-FrontEnd",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start"],
+      "runtimeArgs": ["run", "angular"],
       "console": "integratedTerminal",
       "presentation": {
         "order": 2
@@ -38,7 +38,7 @@
     },
 
     {
-      "name": "Test Electron",
+      "name": "Dev Electron",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/PAP-FrontEnd",

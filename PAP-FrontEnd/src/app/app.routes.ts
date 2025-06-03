@@ -14,6 +14,7 @@ import { CheckoutPage } from './Pages/Orders/checkout.page';
 import { SchedulePage } from './Pages/Schedule/schedule.page';
 import { RoleManagementPage } from './Pages/RoleManager/role-manager.page';
 import { RestaurantSettingsPage } from './Pages/RestaurantSettings/restaurant-settings.page';
+import { TestsPage } from './Pages/Tests/tests.page';
 
 
 export const routes: Routes = [
@@ -39,6 +40,7 @@ export const routes: Routes = [
 
     { path: 'dashboard', component: DashboardPage, canActivate: [PageAuthGuard] },
     { path: 'receipts', component: ReceiptsPage, canActivate: [PageAuthGuard] },
+    { path: 'tests', component: TestsPage, canActivate: [PageAuthGuard] },
 
 
     {

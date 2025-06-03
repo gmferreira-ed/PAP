@@ -1,25 +1,26 @@
-:host{
+:host {
     display: flex;
     position: relative;
 }
 
 
-.container{
+.container {
     display: flex;
     position: relative;
     width: 100%;
     height: 90%;
     gap: 20px;
+    overflow-y: auto;
 }
 
-.product-select{
+.product-select {
     display: flex;
     flex-direction: column;
     width: 50%;
-    flex:1;
+    flex: 1;
 }
 
-.products{
+.products {
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -30,10 +31,10 @@
     padding-top: 5px;
 }
 
-.product{
+.product {
     display: flex;
     flex-direction: column;
-    
+
     background-color: var(--secondary-color-2);
 
     overflow: hidden;
@@ -45,26 +46,26 @@
     height: 165px;
 
     cursor: pointer;
-    
-    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.2);
+
+    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
 
     transform: scale(1);
     transition: all 0.1s ease-out;
 
-    &:hover{
+    &:hover {
         transform: scale(1.05);
 
-        .overlay{
+        .overlay {
             opacity: 1 !important;
         }
     }
 
-    img{
+    img {
         height: 80%;
         object-fit: cover;
     }
 
-    label{
+    label {
         flex: 1;
         pointer-events: none;
         font-size: 16px;
@@ -72,13 +73,13 @@
         text-align: center;
     }
 
-    .price{
+    .price {
         font-size: 12px;
         font-weight: normal;
         color: var(--primary-color-2)
     }
 
-    &.disabled{
+    &.disabled {
         opacity: 0.5;
         pointer-events: none;
         box-shadow: none;
@@ -87,44 +88,44 @@
 }
 
 
-.order{
+.order {
     display: flex;
     flex-direction: column;
 
     min-width: 35%;
 
     overflow: hidden;
-    
+
     background-color: var(--secondary-color-2);
     border-radius: 2%;
 
 
-    h1{
+    h1 {
         margin-left: 10px;
         margin-bottom: 0px;
     }
 
-    .small-caption{
+    .small-caption {
         margin-left: 10px;
         margin-bottom: 10px;
     }
 }
 
-.order-products{
+.order-products {
     display: flex;
     flex-direction: column;
 
     height: 70%;
     overflow-y: auto;
-    overflow-x:hidden;
+    overflow-x: hidden;
 
     gap: 10px;
     margin-left: 20px;
-    
+
     padding-bottom: 10px;
 }
 
-.order-product{
+.order-product {
     display: flex;
     font-size: 16px;
     font-weight: 500;
@@ -133,7 +134,7 @@
     border-radius: 10px;
     background-color: var(--secondary-color-3);
 
-    img{
+    img {
         width: 50px;
         height: 50px;
         border-radius: 50px;
@@ -141,17 +142,17 @@
         margin-right: 10px;
     }
 
-    .price{
+    .price {
         font-size: 14px;
         opacity: 0.5;
     }
 
-    label{
+    label {
         font-size: 16px;
     }
 
-    
-    .actions{
+
+    .actions {
         display: flex;
         flex: 1;
         justify-content: end;
@@ -160,14 +161,14 @@
 
     transition: all 0.1s ease-out;
 
-    &:hover{
+    &:hover {
         transform: scale(1.01);
     }
 }
 
 
-.order-options{
-    
+.order-options {
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -177,20 +178,20 @@
 
     border-top: 2px solid rgba(128, 128, 128, 0.2);
     background-color: var(--secondary-color-3);
-    
-    .total{
+
+    .total {
         font-size: 30px;
         font-weight: 500;
     }
 
-    .actions{
+    .actions {
         display: flex;
         flex: 1;
         justify-content: end;
     }
 }
 
-.finish-button{
+.finish-button {
     height: 50px;
     width: 45%;
     font-size: large;
@@ -200,20 +201,24 @@
 
     box-shadow: 0px 0px 3px 1px var(--shadow-color);
 
-    &.view{
+    &.view {
         background-color: rgb(196, 132, 15);
         margin-right: 20px;
     }
 }
 
-.tables{
+.tables {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px;
+
+    padding-top: 10px;
+
+    overflow-y: auto;
 }
 
-.table{
+.table {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -234,7 +239,61 @@
 
     cursor: pointer;
 
-    &.ongoing{
+    &.ongoing {
         background-color: rgb(114, 114, 49);
     }
+}
+
+.receipt {
+    width: calc(80mm+5px);
+    margin-top: 10px;
+    min-height: 10%;
+    background-color: rgb(233, 233, 233);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable both-edges;
+    box-sizing: content-box;
+
+    padding: 10px;
+    font-family: monospace, 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: black;
+    box-sizing: border-box;
+    user-select: none;
+
+    padding-bottom: 20px;
+    padding-top: 20px;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #dddddd;
+        border-radius: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: #cccccc;
+    }
+
+    p {
+        margin: 0px;
+        margin-block-start:0px;
+        margin-block-end:0px;
+        unicode-bidi: normal;
+        line-height: 1.2em;
+        white-space: pre;
+        user-select:text;
+    }
+}
+
+::ng-deep .ant-select-item-option-content{
+    display: flex;
+    gap: 5px;
 }

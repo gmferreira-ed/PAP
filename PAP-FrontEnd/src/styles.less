@@ -239,6 +239,38 @@ div {
   background-color: var(--secondary-color);
   border: 1px solid var(--primary-color-2);
 
+  icon {
+    margin-right: 5px;
+  }
+
+  &.sucess {
+    color: var(--success-color);
+    background-color: color-mix(in srgb, var(--success-color), transparent 90%);
+    border: 1px solid var(--success-color);
+  }
+
+  &.error {
+    color: var(--error-color);
+    background-color: color-mix(in srgb, var(--error-color), transparent 90%);
+    border: 1px solid var(--error-color);
+  }
+
+  &.large {
+    padding: 4px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 18px;
+
+    &.xl{
+      font-size: 24px;
+    }
+
+    &.xll{
+      font-size: 30px;
+    }
+  }
+
+
   &.block {
     aspect-ratio: 1 / 1;
   }
@@ -259,7 +291,7 @@ div {
   opacity: 0 !important;
 }
 
-.scroll{
+.scroll {
   overflow-y: auto;
   padding-top: 2px;
   padding-bottom: 5px;
@@ -501,20 +533,20 @@ navbar {
       background-color: color-mix(in srgb, var(--accent-color), transparent 80%);
     }
 
-    
+
   }
 
   &.collapsed .navbar-item {
-      padding-left: 5px;
-      align-items: center;
-      justify-content: center;
+    padding-left: 5px;
+    align-items: center;
+    justify-content: center;
 
-      span {
-        display: none;
-      }
-
-      border-radius: 10px;
+    span {
+      display: none;
     }
+
+    border-radius: 10px;
+  }
 }
 
 .prompt {
@@ -592,14 +624,14 @@ body.cursor-grabbing *:hover {
   overflow: auto;
 }
 
-.entry{
+.entry {
   display: flex;
   align-items: center;
   padding: 10px;
   border: 0.5px solid;
   border-radius: 10px;
 
-  .picture{
+  .picture {
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -607,12 +639,12 @@ body.cursor-grabbing *:hover {
     margin-right: 5px;
   }
 
-  &.Entry{
+  &.Entry {
     background-color: color-mix(in srgb, var(--success-color), transparent 80%);
     border-color: var(--success-color);
   }
 
-  &.Exit{
+  &.Exit {
     background-color: color-mix(in srgb, var(--error-color), transparent 80%);
     border-color: var(--error-color);
   }
