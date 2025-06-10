@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { IconsModule } from '../../Components/icon/icon.component';
@@ -12,6 +12,8 @@ import { RouterLink } from '@angular/router';
 import { AnimationItem } from 'lottie-web';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { TranslatePipe } from '@ngx-translate/core';
+import { HttpService } from '../../Services/Http.service';
+import { AppSettings } from '../../Services/AppSettings';
 
 @Component({
   selector: 'register-page',
@@ -22,12 +24,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './register.page.less'
 })
 export class RegisterPage {
-  StepIndex = 2
-  CurrentStepIndex = 2
+  StepIndex = 0
+  CurrentStepIndex = 0
 
   VerificationCode = ''
   CreatingAccount = false
   VerifyingAccount = false
+
+  HttpService = inject(HttpService)
 
   EmailSentOptions: AnimationOptions = {
     path: 'Animations/MailSent.json',
@@ -38,7 +42,7 @@ export class RegisterPage {
     loop: false,
   }
 
-  SetSpeed(animation: AnimationItem, Speed:number): void {
+  SetSpeed(animation: AnimationItem, Speed: number): void {
     animation.setSpeed(Speed)
   }
 
@@ -47,35 +51,44 @@ export class RegisterPage {
       username: new FormControl('', Validators.required),
       active: new FormControl(false),
       email: new FormControl('', [Validators.required, Validators.email]),
-      phone: new FormControl(''),
+      phone: new FormControl('', Validators.required),
       role: new FormControl(''),
       password: new FormControl('', Validators.required)
     }),
     personnal_info: new FormGroup({
       fullname: new FormControl('', Validators.required),
-      birthdate: new FormControl(''),
-      country: new FormControl(''),
-      city: new FormControl(''),
-      address: new FormControl(''),
-      postalcode: new FormControl('')
+      birthdate: new FormControl('', Validators.required),
+      country: new FormControl('', Validators.required),
+      city: new FormControl('', Validators.required),
+      address: new FormControl('', Validators.required),
+      postalcode: new FormControl('', Validators.required)
     }),
     verification_code: new FormControl('', [Validators.minLength(6), Validators.required])
   });
 
-  CreateAccount(){
+  async CreateAccount() {
     this.CreatingAccount = true
 
-    if (true){
+    const BirthDate = new Date(this.RegisterForm.value.personnal_info?.birthdate!).toISOString().slice(0, 19).replace('T', ' ')
+    const [AccountCreateSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/signup', 'POST', 'Failed to create account', {
+      ...this.RegisterForm.value.account_info,
+      ...this.RegisterForm.value.personnal_info,
+      birthdate: BirthDate
+    })
+    if (AccountCreateSucess) {
       this.StepIndex = 2
       this.CurrentStepIndex = 2
     }
     this.CreatingAccount = false
   }
 
-  Verify(){
+  async Verify() {
     this.VerifyingAccount = true
 
-    if (true){
+    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST', 'Failed to verify', {
+      verificationcode: this.RegisterForm.value.verification_code
+    })
+    if (VerifiedSucessfully) {
       this.StepIndex = 3
       this.CurrentStepIndex = 3
     }

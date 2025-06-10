@@ -70,6 +70,9 @@
         {{"Next" | translate}}
         <nz-icon nzType="right"></nz-icon>
       </button>
+
+      <br>
+      <a routerLink="/login">Login Instead</a>
     </fieldset>
     }
 
@@ -128,7 +131,7 @@
           <nz-icon nzType="left"></nz-icon>
         </button>
         <button nz-button [disabled]="RegisterForm.get('personnal_info')?.invalid" (click)="CreateAccount()">
-          {{"Next" | translate}}
+          {{"Create Account" | translate}}
           <nz-icon nzType="right"></nz-icon>
         </button>
       </div>
@@ -136,15 +139,25 @@
     }
 
     @case(2){
-    <label class="title">{{"Verification" | translate}}</label>
+    <label class="title">{{"Your account has been created!" | translate}}</label>
+    <label>You must verify your email in order to continue</label>
     <label>{{"An email has been sent to " | translate}}<b>{{RegisterForm.value.account_info?.email}}</b></label>
     <ng-lottie class='verify-anim' [options]="EmailSentOptions" height="400px"
       (animationCreated)="SetSpeed($event, 1.5)"></ng-lottie>
-    <!-- <label style="opacity: 0.5;">You will be automatically redirected once your email is verified</label> -->
+      
     <ngx-otp-input formControlName="verification_code" [config]="{length:6, allowNumbersOnly:true}" [disabled]="VerifyingAccount"></ngx-otp-input>
+
     <br>
-    <button nz-button nzSize="large" [nzLoading]="VerifyingAccount" [disabled]="RegisterForm.get('verification_code')?.invalid" (click)="Verify()">Verify</button>
+
+    <button nz-button nzSize="large" 
+    [nzLoading]="VerifyingAccount" 
+    [disabled]="RegisterForm.get('verification_code')?.invalid" 
+    (click)="Verify()">
+      Verify
+  </button>
+
     <br>
+
     <label>{{"Didn't recieve an email?" | translate}}</label>
     <a>{{"Resend verification" | translate}}</a>
     }

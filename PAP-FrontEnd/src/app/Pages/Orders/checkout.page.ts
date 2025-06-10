@@ -173,7 +173,7 @@ export class CheckoutPage {
   CustomerInfoForm = new FormGroup({
     amount_paid: new FormControl('', [Validators.required]),
     TIN: new FormControl('', [Validators.required]),
-    payment_method: new FormControl('', [Validators.required]),
+    payment_method: new FormControl('Visa', [Validators.required]),
   })
 
   // Data
@@ -241,13 +241,17 @@ export class CheckoutPage {
     const hours = String(Today.getHours()).padStart(2, '0');
     const minutes = String(Today.getMinutes()).padStart(2, '0');
 
+
+    let TotalPrice = this.OrderInfo.products.reduce((total: number, product: any) => {
+      return total + product.price * product.quantity;
+    }, 0);
     const FormData = this.CustomerInfoForm.value
-    const AmountPaid = Number(FormData.amount_paid)
+    const AmountPaid = FormData.payment_method == 'Cash' ? Number(FormData.amount_paid) : TotalPrice
 
     // BUILDING RECEIPT
     Receipt.push(new PrinterFunction('align', 'CT'))
     Receipt.push(new PrinterFunction('text', new TextData('Restaurant', { size: [1, 1] })))
-    Receipt.push(new PrinterFunction('text', new TextData('Mock Adress')))
+    Receipt.push(new PrinterFunction('text', new TextData('Mock Address')))
     Receipt.push(new PrinterFunction('text', new TextData('3030-032 Coimbra')))
     Receipt.push(new PrinterFunction('text', new TextData('Telef./Fax: 246 247 284')))
     Receipt.push(new PrinterFunction('text', new TextData('Tax ID No: 23424423')))
@@ -264,13 +268,11 @@ export class CheckoutPage {
 
     Receipt.push(new PrinterFunction('drawLine'))
 
-    let TotalPrice = 0
 
     Receipt.push(new PrinterFunction('text', new TextData(JustifyLine(['Qt/Product', 'T/Price']), { justified: true })))
     for (const Product of this.OrderInfo.products) {
       const QtPrice = FormatPrice(Product.price) + '/un'
       const TotalProductPrice = FormatPrice(Product.price * Product.quantity)
-      TotalPrice += Product.price * Product.quantity
 
       Receipt.push(new PrinterFunction('text', new TextData(
         JustifyLine([
@@ -365,7 +367,7 @@ export class CheckoutPage {
       this.MessageService.warning('You left an open table order with no items.\nTo cancel the order, click the cancel button')
     }
     if (this.CheckingOut) {
-      this.Router.navigate(['/orders/'+this.SelectedTable])
+      this.Router.navigate(['/orders/' + this.SelectedTable])
     } else {
       this.Router.navigate(['/orders'])
     }

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, HostBinding, Input, input, Output, EventEmitter, ElementRef } from '@angular/core';
+import { Component, inject, HostBinding, Input, input, Output, EventEmitter, ElementRef, SimpleChanges } from '@angular/core';
+import { IconService } from './icon.service';
 
 
 
@@ -14,23 +15,26 @@ import { Component, inject, HostBinding, Input, input, Output, EventEmitter, Ele
 
 export class IconsModule {
 
-  HttpClient = inject(HttpClient)
   ElementRef = inject(ElementRef)
+  IconService = inject(IconService)
 
-  private IconSRC:string = ''
-  SVGSource:string = ''
+  private IconSRC: string = ''
+  SVGSource: string = ''
 
-  @Input() fill:boolean|string = false
-  @Input() strokewidth:number = 2
-  @Input() color:string = 'currentcolor'
-  @Input() size:string = '18px'
+  @Input() fill: boolean | string = false
+  @Input() strokewidth: number = 2
+  @Input() color: string = 'currentcolor'
+  @Input() size: string = '18px'
+  @Input() monotone: boolean = true
 
 
 
   @Input()
   set type(value: string) {
     this.IconSRC = value;
-    this.LoadSVG()
+    this.IconService.LoadSVG(value).then((SVG) => {
+      this.setSVG(SVG)
+    })
   }
 
   get type() {
@@ -38,25 +42,62 @@ export class IconsModule {
   }
 
 
-    private LoadSVG(){
-    const IconURL = 'Icons/'+this.IconSRC+'.svg'
-    this.HttpClient.get(IconURL, { responseType: 'text' }).subscribe(SVGResult => {
-      this.SVGSource = SVGResult
+  private StyleSVGElement(Element: HTMLElement | HTMLOrSVGImageElement) {
 
-      const wrapper = this.ElementRef.nativeElement.querySelector('.icon-wrapper');
-      wrapper.innerHTML = SVGResult;
+    if (Element.tagName == 'svg') {
+      Element.style.width = this.size;
+      Element.style.height = this.size;
+    }
 
-      const SVG = wrapper.querySelector('svg');
-      if (SVG) {
-        SVG.setAttribute('strokewidth', this.strokewidth);
-        SVG.setAttribute('color', this.color);
-        SVG.style.width = this.size
-        SVG.style.height = this.size
-        if (this.fill){
-          SVG.setAttribute('fill', 'currentcolor');
+
+    if (this.monotone) {
+      Element.setAttribute('strokewidth', String(this.strokewidth));
+      Element.setAttribute('color', this.color);
+      Element.setAttribute('stroke', this.color);
+
+      const PreviousFill = Element.getAttribute('fill')
+      const DefaultFill = Element.getAttribute('defaultfill')
+
+      if ((PreviousFill != 'none' && PreviousFill || this.fill) && !DefaultFill) {
+        if (!DefaultFill) {
+          Element.setAttribute('defaultfill', PreviousFill!)
         }
+        Element.setAttribute('fill', 'currentcolor');
+      } else if (!this.fill && DefaultFill) {
+        Element.setAttribute('fill', DefaultFill)
       }
-    })
+    }
+  }
+
+  private StyleSVG() {
+    const wrapper = this.ElementRef.nativeElement
+    const SVG = wrapper.querySelector('svg') as HTMLOrSVGImageElement
+    if (SVG) {
+      setTimeout(() => {
+        this.StyleSVGElement(SVG)
+        const SVGElements = SVG.querySelectorAll('g, path, rect, circle, ellipse, polygon, polyline, line')
+        if (this.monotone) {
+          SVGElements.forEach(el => {
+            this.StyleSVGElement(el as HTMLElement)
+          })
+        }
+      }, 1);
+    }
+  }
+
+  private setSVG(SVGResult: string) {
+    this.SVGSource = SVGResult;
+    const wrapper = this.ElementRef.nativeElement
+    wrapper.innerHTML = SVGResult;
+    this.StyleSVG()
+  }
+
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['fill'] || changes['color']) {
+      this.StyleSVG()
+    }
   }
 }
 

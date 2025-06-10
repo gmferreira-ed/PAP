@@ -37,10 +37,10 @@ export class LoginPage {
     if (LoginResult){
       this.router.navigate(['/dashboard'])
     }else{
-      if (LoginError == 'Incorrect password'){
+      if (LoginError?.ErrorMessage == 'Incorrect password'){
          this.LoginForm.get('password')?.reset()
 
-      }else if(LoginError == 'User does not exist'){
+      }else if(LoginError?.ErrorMessage == 'User does not exist'){
          this.LoginForm.get('username')?.reset()
       }
     }
@@ -49,10 +49,4 @@ export class LoginPage {
     this.LoginForm.enable()
   }
 
-  ngOnInit() {
-    const User = this.AuthService.User()
-    if (User) {
-      this.router.navigate(['/dashboard'])
-    }
-  }
 }

@@ -3,6 +3,11 @@ import { AppSettings } from './AppSettings';
 import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+type ErrorInfo = {
+  ErrorCode: number,
+  ErrorMessage: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,14 +24,10 @@ export class HttpService {
 
 
 
-  async MakeRequest(RequestURL: URL | string, Method: string = "GET", ErrorSuffix: string = "", Data?: any): Promise<[Boolean | any, string?]> {
+  async MakeRequest(RequestURL: URL | string, Method: string = "GET", ErrorSuffix: string = "", Data?: any): Promise<[Boolean | any, ErrorInfo?]> {
     return new Promise(async (resolve, reject) => {
 
-
       let RequestHeaders: any = undefined
-
-
-
 
       if (typeof (RequestURL) == 'string') {
         RequestURL = new URL(RequestURL)
@@ -85,14 +86,19 @@ export class HttpService {
         } else {
           if (ErrorSuffix)
             this.MessageService.error(`${ErrorSuffix}\n${Result.error}`)
-          resolve([false, Result.error])
+          resolve([false, {
+            ErrorCode: Response.status,
+            ErrorMessage: Result.error
+        }])
         }
 
         // ERROR
       }).catch((Error: Error) => {
-        console.error(Error)
         this.MessageService.error(`Could not connect to the server. Please try again later`)
-        resolve([false, 'Connection error'])
+        resolve([false, {
+          ErrorCode: -1,
+          ErrorMessage: 'Connection Error'
+        }])
       })
     })
   }
@@ -102,7 +108,7 @@ export class HttpService {
   // WEB SOCKETS
 
   async ConnectToWebsocket(WebSocketPath: URL | string, Retry?: Boolean, RetryInterval: number = 5)
-  : Promise<WebSocket & { OnMessage?: (Message: string, Data:any) => void }> {
+    : Promise<WebSocket & { OnMessage?: (Message: string, Data: any) => void }> {
 
     return new Promise(async (FinalResolve, FinalReject) => {
 

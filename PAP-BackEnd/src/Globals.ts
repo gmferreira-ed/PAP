@@ -17,6 +17,8 @@ const Database = mysql.createPool({
   timezone: 'Z',
   database: 'restaurant',
 
+  enableKeepAlive:true,
+
 }).promise()
 
 

@@ -1,11 +1,18 @@
-
 import GlobalConfigs from '../Config/GlobalConfigs';
 import { Database, ErrorResponse, EndpointsAttributes, EndpointMatches, EndpointRegex } from '../Globals'
 import SimpleCache from "../../../shared/SimpleCache"
+import nodemailer from 'nodemailer'
+const crypto = require('crypto');
 
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-
+const MailTransport = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "gabrielmonteiroferreira@gmail.com",
+    pass: "eijn thtg ahsd fnco"
+  }
+})
 
 
 var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
@@ -61,23 +68,55 @@ var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
 }, 15)
 
 
+async function GenerateUserCode(Request: ExpressRequest) {
+  const Code = crypto.randomInt(0, 1000000).toString().padStart(6, '0');
+  Request.session.verificationcode = Code
+  Request.session.verificationcode_created = new Date().getTime()
 
+  const UserData = await GetUserData(Request.session.user!)
+  await MailTransport.sendMail({
+    // from: mail_config.auth.user,
+    to: UserData.email,
+    subject: 'Restro Link Verification code',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; padding: 32px 24px; background: #fafbfc;">
+        <h2 style="color: #333; margin-bottom: 16px;">Your Verification Code</h2>
+        <p style="font-size: 16px; color: #444; margin-bottom: 24px;">
+          Hello <b>${UserData.username || ''}</b>,
+        </p>
+        <p style="font-size: 16px; color: #444; margin-bottom: 24px;">
+          Please use the following code to verify your account:
+        </p>
+        <div style="text-align: center; margin: 32px 0;">
+          <span style="display: inline-block; font-size: 32px; letter-spacing: 8px; font-weight: bold; color: #1976d2; background: #e3f2fd; padding: 16px 32px; border-radius: 8px; border: 1px solid #bbdefb;">
+            ${Code}
+          </span>
+        </div>
+        <p style="font-size: 14px; color: #888;">
+          This code will expire in a few minutes. If you did not request this, please ignore this email.
+        </p>
+        <hr style="margin: 32px 0 16px 0; border: none; border-top: 1px solid #eee;">
+        <p style="font-size: 12px; color: #bbb; text-align: center;">
+          &copy; ${new Date().getFullYear()} Restro Link
+        </p>
+      </div>
+    `
+  })
 
-async function GetUserData(User: User | string): Promise<User> {
-  const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE users.username = ?`
-  const [permission_profiles] = await Database.execute<any>(UserPermissionsQuery, [User]);
-
-
-  let UserPermissions = permission_profiles[0]
-  if (!UserPermissions) {
-    UserPermissions = {
-      permission_level: 1,
-      role: "user"
-    }
-  }
-
-  return UserPermissions
+  return Code
 }
+function VerifyUserCode(Request: ExpressRequest) {
+  const VerificationCode = Request.session.verificationcode
+  const SentVerificationCode = Request.body.verificationcode
+
+  if (VerificationCode && SentVerificationCode == VerificationCode) {
+    Request.session.verificationcode = undefined
+    return true
+  } else {
+    return false
+  }
+}
+
 
 async function CheckPermissions(Route: string, Request: Request, ParamUser?: string) {
 
@@ -115,10 +154,10 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
 
       // Has Required level
       const IsGlobal = EndpointData.Permissions.includes('User')
-      const IsAdmin = UserData.administrator && UserData.active
+      const IsAdmin = UserData.administrator
 
 
-      if (EndpointData.Permissions.includes(UserData.role) || IsGlobal || IsAdmin) {
+      if ((EndpointData.Permissions.includes(UserData.role) || IsGlobal || IsAdmin) && UserData.active && UserData.verified) {
         return [true, IsGlobal]
       }
 
@@ -164,28 +203,25 @@ async function PermissionsMiddleware(request: Request, response: Response, next:
 }
 
 let HardCodedAdmins = ['gmferreira']
-async function GetUserPermissions(User: User | string) {
+
+async function GetUserData(User: string): Promise<User> {
   const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE username = ?`
-  const [permission_profiles] = await Database.execute<any>(UserPermissionsQuery, [User]);
+  const [Users] = await Database.execute<any>(UserPermissionsQuery, [User]);
 
 
-  let UserPermissions = permission_profiles[0]
-  if (!UserPermissions) {
-    UserPermissions = {
-      permission_level: 1,
-      permission_name: "user"
-    }
-  }
+  let UserData = Users[0]
 
+  // Check for hardcoded admins, security measure for mantainers
   if (HardCodedAdmins.includes(User.toString())) {
-    UserPermissions = {
+    UserData = {
+      ...UserData,
       permission_level: 99999,
       permission_name: 'Admin',
       administrator: true,
     }
   }
 
-  return UserPermissions
+  return UserData
 }
 
 
@@ -193,5 +229,6 @@ export default {
   PermissionsMiddleware: PermissionsMiddleware,
   EndpointsData: EndpointsData,
   GetUserData: GetUserData,
-  GetUserPermissions: GetUserPermissions
+  VerifyUserCode: VerifyUserCode,
+  GenerateUserCode: GenerateUserCode,
 }

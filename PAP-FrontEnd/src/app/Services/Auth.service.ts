@@ -30,7 +30,7 @@ export class AuthService {
   PermissionTypes = PermissionTypes
 
   GetEndpointIdentifier(Endpoint: string, PermissionType: PermissionType) {
-    const NormalizedEndpoint = Endpoint.replace(/^\/+/, '') + '/';
+    const NormalizedEndpoint = Endpoint.replace(/^\/+/, '');
     return `${PermissionType}/${NormalizedEndpoint}`
   }
 
@@ -60,18 +60,22 @@ export class AuthService {
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    const [AuthSuccess] = await this.HttpService.MakeRequest(AuthURL, 'POST', 'Failed to authenticate. Please try again')
+    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', 'Failed to authenticate. Please try again')
 
+    const TargetPageURL = ActivateRoute.routeConfig?.path
 
     if (AuthSuccess) {
       const User = AuthSuccess.user
       const EndpointPermissions = AuthSuccess.role_permissions
-
-   
-      console.log(AuthSuccess)
       this.EndpointPermissions = EndpointPermissions
+
+      if (TargetPageURL == '/login' || TargetPageURL=='register') {
+        this.router.navigate(['/dashboard'])
+      }
+
       return [User, EndpointPermissions]
-    } else if (!ActivateRoute.data['NoLogin']) {
+
+    } else if (!ActivateRoute.data['NoLogin'] && ErrorInfo?.ErrorCode == 401) {
       this.router.navigate(['/login'])
     }
     return [null, {}]
@@ -146,6 +150,7 @@ export class AuthService {
           }
         }
 
+        console.log( this.AccessibleRoutes)
         // CHECK CURRENT PAGE ACCESS
         if (CurrentPageURL) {
           const CurrentPageData = this.AccessibleRoutes[CurrentPageURL]
@@ -179,9 +184,9 @@ export class AuthService {
       route = route.parent!;
     }
 
-    return '/'+segments.join('/');
+    return '/' + segments.join('/');
   }
-  
+
 
   constructor() { }
 }

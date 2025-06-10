@@ -148,13 +148,6 @@
             <form nz-form [formGroup]="CustomerInfoForm" class="info-form">
 
                 <nz-form-control>
-                    <nz-form-label>{{'Amount Paid' | translate}}</nz-form-label>
-                    <input nz-input [placeholder]="'Amount paid' | translate" formControlName="amount_paid"
-                        (ngModelChange)="MoveToCheckout()">
-                </nz-form-control>
-
-
-                <nz-form-control>
                     <nz-form-label>{{'TIN' | translate}}</nz-form-label>
                     <input nz-input [placeholder]="'TIN' | translate" formControlName="TIN"
                         (ngModelChange)="MoveToCheckout()">
@@ -171,6 +164,14 @@
                         }
                     </nz-select>
                 </nz-form-control>
+
+                @if (CustomerInfoForm.value.payment_method == 'Cash'){
+                <nz-form-control>
+                    <nz-form-label>{{'Amount Paid' | translate}}</nz-form-label>
+                    <input nz-input [placeholder]="'Amount paid' | translate" formControlName="amount_paid"
+                        (ngModelChange)="MoveToCheckout()">
+                </nz-form-control>
+                }
             </form>
 
             <div class="row fill right" style="margin-top: 10px;">
@@ -193,9 +194,8 @@
                 @let FunctionData = ReceiptFunction.data;
                 <p [style.text-align]="FunctionData.align === 'CT' ? 'center' : FunctionData.align === 'RT' ? 'right' : 'left'"
                     [style.font-size]="
-                                        FunctionData.size[0] === 2 ? '35px' :
-                                        FunctionData.size[0] === 1 ? '24px' :
-                                        '14px'"
+                    FunctionData.size[0] === 2 ? '35px' :
+                    FunctionData.size[0] === 1 ? '24px' : '14px'"
                     [style.font-weight]="FunctionData.style.includes('B') ? 'bold' : 'normal'"
                     [style.font-style]="FunctionData.style.includes('I') ? 'italic' : 'normal'"
                     [style.text-decoration]="FunctionData.style.includes('U') ? 'underline' : 'none'"
@@ -220,7 +220,11 @@
             <nz-icon nzType="arrow-left"></nz-icon>
         </button>
         <label style="font-weight: 700; font-size: 30px; margin-left: 5px;">
-            {{'Order Nº' | translate}}{{OrderInfo.order_id}}
+            @if (CheckingOut){
+                {{'Order Nº' | translate}}{{OrderInfo?.order_id}}
+            }@else {
+                {{'Table' | translate}} {{SelectedTable}}
+            }
         </label>
     </div>
 </ng-template>

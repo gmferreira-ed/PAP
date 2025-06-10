@@ -31,7 +31,7 @@ router.get('/role-permissions/user', HandleEndpointFunction(async function (requ
     const User = request.session.user
 
     if (User){
-        const UserPermissions = await PermissionsService.GetUserPermissions(User)
+        const UserPermissions = await PermissionsService.GetUserData(User)
         response.send(UserPermissions)
     }else{
         response.status(404).send({error: 'User not found'})

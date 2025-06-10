@@ -6,5 +6,8 @@ declare module "express-session" {
   interface SessionData {
     user: string;
     userid: number;
+    verificationcode?: number;
+    verificationcode_created?: number;
+
   }
 }

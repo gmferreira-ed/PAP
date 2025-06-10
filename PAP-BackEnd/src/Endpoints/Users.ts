@@ -10,6 +10,7 @@ import SQLUtils from '../Services/SQLUtils';
  * @path /users
  * @method GET
  * @summary "View all users and their info"
+ * @unprotected true
  */
 Router.get('/users', HandleEndpointFunction(async (req, res) => {
     const query = req.query
@@ -29,6 +30,7 @@ Router.get('/users', HandleEndpointFunction(async (req, res) => {
         res.send(UserInfo[0])
     }
 }))
+
 
 Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
 

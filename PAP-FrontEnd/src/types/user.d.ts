@@ -9,7 +9,7 @@ type User = {
     userid:number,
     phone:number,
     
-    adress: string
+    address: string
     city: string
     country: string
     postalcode: string

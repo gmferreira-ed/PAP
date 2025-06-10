@@ -1,0 +1,9 @@
+<div class="header-content" (click)="Collapsed = !Collapsed">
+    <ng-content select="[navbar-header]">
+    </ng-content>
+    <icon type="arrow-down" class="arrow"></icon>
+</div>
+<div class="section-content">
+    <ng-content select="[navbar-item]">
+    </ng-content>
+</div>

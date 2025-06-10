@@ -66,10 +66,10 @@
                         <label>{{User()?.created | date: 'longDate'}}</label>
                     </div>
 
-                    @if (User()?.adress){
+                    @if (User()?.address){
                     <div class="profile-collumn">
-                        <label class="info-label">Adress</label>
-                        <label>{{User()?.adress}} {{User()?.city}} {{User()?.country}} {{User()?.postalcode}}</label>
+                        <label class="info-label">Address</label>
+                        <label>{{User()?.address}} {{User()?.city}} {{User()?.country}} {{User()?.postalcode}}</label>
                     </div>
                     }
                 </div>
