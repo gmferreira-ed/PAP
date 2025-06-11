@@ -1,4 +1,3 @@
-
 import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction, GetPaginatedResult } from '../Globals'
@@ -8,11 +7,11 @@ import { ExpressWebSocketServer } from '../Types/websocket';
 
 const EntriesWebsocket = new ExpressWebSocketServer('/entries')
 /**
- * @displayname "Entries"
+ * @displayname "View Entries"
+ * @category "Entries"
+ * @summary "View employees entries in the restaurant"
  * @path /entries
  * @method GET
- * @summary "Entries stuff"
- * @unprotected true
  */
 Router.get('/entries', HandleEndpointFunction(async (req, res) => {
     const [InitialEntriesQuery, InitialEntriesValues] = SQLUtils.BuildSelectQuery('attendance', 
@@ -30,10 +29,11 @@ Router.get('/entries', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Entries"
+ * @displayname "Register Entry"
+ * @category "Entries"
+ * @summary "Register an employee entry or exit using keycard"
  * @path /entries
  * @method POST
- * @summary "Entries stuff"
  */
 Router.post('/entries', HandleEndpointFunction(async (req, res) => {
     const CardID = req.body.card_id

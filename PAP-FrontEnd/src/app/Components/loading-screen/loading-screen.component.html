@@ -9,31 +9,6 @@
   }
 }
 
-<ng-template #loaderContent> @switch (LoaderStyle){
-    @case ("Squares"){
-    <div class="modern-loader">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    }
-    @case("ThinkingDots"){
-    <section class="dots-container">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-    </section>
-    }
-    @case("Spinner"){
-    <svg class="spinner" viewBox="25 25 50 50">
-        <circle r="20" cy="50" cx="50"></circle>
-    </svg>
-    }
-
-    }
+<ng-template #loaderContent>
+  <loader [Loading]="IsLoading" [LoaderStyle]="LoaderStyle" ></loader>
 </ng-template>

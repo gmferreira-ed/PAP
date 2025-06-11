@@ -1,4 +1,3 @@
-
 import express from 'express'
 import multer from 'multer'
 const Router = express.Router();
@@ -35,10 +34,11 @@ Router.get('/menu', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Menu Items"
+ * @displayname "Add Menu Item"
+ * @category "Menu"
+ * @summary "Create a new item on the menu"
  * @path /menu
  * @method POST
- * @summary "Create/Delete items on the menu"
  */
 Router.post('/menu',  HandleEndpointFunction(async (req, res) => {
 
@@ -61,10 +61,11 @@ Router.post('/menu',  HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Menu Items"
+ * @displayname "Update Menu Item"
+ * @category "Menu"
+ * @summary "Change menu item information"
  * @path /menu
  * @method PATCH
- * @summary "Change menu items information"
  */
 Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
@@ -81,10 +82,11 @@ Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Menu Items"
+ * @displayname "Delete Menu Item"
+ * @category "Menu"
+ * @summary "Delete an item from the menu"
  * @path /menu
  * @method DELETE
- * @summary "Create/Delete items on the menu"
  */
 Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
 

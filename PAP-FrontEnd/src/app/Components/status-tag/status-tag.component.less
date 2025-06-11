@@ -1,0 +1,68 @@
+
+:host {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  border: 1px solid #DEDEDE;
+  border-radius: 200px;
+
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 4px 8px 4px 8px;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  .circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+  }
+
+  &.Invalid {
+    filter: grayscale(100);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &.Active {
+    color: var(--success-color);
+    border-color: var(--success-color);
+    background-color: color-mix(in srgb, var(--success-color), transparent 90%);
+    box-shadow: 0px 0px 8px 0px color-mix(in srgb, var(--success-color), transparent 80%);
+
+    .circle {
+      background-color: var(--success-color);
+    }
+  }
+
+  &.Disabled, &.Inactive {
+    color: var(--error-color);
+    border-color: var(--error-color);
+    background-color: color-mix(in srgb, var(--error-color), transparent 90%);
+    box-shadow: 0px 0px 8px 0px color-mix(in srgb, var(--error-color), transparent 80%);
+
+    .circle {
+      background-color: var(--error-color);
+    }
+  }
+
+  &.Warning {
+    border-color: var(--warning-color);
+    background-color: color-mix(in srgb, var(--warning-color), transparent 90%);
+    box-shadow: 0px 0px 8px 0px color-mix(in srgb, var(--warning-color), transparent 80%);
+
+    .circle {
+      background-color: var(--warning-color);
+    }
+  }
+
+  loader{
+    width: 15px;
+    height: 15px;
+    margin-left: 5px;
+  }
+}
+

@@ -179,7 +179,7 @@ export class RoleManagementPage {
       {
         endpoint: EndpointData.Endpoint,
         method: PermissionInfo.PermissionType,
-        permission_name: this.SelectedRole
+        role: this.SelectedRole
       }
     )
 

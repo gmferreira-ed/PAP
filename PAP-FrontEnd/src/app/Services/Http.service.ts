@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AppSettings } from './AppSettings';
 import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { Supplier } from '../../types/supplier';
 
 type ErrorInfo = {
   ErrorCode: number,
@@ -106,7 +107,6 @@ export class HttpService {
 
 
   // WEB SOCKETS
-
   async ConnectToWebsocket(WebSocketPath: URL | string, Retry?: Boolean, RetryInterval: number = 5)
     : Promise<WebSocket & { OnMessage?: (Message: string, Data: any) => void }> {
 
@@ -156,5 +156,22 @@ export class HttpService {
         }
       }
     })
+  }
+
+  // Utils
+   GetInstancePatchCallback(URL: URL | string, Error?:string, SucessMessage?:string, Method:string='PATCH') {
+    return (Instance: any, FieldName: string) => {
+      return async (NewValue: any) => {
+        const [UpdateResult] = await this.MakeRequest(URL, Method, Error, {
+          [FieldName]: NewValue,
+          id: Instance.id
+        });
+        if (UpdateResult && SucessMessage) {
+          //Instance[FieldName] = NewValue
+          this.MessageService.success(SucessMessage);
+        }
+        return UpdateResult
+      };
+    }
   }
 }

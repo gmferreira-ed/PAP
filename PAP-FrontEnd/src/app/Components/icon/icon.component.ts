@@ -73,6 +73,10 @@ export class IconsModule {
     const wrapper = this.ElementRef.nativeElement
     const SVG = wrapper.querySelector('svg') as HTMLOrSVGImageElement
     if (SVG) {
+
+      SVG.style.width = this.size;
+      SVG.style.height = this.size;
+
       setTimeout(() => {
         this.StyleSVGElement(SVG)
         const SVGElements = SVG.querySelectorAll('g, path, rect, circle, ellipse, polygon, polyline, line')

@@ -1,4 +1,3 @@
-
 import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
@@ -19,7 +18,9 @@ Router.get('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Menu Categories"
+ * @displayname "Add Menu Category"
+ * @category "Menu"
+ * @summary "Create a new menu category"
  * @path /menu/categories
  * @method POST
  */
@@ -35,10 +36,11 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Menu Categories"
+ * @displayname "Delete Menu Category"
+ * @category "Menu"
+ * @summary "Delete a menu category"
  * @path /menu/categories
  * @method DELETE
- * @summary "Create/Delete categories"
  */
 Router.delete('/menu/categories', HandleEndpointFunction(async (req, res) => {
     const body = req.body

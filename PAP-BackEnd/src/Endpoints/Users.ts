@@ -1,4 +1,3 @@
-
 import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction, GetPaginatedResult } from '../Globals'
@@ -43,10 +42,11 @@ Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Users"
+ * @displayname "Edit User"
+ * @category "Users"
+ * @summary "Edit user information"
  * @path /users
  * @method PATCH
- * @summary "Edit user info"
  */
 Router.patch('/users', HandleEndpointFunction(async (req, res) => {
     const userid = req.body.userid
@@ -59,10 +59,11 @@ Router.patch('/users', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "User Keycard"
+ * @displayname "Set User Keycard"
+ * @category "Users"
+ * @summary "Assign a keycard to a user"
  * @path /users/keycard
  * @method POST
- * @summary ""
  */
 Router.post('/users/keycard', HandleEndpointFunction(async (req, res) => {
     const UserID = req.body.userid
@@ -75,10 +76,11 @@ Router.post('/users/keycard', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "User Keycard"
+ * @displayname "Remove User Keycard"
+ * @category "Users"
+ * @summary "Remove a user's keycard"
  * @path /users/keycard
  * @method DELETE
- * @summary ""
  */
 Router.delete('/users/keycard', HandleEndpointFunction(async (req, res) => {
     const UserID = req.body.userid

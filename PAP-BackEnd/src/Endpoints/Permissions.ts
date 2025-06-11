@@ -38,10 +38,6 @@ router.get('/role-permissions/user', HandleEndpointFunction(async function (requ
     }
 }))
 
-
-
-
-
 /**
  * @displayname "Roles"
  * @path /roles
@@ -78,10 +74,11 @@ router.get('/role-users', HandleEndpointFunction(async function (request, respon
 
 
 /**
- * @displayname "Role Permissions"
+ * @displayname "Bind Role Permission"
+ * @category "Permissions"
+ * @summary "Bind a permission level to an endpoint"
  * @path /role-permissions
  * @method POST
- * @summary "Binds a permission level to an endpoint"
  */
 router.post('/role-permissions', HandleEndpointFunction(async function (request, response) {
     const requestData = request.body
@@ -102,11 +99,12 @@ router.post('/role-permissions', HandleEndpointFunction(async function (request,
 
 
 /**
- * @displayname "Role Permissions"
- * @path /role-permissions
- * @type_label "UPDATE" // Technically, it is CREATE, however for an user view it can look like PATCH, therefore its better to attribute the name manually
- * @method DELETE
+ * @displayname "Change Role Permission"
+ * @category "Permissions"
  * @summary "Change permissions of a role"
+ * @path /role-permissions
+ * @type_label "UPDATE"
+ * @method DELETE
  */
 router.delete('/role-permissions', HandleEndpointFunction(async function (request, response) {
     const requestData = request.body

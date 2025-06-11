@@ -1,4 +1,3 @@
-
 import express from 'express'
 import multer from 'multer'
 const Router = express.Router();
@@ -38,10 +37,11 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Reservations"
+ * @displayname "Add Reservation"
+ * @category "Reservations"
+ * @summary "Create a new reservation"
  * @path /reservations
  * @method POST
- * @summary "Create/Cancel reservations"
  */
 Router.post('/reservations', HandleEndpointFunction(async (req, res) => {
 
@@ -67,10 +67,11 @@ Router.post('/reservations', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Reservations"
+ * @displayname "Update Reservation"
+ * @category "Reservations"
+ * @summary "Change reservation information"
  * @path /reservations
  * @method PATCH
- * @summary "Change reservations info"
  */
 Router.patch('/reservations', HandleEndpointFunction(async (req, res) => {
 
@@ -80,10 +81,11 @@ Router.patch('/reservations', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "reservations"
+ * @displayname "Delete Reservation"
+ * @category "Reservations"
+ * @summary "Delete a reservation"
  * @path /reservations
  * @method DELETE
- * @summary "Create/Cancel reservations"
  */
 Router.delete('/reservations', HandleEndpointFunction(async (Request, Response) => {
 

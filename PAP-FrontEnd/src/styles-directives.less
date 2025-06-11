@@ -1,0 +1,24 @@
+.editable-field {
+  display: inline-block;
+
+  cursor: text;
+  position: relative;
+  outline: none;
+
+  max-width: 100%;
+  min-width: 100%;
+  min-height: 16px;
+
+  &.editing-content {
+    outline: 1px solid #007bff;
+    background-color: rgb(255, 255, 255);
+    padding: 5px;
+    border-radius: 6px;
+  }
+
+  loader{
+    margin-right: 5px;
+    width: 15px;
+    height: 15px;
+  }
+}

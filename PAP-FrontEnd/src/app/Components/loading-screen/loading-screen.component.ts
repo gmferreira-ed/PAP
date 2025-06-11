@@ -1,9 +1,9 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, HostBinding, Input, input } from '@angular/core';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { LoaderComponent } from '../loader/loader.component';
 @Component({
     selector: 'loading-screen',
-    imports: [NzSpinModule, NgTemplateOutlet],
+    imports: [LoaderComponent, NgTemplateOutlet],
 
     templateUrl: 'loading-screen.component.html',
     styleUrl: 'loading-screen.component.less'

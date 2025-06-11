@@ -1,4 +1,3 @@
-
 import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
@@ -121,9 +120,10 @@ Router.post('/auth/verify', HandleEndpointFunction(async (req, res) => {
 
 /**
  * @displayname "Logout"
+ * @category "Authentication"
+ * @summary "Logs a user out"
  * @path /auth/logout
  * @method POST
- * @summary "Logs a user out
  * @unprotected true
  */
 Router.post('/auth/logout', HandleEndpointFunction(async (req, res) => {
@@ -141,10 +141,11 @@ Router.post('/auth/logout', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Request Code"
+ * @displayname "Request Verification Code"
+ * @category "Authentication"
+ * @summary "Request a verification code for account actions"
  * @path /request-code
  * @method POST
- * @summary "Request a verification code, multi purpose"
  * @unprotected true
  */
 Router.post('/request-code', HandleEndpointFunction(async (req, res) => {

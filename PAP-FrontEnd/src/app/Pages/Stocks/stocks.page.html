@@ -1,2 +1,365 @@
 <page-layout>
+
+    <loading-screen [IsLoading]="StocksService.LoadingStocks || StocksService.LoadingSuppliers"
+        LoaderStyle="Spinner"></loading-screen>
+
+    <div class="horizontal-container">
+        <section class="items">
+            <header>
+                <h1>Items</h1>
+                <div class="row">
+                    <button nz-button nzType="primary" (click)="StockItemAddModalVisible=true">
+                        <nz-icon nzType="plus"></nz-icon>
+                        New Item
+                    </button>
+                </div>
+            </header>
+            <nz-checkbox-group class="items-container">
+                @for (StockItem of StocksService.StockItems; track $index) {
+                    <div class="row space-between stock-item" (click)="SelectedStockItem = StockItem">
+                        <label nz-checkbox>
+                            {{StockItem.name}}
+                        </label>
+                        <span class="small-caption">{{StockItem.purchase_price | currency}}</span>
+                    </div>
+                }@empty {
+                    <no-data>
+                        There are no active stock Items<br>
+                        Add one to get started
+                    </no-data>
+                }
+            </nz-checkbox-group>
+        </section>
+
+        <section class="action-card fill">
+
+            <!-- ITEM VIEW -->
+            @if (SelectedStockItem){
+                <section class="item-tab">
+                    <section class="row space-between">
+                        <h1 class="title">{{SelectedStockItem.name}}</h1>
+                        <button nz-button (click)="SelectedStockItem=undefined">
+                            <nz-icon nzType="close"></nz-icon>
+                        </button>
+                    </section>
+                    <div class="separator"></div>
+
+                    <section class="item-info">
+                        <div class="row space-between">
+                            <label>SKU:</label>
+                            <span>{{SelectedStockItem.SKU}}</span>
+                        </div>
+                        <div class="row space-between">
+                            <label>Quantity in Stock:</label>
+                            <span>{{SelectedStockItem.quantity_in_stock}} {{SelectedStockItem.unit_of_measure}}</span>
+                        </div>
+                        <div class="row space-between">
+                            <label>Purchase Price:</label>
+                            <span>{{SelectedStockItem.purchase_price | currency}}</span>
+                        </div>
+                        <div class="row space-between">
+                            <label>Supplier:</label>
+                            <span>
+                                {{GetSupplierByID(SelectedStockItem.supplier_id)?.name}}
+                            </span>
+                        </div>
+                        <br>
+                        <div>
+                            <label>Description</label>
+                            <br>
+                            <span>{{SelectedStockItem.description || '-'}}</span>
+                        </div>
+                    </section>
+
+                    <br>
+
+                    <section class="item-stats">
+                        <div class="stat-card">
+                            <header>
+                                <label>$1,000</label>
+                                <span>Total Expenses</span>
+                            </header>
+                            <apx-chart >
+                            </apx-chart>
+                        </div>
+                    </section>
+                </section>
+                <!-- You can add more fields as needed -->
+                <!-- GENERAL VIEW -->
+            }@else {
+                <header>
+                    <h1>General View</h1>
+                    <div class="row">
+                        <button nz-button (click)="SuppliersModalVisible=true">
+                            <nz-icon nzType="user"></nz-icon>
+                            Suppliers
+                        </button>
+                        <button nz-button (click)="StockOrderAddModalVisible=true">
+                            <nz-icon nzType="shopping-cart"></nz-icon>
+                            New Order
+                        </button>
+                    </div>
+                </header>
+                <br>
+
+                <div class="general-view content">
+                    <section class="action-card total-item-stock">
+                        <header>Total Item Stock</header>
+                        <div class="content">
+                            <h1>{{TotalItems}}</h1>
+                        </div>
+                    </section>
+                    <section class="action-card item-summary">
+                        <header>Items Summary</header>
+                        <div class="content">
+                            @for (StockItem of Items; track $index){
+                                <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
+                                    <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure}}</span>
+                                    <span>{{StockItem.name}}</span>
+                                </div>
+                            }
+                        </div>
+                    </section>
+                    <section class="action-card ingredients-summary">
+                        <header>Ingredients Summary</header>
+                        <div class="content">
+                            @for (StockItem of Ingredients; track $index){
+                                <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
+                                    <span>{{StockItem.name}}</span>
+                                    <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure}}</span>
+                                </div>
+                            }
+                        </div>
+                    </section>
+                </div>
+
+
+            }
+        </section>
+    </div>
 </page-layout>
+
+<!-- SUPPLIER ADD MODAL -->
+<nz-modal [nzOkText]="'Add Supplier'" nzCancelText="Close" [nzVisible]="SupplierAddModalVisible" nzTitle="Add Supplier"
+    nzCentered nzDraggable (nzOnCancel)="SupplierAddModalVisible=false" (nzOnOk)="AddSupplier()"
+    [nzOkLoading]="AddingSuplier" [nzOkDisabled]="SupplierForm.invalid">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="SupplierForm">
+            <nz-form-item>
+                <nz-form-label nzRequired>Name</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="name" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>Email</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="email" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>Phone</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="phone" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>Address</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="address" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>Notes</nz-form-label>
+                <nz-form-control>
+                    <textarea nz-input formControlName="notes"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<!-- STOCK ITEM ADD MODAL -->
+<nz-modal [nzOkText]="'Add Item'" nzCancelText="Close" [nzVisible]="StockItemAddModalVisible" nzTitle="Add Stock Item"
+    nzCentered nzDraggable (nzOnCancel)="StockItemAddModalVisible=false" (nzOnOk)="AddStockItem()"
+    [nzOkLoading]="AddingStockItem" [nzOkDisabled]="StockItemForm.invalid">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="StockItemForm">
+            <nz-form-item>
+                <nz-form-label>Name</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="name" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>SKU</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="SKU" />
+                </nz-form-control>
+            </nz-form-item>
+            <div class="row">
+                <nz-form-item>
+                    <nz-form-label>Initial Quantity</nz-form-label>
+                    <nz-form-control>
+                        <nz-input-number [nzMin]="0" formControlName="quantity_in_stock" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label>Unit</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="unit_of_measure" style="width: 80px;" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <nz-form-item>
+                <nz-form-label>Purchase Price</nz-form-label>
+                <nz-form-control>
+                    <nz-input-number [nzMin]="0" [nzPrecision]="2" [nzStep]="0.1" formControlName="purchase_price">
+                        <span nzInputAddonAfter>$</span></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>Supplier</nz-form-label>
+                <nz-form-control>
+                    <nz-select formControlName="supplier_id">
+                        @for (s of StocksService.Suppliers; track s.id) {
+                            <nz-option [nzValue]="s.id" [nzLabel]="s.name"></nz-option>
+                        }
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label>Description</nz-form-label>
+                <nz-form-control>
+                    <textarea nz-input formControlName="description"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<!-- STOCK ORDER ADD MODAL -->
+<nz-modal [nzOkText]="'Add Order'" nzCancelText="Close" [nzVisible]="StockOrderAddModalVisible"
+    nzTitle="Add Stock Order" nzCentered nzDraggable (nzOnCancel)="StockOrderAddModalVisible=false"
+    (nzOnOk)="AddStockOrder()" [nzOkLoading]="AddingStockOrder" [nzOkDisabled]="StockOrderForm.invalid">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="StockOrderForm" nzLayout="vertical">
+            <nz-form-item>
+                <nz-form-label nzRequired>Supplier</nz-form-label>
+                <nz-form-control>
+                    <nz-select formControlName="supplier_id">
+                        @for (Supplier of StocksService.Suppliers; track $index) {
+                            <nz-option [nzValue]="Supplier.id" [nzLabel]="Supplier.name"></nz-option>
+                        }
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <div class="row space-between">
+                <nz-form-item>
+                    <nz-form-label>Order Date</nz-form-label>
+                    <nz-form-control>
+                        <nz-date-picker formControlName="order_date"></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label>Delivery Date</nz-form-label>
+                    <nz-form-control>
+                        <nz-date-picker formControlName="delivery_date"></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <nz-form-item>
+                <nz-form-label>Items</nz-form-label>
+                <nz-form-control>
+                    <nz-table #ItemsTable nzTemplateMode nzSize="small" [nzShowPagination]="false"
+                        style="margin-bottom: 8px;">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Cost</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of StockOrderItems; track $index) {
+                                <tr>
+                                    <td>
+                                        <nz-select [(ngModel)]="item.item_id" [ngModelOptions]="{standalone:true}"
+                                            style="width: 120px;">
+                                            @for (si of StocksService.StockItems; track si.id) {
+                                                <nz-option [nzValue]="si.id" [nzLabel]="si.name"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </td>
+                                    <td>
+                                        <nz-input-number [nzMin]="0" [(ngModel)]="item.quantity" placeholder="Quantity"
+                                            [ngModelOptions]="{standalone:true}" style="width: 80px;" />
+                                    </td>
+                                    <td>
+                                        <nz-input-number [nzStep]="0.1" [nzPrecision]="2" [nzMin]="0"
+                                            [(ngModel)]="item.cost" placeholder="Cost"
+                                            [ngModelOptions]="{standalone:true}" style="width: 100px;" />
+                                    </td>
+                                    <td>
+                                        <button nz-button nzType="text" nzShape="circle" nzDanger=""
+                                            (click)="RemoveOrderItem($index)">
+                                            <nz-icon nzType="delete"></nz-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </nz-table>
+                    <button nz-button nzType="dashed" (click)="AddOrderItem()" style="margin-top: 8px;">
+                        <nz-icon nzType="plus"></nz-icon>
+                        Add Item
+                    </button>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>
+
+<!-- PROVIDER INSERT MODAL -->
+<nz-modal [nzOkText]="null" nzCancelText="Close" [nzVisible]="SuppliersModalVisible" nzTitle="Suppliers" nzCentered
+    nzDraggable (nzOnCancel)="SuppliersModalVisible=false" nzWidth="800px">
+    <ng-container *nzModalContent>
+        <nz-table #SuppliersTable [nzData]="StocksService.Suppliers" [nzLoading]="StocksService.LoadingSuppliers"
+            nzSize="middle" style="margin-bottom: 16px;" [nzShowPagination]="false">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Active</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (Supplier of SuppliersTable.data; track Supplier.id) {
+                    <tr>
+                        <td><span [editable]="ChangeSupplierData(Supplier, 'name')">{{Supplier.name}}</span></td>
+                        <td><span [editable]="ChangeSupplierData(Supplier, 'email')">{{Supplier.email}}</span></td>
+                        <td><span [editable]="ChangeSupplierData(Supplier, 'phone')"
+                                [NumberOnly]="true">{{Supplier.phone}}</span></td>
+                        <td><span [editable]="ChangeSupplierData(Supplier, 'address')">{{Supplier.address}}</span></td>
+                        <td>
+                            @let StatusName = Supplier.active ? 'Active' : 'Inactive';
+                            <status-tag class='status' [status]="StatusName" [Loading]="Supplier.TogglingActive" (click)="ToggleSupplierActive(Supplier)">
+                                {{StatusName}}
+                        </status-tag>
+                        </td>
+                        <td><span [editable]="ChangeSupplierData(Supplier, 'notes')">{{Supplier.notes}}</span></td>
+                    </tr>
+                    }
+            </tbody>
+        </nz-table>
+        <button nz-button nzShape="round" (click)="SupplierAddModalVisible=true"
+            style="width: 75%; align-self: center;">
+            <nz-icon nzType="plus"></nz-icon>
+            Add Supplier
+        </button>
+    </ng-container>
+</nz-modal>

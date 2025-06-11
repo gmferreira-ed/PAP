@@ -136,11 +136,13 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
     }
   }
 
+  const IsAuthEndpoint = Route.includes('auth')
+  if (IsAuthEndpoint){
+    return [true]
+  }
 
   // By default, anyone has permissions
-  if (EndpointData?.Unprotected) {
-    return [true]
-  } else if (!EndpointData) {
+  if (!EndpointData) {
     console.error("Missing permissions data on", Route)
     return [false, 502, 'This endpoint has missing permissions data.']
   }
@@ -148,6 +150,10 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
 
   if (User) {
     try {
+
+      if (EndpointData?.Unprotected){
+        return [true]
+      }
 
       //const UserBypass = RequiredPermission?.user_bypass == 1
       const UserData = await GetUserData(User)

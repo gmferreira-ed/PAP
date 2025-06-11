@@ -1,4 +1,3 @@
-
 import express from 'express'
 import multer from 'multer'
 const Router = express.Router();
@@ -47,9 +46,10 @@ Router.get('/tables', HandleEndpointFunction(async (req, res) => {
 
 /**
  * @displayname "Edit Layout"
+ * @category "Layout"
+ * @summary "Add a new layout component"
  * @path /layout
  * @method POST
- * @summary "Edit the restaurant layout"
  */
 Router.post('/layout', HandleEndpointFunction(async (req, res) => {
 
@@ -82,10 +82,11 @@ Router.post('/layout', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Edit Layout"
+ * @displayname "Import Layout"
+ * @category "Layout"
+ * @summary "Import a layout component"
  * @path /layout/import
  * @method POST
- * @summary "Edit the restaurant layout"
  */
 Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 
@@ -109,10 +110,11 @@ Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Edit Layout"
+ * @displayname "Update Layout"
+ * @category "Layout"
+ * @summary "Update layout component properties"
  * @path /layout
  * @method PATCH
- * @summary "Edit the restaurant layout"
  */
 Router.patch('/layout', HandleEndpointFunction(async (req, res) => {
     const body = req.body
@@ -127,10 +129,11 @@ Router.patch('/layout', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Menu Items"
+ * @displayname "Delete Layout"
+ * @category "Layout"
+ * @summary "Delete a layout component or clear all"
  * @path /menu
  * @method DELETE
- * @summary "Edit the restaurant layout"
  */
 Router.delete('/layout', HandleEndpointFunction(async (Request, Response) => {
 
