@@ -233,6 +233,8 @@ div {
   width: 100%;
   height: 90%;
   gap: 10px;
+  overflow-y: hidden;
+  padding: 8px;
 }
 
 
@@ -770,4 +772,24 @@ input:-webkit-autofill:active {
 
   transition: background-color 5000s ease-in-out 0s;
   box-shadow: inset 0 0 20px 20px #23232329;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: start;
+  justify-content: left;
+
+  // Remove or override this:
+  // overflow-y: auto;
+  overflow-y: visible; // or just remove the line
+
+  overflow-x: hidden;
+
+  background-color: transparent;
+  padding: 20px;
+  padding-left: 30px;
+
+  position: relative;
 }

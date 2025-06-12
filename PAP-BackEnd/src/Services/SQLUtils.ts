@@ -64,12 +64,12 @@ function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: stri
     return [WhereClause, Values]
 }
 
-function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[], CollumnsToReturn: string[] = ['*'], Join: string = ''): [string, any[]] {
+function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[], CollumnsToReturn: string[] = ['*'], Join: string = '', OrderBy: string=''): [string, any[]] {
     let [Columns, Values] = QueryArray([], RequestData)
 
     const CollumnsToReturnString = CollumnsToReturn.join(',')
     const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
-    let Query = `SELECT ${CollumnsToReturnString} FROM  ${TargetTable} ${Join} ${WhereClause}`;
+    let Query = `SELECT ${CollumnsToReturnString} FROM  ${TargetTable} ${Join} ${WhereClause} ${OrderBy}` ;
 
 
 

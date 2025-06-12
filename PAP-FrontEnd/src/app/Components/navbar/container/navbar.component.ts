@@ -75,7 +75,7 @@ export class NavbarComponent {
 
   @HostListener('window:resize', ['$event'])
   onResize(event?: UIEvent) {
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 1150) {
       this._collapsed = true
       this.auto_collapse = true
     } else if (!this.manual_collapse) {

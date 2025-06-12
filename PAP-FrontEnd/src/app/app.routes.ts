@@ -50,11 +50,16 @@ export const routes: Routes = [
     },
 
     {
-        path: 'stocks', component: StocksPage, canActivate: [PageAuthGuard], data: {
-            CreateEndpoint: 'api/stocks',
-        }
+        path: 'stocks/:itemid',
+        component: StocksPage,
+        canActivate: [PageAuthGuard],
+        data: { CreateEndpoint: 'api/stocks' }
     },
-
+    {
+        path: 'stocks',
+        redirectTo: 'stocks/',  // redirect to the same route with optional param
+        pathMatch: 'full'
+    },
 
 
     {
@@ -80,11 +85,11 @@ export const routes: Routes = [
             CreateEndpoint: 'api/layout',
         }
     },
-    
+
     { path: 'profile/', component: ProfilePage, canActivate: [PageAuthGuard] },
     { path: 'profile/:username', component: ProfilePage, canActivate: [PageAuthGuard] },
 
-    
+
     { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
 

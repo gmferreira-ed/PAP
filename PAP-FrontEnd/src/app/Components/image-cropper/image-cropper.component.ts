@@ -6,15 +6,15 @@ import { IconsModule } from '../icon/icon.component';
 
 
 @Component({
-  selector: 'file-select',
-  imports: [ProgressComponent, CommonModule, IconsModule],
+  selector: 'image-cropper',
+  imports: [CommonModule],
 
   templateUrl: 'image-cropper.component.html',
   styleUrl: 'image-cropper.component.less'
 })
 
 
-export class FileSelectComponent {
+export class ImageCropperComponent {
 
   @Input() EditingImage: null | string = null
 

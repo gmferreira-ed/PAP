@@ -1,16 +1,16 @@
 import { AbstractControl, FormGroup } from "@angular/forms";
 
 function randomString(length = 8): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = '';
-  for(let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
 }
 
 function randomNumber(min = 0, max = 1000): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 const GlobalUtils = {
@@ -44,7 +44,15 @@ const GlobalUtils = {
                 control.setValue(randomString());
             }
         });
-    }
+    },
+
+
+    ToSQLDate(DateToConvert?: Date | string | null) {
+        if (typeof (DateToConvert) == 'string') {
+            DateToConvert = new Date(DateToConvert)
+        }
+        return DateToConvert && !isNaN(DateToConvert.getTime()) && DateToConvert.toISOString().slice(0, 19).replace('T', ' ') || undefined
+    },
 };
 
 export default GlobalUtils;

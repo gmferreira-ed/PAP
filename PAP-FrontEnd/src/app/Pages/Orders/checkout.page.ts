@@ -188,7 +188,8 @@ export class CheckoutPage {
 
   // States
   ProcessingOrder = false
-  LoadingProducts = false
+  LoadingProducts = true
+  LoadingOrder = true
   FinalizingCheckout = false
   CheckingOut = false
 

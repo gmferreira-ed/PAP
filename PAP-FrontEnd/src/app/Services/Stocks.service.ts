@@ -3,8 +3,8 @@ import { AppSettings } from './AppSettings';
 import { HttpService } from './Http.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { StockItem } from '../../types/stock-item';
-import { PurchaseOrder } from '../../types/purchase-order';
 import { Supplier } from '../../types/supplier';
+import { StockOrder } from '../../types/purchase-order';
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +18,7 @@ export class StocksService {
   // DATA
   StockItems: StockItem[] = []
   Suppliers: Supplier[] = []
-  PurchaseOrders: PurchaseOrder[] = []
+  StockOrders: StockOrder[] = []
 
   // VARIABLES
 
@@ -28,7 +28,7 @@ export class StocksService {
   LoadingStockOrders = false
 
 
-  async LoadStocks(){
+  async LoadStocks(Force?:Boolean){
     this.LoadingStocks = true
     const [Stocks]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-items', 'GET', 'Failed to load stock items')
 
@@ -50,9 +50,9 @@ export class StocksService {
 
   async LoadStockOrders(){
     this.LoadingStockOrders = true
-    const [StockOrders]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-items', 'GET', 'Failed to load stock orders')
+    const [StockOrders]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-orders', 'GET', 'Failed to load stock orders')
 
-    this.PurchaseOrders = StockOrders
+    this.StockOrders = StockOrders
     this.LoadingStockOrders = false
 
     return StockOrders

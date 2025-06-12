@@ -150,7 +150,7 @@ export class AuthService {
           }
         }
 
-        console.log( this.AccessibleRoutes)
+        //console.log( this.AccessibleRoutes)
         // CHECK CURRENT PAGE ACCESS
         if (CurrentPageURL) {
           const CurrentPageData = this.AccessibleRoutes[CurrentPageURL]

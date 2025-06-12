@@ -1,3 +1,6 @@
+import { ApexChartOptions } from "./apex-chart";
+import { StockOrderItem } from "./purchase-order";
+
 export interface StockItem {
     id: number;
     SKU: string;
@@ -9,4 +12,11 @@ export interface StockItem {
     description: string;
     active: boolean;
     created_at: string;
+    
+    // Optional chart data. Caches
+    Orders:StockOrderItem[]
+    ExpensesChartOptions?:ApexChartOptions
+    QuantityChartOptions?:ApexChartOptions
+
+    [key:string]:any
 }

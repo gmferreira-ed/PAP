@@ -1,11 +1,11 @@
 <page-layout>
     <!-- <loading-screen [ShowContainer]="true" LoaderStyle="Spinner"
         [IsLoading]="LoadingProducts || FinalizingCheckout || ProcessingOrder"></loading-screen> -->
-    <div class="container">
+    <div class="horizontal-container">
         @if (!SelectedTable && !CheckingOut){
 
         <!-- TABLE SELECTION -->
-        <div class="action-card" style="width: 100%;">
+        <div class="action-card fill" style="width: 100%;">
             <div class="flex space-between">
                 <label class="title">{{'Table Select' | translate}}</label>
                 <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType" (ngModelChange)="SelectionViewChanged()">
@@ -74,6 +74,7 @@
 
             <!-- PRODUCTS -->
             <div class="products">
+                <loading-screen [IsLoading]="LoadingProducts"></loading-screen>
                 @for (Product of Products; track $index){
                 <div class="product" (click)="AddToOrder(Product)" [class.disabled]="Product.active == 0">
                     <img [src]="MenuImagesURL+Product.name">
@@ -91,6 +92,7 @@
         <div class="order">
             <h1>Order</h1>
             <label class="small-caption">ID:{{OrderInfo?.order_id}}</label>
+                <loading-screen [IsLoading]="ProcessingOrder" LoaderStyle="ThinkingDots"></loading-screen>
             <div class="order-products">
                 @for (Product of OrderProducts; track $index){
                 <div class="order-product">
@@ -122,7 +124,7 @@
                 <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | currency}}</label>
 
                 <div class="flex center">
-                    <button nz-button class="button finish-button view" style="gap: 5px;"
+                    <button nz-button class="button finish-button cancel" 
                         [nzLoading]="FinalizingCheckout" (click)="CancelOrder()">
 
                         <icon type="trash" size="25"></icon>
@@ -130,8 +132,9 @@
 
                     </button>
 
-                    <button class="button finish-button" (click)="MoveToCheckout()" style="gap: 5px;"
+                    <button class="button finish-button" (click)="MoveToCheckout()" 
                         [disabled]="OrderProducts.length < 1 || FinalizingCheckout">
+                        
                         {{'Checkout' | translate}}
                         <icon type="circle-arrow-right" size="25"></icon>
                     </button>

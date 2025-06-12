@@ -14,12 +14,19 @@
                     </button>
                 </div>
             </header>
-            <nz-checkbox-group class="items-container">
+            <nz-checkbox-group class="items-container" [(ngModel)]="SelectedItems">
                 @for (StockItem of StocksService.StockItems; track $index) {
-                    <div class="row space-between stock-item" (click)="SelectedStockItem = StockItem">
-                        <label nz-checkbox>
-                            {{StockItem.name}}
-                        </label>
+                    <div class="row space-between stock-item" (click)="SelectedStockItem = StockItem"
+                        [class.selected]="SelectedItems.includes(StockItem.id)"
+                        [class.active]="SelectedStockItem == StockItem">
+                        <div class="row">
+                            <label nz-checkbox [nzName]="StockItem.name" [nzValue]="StockItem.id">
+
+                            </label>
+                            <span>
+                                {{StockItem.name}}
+                            </span>
+                        </div>
                         <span class="small-caption">{{StockItem.purchase_price | currency}}</span>
                     </div>
                 }@empty {
@@ -29,6 +36,12 @@
                     </no-data>
                 }
             </nz-checkbox-group>
+            <footer [class.show]="SelectedItems.length > 0">
+                <button nz-button nzType="primary"><nz-icon nzType="edit"></nz-icon></button>
+                <button nz-button nzType="primary" nzDanger><nz-icon nzType="delete"></nz-icon></button>
+                <button nz-button nzType="primary" nzShape="round" (click)="CreateOrder()"><nz-icon
+                        nzType="shopping-cart"></nz-icon></button>
+            </footer>
         </section>
 
         <section class="action-card fill">
@@ -38,50 +51,75 @@
                 <section class="item-tab">
                     <section class="row space-between">
                         <h1 class="title">{{SelectedStockItem.name}}</h1>
-                        <button nz-button (click)="SelectedStockItem=undefined">
-                            <nz-icon nzType="close"></nz-icon>
-                        </button>
+                        <div class="row">
+                            <button nz-button (click)="SelectedStockItem=undefined; Router.navigate(['/stocks'])">
+                                <nz-icon nzType="close"></nz-icon>
+                            </button>
+                        </div>
                     </section>
                     <div class="separator"></div>
 
-                    <section class="item-info">
-                        <div class="row space-between">
-                            <label>SKU:</label>
-                            <span>{{SelectedStockItem.SKU}}</span>
-                        </div>
-                        <div class="row space-between">
-                            <label>Quantity in Stock:</label>
-                            <span>{{SelectedStockItem.quantity_in_stock}} {{SelectedStockItem.unit_of_measure}}</span>
-                        </div>
-                        <div class="row space-between">
-                            <label>Purchase Price:</label>
-                            <span>{{SelectedStockItem.purchase_price | currency}}</span>
-                        </div>
-                        <div class="row space-between">
-                            <label>Supplier:</label>
-                            <span>
-                                {{GetSupplierByID(SelectedStockItem.supplier_id)?.name}}
-                            </span>
-                        </div>
+                    <section class="item-data">
+                        <section class="item-info">
+                            <section>
+                                <div class="row space-between">
+                                    <label>SKU:</label>
+                                    <span>{{SelectedStockItem.SKU}}</span>
+                                </div>
+                                <div class="row space-between">
+                                    <label>Quantity in Stock:</label>
+                                    <span>{{SelectedStockItem.quantity_in_stock}}{{SelectedStockItem.unit_of_measure}}</span>
+                                </div>
+                                <div class="row space-between">
+                                    <label>Purchase Price:</label>
+                                    <span>{{SelectedStockItem.purchase_price | currency}}</span>
+                                </div>
+                                <div class="row space-between">
+                                    <label>Supplier:</label>
+                                    <span>
+                                        {{GetSupplierByID(SelectedStockItem.supplier_id)?.name}}
+                                    </span>
+                                </div>
+                            </section>
+                            <section>
+                                <div>
+                                    <label>Image: </label>
+                                    <div class="image-container">
+                                        <img [src]="FileSelector.Files[0]?.imagebase64 || ''">
+                                        <div class="overlay invisible">
+                                            <file-select #FileSelector [override]="true" UploadDisplayMode="none">
+                                                <label>{{'Change Thumbnail' | translate}}</label>
+                                                <nz-icon nzType="edit"></nz-icon>
+                                            </file-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>Description: </label>
+                                    <span class="description">{{SelectedStockItem.description || '-'}}</span>
+                                </div>
+                            </section>
+                        </section>
+
                         <br>
-                        <div>
-                            <label>Description</label>
-                            <br>
-                            <span>{{SelectedStockItem.description || '-'}}</span>
-                        </div>
-                    </section>
 
-                    <br>
+                        <section class="item-stats">
+                            <loading-screen [IsLoading]="LoadingItemStats" LoaderStyle="Spinner"></loading-screen>
 
-                    <section class="item-stats">
-                        <div class="stat-card">
-                            <header>
-                                <label>$1,000</label>
-                                <span>Total Expenses</span>
-                            </header>
-                            <apx-chart >
-                            </apx-chart>
-                        </div>
+                            @if (!LoadingItemStats){
+                                <stat-card #ExpensesStats StatName="Expenses"
+                                    [StatTotalValue]="GetOrderTotal('cost', SelectedStockItem,ExpensesStats.CurrentViewType)"
+                                    [ChartOptions]="SelectedStockItem.ExpensesChartOptions" FormatType="currency">
+                                </stat-card>
+
+                                <stat-card #QuantityStats StatName="Quantity Ordered"
+                                    [StatTotalValue]="GetOrderTotal('quantity', SelectedStockItem,QuantityStats.CurrentViewType)"
+                                    [ChartOptions]="SelectedStockItem.QuantityChartOptions">
+
+                                </stat-card>
+
+                            }
+                        </section>
                     </section>
                 </section>
                 <!-- You can add more fields as needed -->
@@ -100,26 +138,22 @@
                         </button>
                     </div>
                 </header>
-                <br>
-
                 <div class="general-view content">
-                    <section class="action-card total-item-stock">
-                        <header>Total Item Stock</header>
-                        <div class="content">
-                            <h1>{{TotalItems}}</h1>
-                        </div>
-                    </section>
+                    <stat-card class="stocks-summary" StatName="Stocks" [ShowChartTimeOptions]="false"
+                        [ChartOptions]="StockItemsChartOptions">
+                    </stat-card>
                     <section class="action-card item-summary">
                         <header>Items Summary</header>
                         <div class="content">
                             @for (StockItem of Items; track $index){
                                 <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
-                                    <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure}}</span>
                                     <span>{{StockItem.name}}</span>
+                                    <span>{{StockItem.quantity_in_stock}} un</span>
                                 </div>
                             }
                         </div>
                     </section>
+
                     <section class="action-card ingredients-summary">
                         <header>Ingredients Summary</header>
                         <div class="content">
@@ -131,7 +165,30 @@
                             }
                         </div>
                     </section>
+
+                    <stat-card class="purchase-distribution" StatName="Average Purchase Distribution"
+                        [ShowChartTimeOptions]="true" [ChartOptions]="StockOrdersDisChartOptions">
+                    </stat-card>
+
+
+                    <div class="action-card view-lists">
+                        <div class="buttons">
+                            <button class="button">
+                            <icon type="clipboard-list" size="24"></icon>
+                            <span>Order History</span>
+                        </button>
+                        <button class="button">
+                            <icon type="inventory" size="24"></icon>
+                            <span>Stock List</span>
+                        </button>
+                        <button class="button">
+                            <icon type="inventory2" size="24"></icon>
+                            <span>Inventory Report</span>
+                        </button>
+                        </div>
+                    </div>
                 </div>
+
 
 
             }
@@ -286,7 +343,7 @@
                                 <tr>
                                     <td>
                                         <nz-select [(ngModel)]="item.item_id" [ngModelOptions]="{standalone:true}"
-                                            style="width: 120px;">
+                                            style="width: 120px;" (ngModelChange)="OrderItemChanged(item)">
                                             @for (si of StocksService.StockItems; track si.id) {
                                                 <nz-option [nzValue]="si.id" [nzLabel]="si.name"></nz-option>
                                             }
@@ -294,6 +351,7 @@
                                     </td>
                                     <td>
                                         <nz-input-number [nzMin]="0" [(ngModel)]="item.quantity" placeholder="Quantity"
+                                            (ngModelChange)="OrderItemChanged(item)"
                                             [ngModelOptions]="{standalone:true}" style="width: 80px;" />
                                     </td>
                                     <td>

@@ -11,11 +11,14 @@ import {
   ApexGrid,
   ApexLegend,
   ApexTooltip,
-  ApexAnnotations,       // ← Use this instead
+  ApexAnnotations,
+  ApexMarkers, // fixed import
+  ApexResponsive,
+  ApexTheme
 } from 'ng-apexcharts';
 
 export type ApexChartOptions = {
-  series: ApexAxisChartSeries;
+  series: ApexAxisChartSeries | number[];
   chart: ApexChart;
   xaxis?: ApexXAxis;
   yaxis?: ApexYAxis | ApexYAxis[];
@@ -25,7 +28,13 @@ export type ApexChartOptions = {
   fill?: ApexFill;
   stroke?: ApexStroke;
   grid?: ApexGrid;
+  markers?: ApexMarkers;
   legend?: ApexLegend;
+  labels?: string[]; // fixed type
   tooltip?: ApexTooltip;
-  annotations?: ApexAnnotations;  // ← Add this
+  annotations?: ApexAnnotations;
+  colors?: any[];
+  subtitle?: ApexTitleSubtitle; // added
+  theme?: ApexTheme; // added
+  responsive?: ApexResponsive[]; // added
 };

@@ -12,9 +12,10 @@ import SQLUtils from '../Services/SQLUtils'
  */
 Router.get('/stock-orders', HandleEndpointFunction(async (req, res) => {
     const [Query, Values] = SQLUtils.BuildSelectQuery('purchase_orders', req.query, ['purchase_items.item_id'], undefined, 
-        'JOIN purchase_items WHERE purchase_items.purchase_order_id=purchase_orders.id')
-    const [Rows] = await Database.execute(Query, Values)
-    res.send(Rows)
+        'JOIN purchase_items ON purchase_items.purchase_order_id=purchase_orders.id', 'ORDER BY purchase_orders.order_date ASC')
+
+    const [StockOrders] = await Database.execute(Query, Values)
+    res.send(StockOrders)
 }))
 
 /**

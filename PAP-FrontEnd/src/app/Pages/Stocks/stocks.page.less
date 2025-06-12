@@ -5,7 +5,8 @@
     overflow: hidden;
 
     height: 100%;
-    width: 20%;
+    min-width: 250px;
+    max-width: 20%;
 
     background-color: var(--secondary-color);
     border-radius: 12px;
@@ -32,52 +33,85 @@
 
         gap: 6px;
 
-        .stock-item {}
-    }
-}
-
-.item-tab {}
-
-.item-info {
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    width: 40%;
-
-    gap: 8px;
-
-    label {
-        opacity: 0.8;
     }
 
-    span {
-        font-weight: 500;
-    }
-}
-
-.item-stats {
-    .stat-card {
+    footer {
         display: flex;
-        border-radius: 6px;
-        box-shadow: 0px 0px 5px 0px var(--shadow-color);
+        align-items: center;
+        justify-content: end;
+        gap: 6px;
 
-        header {
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
+        padding: 6px;
+        background-color: color-mix(in srgb, var(--secondary-color-2), transparent 50%);
+        width: 100%;
 
-            label {
-                font-weight: 600;
-                font-size: 24px;
-            }
-            span {
-                font-weight: 500;
-                font-size: 16px;
-                opacity: 0.8;
-            }
+        opacity: 0;
+        transition: all 0.3s ease-in-out;
+        transform: translateY(100%);
+
+        &.show {
+            opacity: 1;
+            transform: translateY(0%);
         }
     }
 }
+
+.item-tab {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+
+    .item-data {
+        overflow: auto;
+        padding: 5px;
+        flex: 1 1;
+
+        .item-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            width: 100%;
+            gap: 50px;
+
+            section {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                width: 50%;
+            }
+
+            label {
+                opacity: 0.8;
+            }
+
+            span:not(.description) {
+                font-weight: 500;
+            }
+
+            .description {
+                font-size: 13px;
+            }
+
+
+
+            .image-container {
+                position: relative;
+                width: 75px;
+                height: 75px;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+}
+
+
+
 
 .stock-item {
     display: flex;
@@ -98,20 +132,94 @@
     &.ran-out {
         color: var(--error-color);
     }
+
+
+    &.active {
+        background-color: var(--accent-color-light);
+
+    }
+
+    &.selected {
+        span {
+            color: var(--accent-color);
+        }
+    }
+}
+
+.item-stats {
+    display: flex;
+    gap: 10px;
 }
 
 .general-view {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 47.5%);
     gap: 16px;
+    padding: 24px;
+    max-height: 100%;
+    height: 100%;
+    align-items: stretch;
+    justify-items: stretch;
+    grid-template-areas:
+        "stocks stocks items ingredients"
+        "purchase purchase purchase lists";
 }
 
-.total-item-stock {}
+.stocks-summary {
+    grid-area: stocks;
+}
 
-.item-summary,
-.ingredients-summary {
+.item-summary {
+    grid-area: items;
+
     .stock-item {
         gap: 25px;
+    }
+}
+
+.ingredients-summary {
+    grid-area: ingredients;
+
+    .stock-item {
+        gap: 25px;
+    }
+}
+
+.purchase-distribution {
+    grid-area: purchase;
+
+    ::ng-deep apx-chart {
+        flex: 1;
+    }
+}
+
+.view-lists {
+
+    .buttons {
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(2, 40%);
+        grid-template-rows: repeat(2, 40%);
+        gap: 24px;
+        aspect-ratio: 1 / 1;
+    }
+
+    button {
+        color: var(--secondary-color);
+        background-color: var(--dark-color);
+        box-shadow: 0px 0px 5px 0px var(--shadow-color);
+        border-radius: 6px;
+        aspect-ratio: 1 / 1;
+
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    ::ng-deep apx-chart {
+        flex: 1;
     }
 }
