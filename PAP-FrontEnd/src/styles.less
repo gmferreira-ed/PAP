@@ -396,7 +396,7 @@ body.cursor-grabbing *:hover {
   gap: 10px;
 }
 
-.ant-modal-body{
+.ant-modal-body {
   display: flex;
   flex-direction: column;
 }
@@ -544,17 +544,19 @@ body.cursor-grabbing *:hover {
   width: 90%;
   background-color: var(--primary-color);
   opacity: 0.1;
-  margin-top: 5px;
-  margin-bottom: 5px;
   height: 0.5px;
   min-height: 0.5px;
-  margin-bottom: 20px;
 
   &.vertical {
     height: 90%;
     width: 0.5px;
     margin-left: 20px;
     margin-right: 20px;
+  }
+
+  &:not(.vertical) {
+    margin-top: 5px;
+    margin-bottom: 20px;
   }
 }
 

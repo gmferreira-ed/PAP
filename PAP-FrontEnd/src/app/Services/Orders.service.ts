@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core';
-import SimpleCache from '../../../../shared/SimpleCache';
+import SimpleCache from '../../shared/SimpleCache';
 import { AppSettings } from './AppSettings';
 import { HttpService } from './Http.service';
-import { Table } from '../../../../shared/table';
+import { Table } from '../../shared/table';
 
 @Injectable({
   providedIn: 'root'

@@ -2,8 +2,6 @@
     display: flex;
     flex-direction: column;
 
-    overflow: hidden;
-
     height: 100%;
     min-width: 250px;
     max-width: 20%;
@@ -20,6 +18,9 @@
         justify-content: space-between;
         align-items: center;
 
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+
         padding: 12px;
         background-color: var(--secondary-color-2);
     }
@@ -35,7 +36,7 @@
 
     }
 
-    footer {
+    .footer {
         display: flex;
         align-items: center;
         justify-content: end;
@@ -47,11 +48,49 @@
 
         opacity: 0;
         transition: all 0.3s ease-in-out;
-        transform: translateY(100%);
 
         &.show {
             opacity: 1;
-            transform: translateY(0%);
+        }
+    }
+}
+
+.orders {
+    background-color: color-mix(in srgb, var(--success-color), var(--secondary-color) 95%);
+
+    .values {
+        color: var(--success-color);
+    }
+}
+
+.consumption {
+    background-color: color-mix(in srgb, var(--error-color), var(--secondary-color) 95%);
+
+    .values {
+        color: var(--error-color);
+    }
+}
+
+.linked-item {
+    no-data {
+        width: unset;
+        height: 100px;
+    }
+
+    img {
+        width: 75px;
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+    }
+
+    .info {
+        label {
+            opacity: 0.8;
+        }
+
+        span {
+            font-weight: 500;
         }
     }
 }
@@ -63,6 +102,9 @@
     overflow: auto;
 
     .item-data {
+        display: flex;
+        flex-direction: column;
+
         overflow: auto;
         padding: 5px;
         flex: 1 1;
@@ -70,6 +112,7 @@
         .item-info {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 14px;
             width: 100%;
             gap: 50px;
@@ -96,6 +139,7 @@
 
 
             .image-container {
+                cursor: pointer;
                 position: relative;
                 width: 75px;
                 height: 75px;
@@ -148,13 +192,21 @@
 
 .item-stats {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    position: relative;
+
+    flex: 1 1;
+    gap: 24px;
+
+    .charts {
+        gap: 24px;
+    }
 }
 
 .general-view {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 47.5%);
+    grid-template-rows: repeat(2, 1fr);
     gap: 16px;
     padding: 24px;
     max-height: 100%;
@@ -166,8 +218,21 @@
         "purchase purchase purchase lists";
 }
 
+
+.other-stats {
+    display: flex;
+    gap: 24px;
+    flex: 1 1;
+}
+
 .stocks-summary {
     grid-area: stocks;
+
+
+}
+
+::ng-deep apx-chart {
+    flex: 1;
 }
 
 .item-summary {

@@ -30,9 +30,8 @@ export class Topbar {
   async Logout() {
     const LogoutSucess = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/logout', 'POST', 'Failed to logout')
     if (LogoutSucess) {
-      this.Router.navigate(['/login']).then(()=>{
-        window.location.reload()
-      })
+      this.Router.navigate(['/login'])
+      this.User.set(null)
     }
   }
 }

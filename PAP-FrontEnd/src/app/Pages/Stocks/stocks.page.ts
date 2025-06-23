@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
@@ -24,21 +24,29 @@ import { EditableDirective } from '../../Directives/editable-field.directive';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
-import { ApexXAxis, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
+import { ApexAxisChartSeries, ApexXAxis, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
-import { StatCardComponent } from "../../Components/stats/stat-card.component";
+import { StatCardComponent } from "../../Components/stats-card/stat-card.component";
 import { ActivatedRoute, Router } from '@angular/router';
 import { FileSelectComponent } from '../../Components/file-selector/file-select.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ThemeService } from '../../Services/Theme.service';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { MenuProductSelect } from "../../../shared/product-selector/product-select";
+import { OptionsBar } from "../../Components/options-bar/options-bar.component";
+import { FloatingContainer } from "../../Components/floating-container/floating-container";
+import { MenuService } from '../../Services/menu.service';
+import { UFile } from '../../../types/ufile';
 
 var DefaultChartOptions: Partial<ApexChartOptions> = {
   chart: {
     type: 'area',
     toolbar: { show: false },
     height: '100%',
+    width: '100%'
   },
   markers: {
     size: 0
@@ -67,17 +75,21 @@ type StockTotalData = {
 
 @Component({
   selector: 'stocks-page',
-  imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule,
-    NzTabsModule, FileSelectComponent, NoDataComponent, NzSelectModule, NzDatePickerModule, NzTableModule, EditableDirective, StatusTagComponent,
-    NzInputNumberModule, NzCheckboxModule, CurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule],
+  imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, DatePipe,
+    NzTabsModule, FileSelectComponent, NoDataComponent, NzSelectModule, NzDatePickerModule, NzTableModule, EditableDirective, StatusTagComponent, NzRadioModule,
+    NzInputNumberModule, NzCheckboxModule, CurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule, MenuProductSelect, OptionsBar, FloatingContainer],
   templateUrl: './stocks.page.html',
   styleUrl: './stocks.page.less'
 })
 export class StocksPage {
 
+  // Components
+  @ViewChild('StockItemImage') StockItemImage!: ElementRef<HTMLImageElement>;
+
   // SERVICES
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
+  MenuService = inject(MenuService)
   StocksService = inject(StocksService)
   Router = inject(Router)
   ActiveRoute = inject(ActivatedRoute)
@@ -95,6 +107,7 @@ export class StocksPage {
   SupplierAddModalVisible = false
   StockOrderAddModalVisible = false
   StockItemAddModalVisible = false
+  MenuItemSelectModalVisible = false
 
   AddingStockOrder = false
   AddingSuplier = false
@@ -106,6 +119,18 @@ export class StocksPage {
 
   // VARIABLES
   SelectedItems: number[] = []
+  ConsumptionStartDate = new Date()
+  ConsumptionEndDate = new Date()
+  OrdersStartDate = new Date()
+  OrdersEndDate = new Date()
+
+  StockImagesURL = AppSettings.APIUrl + 'images/stocks/'
+  MenuImagesURL = AppSettings.APIUrl + 'images/menu/'
+
+  constructor() {
+    this.ConsumptionStartDate.setDate(this.ConsumptionStartDate.getDate() - 7)
+    this.OrdersStartDate.setDate(this.OrdersStartDate.getDate() - 7)
+  }
 
   // FORMS
   SupplierForm = new FormGroup({
@@ -132,15 +157,6 @@ export class StocksPage {
     delivery_date: new FormControl(''),
   });
 
-  // constructor
-  // constructor(){
-  //   DefaultChartOptions = {
-  //     ...DefaultChartOptions,
-  //     theme:{
-  //       mode:this.ThemeService.Theme()
-  //     }
-  //   } as ApexChartOptions
-  // }
 
   // ASYNC ACTIONS
   async AddSupplier() {
@@ -207,6 +223,21 @@ export class StocksPage {
   ChangeSupplierData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'suppliers', 'Failed to update supplier', 'Sucessfully updated supplier')
 
 
+  async ChangeItemImage(Product: StockItem, Files: UFile[]) {
+    const File = Files[0]
+    if (File) {
+      const FileData = new FormData();
+      FileData.append('name', Product.name)
+      FileData.append('image', File);
+
+      const [UploadResult] = await this.HttpService.MakeRequest(this.StockImagesURL, 'POST', 'Failed to upload stock item image', FileData)
+
+      if (UploadResult) {
+        this.MessageService.success('Successfully changed item image')
+      }
+    }
+  }
+
 
 
   // ACTIONS
@@ -219,6 +250,9 @@ export class StocksPage {
     OrderItem.cost = StockItem.purchase_price * OrderItem.quantity
   }
 
+  SetTemplateImage(Event: Event) {
+    (Event.target as HTMLImageElement).src = this.SelectedStockItem!.product_name && this.MenuImagesURL + this.SelectedStockItem!.product_name || 'Icons/package.svg'
+  }
 
   RemoveOrderItem(index: number) {
     this.StockOrderItems.splice(index, 1)
@@ -234,7 +268,55 @@ export class StocksPage {
     this.StockOrderAddModalVisible = true
   }
 
+  async UnlinkLinkItemToProduct() {
+    this.UnlinkingProduct = true
 
+    const [UnlinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to disconnect product', {
+      connected_product_id: null,
+      id: this.SelectedStockItem!.id
+    })
+    if (UnlinkResult) {
+      this.MessageService.success('Sucessfully disconnected ' + this.SelectedStockItem!.name)
+      this.SelectedStockItem!.product_name = undefined
+
+      const ProductImage = this.StockItemImage.nativeElement
+      if (ProductImage && ProductImage.src.includes('/menu/')){
+        ProductImage.src = ''
+      }
+    }
+
+    this.UnlinkingProduct = false
+  }
+
+  LinkingProduct = false
+  UnlinkingProduct = false
+
+  async LinkItemToProduct(ProductInfo: any) {
+    this.LinkingProduct = true
+
+    const [LinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to link product', {
+      connected_product_id: ProductInfo.id,
+      id: this.SelectedStockItem!.id
+    })
+    if (LinkResult) {
+      this.MessageService.success('Sucessfully connected ' + this.SelectedStockItem!.name + ' to ' + ProductInfo.name)
+      this.MenuItemSelectModalVisible = false
+      this.SelectedStockItem!.product_name = ProductInfo.name
+      this.SelectedStockItem!.selling_price = ProductInfo.price
+
+      const ProductImage = this.StockItemImage.nativeElement
+      if (ProductImage && ProductImage.src.includes('.svg')){
+        ProductImage.src = this.MenuImagesURL+ProductInfo.name
+      }
+    }
+
+    this.LinkingProduct = false
+  }
+
+  OpenProductSelectModal() {
+    this.MenuItemSelectModalVisible = true
+
+  }
 
 
   // UTILS
@@ -267,11 +349,14 @@ export class StocksPage {
 
   // ON INIT
 
+  PurchaseDistributionView = 'All'
+
   async ngOnInit() {
     await this.StocksService.LoadSuppliers();
     await this.LoadStockItems();
     await this.StocksService.LoadStockOrders();
-    this.LoadGeneralCharts()
+    this.LoadStocksPieChart()
+    this.LoadPurchaseDistributionChart()
 
     const SelectedItemID = Number(this.ActiveRoute.snapshot.paramMap.get('itemid'));
     const SelectedItem = SelectedItemID && this.StocksService.StockItems.find(item => item.id == SelectedItemID);
@@ -296,65 +381,76 @@ export class StocksPage {
     ...DefaultChartOptions,
     chart: {
       ...DefaultChartOptions.chart,
-      type: 'bar', // switched from 'radar' to 'bar'
+      type: 'bar',
       height: '100%',
       width: '100%',
-    }
+    },
+    series: []
   } as ApexChartOptions
 
-  LoadGeneralCharts() {
-    const Labels: string[] = []
-    const StockItemsSeries: number[] = []
-    const StockItemsDistributions: string[] = []
-
-    // Prepare data for two series: quantity bought and money spent
-    const purchaseStats: { [itemName: string]: { totalQuantity: number, totalSpent: number } } = {}
+  LoadPurchaseDistributionChart(dateRange?: [number?, number?]) {
+    const purchaseStats: { [itemName: string]: { totalQuantity: number, totalSpent: number } } = {};
 
     for (const StockOrder of this.StocksService.StockOrders) {
-      const StockItem = this.GetStockItemByID(StockOrder.item_id)
+      const orderDate = new Date(StockOrder.order_date).getTime()
+
+      if (dateRange && dateRange[0] && dateRange[1] && (orderDate < dateRange[0] || orderDate > dateRange[1])) continue;
+
+      const StockItem = this.GetStockItemByID(StockOrder.item_id);
       if (StockItem) {
         if (!purchaseStats[StockItem.name]) {
-          purchaseStats[StockItem.name] = { totalQuantity: 0, totalSpent: 0 }
+          purchaseStats[StockItem.name] = { totalQuantity: 0, totalSpent: 0 };
         }
-        purchaseStats[StockItem.name].totalQuantity += StockOrder.quantity || 0
-        purchaseStats[StockItem.name].totalSpent += StockOrder.cost || 0
+        purchaseStats[StockItem.name].totalQuantity += StockOrder.quantity || 0;
+        purchaseStats[StockItem.name].totalSpent += StockOrder.cost || 0;
       }
     }
 
-    const StockItemsDistributionQuantitySeries: number[] = []
-    const StockItemsDistributionSpentSeries: number[] = []
+
+    const StockItemsDistributionQuantitySeries: number[] = [];
+    const StockItemsDistributionSpentSeries: number[] = [];
+    const StockItemNames: string[] = [];
 
     for (const StockItem of this.StocksService.StockItems) {
-      Labels.push(StockItem.name)
-      StockItemsSeries.push(StockItem.quantity_in_stock)
-      StockItemsDistributions.push(StockItem.name)
-      StockItemsDistributionQuantitySeries.push(purchaseStats[StockItem.name]?.totalQuantity || 0)
-      StockItemsDistributionSpentSeries.push(purchaseStats[StockItem.name]?.totalSpent || 0)
+      StockItemsDistributionQuantitySeries.push(purchaseStats[StockItem.name]?.totalQuantity || 0);
+      StockItemsDistributionSpentSeries.push(purchaseStats[StockItem.name]?.totalSpent || 0);
+      StockItemNames.push(StockItem.name);
+    }
+
+
+    if (StockItemNames.length > 0)
+      this.StockOrdersDisChartOptions = {
+        ...this.StockOrdersDisChartOptions,
+        xaxis: {
+          categories: StockItemNames,
+        },
+        series: [
+          { name: 'Total Quantity Bought', data: StockItemsDistributionQuantitySeries },
+          { name: 'Total Money Spent', data: StockItemsDistributionSpentSeries }
+        ]
+      };
+  }
+
+  LoadStocksPieChart() {
+    const Labels: string[] = [];
+    const StockItemsSeries: number[] = [];
+
+    for (const StockItem of this.StocksService.StockItems) {
+      Labels.push(StockItem.name);
+      StockItemsSeries.push(StockItem.quantity_in_stock);
     }
 
     this.StockItemsChartOptions = {
       ...this.StockItemsChartOptions,
       labels: Labels,
       series: StockItemsSeries
-    }
-
-    this.StockOrdersDisChartOptions = {
-      ...this.StockOrdersDisChartOptions,
-      xaxis: {
-        categories: StockItemsDistributions,
-      },
-      series: [
-        { name: 'Total Quantity Bought', data: StockItemsDistributionQuantitySeries },
-        { name: 'Total Money Spent', data: StockItemsDistributionSpentSeries }
-      ]
-    }
+    };
   }
 
 
   // STOCK ITEM SELECTION 
   set SelectedStockItem(item: StockItem | undefined) {
     if (item) {
-      console.log('NAVIGATING')
       this.Router.navigate(['/stocks', item.id])
       this.CalculateItemStats(item);
     } else {
@@ -402,9 +498,11 @@ export class StocksPage {
       };
     }
 
-    const FilteredItems = StockItem.Orders.filter(filterFn);
-    for (const PurchaseOrderItem of FilteredItems) {
-      Total += PurchaseOrderItem[Property];
+    const FilteredItems = StockItem.Orders && StockItem.Orders.filter(filterFn);
+    if (FilteredItems) {
+      for (const PurchaseOrderItem of FilteredItems) {
+        Total += PurchaseOrderItem[Property];
+      }
     }
     return Total;
   }

@@ -2,7 +2,7 @@ import { Component, Inject, inject } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MenuService } from '../Menu/menu.service';
+import { MenuService } from '../../Services/menu.service';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -19,6 +19,7 @@ import { OrdersService } from '../../Services/Orders.service';
 import { FloatingContainer } from '../../Components/floating-container/floating-container';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { MenuProductSelect } from "../../../shared/product-selector/product-select";
 
 
 declare global {
@@ -150,7 +151,7 @@ function FormatPrice(price: number | string) {
 @Component({
   selector: 'checkout-page',
   imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule, CurrencyPipe,
-    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule, NzFormModule],
+    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule, NzFormModule, MenuProductSelect],
   templateUrl: './checkout.page.html',
   styleUrl: './checkout.page.less'
 })
@@ -388,9 +389,7 @@ export class CheckoutPage {
 
   async LoadProducts() {
     this.LoadingProducts = true
-
-    const Category = this.SelectedCategory != 'All' && this.SelectedCategory || undefined
-    const Products = await this.MenuService.GetMenuItems(Category)
+    const Products = await this.MenuService.MenuProducts.Get()
     if (Products) {
       this.Products = Products
     }

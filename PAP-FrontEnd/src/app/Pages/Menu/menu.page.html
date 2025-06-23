@@ -1,11 +1,7 @@
 <page-layout>
 
 
-    <loading-screen 
-        [IsLoading]="LoadingMenu" 
-        [Fullscreen]="false" 
-        [ShowBackground]="true"
-        LoaderStyle="Spinner" 
+    <loading-screen [IsLoading]="LoadingMenu" [Fullscreen]="false" [ShowBackground]="true" LoaderStyle="Spinner"
         [ShowContainer]="true">
     </loading-screen>
 
@@ -14,32 +10,33 @@
         <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true" style="margin-right: 5px;">
             <nz-icon nzType="menu" />
         </button>
-        <nz-segmented (nzValueChange)="LoadMenuItems($event)" [(ngModel)]="CurrentCategory">
+        <nz-segmented [(ngModel)]="CurrentCategory">
             <label nz-segmented-item [nzValue]="'All'">{{'All' | translate}}</label>
             @for (Category of Categories; track $index){
-            <label nz-segmented-item [nzValue]="Category">{{Category}}</label>
+                <label nz-segmented-item [nzValue]="Category.name">{{Category.name}}</label>
             }
         </nz-segmented>
     </div>
 
     <div class="menu-container">
         <div class="menu-items">
-            @for (MenuItem of CurrentMenuList(); track $index) {
-            <div class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
-                <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'" class="menu-item-image-container">
-
-                <label class="menu-item-title">{{MenuItem.name}}</label>
-                <label class="menu-item-price">{{MenuItem.price | currency}}</label>
-                <div>
-                    <button nz-button nzType="primary" nzShape="circle">
-                        <nz-icon nzType="eye" />
-                    </button>
-                </div>
-            </div>
-            }
             <div class="menu-item" (click)="OpenUploadModel()">
                 <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)" />
             </div>
+            @for (MenuItem of GetFilteredMenuItems(); track $index) {
+                <div class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
+                    <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'"
+                        class="menu-item-image-container">
+
+                    <label class="menu-item-title">{{MenuItem.name}}</label>
+                    <label class="menu-item-price">{{MenuItem.price | currency}}</label>
+                    <div>
+                        <button nz-button nzType="primary" nzShape="circle">
+                            <nz-icon nzType="eye" />
+                        </button>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </page-layout>
@@ -67,7 +64,7 @@
             [style.text-decoration]="!SelectedItemInfo.active ? 'line-through' : ''">{{SelectedItemInfo.price |
             currency}}</label>
         @if (!SelectedItemInfo.active){
-        <label class="menu-item-category">{{'Inactive' | translate}}</label>
+            <label class="menu-item-category">{{'Inactive' | translate}}</label>
         }
         <nz-row style="gap:10px">
             <button nz-button nzType="primary" nzShape="circle" nz-tooltip
@@ -99,12 +96,12 @@
 
             <div cdkDropList class="list">
                 @for (Category of Categories; track $index){
-                <div class="list-item">
-                    <label>{{Category}}</label>
-                    <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)">
-                        <nz-icon nzType="delete"></nz-icon>
-                    </button>
-                </div>
+                    <div class="list-item">
+                        <label>{{Category.name}}</label>
+                        <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)">
+                            <nz-icon nzType="delete"></nz-icon>
+                        </button>
+                    </div>
                 }
             </div>
 
@@ -147,7 +144,7 @@
                     <nz-select formControlName="category" nzShowSearch nzAllowClear
                         [nzPlaceHolder]="'Select a category' | translate">
                         @for (Category of Categories; track Category) {
-                        <nz-option [nzLabel]="Category" [nzValue]="Category"></nz-option>
+                            <nz-option [nzLabel]="Category.name" [nzValue]="Category.id"></nz-option>
                         }
                     </nz-select>
                 </nz-form-control>
@@ -175,10 +172,10 @@
                     <nz-form-label>{{'Thumbnail' | translate}}</nz-form-label>
                     <file-select [(Files)]="MenuThumbnails">
                         @if (!SelectedThumbnailUrl) {
-                        <nz-icon class="upload-icon" [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
-                        <div class="ant-upload-text">Upload</div>
+                            <nz-icon class="upload-icon" [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
+                            <div class="ant-upload-text">Upload</div>
                         } @else {
-                        <img [src]="SelectedThumbnailUrl" style="width: 100%" />
+                            <img [src]="SelectedThumbnailUrl" style="width: 100%" />
                         }
                     </file-select>
                 </nz-form-control>

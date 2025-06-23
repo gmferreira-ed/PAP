@@ -1,8 +1,9 @@
 
 import { inject, Injectable } from '@angular/core';
-import { HttpService } from '../../Services/Http.service';
-import { AppSettings } from '../../Services/AppSettings';
+import { HttpService } from './Http.service';
+import { AppSettings } from './AppSettings';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import SimpleCache from '../../shared/SimpleCache';
 
 @Injectable({
   providedIn: 'root'
@@ -21,23 +22,30 @@ export class MenuService {
   ImagesURL = AppSettings.ImagesURL + "menu/"
   CategoriesURL = this.MenuURL + "/categories"
 
-  async GetMenuItems(category: any = null) {
+  MenuProducts = new SimpleCache(async (category: string): Promise<any[]> => {
     this.LoadingMenuItems = true
 
     const MenuURL = new URL(this.MenuURL)
     if (category != "All" && category) {
       MenuURL.searchParams.append('category', category);
     }
-    let [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
 
-    if (Array.isArray(Result)){
+    const [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
+
+    if (Array.isArray(Result)) {
       for (const MenuItem of Result)
-        MenuItem.ImageURL = this.ImagesURL+MenuItem.name
-    } 
+        MenuItem.ImageURL = this.ImagesURL + MenuItem.name
+    }
     this.LoadingMenuItems = false
 
     return Result
-  }
+  }, 30)
+
+
+
+  Categories: any[] = []
+
+  LastMenuFetch = 0
 
   async DeleteMenuItem(ProductName: string) {
     const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to delete menu item', {
@@ -50,20 +58,20 @@ export class MenuService {
   }
 
 
-  async SetImage(product:string, File:File){
-      const FileData = new FormData();
-      FileData.append('name', product)
-      FileData.append('image', File);
+  async SetImage(product: string, File: File) {
+    const FileData = new FormData();
+    FileData.append('name', product)
+    FileData.append('image', File);
 
-      const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', 'Failed to upload menu item image', FileData)
+    const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', 'Failed to upload menu item image', FileData)
 
-      if (UploadResult){
-        this.MessageService.success('Successfully changed product image')
-      }
-      return UploadResult
+    if (UploadResult) {
+      this.MessageService.success('Successfully changed product image')
+    }
+    return UploadResult
   }
 
-  async InsertMenuItem(name: string, category: string, price: number, active: boolean | string, File?: File) {
+  async InsertMenuItem(name: string, category: string|null, price: number, active: boolean | string, File?: File) {
 
 
     var UploadResult: any = true
@@ -74,7 +82,8 @@ export class MenuService {
     if (UploadResult) {
       const formData = new URLSearchParams();
       formData.append('name', name)
-      formData.append('category', category)
+      if (category)
+        formData.append('category_id', category)
       formData.append('price', String(price))
       formData.append('active', 'true')
 
@@ -120,6 +129,9 @@ export class MenuService {
     CategoriesUrl.searchParams.append('category', category);
 
     const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', 'Failed to load categories')
+
+    if (Result)
+      this.Categories = Result
 
     this.LoadingCategories = false
     return Result

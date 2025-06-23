@@ -13,6 +13,10 @@ export interface StockItem {
     active: boolean;
     created_at: string;
     
+    product_name?:string
+    product_category?:string
+    selling_price?:number
+    
     // Optional chart data. Caches
     Orders:StockOrderItem[]
     ExpensesChartOptions?:ApexChartOptions

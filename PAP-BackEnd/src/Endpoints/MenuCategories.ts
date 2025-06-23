@@ -28,9 +28,9 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
     const body = req.body
 
-    var SQLQuery = `INSERT INTO menu_categories (category) VALUES ('${body.category}')`;
+    var SQLQuery = `INSERT INTO menu_categories (name) VALUES (?)`;
 
-    const [rows] = await Database.query(SQLQuery);
+    const [rows] = await Database.execute(SQLQuery, [body.category]);
     res.send(rows)
 
 }))
@@ -45,10 +45,10 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 Router.delete('/menu/categories', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
-    var SQLQuery = "DELETE FROM `menu_categories` WHERE category=?"
+    var SQLQuery = "DELETE FROM `menu_categories` WHERE id=?"
 
 
-    const [rows] = await Database.execute(SQLQuery, [body.category]);
+    const [rows] = await Database.execute(SQLQuery, [body.category_id]);
     res.send(rows)
 }))
 

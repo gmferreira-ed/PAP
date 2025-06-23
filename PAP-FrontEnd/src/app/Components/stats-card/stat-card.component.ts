@@ -1,5 +1,4 @@
-
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, inject, HostBinding, Input, input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { ApexXAxis, ChartComponent, NgApexchartsModule, XAxisAnnotations } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
@@ -9,7 +8,7 @@ import { NoDataComponent } from '../no-data/no-data';
 
 @Component({
   selector: 'stat-card',
-  imports: [CurrencyPipe, NgApexchartsModule, NoDataComponent],
+  imports: [CurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet],
 
   templateUrl: 'stat-card.component.html',
   styleUrl: 'stat-card.component.less'
@@ -25,11 +24,13 @@ export class StatCardComponent {
   @Input() ChartsTimeOptions: { [key: string]: Partial<ApexXAxis> } = {}
   @Input() ShowChartTimeOptions = true
 
-  @ViewChild("Chart", { static: false }) Chart!: ChartComponent;
+  @ViewChild("Chart", { static: false, read:ElementRef }) Chart!: ElementRef;
 
-  CurrentViewType = 'Month'
+  @Input() ViewType = 'Month'
+  @Output() ViewTypeChanged = new EventEmitter<[number?, number?]>();
+
   UpdateChartView(ViewType: string) {
-    this.CurrentViewType = ViewType
+    this.ViewType = ViewType
     const ViewTypeInfo = this.ChartsTimeOptions[ViewType]!
 
     this.ChartOptions!.xaxis = {
@@ -37,12 +38,14 @@ export class StatCardComponent {
       min: ViewTypeInfo.min,
       max: ViewTypeInfo.max,
     }
+
+    this.ViewTypeChanged.emit([ViewTypeInfo.min, ViewTypeInfo.max])
   }
 
   GetObjectKeys = Object.keys
 
-  constructor() {
-    const today = new Date();
+  ngOnInit(){
+     const today = new Date();
 
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay() + 1);
@@ -87,7 +90,21 @@ export class StatCardComponent {
           format: 'MMM YY',
         }
       }
-    };
+    }
+
+    this.UpdateChartView(this.ViewType)
+  }
+
+    // Chart scroll error fix
+  ngAfterViewInit() {
+    if (this.Chart && this.Chart.nativeElement) {
+      this.Chart.nativeElement.addEventListener('wheel', (e: Event) => {
+        e.preventDefault();
+      }, { passive: false });
+      this.Chart.nativeElement.addEventListener('touchmove', (e: Event) => {
+        e.preventDefault();
+      }, { passive: false });
+    }
   }
 }
 

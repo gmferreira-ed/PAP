@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
-import { EndpointCategory, EndpointData, PermissionInfo } from '../../../../../shared/permissions';
+import { EndpointCategory, EndpointData, PermissionInfo } from '../../../shared/permissions';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';

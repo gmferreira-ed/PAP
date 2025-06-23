@@ -17,16 +17,12 @@ import path from 'path';
 Router.get('/menu', HandleEndpointFunction(async (req, res) => {
 
     const query = req.query
-    const category = query.category
 
-    var SQLQuery = `SELECT * FROM menu`
-
-    const Values = []
-    if (category) {
-        SQLQuery = SQLQuery + ' WHERE `category`=?'
-        Values.push(category)
-    }
-    const [MenuItems] = await Database.execute(SQLQuery, Values);
+    var SQLQuery = `SELECT menu.*, catg.name as category FROM menu 
+    LEFT JOIN  menu_categories catg ON catg.id = menu.category_id
+     LEFT JOIN  stock_items stockitem ON stockitem.connected_product_id = menu.id
+    `
+    const [MenuItems] = await Database.execute(SQLQuery);
 
 
     res.send(MenuItems)
@@ -49,7 +45,7 @@ Router.post('/menu',  HandleEndpointFunction(async (req, res) => {
     const [InsertQuery, Values] = SQLUtils.BuildInsertQuery('menu', [
         'name', 
         'price', 
-        'category', 
+        'category_id', 
         'active', 
     ], body)
 
@@ -71,7 +67,7 @@ Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
 
-    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category'], body, ['name'])
+    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category'], body, ['id'])
 
 
     const [rows] = await Database.execute(SQLQuery, Values);

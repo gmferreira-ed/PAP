@@ -54,37 +54,8 @@
         <!-- PRODUCT SELECTION -->
         <div class="product-select">
             <!-- GO BACK BUTTON -->
-            <ng-container *ngTemplateOutlet="BackButton"></ng-container>
-
-            <!-- SEARCH -->
-            <nz-input-group style="margin-bottom:10px;" nzSearch [nzAddOnAfter]="suffixIconButton">
-                <input type="text" nz-input placeholder="Search for a product" />
-            </nz-input-group>
-            <ng-template #suffixIconButton>
-                <button nz-button nzType="primary" nzSearch><nz-icon nzType="search" /></button>
-            </ng-template>
-
-            <!-- CATEGORIES -->
-            <nz-radio-group nzButtonStyle="solid" [(ngModel)]="SelectedCategory" (ngModelChange)="LoadProducts()">
-                <label nz-radio-button nzValue="All">{{'All' | translate}}</label>
-                @for (Category of Categories ; track $index){
-                <label nz-radio-button [nzValue]="Category.category">{{Category.category}}</label>
-                }
-            </nz-radio-group>
-
-            <!-- PRODUCTS -->
-            <div class="products">
-                <loading-screen [IsLoading]="LoadingProducts"></loading-screen>
-                @for (Product of Products; track $index){
-                <div class="product" (click)="AddToOrder(Product)" [class.disabled]="Product.active == 0">
-                    <img [src]="MenuImagesURL+Product.name">
-                    <label>{{Product.name}}</label>
-                    <div class="overlay invisible">
-                        <icon type="circle-arrow-right" size="40" [strokewidth]="0.5"></icon>
-                    </div>
-                </div>
-                }
-            </div>
+            <ng-container *ngTemplateOutlet="BackButton" ></ng-container>
+            <menu-product-select (ProductSelected)="AddToOrder($event)" style="height: 90%;"></menu-product-select>
         </div>
 
 
@@ -218,7 +189,7 @@
 </page-layout>
 
 <ng-template #BackButton>
-    <div class="flex row" style="margin-bottom: 5px;">
+    <div class="flex row" style="margin-bottom: 5px;" style="height: 10%;">
         <button nz-button nzType="default" (click)="LeaveOrder()" nzSize="large">
             <nz-icon nzType="arrow-left"></nz-icon>
         </button>

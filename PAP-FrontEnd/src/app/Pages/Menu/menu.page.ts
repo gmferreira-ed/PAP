@@ -13,7 +13,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MenuService } from './menu.service';
+import { MenuService } from '../../Services/menu.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
@@ -28,11 +28,11 @@ import { UFile } from '../../../types/ufile';
 
 @Component({
   selector: 'menu-page',
-  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule, 
+  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,
     NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule,
     CdkDropList, NzToolTipModule,
     NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule, NzIconModule, FormsModule,
-     CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen],
+    CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen],
   templateUrl: './menu.page.html',
   styleUrl: './menu.page.less'
 })
@@ -48,8 +48,6 @@ export class MenuPage {
   MessageService = inject(NzMessageService)
   HttpService = inject(HttpService)
 
-  // SIGNALS
-  CurrentMenuList = signal<any[]>([])
 
   // IMAGE UPLOADING / LOADING
   ThumbnailsUrl = AppSettings.ImagesURL + 'menu/'
@@ -61,7 +59,7 @@ export class MenuPage {
 
   // OBJECTS
 
-  Categories:string[] = []
+  Categories: any[] = []
 
   CategoryToInsert = ""
 
@@ -75,7 +73,6 @@ export class MenuPage {
     active: true,
   }
 
-  console = console
 
   // STATES
   CategoryInsertVisible = false
@@ -103,20 +100,21 @@ export class MenuPage {
     const FormValues = this.ItemCreationForm.value
     const ProductName = FormValues.product!
     const ProductPrice = Number(FormValues.price!)
-    const ProductCategory = FormValues.category!
+    const ProductCategory = FormValues.category || null
 
     this.ItemCreationForm.disable()
 
-    await this.MenuService.InsertMenuItem(ProductName, ProductCategory, ProductPrice, FormValues.active!, this.MenuThumbnails[0])
-    await this.LoadMenuItems(this.CurrentCategory)
+    const ItemInsertResult = await this.MenuService.InsertMenuItem(ProductName, ProductCategory, ProductPrice, FormValues.active!, this.MenuThumbnails[0])
+    if (ItemInsertResult) {
+      await this.LoadMenuItems(this.CurrentCategory)
 
-    this.MenuThumbnails = []
+      this.MenuThumbnails = []
+      this.ItemCreationForm.reset()
+      this.InsertModalOpen = false
+    }
 
     this.ItemCreationForm.enable()
-    this.ItemCreationForm.reset()
-
     this.IsInsertingItem = false
-    this.InsertModalOpen = false
   }
 
   async CreateCategory() {
@@ -127,7 +125,7 @@ export class MenuPage {
 
     if (ValidLenght && ValidName) {
       const InsertSucess = await this.MenuService.InsertCategory(Category)
-      if (InsertSucess){
+      if (InsertSucess) {
         this.CategoryInsertVisible = false
         this.LoadCategories()
       }
@@ -140,9 +138,9 @@ export class MenuPage {
   }
 
 
-  async ChangeProductImage(Product:any, Files:UFile[]){
+  async ChangeProductImage(Product: any, Files: UFile[]) {
     const File = Files[0]
-    if (File){
+    if (File) {
       await this.MenuService.SetImage(Product.name, File)
       Product.ImageURL = File.imagebase64
     }
@@ -180,7 +178,7 @@ export class MenuPage {
       nzOnOk: async () => {
         const [UpdateResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'menu', 'PATCH', 'Could not update menu item', {
           active: TargetActive,
-          name: SelectedProduct.name,
+          name: SelectedProduct.id,
         })
 
         if (UpdateResult) {
@@ -195,7 +193,7 @@ export class MenuPage {
     })
   }
 
-  async DeleteCategory(Category:string) {
+  async DeleteCategory(Category: string) {
     await this.MenuService.DeleteCategory(Category)
     this.LoadCategories()
   }
@@ -204,38 +202,53 @@ export class MenuPage {
 
   DisplayItemInfo(ItemInfo: any) {
     this.DrawerOpen = true,
-    this.SelectedItemInfo = ItemInfo
+      this.SelectedItemInfo = ItemInfo
   }
 
   async OpenUploadModel() {
     this.InsertModalOpen = true
   }
 
+  MenuProducts: any[] = []
+
   async LoadMenuItems(Category: any = null) {
     this.LoadingMenu = true
-    
+
     const CategoryToSet = Category != 'All' ? Category : 'Dish'
     this.ItemCreationForm.get('category')?.setValue(CategoryToSet)
 
-    let MenuItemResult:any[] = await this.MenuService.GetMenuItems(Category)
-    if (MenuItemResult) {
-      this.CurrentMenuList.set(MenuItemResult)
+    let MenuProducts: any[] = await this.MenuService.MenuProducts.Get(true)
+
+    if (MenuProducts) {
+      this.MenuProducts = MenuProducts
+
+      // Update selected item info
       const SelectedMenuItem = this.SelectedItemInfo
-      if (SelectedMenuItem){
-        const SelectedMenuItemIndex = MenuItemResult.findIndex((product)=>product.id == SelectedMenuItem.id)
-        if (SelectedMenuItemIndex != -1){
-          this.SelectedItemInfo = MenuItemResult[SelectedMenuItemIndex]
+      if (SelectedMenuItem) {
+        const SelectedMenuItemIndex = MenuProducts.findIndex((product) => product.id == SelectedMenuItem.id)
+        if (SelectedMenuItemIndex != -1) {
+          this.SelectedItemInfo = MenuProducts[SelectedMenuItemIndex]
         }
       }
     }
     this.LoadingMenu = false
   }
+
+  GetFilteredMenuItems() {
+    if (this.CurrentCategory == 'All') {
+      return this.MenuProducts
+    } else {
+      return this.MenuProducts.filter((Product) => Product.category == this.CurrentCategory)
+    }
+  }
+
+
   async LoadCategories() {
 
     let CategoriesResult = await this.MenuService.GetCategories()
 
     if (CategoriesResult) {
-      let ConvertedResult = Object.keys(CategoriesResult).map(key => (CategoriesResult[key].category))
+      let ConvertedResult = Object.keys(CategoriesResult).map(key => (CategoriesResult[key]))
 
       this.Categories = ConvertedResult
     }
@@ -244,7 +257,7 @@ export class MenuPage {
 
   ngOnInit() {
     this.LoadCategories()
-
+    this.LoadMenuItems()
   }
 
 

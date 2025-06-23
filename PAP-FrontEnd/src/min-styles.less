@@ -21,10 +21,15 @@
 }
 
 .collumn-layout,
-.collumn {
+.collumn,
+.column {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.nogap, .no-gap{
+    gap: 0px;
 }
 
 .fixed {
@@ -38,13 +43,30 @@
 .space-between {
     justify-content: space-between;
 }
+.jself-center{
+    justify-self:center;
+}
+.aself-center{
+    align-self:center;
+}
+
+.jself-end{
+    justify-self:end;
+}
+.aself-end{
+    align-self:flex-end;
+}
 
 .wrap {
     flex-wrap: wrap;
 }
 
-.vcenter {
+.vcenter, .v-center {
     align-items: center;
+}
+
+.tecenter, .t-center{
+    text-align: center;
 }
 
 .center {

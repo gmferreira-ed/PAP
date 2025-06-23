@@ -69,7 +69,7 @@ export class AuthService {
       const EndpointPermissions = AuthSuccess.role_permissions
       this.EndpointPermissions = EndpointPermissions
 
-      if (TargetPageURL == '/login' || TargetPageURL=='register') {
+      if (TargetPageURL == 'login' || TargetPageURL=='register') {
         this.router.navigate(['/dashboard'])
       }
 

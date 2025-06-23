@@ -1,6 +1,6 @@
 import GlobalConfigs from '../Config/GlobalConfigs';
 import { Database, ErrorResponse, EndpointsAttributes, EndpointMatches, EndpointRegex } from '../Globals'
-import SimpleCache from "../../../shared/SimpleCache"
+import SimpleCache from "../../../PAP-FrontEnd/src/shared/SimpleCache"
 import nodemailer from 'nodemailer'
 const crypto = require('crypto');
 

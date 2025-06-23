@@ -25,7 +25,9 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
         ExpectedColumns.forEach((Column) => {
 
             const CorrespondingValue = Data[AbsoluteCollumnName(Column)]
-            if (CorrespondingValue != undefined && CorrespondingValue!='undefined') {
+
+            if (CorrespondingValue != undefined && CorrespondingValue!='undefined' || CorrespondingValue === null) {
+
                 Values.push(CorrespondingValue);
                 rowPlaceholders.push('?')
                 if (!IsArray) {

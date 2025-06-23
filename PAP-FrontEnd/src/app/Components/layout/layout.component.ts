@@ -59,7 +59,7 @@ import { FloatingContainer } from "../floating-container/floating-container";
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { RouterModule } from '@angular/router';
 import { OrdersService } from '../../Services/Orders.service';
-import { Table } from '../../../../../shared/table';
+import { Table } from '../../../shared/table';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -630,6 +630,12 @@ export class RestaurantLayout {
           // PASTE
         } else if (Key == 'v') {
           this.PasteClipboardComponent()
+
+        } else if (Key == 'z') {
+          this.NavigateHistory(-1)
+
+        } else if (Key == 'y' || (Key=='Z' && ShiftCombo)) {
+          this.NavigateHistory(1)
 
           // CUT
         } else if (Key == 'x' && this.SelectedComponent) {

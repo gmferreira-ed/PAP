@@ -11,8 +11,15 @@ import SQLUtils from '../Services/SQLUtils'
  * @unprotected true
  */
 Router.get('/stock-items', HandleEndpointFunction(async (req, res) => {
-    const [Query, Values] = SQLUtils.BuildSelectQuery('stock_items', req.query, [])
-    const [Rows] = await Database.execute(Query, Values)
+    const StockItemsQuery = `SELECT stock_items.*, 
+    menu.name AS product_name,
+    menu.price AS selling_price,
+    category.name AS product_category
+
+    FROM stock_items
+    LEFT JOIN menu ON menu.id = stock_items.connected_product_id
+    LEFT JOIN menu_categories category ON menu.category_id = category.id`
+    const [Rows] = await Database.execute(StockItemsQuery)
     res.send(Rows)
 }))
 
@@ -40,8 +47,10 @@ Router.post('/stock-items', HandleEndpointFunction(async (req, res) => {
  */
 Router.patch('/stock-items', HandleEndpointFunction(async (req, res) => {
     const [Query, Values] = SQLUtils.BuildUpdateQuery('stock_items', [
-        'SKU', 'name', 'quantity_in_stock', 'unit_of_measure', 'purchase_price', 'supplier_id', 'description', 'active'
+        'SKU', 'name', 'quantity_in_stock', 'unit_of_measure', 'purchase_price', 'supplier_id', 'description', 'active', 'connected_product_id'
     ], req.body, ['id'])
+
+    console.log(Query, Values)
     const [Result] = await Database.execute(Query, Values)
     res.send(Result)
 }))
