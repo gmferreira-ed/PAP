@@ -26,7 +26,7 @@ export class StatCardComponent {
 
   @ViewChild("Chart", { static: false, read:ElementRef }) Chart!: ElementRef;
 
-  @Input() ViewType = 'Month'
+  @Input() ViewType = 'All'
   @Output() ViewTypeChanged = new EventEmitter<[number?, number?]>();
 
   UpdateChartView(ViewType: string) {

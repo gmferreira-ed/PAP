@@ -11,5 +11,5 @@
     "outDir": "build",
     "strict": true,
   },
-  "include": ["src/**/*.ts", "../shared/**/*.ts"]
+  "include": ["src/**/*.ts", "../PAP-FrontEnd/src/shared/**/*.ts"]
 }

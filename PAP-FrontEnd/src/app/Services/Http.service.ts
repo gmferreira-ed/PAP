@@ -1,8 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AppSettings } from './AppSettings';
 import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { Supplier } from '../../types/supplier';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 type ErrorInfo = {
   ErrorCode: number,
@@ -160,11 +159,11 @@ export class HttpService {
 
   // Utils
    GetInstancePatchCallback(URL: URL | string, Error?:string, SucessMessage?:string, Method:string='PATCH') {
-    return (Instance: any, FieldName: string) => {
+    return (Instance: any, FieldName: string, IdField:string='id') => {
       return async (NewValue: any) => {
         const [UpdateResult] = await this.MakeRequest(URL, Method, Error, {
           [FieldName]: NewValue,
-          id: Instance.id
+          id: Instance[IdField]
         });
         if (UpdateResult && SucessMessage) {
           //Instance[FieldName] = NewValue

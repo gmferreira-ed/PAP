@@ -2,6 +2,7 @@ import express from 'express'
 const Router = express.Router();
 import { Database, HandleEndpointFunction } from '../Globals'
 import SQLUtils from '../Services/SQLUtils'
+import { GetStockItems } from '../Services/StocksUtils';
 
 /**
  * @displayname "Stock Items"
@@ -11,16 +12,8 @@ import SQLUtils from '../Services/SQLUtils'
  * @unprotected true
  */
 Router.get('/stock-items', HandleEndpointFunction(async (req, res) => {
-    const StockItemsQuery = `SELECT stock_items.*, 
-    menu.name AS product_name,
-    menu.price AS selling_price,
-    category.name AS product_category
-
-    FROM stock_items
-    LEFT JOIN menu ON menu.id = stock_items.connected_product_id
-    LEFT JOIN menu_categories category ON menu.category_id = category.id`
-    const [Rows] = await Database.execute(StockItemsQuery)
-    res.send(Rows)
+    const StockItems = await GetStockItems()
+    res.send(StockItems)
 }))
 
 /**

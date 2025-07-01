@@ -1,5 +1,7 @@
 // BUTTON
 .button {
+
+
   display: flex;
   min-width: 32px;
   text-align: center;
@@ -11,9 +13,7 @@
 
   box-sizing: border-box;
 
-  padding: 2px;
-  padding-right: 8px;
-  padding-left: 8px;
+  padding: 4px 15px;
   border-radius: 5px;
 
   background-color: var(--secondary-color);
@@ -21,16 +21,28 @@
 
   transition: all 0.25s ease-in-out;
 
+  &:not(.block) {
+    gap: 5px;
+  }
+
   &.sucess {
     color: var(--success-color);
-    background-color: color-mix(in srgb, var(--success-color), transparent 90%);
     border: 1px solid var(--success-color);
+    box-shadow: 0px 0px 1px 0px color-mix(in srgb, var(--success-color), transparent 50%);
+
+    &.solid {
+      background-color: color-mix(in srgb, var(--success-color), transparent 90%);
+    }
   }
 
   &.error {
     color: var(--error-color);
-    background-color: color-mix(in srgb, var(--error-color), transparent 90%);
     border: 1px solid var(--error-color);
+    box-shadow: 0px 0px 1px 0px color-mix(in srgb, var(--error-color), transparent 50%);
+
+    &.solid {
+      background-color: color-mix(in srgb, var(--error-color), transparent 90%);
+    }
   }
 
   &.large {
@@ -48,7 +60,19 @@
     }
   }
 
-  &.selected{
+
+  &:hover {
+    opacity: 0.8;
+    &.sucess {
+      box-shadow: 0px 0px 6px 0px color-mix(in srgb, var(--success-color), transparent 50%);
+    }
+
+    &.error {
+      box-shadow: 0px 0px 6px 0px color-mix(in srgb, var(--error-color), transparent 50%);
+    }
+  }
+
+  &.selected {
     background-color: var(--accent-color);
     color: var(--secondary-color);
     border-color: var(--secondary-color-2);
@@ -109,11 +133,11 @@
   box-shadow: 0px 0px 5px 0px var(--shadow-color);
   border: 1px solid var(--border-color);
 
-  &:has(> header){
+  &:has(> header) {
     padding: 0px;
   }
 
-  > .content{
+  >.content {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -123,7 +147,7 @@
     max-height: 300px;
   }
 
-  > header {
+  >header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -143,13 +167,13 @@
   }
 
 
-  .value{
+  .value {
     margin-top: 2px;
     font-size: 16px;
   }
 }
 
-.date-range{
+.date-range {
   font-size: 16px;
   font-weight: 500;
 }
@@ -192,4 +216,3 @@ navbar {
     border-radius: 10px;
   }
 }
-

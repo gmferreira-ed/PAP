@@ -2,9 +2,9 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AppSettings } from './AppSettings';
 import { HttpService } from './Http.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { StockItem } from '../../types/stock-item';
+import { StockItem } from '../../shared/stock-item';
+import { StockOrder } from '../../shared/stock-order';
 import { Supplier } from '../../types/supplier';
-import { StockOrder } from '../../types/purchase-order';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,6 +19,7 @@ export class StocksService {
   StockItems: StockItem[] = []
   Suppliers: Supplier[] = []
   StockOrders: StockOrder[] = []
+  InventoryReports: InventoryReport[] = []
 
   // VARIABLES
 
@@ -26,9 +27,10 @@ export class StocksService {
   LoadingStocks = false
   LoadingSuppliers = false
   LoadingStockOrders = false
+  LoadingReportsHistory = false
 
 
-  async LoadStocks(Force?:Boolean){
+  async LoadStocks(){
     this.LoadingStocks = true
     const [Stocks]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-items', 'GET', 'Failed to load stock items')
 
@@ -56,6 +58,18 @@ export class StocksService {
     this.LoadingStockOrders = false
 
     return StockOrders
+
+  }
+  
+  async LoadReportsHistory(){
+    this.LoadingReportsHistory = true
+    const [InventoryReports]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'inventory-reports', 'GET',
+       'Failed to load inventory reports')
+
+    this.InventoryReports = InventoryReports
+    this.LoadingReportsHistory = false
+
+    return InventoryReports
 
   }
 }

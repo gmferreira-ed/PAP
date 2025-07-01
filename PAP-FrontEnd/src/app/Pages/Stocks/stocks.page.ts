@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
-import { NzModalComponent, NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalComponent, NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzButtonComponent, NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -8,9 +8,9 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, F
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconsModule } from '../../Components/icon/icon.component';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { StockItem } from '../../../types/stock-item';
+import { StockItem } from '../../../shared/stock-item';
 import { Supplier } from '../../../types/supplier';
-import { StockOrderItem } from '../../../types/purchase-order';
+import { StockOrder, StockOrderItem } from '../../../shared/stock-order';
 import { NoDataComponent } from '../../Components/no-data/no-data';
 import { HttpService } from '../../Services/Http.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -40,6 +40,8 @@ import { OptionsBar } from "../../Components/options-bar/options-bar.component";
 import { FloatingContainer } from "../../Components/floating-container/floating-container";
 import { MenuService } from '../../Services/menu.service';
 import { UFile } from '../../../types/ufile';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 var DefaultChartOptions: Partial<ApexChartOptions> = {
   chart: {
@@ -75,7 +77,7 @@ type StockTotalData = {
 
 @Component({
   selector: 'stocks-page',
-  imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, DatePipe,
+  imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, DatePipe, NzToolTipModule,
     NzTabsModule, FileSelectComponent, NoDataComponent, NzSelectModule, NzDatePickerModule, NzTableModule, EditableDirective, StatusTagComponent, NzRadioModule,
     NzInputNumberModule, NzCheckboxModule, CurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule, MenuProductSelect, OptionsBar, FloatingContainer],
   templateUrl: './stocks.page.html',
@@ -94,6 +96,8 @@ export class StocksPage {
   Router = inject(Router)
   ActiveRoute = inject(ActivatedRoute)
   ThemeService = inject(ThemeService)
+  ModalService = inject(NzModalService)
+  NotificationService = inject(NzNotificationService)
   GlobalUtils = GlobalUtils
 
   // DATA
@@ -108,7 +112,9 @@ export class StocksPage {
   StockOrderAddModalVisible = false
   StockItemAddModalVisible = false
   MenuItemSelectModalVisible = false
+  InventoryReportModalVisible = false
 
+  ReportingInventory = false
   AddingStockOrder = false
   AddingSuplier = false
   AddingStockItem = false
@@ -116,6 +122,7 @@ export class StocksPage {
 
   // ORDER ITEMS
   StockOrderItems: StockOrderItem[] = [];
+  InventoryReportItems: ItemReport[] = [];
 
   // VARIABLES
   SelectedItems: number[] = []
@@ -124,6 +131,10 @@ export class StocksPage {
   OrdersStartDate = new Date()
   OrdersEndDate = new Date()
 
+  UserImagesURL = AppSettings.UserImagesURL
+
+  ActiveView: 'General View' | 'Order History' | 'Stocks List' | string = 'General View'
+  ReportActions = ['SET', 'REMOVE']
   StockImagesURL = AppSettings.APIUrl + 'images/stocks/'
   MenuImagesURL = AppSettings.APIUrl + 'images/menu/'
 
@@ -147,7 +158,7 @@ export class StocksPage {
     quantity_in_stock: new FormControl(0, [Validators.required]),
     unit_of_measure: new FormControl(''),
     purchase_price: new FormControl(0),
-    supplier_id: new FormControl(null, [Validators.required]),
+    supplier_id: new FormControl<null | number>(null, [Validators.required]),
     description: new FormControl(''),
   });
 
@@ -157,6 +168,26 @@ export class StocksPage {
     delivery_date: new FormControl(''),
   });
 
+  CheckInvalidOrderItem() {
+    return this.StockOrderItems.find((Item) => {
+      if (!Item.item_id) {
+        console.log('No item id')
+        return true
+      }
+      return false
+    })
+  }
+
+  SupplierFieldChanged(NewVal: number) {
+    this.StockOrderItems = this.StockOrderItems.filter((Item) => {
+      const StockItem = this.GetStockItemByID(Item.item_id)
+      return !StockItem || StockItem.supplier_id == NewVal
+    })
+  }
+
+  FindReportItemWithID(ID: number) {
+    return this.InventoryReportItems.find((i) => i.item_id == ID)
+  }
 
   // ASYNC ACTIONS
   async AddSupplier() {
@@ -223,6 +254,104 @@ export class StocksPage {
   ChangeSupplierData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'suppliers', 'Failed to update supplier', 'Sucessfully updated supplier')
 
 
+
+
+  LinkingProduct = false
+  UnlinkingProduct = false
+
+  async UnlinkLinkItemToProduct() {
+    this.UnlinkingProduct = true
+
+    const [UnlinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to disconnect product', {
+      connected_product_id: null,
+      id: this.SelectedStockItem!.id
+    })
+    if (UnlinkResult) {
+      this.MessageService.success('Sucessfully disconnected ' + this.SelectedStockItem!.name)
+      this.SelectedStockItem!.product_name = undefined
+
+      const ProductImage = this.StockItemImage.nativeElement
+      if (ProductImage && ProductImage.src.includes('/menu/')) {
+        ProductImage.src = ''
+      }
+    }
+
+    this.UnlinkingProduct = false
+  }
+
+  async LinkItemToProduct(ProductInfo: any) {
+    this.LinkingProduct = true
+
+    const [LinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to link product', {
+      connected_product_id: ProductInfo.id,
+      id: this.SelectedStockItem!.id
+    })
+    if (LinkResult) {
+      this.MessageService.success('Sucessfully connected ' + this.SelectedStockItem!.name + ' to ' + ProductInfo.name)
+      this.MenuItemSelectModalVisible = false
+      this.SelectedStockItem!.product_name = ProductInfo.name
+      this.SelectedStockItem!.selling_price = ProductInfo.price
+
+      const ProductImage = this.StockItemImage.nativeElement
+      if (ProductImage && ProductImage.src.includes('.svg')) {
+        ProductImage.src = this.MenuImagesURL + ProductInfo.name
+      }
+    }
+
+    this.LinkingProduct = false
+  }
+
+  async CreateInventoryReport() {
+    this.ReportingInventory = true
+    
+    const [ReportResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'inventory-reports', 'POST', 'Failed to submit inventory report',
+      { items: this.InventoryReportItems })
+
+    if (ReportResult) {
+      this.MessageService.success('Sucessfully submitted inventory report')
+      await this.LoadStockItems()
+      await this.StocksService.LoadReportsHistory()
+      this.InventoryReportModalVisible = false
+    }
+    this.ReportingInventory = false
+  }
+
+  PromptInventoryReportSubmit() {
+    const NegativeItem = this.InventoryReportItems.find((RItem) => {
+      const StockItem = this.GetStockItemByID(RItem.item_id)!
+      const TargetAmount = RItem.action == 'REMOVE' ? StockItem.quantity_in_stock - RItem.amount : RItem.amount
+      if (TargetAmount < 0) {
+
+        this.ModalService.confirm({
+          nzTitle: 'Confirm Inventory Report',
+          nzContent: 'You have one or more items that reach a negative stock amount. Are you sure? <br>This may tamper with certain RestroLink features',
+          nzOnOk: async () => this.CreateInventoryReport,
+          nzOkLoading: this.ReportingInventory,
+          nzCentered: true
+        })
+      } else {
+        this.CreateInventoryReport()
+      }
+    })
+  }
+
+
+  PromptStockStatusChange(StockOrder: StockOrder, Status: string) {
+    this.ModalService.confirm({
+      nzTitle: 'Are you sure?',
+      nzContent: `Once you mark this order as <b>${Status}</b>, you won't be able to change it again`,
+      nzOnOk: async () => {
+        await this.ChangeStockOrderData(StockOrder, 'status')(Status)
+        this.LoadStockOrders()
+        this.LoadStockItems()
+      },
+      nzCentered: true
+    })
+  }
+  ChangeStockOrderData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'stock-orders', 'Failed to update stock order', 'Sucessfully updated stock order')
+
+
+
   async ChangeItemImage(Product: StockItem, Files: UFile[]) {
     const File = Files[0]
     if (File) {
@@ -242,7 +371,34 @@ export class StocksPage {
 
   // ACTIONS
   AddOrderItem() {
-    this.StockOrderItems.push({ item_id: 1, quantity: 1, cost: 0 })
+    const CurrentSupplierID = this.StockOrderForm.value.supplier_id
+    if (CurrentSupplierID) {
+      const DefaultItem: StockItem = CurrentSupplierID && this.StocksService.StockItems.find((Stockitem) => Stockitem.supplier_id == CurrentSupplierID)
+      if (DefaultItem) {
+        this.StockOrderItems.push({ item_id: DefaultItem.id, quantity: 1, cost: DefaultItem.purchase_price })
+      } else {
+        this.NotificationService.error('Error', `This supplier doesn't have linked items. Switch suppliers or link stock items first`)
+      }
+    } else {
+      this.NotificationService.error('Error', 'Selected a valid supplier first')
+    }
+  }
+
+  AddReportItem() {
+    const ReportItemsMap = Object.fromEntries(
+      this.InventoryReportItems.map(Report => [Report.item_id, Report])
+    );
+    const DefaultReportItemID = this.StocksService.StockItems.find((Stockitem) => {
+      return !ReportItemsMap[Stockitem.id]
+    })?.id
+
+    if (DefaultReportItemID) {
+      this.InventoryReportItems.push({
+        action: 'REMOVE',
+        item_id: DefaultReportItemID,
+        amount: 1,
+      })
+    }
   }
 
   OrderItemChanged(OrderItem: StockOrderItem) {
@@ -250,8 +406,11 @@ export class StocksPage {
     OrderItem.cost = StockItem.purchase_price * OrderItem.quantity
   }
 
-  SetTemplateImage(Event: Event) {
-    (Event.target as HTMLImageElement).src = this.SelectedStockItem!.product_name && this.MenuImagesURL + this.SelectedStockItem!.product_name || 'Icons/package.svg'
+  SetTemplateImage(Event: Event, StockItem?: StockItem|ItemReport) {
+    const ImageEl = (Event.target as HTMLImageElement)
+
+    StockItem = StockItem || this.SelectedStockItem!
+    ImageEl.src = StockItem.product_name && this.MenuImagesURL + StockItem.product_name || 'Icons/package.svg'
   }
 
   RemoveOrderItem(index: number) {
@@ -266,51 +425,6 @@ export class StocksPage {
     }
     this.SelectedItems = []
     this.StockOrderAddModalVisible = true
-  }
-
-  async UnlinkLinkItemToProduct() {
-    this.UnlinkingProduct = true
-
-    const [UnlinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to disconnect product', {
-      connected_product_id: null,
-      id: this.SelectedStockItem!.id
-    })
-    if (UnlinkResult) {
-      this.MessageService.success('Sucessfully disconnected ' + this.SelectedStockItem!.name)
-      this.SelectedStockItem!.product_name = undefined
-
-      const ProductImage = this.StockItemImage.nativeElement
-      if (ProductImage && ProductImage.src.includes('/menu/')){
-        ProductImage.src = ''
-      }
-    }
-
-    this.UnlinkingProduct = false
-  }
-
-  LinkingProduct = false
-  UnlinkingProduct = false
-
-  async LinkItemToProduct(ProductInfo: any) {
-    this.LinkingProduct = true
-
-    const [LinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to link product', {
-      connected_product_id: ProductInfo.id,
-      id: this.SelectedStockItem!.id
-    })
-    if (LinkResult) {
-      this.MessageService.success('Sucessfully connected ' + this.SelectedStockItem!.name + ' to ' + ProductInfo.name)
-      this.MenuItemSelectModalVisible = false
-      this.SelectedStockItem!.product_name = ProductInfo.name
-      this.SelectedStockItem!.selling_price = ProductInfo.price
-
-      const ProductImage = this.StockItemImage.nativeElement
-      if (ProductImage && ProductImage.src.includes('.svg')){
-        ProductImage.src = this.MenuImagesURL+ProductInfo.name
-      }
-    }
-
-    this.LinkingProduct = false
   }
 
   OpenProductSelectModal() {
@@ -345,24 +459,43 @@ export class StocksPage {
 
     this.Ingredients = Ingredients
     this.Items = Items
+
+
+    this.LoadStocksPieChart()
   }
 
   // ON INIT
 
   PurchaseDistributionView = 'All'
 
+  async LoadData(): Promise<void> {
+    await Promise.all([
+      this.StocksService.LoadSuppliers(),
+      this.StocksService.LoadReportsHistory(),
+      this.LoadStockItems(),
+      this.LoadStockOrders()
+    ]);
+  }
+
+  async LoadStockOrders() {
+    await this.StocksService.LoadStockOrders()
+
+    const SelectedStockOrderID = this.SelectedStockOrder?.id
+
+    if (SelectedStockOrderID) {
+      const NewOrderInfo = this.StocksService.StockOrders.find((Order) => Order.id == SelectedStockOrderID)
+
+      if (NewOrderInfo) {
+        this.SelectedStockOrder = NewOrderInfo
+      }
+    }
+  }
+
   async ngOnInit() {
-    await this.StocksService.LoadSuppliers();
-    await this.LoadStockItems();
-    await this.StocksService.LoadStockOrders();
-    this.LoadStocksPieChart()
+    await this.LoadData()
     this.LoadPurchaseDistributionChart()
 
-    const SelectedItemID = Number(this.ActiveRoute.snapshot.paramMap.get('itemid'));
-    const SelectedItem = SelectedItemID && this.StocksService.StockItems.find(item => item.id == SelectedItemID);
-    if (SelectedItem) {
-      this.SelectedStockItem = SelectedItem;
-    }
+    this.OnSelectionChange()
   }
 
   // STOCK ITEMS CHART
@@ -396,13 +529,15 @@ export class StocksPage {
 
       if (dateRange && dateRange[0] && dateRange[1] && (orderDate < dateRange[0] || orderDate > dateRange[1])) continue;
 
-      const StockItem = this.GetStockItemByID(StockOrder.item_id);
-      if (StockItem) {
-        if (!purchaseStats[StockItem.name]) {
-          purchaseStats[StockItem.name] = { totalQuantity: 0, totalSpent: 0 };
+      for (const StockOrderItem of StockOrder.items) {
+        const StockItem = this.GetStockItemByID(StockOrderItem.item_id!);
+        if (StockItem) {
+          if (!purchaseStats[StockItem.name]) {
+            purchaseStats[StockItem.name] = { totalQuantity: 0, totalSpent: 0 };
+          }
+          purchaseStats[StockItem.name].totalQuantity += StockOrderItem.quantity || 0;
+          purchaseStats[StockItem.name].totalSpent += StockOrderItem.cost || 0;
         }
-        purchaseStats[StockItem.name].totalQuantity += StockOrder.quantity || 0;
-        purchaseStats[StockItem.name].totalSpent += StockOrder.cost || 0;
       }
     }
 
@@ -445,22 +580,111 @@ export class StocksPage {
       labels: Labels,
       series: StockItemsSeries
     };
+
+
+
+    this.ActiveRoute.params.subscribe((params) => {
+      this.OnSelectionChange()
+    });
+
+    this.ActiveRoute.queryParams.subscribe((queryParams) => {
+      this.OnSelectionChange()
+    });
   }
 
+  ResetView(Context?: string) {
+    this.ActiveView = Context || 'General View'
+    this.SelectedStockItem = undefined
+    this.SelectedStockOrder = undefined
+    this.SelectedInventoryAdjustment = undefined
+  }
+
+  OnSelectionChange() {
+    const ItemID = Number(this.ActiveRoute.snapshot.paramMap.get('itemid'));
+    const Context = this.ActiveRoute.snapshot.queryParamMap.get('context');
+
+    console.log(Context, ItemID)
+    if (Context) {
+      this.ActiveView = Context;
+      if (ItemID) {
+        const SelectedStockItem = Context == 'Stocks List' && this.StocksService.StockItems.find(item => item.id == ItemID);
+        const SelectedStockOrder = Context == 'Order History' && this.StocksService.StockOrders.find(item => item.id == ItemID);
+        const SelectedInventoryAdjustment = Context == 'Adjustments History' && this.StocksService.InventoryReports.find(item => item.id == ItemID);
+
+        if (SelectedStockItem) {
+          this.SelectedStockItem = SelectedStockItem;
+        } else if (SelectedStockOrder) {
+          this.SelectedStockOrder = SelectedStockOrder
+        } else if (SelectedInventoryAdjustment) {
+          this.SelectedInventoryAdjustment = SelectedInventoryAdjustment
+        } else {
+          this.ResetView(Context)
+        }
+      } else {
+        this.ResetView(Context)
+      }
+    } else {
+      this.ResetView()
+    }
+  }
+
+  private _selectedStockItem?: StockItem;
+  private _selectedStockOrder?: StockOrder;
+  private _SelectedInventoryAdjustment?: InventoryReport;
+
+  // STOCK ORDER SELECTION 
+  set SelectedStockOrder(Order: StockOrder | undefined) {
+    if (Order) {
+      this.Router.navigate(
+        ['/stocks', Order.id],
+        { queryParams: { context: 'Order History' } }
+      );
+      this._selectedStockOrder = Order;
+    } else {
+      this.Router.navigate(['/stocks/'], { queryParams: { context: this.ActiveView } })
+      this._selectedStockOrder = undefined
+    }
+  }
+  get SelectedStockOrder(): StockOrder | undefined {
+    return this._selectedStockOrder;
+  }
+
+  // INVENTORY REPORT SELECTION
+  set SelectedInventoryAdjustment(Report: InventoryReport | undefined) {
+    if (Report) {
+      this.Router.navigate(
+        ['/stocks', Report.id],
+        { queryParams: { context: 'Adjustments History' } }
+      );
+      this._SelectedInventoryAdjustment = Report;
+    } else {
+      this.Router.navigate(['/stocks/'], { queryParams: { context: this.ActiveView } })
+      this._SelectedInventoryAdjustment = undefined
+    }
+  }
+  get SelectedInventoryAdjustment(): InventoryReport | undefined {
+    return this._SelectedInventoryAdjustment;
+  }
 
   // STOCK ITEM SELECTION 
   set SelectedStockItem(item: StockItem | undefined) {
     if (item) {
-      this.Router.navigate(['/stocks', item.id])
+      this.Router.navigate(
+        ['/stocks', item.id],
+        { queryParams: { context: 'Stocks List' } }
+      );
       this.CalculateItemStats(item);
     } else {
+      this.Router.navigate(['/stocks/'], { queryParams: { context: this.ActiveView } })
       this._selectedStockItem = undefined
     }
   }
   get SelectedStockItem(): StockItem | undefined {
     return this._selectedStockItem;
   }
-  private _selectedStockItem?: StockItem;
+
+
+
 
 
   LoadingItemStats = false
@@ -507,6 +731,48 @@ export class StocksPage {
     return Total;
   }
 
+  OrdersQuickDateChanged(Option: string) {
+    const now = new Date();
+    if (Option == 'Week') {
+      const day = now.getDay();
+      const diffToMonday = (day === 0 ? -6 : 1) - day; // Sunday is 0
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday);
+      monday.setHours(0, 0, 0, 0);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+      this.OrdersStartDate = monday;
+      this.OrdersEndDate = sunday;
+    } else if (Option == 'Month') {
+      const startOfMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0);
+      const endOfMonth = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999);
+      this.OrdersStartDate = startOfMonth;
+      this.OrdersEndDate = endOfMonth;
+    } else if (Option == 'Year') {
+      const startOfYear = new Date(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0);
+      const endOfYear = new Date(now.getUTCFullYear(), 11, 31, 23, 59, 59, 999);
+      this.OrdersStartDate = startOfYear;
+      this.OrdersEndDate = endOfYear;
+    }
+  }
+
+  GetOrdersInfo(StockItem:StockItem){  
+    const FilteredItems = StockItem.Orders && StockItem.Orders.filter((order) => {
+      const OrderDate = new Date(order.order_date)
+      return  OrderDate >= this.OrdersStartDate && OrderDate <= this.OrdersEndDate
+    });
+    let Expenses = 0
+    let Received = 0
+    if (FilteredItems) {
+      for (const PurchaseOrderItem of FilteredItems) {
+        Expenses += PurchaseOrderItem.cost;
+        Received += PurchaseOrderItem.quantity;
+      }
+    }
+    return {expenses:Expenses, received:Received};
+  }
+
   async CalculateItemStats(item: StockItem) {
 
     this._selectedStockItem = item;
@@ -516,18 +782,21 @@ export class StocksPage {
 
       const [StockItemOrders] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-orders', 'GET', 'Failed to load product stats', {
         item_id: item.id
-      })
+      }) as [StockOrder[]]
       item.Orders = StockItemOrders
 
 
-      const months: number[] = [];
-      const expenses: [number, number][] = [];
-      const quantities: [number, number][] = [];
+      const months: number[] = []
+      const expenses: [number, number][] = []
+      const quantities: [number, number][] = []
 
-      for (const PurchaseOrderItem of StockItemOrders) {
-        const PurchaseTimestamp = new Date(PurchaseOrderItem.order_date).getTime()
-        expenses.push([PurchaseTimestamp, PurchaseOrderItem.cost])
-        quantities.push([PurchaseTimestamp, PurchaseOrderItem.quantity])
+
+      for (const StockPurchaseOrder of StockItemOrders) {
+        const PurchaseTimestamp = new Date(StockPurchaseOrder.order_date).getTime()
+        expenses.push([PurchaseTimestamp, StockPurchaseOrder.cost])
+        for (const PurchaseOrderItem of StockPurchaseOrder.items) {
+          quantities.push([PurchaseTimestamp, PurchaseOrderItem.quantity])
+        }
       }
 
       const now = new Date()

@@ -29,13 +29,13 @@
                         <label class="fullname">{{User()?.fullname}}</label>
                         <div class="row fill wrap" style="justify-content: end;">
                             @if (User()?.active){
-                            <button nz-button nzType="primary" [disabled]="User()?.username">
+                            <button nz-button nzType="primary" [disabled]="User()?.username == CurrentUser()">
                                 <nz-icon nzType="security-scan" nzTheme="outline" />
                                 Change Permissions
                             </button>
 
 
-                            <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus" [disabled]="User()?.username">
+                            <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus" [disabled]="User()?.username== CurrentUser()">
                                 <nz-icon nzType="user-delete" nzTheme="outline" />
                                 Deactivate User
                             </button>

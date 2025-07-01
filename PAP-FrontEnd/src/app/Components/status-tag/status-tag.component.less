@@ -28,7 +28,7 @@
     pointer-events: none;
   }
 
-  &.Active {
+  &.Active, &.Received {
     color: var(--success-color);
     border-color: var(--success-color);
     background-color: color-mix(in srgb, var(--success-color), transparent 90%);
@@ -39,7 +39,7 @@
     }
   }
 
-  &.Disabled, &.Inactive {
+  &.Disabled, &.Inactive, &.Cancelled  {
     color: var(--error-color);
     border-color: var(--error-color);
     background-color: color-mix(in srgb, var(--error-color), transparent 90%);
@@ -50,7 +50,7 @@
     }
   }
 
-  &.Warning {
+  &.Warning, &.Pending {
     border-color: var(--warning-color);
     background-color: color-mix(in srgb, var(--warning-color), transparent 90%);
     box-shadow: 0px 0px 8px 0px color-mix(in srgb, var(--warning-color), transparent 80%);

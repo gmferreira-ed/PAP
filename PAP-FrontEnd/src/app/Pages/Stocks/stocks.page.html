@@ -1,7 +1,10 @@
 <page-layout>
 
-    <loading-screen [IsLoading]="StocksService.LoadingStocks || StocksService.LoadingSuppliers"
-        LoaderStyle="Spinner"></loading-screen>
+    <loading-screen [IsLoading]="
+        StocksService.LoadingSuppliers || 
+        StocksService.LoadingStockOrders || 
+        StocksService.LoadingStocks || 
+        StocksService.LoadingReportsHistory" LoaderStyle="Spinner"></loading-screen>
 
     <div class="horizontal-container">
         <section class="items">
@@ -47,271 +50,600 @@
 
         <section class="action-card fill">
 
-            <!-- ITEM VIEW -->
-            @if (SelectedStockItem){
-                <section class="item-tab">
-                    <loading-screen [IsLoading]="LoadingItemStats" LoaderStyle="Spinner"></loading-screen>
+            @switch (true) {
+                @case (SelectedStockItem !== undefined) {
+                    <!-- ITEM VIEW -->
+                    <section class="item-tab">
 
-                    <section class="row space-between">
-                        <h1 class="title">{{SelectedStockItem.name}}</h1>
-                        <div class="row">
-                            <button nz-button (click)="SelectedStockItem=undefined; Router.navigate(['/stocks'])">
-                                <nz-icon nzType="close"></nz-icon>
-                            </button>
-                        </div>
-                    </section>
-                    <div class="separator"></div>
-
-                    <section class="item-data">
-
-                        <section class="item-info">
-                            <div class="image-container">
-                                <img #StockItemImage [src]="FileSelector.Files[0]?.imagebase64 || StockImagesURL+SelectedStockItem.name" 
-                                (error)="SetTemplateImage($event)">
-                                <div class="overlay invisible">
-                                    <file-select #FileSelector [override]="true" UploadDisplayMode="none" (FilesChange)="ChangeItemImage(SelectedStockItem, $event)">
-                                        <label>{{'Change Thumbnail' | translate}}</label>
-                                        <nz-icon nzType="edit"></nz-icon>
-                                    </file-select>
-                                </div>
+                        <section class="row space-between">
+                            <h1 class="title">{{SelectedStockItem.name}}</h1>
+                            <div class="row">
+                                <button nz-button
+                                    (click)="SelectedStockItem=undefined; Router.navigate(['/stocks/'+ActiveView])">
+                                    <nz-icon nzType="close"></nz-icon>
+                                </button>
                             </div>
-                            <section>
-                                <div class="row space-between">
-                                    <label>SKU:</label>
-                                    <span>{{SelectedStockItem.SKU}}</span>
-                                </div>
-                                <div class="row space-between">
-                                    <label>Quantity in Stock:</label>
-                                    <span>{{SelectedStockItem.quantity_in_stock}}{{SelectedStockItem.unit_of_measure}}</span>
-                                </div>
-                                <div class="row space-between">
-                                    <label>Purchase Price:</label>
-                                    <span>{{SelectedStockItem.purchase_price | currency}}</span>
-                                </div>
-                                <div class="row space-between">
-                                    <label>Supplier:</label>
-                                    <span>
-                                        {{GetSupplierByID(SelectedStockItem.supplier_id)?.name}}
-                                    </span>
-                                </div>
-                            </section>
-                            <section style="align-self: flex-start;">
-                                <div>
-                                    <label>Description: </label>
-                                    <span class="description">{{SelectedStockItem.description || '-'}}</span>
-                                </div>
-                            </section>
                         </section>
+                        <div class="separator"></div>
 
-                        <br>
+                        <section class="item-data">
 
-                        <section class="item-stats">
-
-                            <div class="row wrap charts">
-                                <stat-card #ExpensesStats StatName="Expenses" class="expenses"
-                                    [StatTotalValue]="GetOrderTotal('cost', SelectedStockItem,ExpensesStats.ViewType)"
-                                    [ChartOptions]="SelectedStockItem.ExpensesChartOptions" FormatType="currency">
-                                </stat-card>
-
-                                <stat-card #QuantityStats StatName="Quantity Ordered" class="quantity-ordered"
-                                    [StatTotalValue]="GetOrderTotal('quantity', SelectedStockItem,QuantityStats.ViewType)"
-                                    [ChartOptions]="SelectedStockItem.QuantityChartOptions">
-
-                                </stat-card>
-                            </div>
-
-                            <div class="other-stats">
-                                <!-- <section class="action-card fill consumption">
-                                    <label class="title">
-                                        <icon type="utensils"></icon>Consumption
-                                    </label>
-                                    <div class="date-range row space-between">
-                                        <span nz-dropdown
-                                            [nzDropdownMenu]="StartDateDropdown">{{ConsumptionStartDate | date:'dd/MM/YY'}}</span>
-                                        <icon type="long-arrow-right"></icon>
-                                        <span nz-dropdown
-                                            [nzDropdownMenu]="EndDateDropdown">{{ConsumptionEndDate | date:'dd/MM/YY'}}</span>
+                            <section class="item-info">
+                                <div class="image-container">
+                                    <img #StockItemImage
+                                        [src]="FileSelector.Files[0]?.imagebase64 || StockImagesURL+SelectedStockItem.name"
+                                        (error)="SetTemplateImage($event)">
+                                    <div class="overlay invisible">
+                                        <file-select #FileSelector [override]="true" UploadDisplayMode="none"
+                                            (FilesChange)="ChangeItemImage(SelectedStockItem, $event)">
+                                            <label>{{'Change Thumbnail' | translate}}</label>
+                                            <nz-icon nzType="edit"></nz-icon>
+                                        </file-select>
                                     </div>
-                                    <div class="separator"></div>
-                                    <div class="values row space-between title aself-center"
-                                        style="margin-top: auto; width: 80%;">
-                                        <span>- 10g</span>
-                                        <span>- 100$</span>
+                                </div>
+                                <section>
+                                    <div class="row space-between">
+                                        <label>SKU:</label>
+                                        <span>{{SelectedStockItem.SKU}}</span>
                                     </div>
+                                    <div class="row space-between">
+                                        <label>Quantity in Stock:</label>
+                                        <span>{{SelectedStockItem.quantity_in_stock}}{{SelectedStockItem.unit_of_measure}}</span>
+                                    </div>
+                                    <div class="row space-between">
+                                        <label>Purchase Price:</label>
+                                        <span>{{SelectedStockItem.purchase_price | currency}}/{{SelectedStockItem.unit_of_measure || 'pc'}}</span>
+                                    </div>
+                                    <div class="row space-between">
+                                        <label>Supplier:</label>
+                                        <span>
+                                            {{GetSupplierByID(SelectedStockItem.supplier_id)?.name}}
+                                        </span>
+                                    </div>
+                                </section>
+                                <section style="align-self: flex-start;">
+                                    <div>
+                                        <label>Description: </label>
+                                        <span class="description">{{SelectedStockItem.description || '-'}}</span>
+                                    </div>
+                                </section>
+                            </section>
 
-                                    <nz-dropdown-menu #StartDateDropdown>
-                                        <nz-date-picker nzInline [(ngModel)]="ConsumptionStartDate"></nz-date-picker>
-                                    </nz-dropdown-menu>
-                                    <nz-dropdown-menu #EndDateDropdown>
-                                        <nz-date-picker nzInline [(ngModel)]="ConsumptionEndDate"></nz-date-picker>
-                                    </nz-dropdown-menu>
-                                </section> -->
+                            <br>
 
-                                <section class="action-card fill orders">
-                                    <div class="row space-between" style="align-items: start;">
+                            <section class="item-stats">
+
+                                <div class="row wrap charts">
+                                    <stat-card #ExpensesStats StatName="Expenses" class="expenses"
+                                        [StatTotalValue]="GetOrderTotal('cost', SelectedStockItem,ExpensesStats.ViewType)"
+                                        [ChartOptions]="SelectedStockItem.ExpensesChartOptions" FormatType="currency">
+                                    </stat-card>
+
+                                    <stat-card #QuantityStats StatName="Quantity Ordered" class="quantity-ordered"
+                                        [StatTotalValue]="GetOrderTotal('quantity', SelectedStockItem,QuantityStats.ViewType)"
+                                        [ChartOptions]="SelectedStockItem.QuantityChartOptions">
+
+                                    </stat-card>
+                                </div>
+
+                                <div class="other-stats">
+                                    <!-- <section class="action-card fill consumption">
                                         <label class="title">
-                                            <icon type="shipping"></icon>Orders
+                                            <icon type="utensils"></icon>Consumption
+                                        </label>
+                                        <div class="date-range row space-between">
+                                            <span nz-dropdown
+                                                [nzDropdownMenu]="StartDateDropdown">{{ConsumptionStartDate | date:'dd/MM/YY'}}</span>
+                                            <icon type="long-arrow-right"></icon>
+                                            <span nz-dropdown
+                                                [nzDropdownMenu]="EndDateDropdown">{{ConsumptionEndDate | date:'dd/MM/YY'}}</span>
+                                        </div>
+                                        <div class="separator"></div>
+                                        <div class="values row space-between title aself-center"
+                                            style="margin-top: auto; width: 80%;">
+                                            <span>- 10g</span>
+                                            <span>- 100$</span>
+                                        </div>
+
+                                        <nz-dropdown-menu #StartDateDropdown>
+                                            <nz-date-picker nzInline [(ngModel)]="ConsumptionStartDate"></nz-date-picker>
+                                        </nz-dropdown-menu>
+                                        <nz-dropdown-menu #EndDateDropdown>
+                                            <nz-date-picker nzInline [(ngModel)]="ConsumptionEndDate"></nz-date-picker>
+                                        </nz-dropdown-menu>
+                                    </section> -->
+
+                                    <section class="action-card fill orders">
+                                        <div class="row space-between" style="align-items: start;">
+                                            <label class="title">
+                                                <icon type="shipping"></icon>Orders
+                                            </label>
+
+                                            <nz-radio-group nzSize="small" nzButtonStyle="solid" [ngModel]="''" (ngModelChange)="OrdersQuickDateChanged($event)">
+                                                <label nz-radio-button nzValue="Week">Week</label>
+                                                <label nz-radio-button nzValue="Month">Month</label>
+                                                <label nz-radio-button nzValue="Year">Year</label>
+                                            </nz-radio-group>
+                                        </div>
+
+                                        <div class="date-range row space-between">
+                                            <span nz-dropdown
+                                                [nzDropdownMenu]="OrdersStartDateDropdown">{{OrdersStartDate | date:'dd/MM/yyyy'}}</span>
+                                            <icon type="long-arrow-right"></icon>
+                                            <span nz-dropdown
+                                                [nzDropdownMenu]="OrdersEndDateDropdown">{{OrdersEndDate | date:'dd/MM/yyyy'}}</span>
+                                        </div>
+
+                                        @let OrdersInfo = GetOrdersInfo(SelectedStockItem);
+                                        <div class="separator"></div>
+                                        <div class="values row space-between title aself-center"
+                                            style="margin-top: auto; width: 80%;">
+                                            <span>+ {{OrdersInfo.received}}{{SelectedStockItem.unit_of_measure || 'pc'}}</span>
+                                            <span style="color: var(--error-color);">- {{OrdersInfo.expenses}}$</span>
+                                        </div>
+
+
+
+                                        <nz-dropdown-menu #OrdersStartDateDropdown>
+                                            <nz-date-picker nzInline [(ngModel)]="OrdersStartDate"></nz-date-picker>
+                                        </nz-dropdown-menu>
+                                        <nz-dropdown-menu #OrdersEndDateDropdown>
+                                            <nz-date-picker nzInline [(ngModel)]="OrdersEndDate"></nz-date-picker>
+                                        </nz-dropdown-menu>
+                                    </section>
+
+                                    <section class="action-card fill linked-item">
+
+                                        <label class="title">
+                                            <icon type="menu"></icon>
+                                            Linked Product
                                         </label>
 
-                                        <nz-radio-group nzSize="small" nzButtonStyle="solid" [ngModel]="'Week'">
-                                            <label nz-radio-button nzValue="Week">Week</label>
-                                            <label nz-radio-button nzValue="Month">Month</label>
-                                            <label nz-radio-button nzValue="Year">Year</label>
-                                        </nz-radio-group>
-                                    </div>
+                                        @if (SelectedStockItem.product_name){
+                                            <div class="row v-center" style="height: 100%;">
+                                                <img [src]="MenuService.ImagesURL+SelectedStockItem.product_name">
 
-                                    <div class="date-range row space-between">
-                                        <span nz-dropdown
-                                            [nzDropdownMenu]="OrdersStartDateDropdown">{{OrdersStartDate | date:'dd/MM/YY'}}</span>
-                                        <icon type="long-arrow-right"></icon>
-                                        <span nz-dropdown
-                                            [nzDropdownMenu]="OrdersEndDateDropdown">{{OrdersEndDate | date:'dd/MM/YY'}}</span>
-                                    </div>
+                                                <div class="separator vertical"></div>
 
-                                    <div class="separator"></div>
-                                    <div class="values row space-between title aself-center"
-                                        style="margin-top: auto; width: 80%;">
-                                        <span>+ 10g</span>
-                                        <span>+ 100$</span>
-                                    </div>
-
-
-
-                                    <nz-dropdown-menu #OrdersStartDateDropdown>
-                                        <nz-date-picker nzInline [(ngModel)]="OrdersStartDate"></nz-date-picker>
-                                    </nz-dropdown-menu>
-                                    <nz-dropdown-menu #OrdersEndDateDropdown>
-                                        <nz-date-picker nzInline [(ngModel)]="OrdersEndDate"></nz-date-picker>
-                                    </nz-dropdown-menu>
-                                </section>
-
-                                <section class="action-card fill linked-item">
-
-                                    <label class="title">
-                                        <icon type="menu"></icon>
-                                        Linked Product
-                                    </label>
-
-                                    @if (SelectedStockItem.product_name){
-                                        <div class="row v-center" style="height: 100%;">
-                                            <img [src]="MenuService.ImagesURL+SelectedStockItem.product_name">
-
-                                            <div class="separator vertical"></div>
-
-                                            <div class="column info fill" style="height: 100%; align-items: start;">
-                                                <div class="row">
-                                                    <label>Name:</label>
-                                                    <span>{{SelectedStockItem.product_name}}</span>
-                                                </div>
-                                                <div class="row">
-                                                    <label>Selling Price:</label>
-                                                    <span>{{SelectedStockItem.selling_price | currency}}</span>
-                                                </div>
-                                                <div class="row">
-                                                    <label>Category:</label>
-                                                    <span>{{SelectedStockItem.product_category || ('None' | translate)}}</span>
+                                                <div class="column info fill" style="height: 100%; align-items: start;">
+                                                    <div class="row">
+                                                        <label>Name:</label>
+                                                        <span>{{SelectedStockItem.product_name}}</span>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label>Selling Price:</label>
+                                                        <span>{{SelectedStockItem.selling_price | currency}}</span>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label>Category:</label>
+                                                        <span>{{SelectedStockItem.product_category || ('None' | translate)}}</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <floating-container style="right: 15px">
+                                                <button nz-button nzDanger nzType="default" nzShape="circle"
+                                                    (click)="UnlinkLinkItemToProduct()">
+                                                    <icon type="close"></icon>
+                                                </button>
+                                            </floating-container>
+
+                                            <floating-container style="right: 15px; bottom: 15px;">
+                                                <button class="button">View More</button>
+                                            </floating-container>
+                                        }@else {
+                                            <div class="collumn center fill tcenter center v-center">
+                                                <span>
+                                                    You don't have any product connected to this item
+                                                </span>
+                                                <button nz-button (click)="MenuItemSelectModalVisible=true"
+                                                    [nzLoading]="UnlinkingProduct">+ Connect
+                                                    Product</button>
+                                            </div>
+                                        }
+                                    </section>
+                                </div>
+                            </section>
+                        </section>
+                    </section>
+
+                }@case (SelectedStockOrder !== undefined) {
+                    <!-- STOCK ORDER VIEW -->
+                    <section class="order-tab">
+
+                        <section class="row space-between">
+                            <h1 class="title">PO-{{SelectedStockOrder.id}}</h1>
+                            <button nz-button (click)="SelectedStockOrder=undefined;">
+                                <nz-icon nzType="close"></nz-icon>
+                            </button>
+                        </section>
+                        <div class="separator"></div>
+
+                        <div class="row space-between">
+                            <div class="row">
+                                <span class="caption">
+                                    Submitted by:
+                                </span>
+                                <div class="tag">
+                                    <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
+                                        [src]="UserImagesURL+SelectedStockOrder.username"
+                                        onerror="this.src='Images/Icons/account.svg'">
+                                    <strong>{{SelectedStockOrder.username}}</strong>
+                                </div>
+                            </div>
+
+                            @if (SelectedStockOrder.status == 'Pending'){
+                                <div class=row>
+                                    <button class="button error"
+                                        (click)="PromptStockStatusChange(SelectedStockOrder, 'Cancelled')">
+                                        <icon type="ban"></icon>Mark as Cancelled
+                                    </button>
+                                    <button class="button sucess"
+                                        (click)="PromptStockStatusChange(SelectedStockOrder, 'Received')">
+                                        <icon type="check"></icon>Mark as Received
+                                    </button>
+                                </div>
+                            }
+                        </div>
+
+                        <section class="order-container">
+                            <div class="order">
+                                <div class="row" style="gap:40px; align-items: start;">
+                                    <div class="collumn">
+                                        <span class="title">STOCK PURCHASE ORDER</span>
+                                        <span>Purchase Order # <strong>PO-{{SelectedStockOrder.id}}</strong></span>
+                                        <status-tag [status]="SelectedStockOrder.status">
+                                            <strong>{{SelectedStockOrder.status}}</strong>
+                                        </status-tag>
+
+                                        <span>Order Date:
+                                            <b>{{SelectedStockOrder.order_date | date:'dd/MM/YYYY'}}</b></span>
+                                        <span>Delivered Date:
+                                            <b>{{SelectedStockOrder.status != 'Cancelled' && (SelectedStockOrder.delivery_date | date:'dd/MM/YYYY') || '-'}}</b></span>
+                                    </div>
+                                    <div class="collumn">
+                                        <h4>Vendor Info</h4>
+                                        <div class="row">
+                                            <label>Name: </label>
+                                            <span>{{SelectedStockOrder.supplier.name}}</span>
                                         </div>
-                                        <floating-container style="right: 15px">
-                                            <button nz-button nzDanger nzType="default" nzShape="circle"
-                                                (click)="UnlinkLinkItemToProduct()">
-                                                <icon type="close"></icon>
-                                            </button>
-                                        </floating-container>
-                                        
-                                        <floating-container style="right: 15px; bottom: 15px;">
-                                            <button class="button">View More</button>
-                                        </floating-container>
-                                    }@else {
-                                        <div class="collumn center fill tcenter center v-center">
-                                            <span>
-                                                You don't have any product connected to this item
-                                            </span>
-                                            <button nz-button (click)="MenuItemSelectModalVisible=true"
-                                                [nzLoading]="UnlinkingProduct">+ Connect
-                                                Product</button>
+
+                                        <div class="row">
+                                            <label>Email: </label>
+                                            <span>{{SelectedStockOrder.supplier.email}}</span>
                                         </div>
+
+                                        <div class="row">
+                                            <label>Phone: </label>
+                                            <span>{{SelectedStockOrder.supplier.phone}}</span>
+                                        </div>
+
+                                        <div class="row">
+                                            <label>Adress: </label>
+                                            <span>{{SelectedStockOrder.supplier.address}}</span>
+                                        </div>
+
+                                        <!-- <div class="row" style="align-items: start;max-width: 300px;">
+                                            <label>Notes: </label>
+                                            <span>{{SelectedStockOrder.supplier.notes}}</span>
+                                        </div> -->
+                                    </div>
+                                </div>
+
+                                <br>
+                                <br>
+
+                                <nz-table #StockOrderItemsTable [nzData]="SelectedStockOrder.items"
+                                    [nzShowPagination]="false" [nzBordered]="true">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>SKU</th>
+                                            <th>Quantity</th>
+                                            <th>Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (StockOrderItem of StockOrderItemsTable.data; track $index) {
+                                            @let StockItem = GetStockItemByID(StockOrderItem.item_id)!;
+                                            
+                                            <tr>
+                                                <td>
+                                                    <img [src]="StockImagesURL+StockItem.name"
+                                                        (error)="SetTemplateImage($event, StockItem)">
+                                                    <span>{{StockItem.name}}</span>
+                                        </td>
+                                        <td>
+                                            <span>{{StockItem.SKU}}</span>
+                                        </td>
+                                        <td>
+                                            <span>{{StockOrderItem.quantity}}{{StockItem.unit_of_measure || 'pc'}}</span>
+                                        </td>
+                                        <td>
+                                            <span>{{StockOrderItem.cost | currency}}</span>
+                                        </td>
+                                        </tr>
                                     }
-                                </section>
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        </section>
+
+                    </section>
+                }@case (SelectedInventoryAdjustment !== undefined) {
+                    <!-- INVENTORY Adjustment VIEW -->
+                    <section class="order-tab">
+
+                        <section class="row space-between">
+                            <h1 class="title">IR-{{SelectedInventoryAdjustment.id}}</h1>
+                            <button nz-button (click)="SelectedInventoryAdjustment=undefined;">
+                                <nz-icon nzType="close"></nz-icon>
+                            </button>
+                        </section>
+                        <div class="separator"></div>
+
+                        <div class="row space-between">
+                            <div class="row">
+                                <span class="caption">
+                                    Submitted by:
+                                </span>
+                                <div class="tag">
+                                    <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
+                                        [src]="UserImagesURL+SelectedInventoryAdjustment.username"
+                                        onerror="this.src='Images/Icons/account.svg'">
+                                    <strong>{{SelectedInventoryAdjustment.username}}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <section class="order-container">
+                            <h2>Adjustments</h2>
+                            <nz-table nzTemplateMode nzSize="middle" [nzShowPagination]="false" [nzBordered]="true"
+                                style="width: 50%;">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Action</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (ReportItem of SelectedInventoryAdjustment.items; track $index) {
+                                        <tr>
+                                            <td>
+                                                <img [src]="StockImagesURL+ReportItem.name"
+                                                    (error)="SetTemplateImage($event, ReportItem)">
+                                                {{ReportItem.name}}
+                                            </td>
+                                            <td>
+                                                {{ReportItem.action}}
+                                            </td>
+                                            <td>
+                                                {{ReportItem.amount}}
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </nz-table>
+                            <br>
+                            <br>
+
+                            <h2>Updates</h2>
+                            <div class="order" style="padding: 0px; width: 50%;">
+                                @for (ReportItem of SelectedInventoryAdjustment.items; track $index) {
+
+                                    <div class="report-item row space-around fill">
+                                        <label class="name">{{ReportItem.name}}</label>
+                                        <span>{{ReportItem.old_amount}}{{ReportItem.unit || 'pc'}}</span>
+                                        <icon type="long-arrow-right"></icon>
+                                        <span [style.color]="
+                                        ReportItem.new_amount! < ReportItem.old_amount! && 'var(--error-color)' 
+                                        || ReportItem.new_amount! > ReportItem.old_amount! && 'var(--success-color)'  
+                                        || 'unset'">{{ReportItem.new_amount}}{{ReportItem.unit || 'pc' }}</span>
+                                    </div>
+                                    <div class="separator" style="width: 100%;"></div>
+                                }
                             </div>
                         </section>
                     </section>
-                </section>
-                <!-- You can add more fields as needed -->
-                <!-- GENERAL VIEW -->
-            }@else {
-                <header>
-                    <h1>General View</h1>
-                    <div class="row">
-                        <button nz-button (click)="SuppliersModalVisible=true">
-                            <nz-icon nzType="user"></nz-icon>
-                            Suppliers
-                        </button>
-                        <button nz-button (click)="StockOrderAddModalVisible=true">
-                            <nz-icon nzType="shopping-cart"></nz-icon>
-                            New Order
-                        </button>
-                    </div>
-                </header>
-                <div class="general-view content">
-                    <stat-card class="stocks-summary" StatName="Stocks" [ShowChartTimeOptions]="false"
-                        [ChartOptions]="StockItemsChartOptions">
-                    </stat-card>
-                    <section class="action-card item-summary">
-                        <header>Items Summary</header>
-                        <div class="content">
-                            @for (StockItem of Items; track $index){
-                                <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
-                                    <span>{{StockItem.name}}</span>
-                                    <span>{{StockItem.quantity_in_stock}} un</span>
-                                </div>
+                }
+                @default {
+                    <!-- OTHER VIEWS -->
+                    <header>
+                        <h1>{{ActiveView | translate}}</h1>
+                        <div class="row">
+                            @if (ActiveView == 'General View'){
+                                <button nz-button (click)="SuppliersModalVisible=true">
+                                    <nz-icon nzType="user"></nz-icon>
+                                    Suppliers
+                                </button>
+                                <button nz-button (click)="StockOrderAddModalVisible=true">
+                                    <nz-icon nzType="shopping-cart"></nz-icon>
+                                    New Order
+                                </button>
+                            }@else {
+                                <button nz-button (click)="ActiveView='General View'; Router.navigate(['/stocks/'])">
+                                    <nz-icon nzType="close"></nz-icon>
+                                </button>
                             }
                         </div>
-                    </section>
+                    </header>
+                    @switch (ActiveView) {
+                        @case ('General View'){
+                            <div class="general-view content">
+                                <stat-card class="stocks-summary" StatName="Stocks" [ShowChartTimeOptions]="false"
+                                    [ChartOptions]="StockItemsChartOptions">
+                                    You are currently out of stocks!
+                                </stat-card>
+                                <section class="action-card item-summary">
+                                    <header>Items Summary</header>
+                                    <div class="content">
+                                        @for (StockItem of Items; track $index){
+                                            <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
+                                                <span>{{StockItem.name}}</span>
+                                                <span>{{StockItem.quantity_in_stock}} un</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </section>
 
-                    <section class="action-card ingredients-summary">
-                        <header>Ingredients Summary</header>
-                        <div class="content">
-                            @for (StockItem of Ingredients; track $index){
-                                <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
-                                    <span>{{StockItem.name}}</span>
-                                    <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure}}</span>
+                                <section class="action-card ingredients-summary">
+                                    <header>Ingredients Summary</header>
+                                    <div class="content">
+                                        @for (StockItem of Ingredients; track $index){
+                                            <div class="stock-item" [class.ran-out]="StockItem.quantity_in_stock == 0">
+                                                <span>{{StockItem.name}}</span>
+                                                <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure}}</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </section>
+
+                                <stat-card class="purchase-distribution" StatName="Average Purchase Distribution"
+                                    [ViewType]="PurchaseDistributionView"
+                                    (ViewTypeChanged)="LoadPurchaseDistributionChart($event)"
+                                    [ShowChartTimeOptions]="true" [ChartOptions]="StockOrdersDisChartOptions">
+                                </stat-card>
+
+
+                                <div class="action-card view-lists">
+                                    <div class="buttons">
+                                        <button class="button"
+                                            (click)="ActiveView='Order History'; Router.navigate(['/stocks/'], {queryParams: { context: this.ActiveView}})">
+                                            <icon type="clipboard-list" size="24"></icon>
+                                            <span>Order History</span>
+                                        </button>
+                                        <button class="button"
+                                            (click)="ActiveView='Stocks List'; Router.navigate(['/stocks'], {queryParams: { context: this.ActiveView}})">
+                                            <icon type="inventory" size="24"></icon>
+                                            <span>Stocks List</span>
+                                        </button>
+                                        <button class="button" (click)="InventoryReportModalVisible=true">
+                                            <icon type="inventory2" size="24"></icon>
+                                            <span>Inventory Adjustment</span>
+                                        </button>
+                                        <button class="button"
+                                            (click)="ActiveView='Adjustments History'; Router.navigate(['/stocks'], {queryParams: { context: this.ActiveView}})">
+                                            <icon type="inventory" size="24"></icon>
+                                            <span>Adjustments History</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            }
-                        </div>
-                    </section>
-
-                    <stat-card class="purchase-distribution" StatName="Average Purchase Distribution"
-                        [ViewType]="PurchaseDistributionView" (ViewTypeChanged)="LoadPurchaseDistributionChart($event)"
-                        [ShowChartTimeOptions]="true" [ChartOptions]="StockOrdersDisChartOptions">
-                    </stat-card>
-
-
-                    <div class="action-card view-lists">
-                        <div class="buttons">
-                            <button class="button">
-                                <icon type="clipboard-list" size="24"></icon>
-                                <span>Order History</span>
-                            </button>
-                            <button class="button">
-                                <icon type="inventory" size="24"></icon>
-                                <span>Stock List</span>
-                            </button>
-                            <button class="button">
-                                <icon type="inventory2" size="24"></icon>
-                                <span>Inventory Report</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-
-
-            }
+                            </div>
+                        }
+                        @case ('Stocks List'){
+                            <div class="stocks-list content">
+                                <nz-table #StocksTable [nzData]="StocksService.StockItems" nzTemplateMode
+                                    nzSize="default" [nzShowPagination]="false" style="margin-bottom: 8px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>SKU</th>
+                                            <th>Quantity</th>
+                                            <th>Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (StockItem of StocksTable.data; track $index) {
+                                            <tr (click)="SelectedStockItem=StockItem">
+                                                <td>
+                                                    <img [src]="StockImagesURL+StockItem.name"
+                                                        (error)="SetTemplateImage($event, StockItem)">
+                                                    <span>{{StockItem.name}}</span>
+                                                </td>
+                                                <td>
+                                                    <span>{{StockItem.SKU}}</span>
+                                                </td>
+                                                <td>
+                                                    <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure || 'pc'}}</span>
+                                                </td>
+                                                <td>
+                                                    <span>{{StockItem.purchase_price | currency}}</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        }
+                        @case ('Order History'){
+                            <div class="stocks-list content">
+                                <nz-table #OrdersTable [nzData]="StocksService.StockOrders" nzTemplateMode
+                                    nzSize="default" [nzShowPagination]="false" style="margin-bottom: 8px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>ID#</th>
+                                            <th>Status</th>
+                                            <th>Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (PurchaseOrder of OrdersTable.data ; track $index) {
+                                            <tr (click)="SelectedStockOrder=PurchaseOrder">
+                                                <td>
+                                                    <span>{{PurchaseOrder.order_date | date}}</span>
+                                                </td>
+                                                <td>
+                                                    <span>PO-{{PurchaseOrder.id}}</span>
+                                                </td>
+                                                <td>
+                                                    <status-tag
+                                                        [status]="PurchaseOrder.status">{{PurchaseOrder.status}}</status-tag>
+                                                </td>
+                                                <td>
+                                                    <span>{{PurchaseOrder.cost | currency}}</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        }
+                        @case ('Adjustments History'){
+                            <div class="stocks-list content">
+                                <nz-table #OrdersTable [nzData]="StocksService.InventoryReports" nzTemplateMode
+                                    nzSize="default" [nzShowPagination]="false" style="margin-bottom: 8px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Report ID</th>
+                                            <th>Created At</th>
+                                            <th>By User</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (InventoryReport of OrdersTable.data ; track $index) {
+                                            <tr (click)="SelectedInventoryAdjustment=InventoryReport">
+                                                <td>
+                                                    <span>IR-{{InventoryReport.id}}</span>
+                                                </td>
+                                                <td>
+                                                    <span>{{InventoryReport.created_at | date:'hh:mm dd MMMM YYYY'}}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="tag" style=" max-width: 250px;">
+                                                        <img style="width: 25px; height: 25px; margin-right: 5px;"
+                                                            class="pfp small"
+                                                            [src]="UserImagesURL+InventoryReport.username"
+                                                            onerror="this.src='Images/Icons/account.svg'">
+                                                        <strong>{{InventoryReport.username}}</strong>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        }
+                    }
+                }
+                }
         </section>
     </div>
 </page-layout>
+
+
+
 
 <!-- SUPPLIER ADD MODAL -->
 <nz-modal [nzOkText]="'Add Supplier'" nzCancelText="Close" [nzVisible]="SupplierAddModalVisible" nzTitle="Add Supplier"
@@ -415,13 +747,14 @@
 <!-- STOCK ORDER ADD MODAL -->
 <nz-modal [nzOkText]="'Add Order'" nzCancelText="Close" [nzVisible]="StockOrderAddModalVisible"
     nzTitle="Add Stock Order" nzCentered nzDraggable (nzOnCancel)="StockOrderAddModalVisible=false"
-    (nzOnOk)="AddStockOrder()" [nzOkLoading]="AddingStockOrder" [nzOkDisabled]="StockOrderForm.invalid">
+    (nzOnOk)="AddStockOrder()" [nzOkLoading]="AddingStockOrder"
+    [nzOkDisabled]="StockOrderForm.invalid || CheckInvalidOrderItem() || StockOrderItems.length == 0">
     <ng-container *nzModalContent>
         <form nz-form [formGroup]="StockOrderForm" nzLayout="vertical">
             <nz-form-item>
                 <nz-form-label nzRequired>Supplier</nz-form-label>
                 <nz-form-control>
-                    <nz-select formControlName="supplier_id">
+                    <nz-select formControlName="supplier_id" (ngModelChange)="SupplierFieldChanged($event)">
                         @for (Supplier of StocksService.Suppliers; track $index) {
                             <nz-option [nzValue]="Supplier.id" [nzLabel]="Supplier.name"></nz-option>
                         }
@@ -443,7 +776,6 @@
                 </nz-form-item>
             </div>
             <nz-form-item>
-                <nz-form-label>Items</nz-form-label>
                 <nz-form-control>
                     <nz-table #ItemsTable nzTemplateMode nzSize="small" [nzShowPagination]="false"
                         style="margin-bottom: 8px;">
@@ -462,7 +794,9 @@
                                         <nz-select [(ngModel)]="item.item_id" [ngModelOptions]="{standalone:true}"
                                             style="width: 120px;" (ngModelChange)="OrderItemChanged(item)">
                                             @for (si of StocksService.StockItems; track si.id) {
-                                                <nz-option [nzValue]="si.id" [nzLabel]="si.name"></nz-option>
+                                                @if (StockOrderForm.value.supplier_id && si.supplier_id == StockOrderForm.value.supplier_id) {
+                                                    <nz-option [nzValue]="si.id" [nzLabel]="si.name"></nz-option>
+                                                }
                                             }
                                         </nz-select>
                                     </td>
@@ -546,5 +880,82 @@
     <ng-container *nzModalContent>
         <loading-screen [IsLoading]="LinkingProduct"></loading-screen>
         <menu-product-select (ProductSelected)="LinkItemToProduct($event)"></menu-product-select>
+    </ng-container>
+</nz-modal>
+
+<!-- Inventory Adjustment -->
+<nz-modal [nzOkText]="'Submit'" nzCancelText="Cancel" [nzVisible]="InventoryReportModalVisible"
+    [nzOkLoading]="ReportingInventory" nzTitle="Inventory Adjustment" nzCentered
+    (nzOnOk)="PromptInventoryReportSubmit()" (nzOnCancel)="InventoryReportModalVisible=false">
+    <ng-container *nzModalContent>
+        <nz-table #ItemsTable nzTemplateMode nzSize="small" [nzShowPagination]="false" style="margin-bottom: 8px;">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Action</th>
+                    <th>Amount</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (ReportItem of InventoryReportItems; track $index) {
+                    <tr>
+                        <td>
+                            <nz-select nzShowSearch [(ngModel)]="ReportItem.item_id"
+                                [ngModelOptions]="{standalone:true}" style="width: 180px;">
+                                @for (si of StocksService.StockItems; track si.id) {
+                                    @if (!FindReportItemWithID(si.id) || si.id == ReportItem.item_id){
+                                        <nz-option [nzValue]="si.id" [nzLabel]="si.name"></nz-option>
+                                    }
+                                }
+                            </nz-select>
+                        </td>
+                        <td>
+                            <nz-select [(ngModel)]="ReportItem.action">
+                                @for (Action of ReportActions; track $index) {
+                                    <nz-option [nzValue]="Action" [nzLabel]="Action"></nz-option>
+                                }
+                            </nz-select>
+                        </td>
+                        <td>
+                            <nz-input-number [nzMin]="0" [(ngModel)]="ReportItem.amount" placeholder="Quantity"
+                                style="width: 80px;" />
+                        </td>
+                        <td>
+                            <button nz-button (click)="InventoryReportItems.splice($index, 1)" nzDanger><nz-icon
+                                    nzType="delete"></nz-icon></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </nz-table>
+
+        <button nz-button (click)="AddReportItem()"
+            [disabled]="StocksService.StockItems.length == InventoryReportItems.length">+ Add Item</button>
+
+        <br>
+
+        @for (ReportItem of InventoryReportItems; track $index) {
+            <div class="report-item row space-around fill">
+                @let StockItem = GetStockItemByID(ReportItem.item_id)!;
+                <span class="name">{{StockItem.name}}</span>
+            <span>{{StockItem.quantity_in_stock}}</span>
+            <icon type="long-arrow-right"></icon>
+            @let TargetAmount = ReportItem.action == 'SET' ? ReportItem.amount : StockItem.quantity_in_stock-ReportItem.amount;
+                <div class="row">
+                    @if (TargetAmount < 0){
+                <icon style="pointer-events: all;" nz-tooltip="The item will reach negative quantities."
+                    type="triangle-alert" color="var(--warning-color)"></icon>
+            }
+            <span [style.color]="
+                TargetAmount < StockItem.quantity_in_stock && 'var(--error-color)' 
+                || TargetAmount > StockItem.quantity_in_stock && 'var(--success-color)'  
+                || 'unset'">
+                {{TargetAmount}}
+            </span>
+            </div>
+            </div>
+            <div class="separator" style="width: 100%;"></div>
+            }
     </ng-container>
 </nz-modal>
