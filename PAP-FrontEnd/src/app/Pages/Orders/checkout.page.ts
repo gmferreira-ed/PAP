@@ -21,14 +21,16 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { MenuProductSelect } from "../../../shared/product-selector/product-select";
 import { ReceiptComponent } from "../../Components/receipt/receipt.component";
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 
 
 
 @Component({
   selector: 'checkout-page',
-  imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule, CurrencyPipe,
-    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule, NzFormModule, MenuProductSelect, ReceiptComponent],
+  imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule, CurrencyPipe, NzInputNumberModule,
+    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule, NzFormModule, MenuProductSelect, 
+    ReceiptComponent],
   templateUrl: './checkout.page.html',
   styleUrl: './checkout.page.less'
 })
@@ -54,6 +56,7 @@ export class CheckoutPage {
     amount_paid: new FormControl('', [Validators.required]),
     TIN: new FormControl('', [Validators.required]),
     payment_method: new FormControl('Visa', [Validators.required]),
+    discount: new FormControl(''),
   })
 
   // Data
@@ -80,7 +83,7 @@ export class CheckoutPage {
   OrderTotal = 0
 
   CalculateTotal() {
-    const total = this.OrderProducts.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    let total = this.OrderProducts.reduce((sum, item) => sum + item.price * item.quantity, 0)
     return total
   }
 
@@ -119,11 +122,12 @@ export class CheckoutPage {
   async OnInfoChange() {
     const FormValues = this.CustomerInfoForm.value
     this.ReceiptData = {
-      Products: this.OrderProducts,
-      OrderID: this.OrderInfo.order_id,
-      PaymentMethod: FormValues.payment_method,
-      AmountPaid: FormValues.amount_paid,
-      TIN: FormValues.TIN
+      items: this.OrderProducts,
+      order_id: this.OrderInfo.order_id,
+      payment_method: FormValues.payment_method,
+      amount_paid: FormValues.amount_paid,
+      TIN: FormValues.TIN,
+      discount: Number(FormValues.discount)
     }
   }
 
@@ -132,15 +136,26 @@ export class CheckoutPage {
   }
 
   async FinalizeCheckout() {
-    const [Response] = await this.HttpService.MakeRequest(this.OrdersURL, 'POST', 'Failed to checkout', {
+    this.FinalizingCheckout = true
+
+    const FormValues = this.CustomerInfoForm.value
+    const [Response] = await this.HttpService.MakeRequest(AppSettings.APIUrl+'checkout', 'POST', 'Failed to checkout', {
       products: this.OrderProducts,
+      order_id: this.OrderInfo.order_id,
+      payment_method: FormValues.payment_method,
+      amount_paid: FormValues.amount_paid,
+      TIN: FormValues.TIN,
+      discount: Number(FormValues.discount)
     })
     if (Response) {
       this.MessageService.success('Sucessfullly checked out')
       this.OrderProducts = []
 
+      this.Router.navigate(['/orders'])
       this.Receipt.Print()
     }
+
+    this.FinalizingCheckout = false
   }
 
   async UpdateItemAmountAsync(Product: any) {

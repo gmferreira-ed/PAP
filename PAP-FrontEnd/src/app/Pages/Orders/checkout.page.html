@@ -4,167 +4,189 @@
     <div class="horizontal-container">
         @if (!SelectedTable && !CheckingOut){
 
-        <!-- TABLE SELECTION -->
-        <div class="action-card fill" style="width: 100%;">
-            <div class="flex space-between">
-                <label class="title">{{'Table Select' | translate}}</label>
-                <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType" (ngModelChange)="SelectionViewChanged()">
-                    <label nz-radio-button nzValue="Layout">Layout</label>
-                    <label nz-radio-button nzValue="Grid">Grid</label>
-                </nz-radio-group>
-            </div>
-
-            @if (ViewType == 'Layout'){
-            <restaurant-layout style="width: 100%; height: 100%;"
-                (TableSelected)="SelectTable($event.tableid)"></restaurant-layout>
-            }@else {
-            <div class="tables">
-                <loading-screen [IsLoading]="this.OrdersService.LoadingTables" LoaderStyle="Spinner"></loading-screen>
-                @for (Table of ToArray(Tables);track $index){
-                <div [class]="'table '+Table.status" (click)="SelectTable(Table.tableid)">
-                    <icon type="table" size="100%" [fill]="true"></icon>
-
-                    {{'Table' | translate}} {{Table.tableid}}
-                    @if (Table.status){
-                    <label style="font-size: 14px; color: rgb(176, 207, 0);">
-                        {{Table.time | date:'HH:mm:ss':'UTC'}}
-                    </label>
-                    }
-                    <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-60%, 60%);">
-                        @if (Table.status == 'OnGoing'){
-                        <div class="clock" style="width: 25px; height: 25px;">
-                            <span class="hour"></span>
-                            <span class="min"></span>
-                            <span class="circel"></span>
-                        </div>
-                        }@else {
-
-                        }
-                    </floating-container>
+            <!-- TABLE SELECTION -->
+            <div class="action-card fill" style="width: 100%;">
+                <div class="flex space-between">
+                    <label class="title">{{'Table Select' | translate}}</label>
+                    <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType"
+                        (ngModelChange)="SelectionViewChanged()">
+                        <label nz-radio-button nzValue="Layout">Layout</label>
+                        <label nz-radio-button nzValue="Grid">Grid</label>
+                    </nz-radio-group>
                 </div>
+
+                @if (ViewType == 'Layout'){
+                    <restaurant-layout style="width: 100%; height: 100%;"
+                        (TableSelected)="SelectTable($event.tableid)"></restaurant-layout>
+                }@else {
+                    <div class="tables">
+                        <loading-screen [IsLoading]="this.OrdersService.LoadingTables"
+                            LoaderStyle="Spinner"></loading-screen>
+                        @for (Table of ToArray(Tables);track $index){
+                            <div [class]="'table '+Table.status" (click)="SelectTable(Table.tableid)">
+                                <icon type="table" size="100%" [fill]="true"></icon>
+
+                                {{'Table' | translate}} {{Table.tableid}}
+                                @if (Table.status){
+                                    <label style="font-size: 14px; color: rgb(176, 207, 0);">
+                                        {{Table.time | date:'HH:mm:ss':'UTC'}}
+                                    </label>
+                                }
+                                <floating-container
+                                    style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-60%, 60%);">
+                                    @if (Table.status == 'OnGoing'){
+                                        <div class="clock" style="width: 25px; height: 25px;">
+                                            <span class="hour"></span>
+                                            <span class="min"></span>
+                                            <span class="circel"></span>
+                                        </div>
+                                    }@else {
+
+                                    }
+                                </floating-container>
+                            </div>
+                        }
+                    </div>
                 }
             </div>
-            }
-        </div>
 
         }
 
         @else {
-        @if (!CheckingOut){
-        <!-- PRODUCT SELECTION -->
-        <div class="product-select">
-            <!-- GO BACK BUTTON -->
-            <ng-container *ngTemplateOutlet="BackButton" ></ng-container>
-            <menu-product-select (ProductSelected)="AddToOrder($event)" style="height: 90%;"></menu-product-select>
-        </div>
+            @if (!CheckingOut){
+                <!-- PRODUCT SELECTION -->
+                <div class="product-select">
+                    <!-- GO BACK BUTTON -->
+                    <ng-container *ngTemplateOutlet="BackButton"></ng-container>
+                    <menu-product-select (ProductSelected)="AddToOrder($event)"
+                        style="height: 90%;"></menu-product-select>
+                </div>
 
 
-        <!-- ORDER VIEW -->
-        <div class="order">
-            <h1>Order</h1>
-            <label class="small-caption">ID:{{OrderInfo?.order_id}}</label>
-                <loading-screen [IsLoading]="ProcessingOrder" LoaderStyle="ThinkingDots"></loading-screen>
-            <div class="order-products">
-                @for (Product of OrderProducts; track $index){
-                <div class="order-product">
-                    <img [src]="MenuImagesURL+Product.name" decoding="async" loading="lazy">
-                    <div style="display: flex; flex-direction: column;">
-                        <label>{{Product.quantity}}x - {{Product.name}}</label>
-                        <label class="price">{{Product.quantity * Product.price | currency}}</label>
+                <!-- ORDER VIEW -->
+                <div class="order">
+                    <h1>Order</h1>
+                    <label class="small-caption">ID:{{OrderInfo?.order_id}}</label>
+                    <loading-screen [IsLoading]="ProcessingOrder" LoaderStyle="ThinkingDots"></loading-screen>
+                    <div class="order-products">
+                        @for (Product of OrderProducts; track $index){
+                            <div class="order-product">
+                                <img [src]="MenuImagesURL+Product.name" decoding="async" loading="lazy">
+                                <div style="display: flex; flex-direction: column;">
+                                    <label>{{Product.quantity}}x - {{Product.name}}</label>
+                                    <label class="price">{{Product.quantity * Product.price | currency}}</label>
+                                </div>
+
+                                <button nz-button nzDanger nzType="text" nzShape="circle"
+                                    (click)="DecreaseOrderItem(Product)">
+                                    <nz-icon nzType="delete"></nz-icon>
+                                </button>
+
+                                <div class="actions">
+
+
+                                    <button nz-button nzType="text" nzShape="circle" nzSize="large"
+                                        (click)="RemoveOrderItem(Product)">
+                                        <nz-icon nzType="close"></nz-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        }@empty {
+                            <label>{{'No items to display' | translate}}</label>
+                        }
                     </div>
 
-                    <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DecreaseOrderItem(Product)">
-                        <nz-icon nzType="delete"></nz-icon>
-                    </button>
+                    <div class="order-options">
+                        <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | currency}}</label>
 
-                    <div class="actions">
+                        <div class="flex center">
+                            <button nz-button class="button finish-button cancel" [nzLoading]="FinalizingCheckout"
+                                (click)="CancelOrder()">
 
+                                <icon type="trash" size="25"></icon>
+                                {{'Cancel' | translate}}
 
-                        <button nz-button nzType="text" nzShape="circle" nzSize="large"
-                            (click)="RemoveOrderItem(Product)">
-                            <nz-icon nzType="close"></nz-icon>
+                            </button>
+
+                            <button class="button finish-button" (click)="MoveToCheckout()"
+                                [disabled]="OrderProducts.length < 1 || FinalizingCheckout">
+
+                                {{'Checkout' | translate}}
+                                <icon type="circle-arrow-right" size="25"></icon>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            @else {
+                <div class="action-card" style="width: 60%;">
+                    <!-- GO BACK BUTTON -->
+                     <loading-screen [IsLoading]="FinalizingCheckout"></loading-screen>
+                    <ng-container *ngTemplateOutlet="BackButton"></ng-container>
+
+                    <form nz-form [formGroup]="CustomerInfoForm" class="info-form">
+
+                        <nz-form-item>
+                            <nz-form-control>
+                                <nz-form-label>{{'TIN' | translate}}</nz-form-label>
+                                <input nz-input [placeholder]="'TIN' | translate" maxlength="11" formControlName="TIN"
+                                    (ngModelChange)="OnInfoChange()">
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-control>
+                                <nz-form-label>{{'Payment method' | translate}}</nz-form-label>
+                                <nz-select formControlName="payment_method" (ngModelChange)="OnInfoChange()">
+                                    @for (PaymentMethod of PaymentMethods; track $index){
+                                        <nz-option nzCustomContent [nzValue]="PaymentMethod" [nzLabel]="PaymentMethod">
+                                            <icon [type]="PaymentMethod" [monotone]="false"></icon>
+                                            <label>{{PaymentMethod}}</label>
+                                        </nz-option>
+                                    }
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        @if (CustomerInfoForm.value.payment_method == 'Cash'){
+                            <nz-form-item>
+                                <nz-form-control>
+                                    <nz-form-label>{{'Amount Paid' | translate}}</nz-form-label>
+                                    <input nz-input [placeholder]="'Amount paid' | translate" formControlName="amount_paid"
+                                        (ngModelChange)="OnInfoChange()">
+                                </nz-form-control>
+                            </nz-form-item>
+                        }
+
+                        <nz-form-item>
+                            <nz-form-control>
+                                <nz-form-label>{{'Discount' | translate}}</nz-form-label>
+                                <nz-input-number formControlName="discount" nzMin="0" nzMax="100" nzInputSuffix="%"
+                                    (ngModelChange)="OnInfoChange()">
+                                     <nz-icon nzInputAddonAfter nzType="percentage" />
+                                </nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </form>
+
+                    <div class="row right">
+                        <button class="button large" (click)="PrinptReceipt()">
+                            <icon type="receipt_long" [fill]="true"></icon>
+                            {{'Receipt'}}
+                        </button>
+                        <button class="button large sucess" nzType="primary" (click)="FinalizeCheckout()">
+                            <icon type="circle-check-big"></icon>
+                            {{'Finalize'}}
                         </button>
                     </div>
                 </div>
-                }@empty {
-                <label>{{'No items to display' | translate}}</label>
-                }
-            </div>
 
-            <div class="order-options">
-                <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | currency}}</label>
-
-                <div class="flex center">
-                    <button nz-button class="button finish-button cancel" 
-                        [nzLoading]="FinalizingCheckout" (click)="CancelOrder()">
-
-                        <icon type="trash" size="25"></icon>
-                        {{'Cancel' | translate}}
-
-                    </button>
-
-                    <button class="button finish-button" (click)="MoveToCheckout()" 
-                        [disabled]="OrderProducts.length < 1 || FinalizingCheckout">
-                        
-                        {{'Checkout' | translate}}
-                        <icon type="circle-arrow-right" size="25"></icon>
-                    </button>
+                <div class="action-card vcenter" style="width: 40%;">
+                    <label class="header">Receipt</label>
+                    <receipt #Receipt [(ReceiptData)]="ReceiptData"></receipt>
                 </div>
-            </div>
-
-        </div>
-        }
-        @else {
-        <div class="action-card" style="width: 60%;">
-            <!-- GO BACK BUTTON -->
-            <ng-container *ngTemplateOutlet="BackButton"></ng-container>
-
-            <form nz-form [formGroup]="CustomerInfoForm" class="info-form">
-
-                <nz-form-control>
-                    <nz-form-label>{{'TIN' | translate}}</nz-form-label>
-                    <input nz-input [placeholder]="'TIN' | translate" formControlName="TIN"
-                        (ngModelChange)="MoveToCheckout()">
-                </nz-form-control>
-
-                <nz-form-control>
-                    <nz-form-label>{{'Payment method' | translate}}</nz-form-label>
-                    <nz-select formControlName="payment_method" (ngModelChange)="MoveToCheckout()">
-                        @for (PaymentMethod of PaymentMethods; track $index){
-                        <nz-option nzCustomContent [nzValue]="PaymentMethod" [nzLabel]="PaymentMethod">
-                            <icon [type]="PaymentMethod" [monotone]="false"></icon>
-                            <label>{{PaymentMethod}}</label>
-                        </nz-option>
-                        }
-                    </nz-select>
-                </nz-form-control>
-
-                @if (CustomerInfoForm.value.payment_method == 'Cash'){
-                <nz-form-control>
-                    <nz-form-label>{{'Amount Paid' | translate}}</nz-form-label>
-                    <input nz-input [placeholder]="'Amount paid' | translate" formControlName="amount_paid"
-                        (ngModelChange)="MoveToCheckout()">
-                </nz-form-control>
-                }
-            </form>
-
-            <div class="row fill right" style="margin-top: 10px;">
-                <button class="button large" (click)="PrinptReceipt()">
-                    <icon type="receipt_long" [fill]="true"></icon>
-                    {{'Receipt'}}
-                </button>
-                <button class="button large sucess" nzType="primary" (click)="FinalizeCheckout()">
-                    <icon type="circle-check-big"></icon>
-                    {{'Finalize'}}
-                </button>
-            </div>
-        </div>
-
-        <div class="action-card vcenter" style="width: 40%;">
-            <label class="header">Receipt</label>
-            <receipt [(ReceiptData)]="ReceiptData"></receipt>
-        </div>
-        }
+            }
         }
     </div>
 </page-layout>

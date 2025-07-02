@@ -55,14 +55,21 @@ Router.get('/receipts/id', HandleEndpointFunction(async (req, res) => {
         console.log(OrderData)
         const Order = {
             id: OrderData.id,
-            created_at: OrderData.created_at,
             order_id: OrderData.order_id,
             tableid: OrderData.tableid,
-            NIF: OrderData.NIF,
+            
+            TIN: OrderData.TIN,
             total_price: OrderData.total_price,
+            amount_paid: OrderData.amount_paid,
+            payment_method: OrderData.payment_method,
+            discount: OrderData.discount,
+            
+            created_at: OrderData.created_at,
             created_by: OrderData.created_by,
+            checked_out_at: OrderData.checked_out_at,
             username: OrderData.username,
             status: OrderData.status,
+
             items: [] as any[]
         }
         for (const OrderItem of OrderItems) {

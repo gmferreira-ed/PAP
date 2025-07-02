@@ -52,40 +52,17 @@ Router.get('/orders', HandleEndpointFunction(async (req, res) => {
 }))
 
 
-async function CheckoutOrder(OrderID: number) {
-
-    const ProductsQuery = `SELECT * FROM order_items
-     JOIN menu ON order_items.product_id = menu.id
-      WHERE order_id=${OrderID}`
-
-    const [OrderProducts] = await Database.query<any[]>(ProductsQuery)
 
 
-    var TotalPrice = 0
-    for (const product of OrderProducts) {
-        TotalPrice += product.price
-    }
 
-    const [CheckoutQuery, Values] = SQLUtils.BuildUpdateQuery('orders', [
-        'total_price',
-        'userid'
-    ], {
-        total_price: TotalPrice,
-        order_id: OrderID
-    }, ['order_id'])
-    const [CheckoutResult] = await Database.execute(CheckoutQuery, Values)
-
-}
-
-
-async function CreateOrder(TableID: number, User?: User) {
+async function CreateOrder(TableID: number, UserID?: number) {
 
     const [OrderInsertQuery, Values] = SQLUtils.BuildInsertQuery('orders', [
         'tableid',
-        'userid'
+        'created_by'
     ], {
         tableid: TableID,
-        userid: User?.userid
+        created_by: UserID
     })
 
     const [OrderInsertResult] = await Database.execute(OrderInsertQuery, Values) as ResultSetHeader[]
@@ -106,7 +83,7 @@ Router.post('/orders', HandleEndpointFunction(async (req, res) => {
     const body = req.body
     const tableid = body.tableid
 
-    const OrderID = await CreateOrder(tableid)
+    const OrderID = await CreateOrder(tableid, req.session.userid)
 
     res.send({ order_id: OrderID })
 }));
@@ -143,7 +120,7 @@ Router.delete('/orders', HandleEndpointFunction(async (req, res) => {
     if (OrderProducts?.length > 0) {
         const UpdateQuery = `UPDATE orders SET status='Cancelled' WHERE order_id=?`
         const [UpdateResult] = await Database.execute(UpdateQuery, [body.order_id])
-    }else{
+    } else {
         Deleted = true
         const DeleteQuery = `DELETE FROM orders WHERE order_id=?`
         const [DeleteResult] = await Database.execute(DeleteQuery, [body.order_id])
@@ -152,8 +129,74 @@ Router.delete('/orders', HandleEndpointFunction(async (req, res) => {
     OrdersWebsocket.SendGlobalMessage('update', { order_id: order_id })
 
 
-    res.send({deleted:Deleted})
+    res.send({ deleted: Deleted })
 }));
+
+function AddCheckOutTimestamp(Query: string): string {
+    const whereIndex = Query.toUpperCase().indexOf(' WHERE ');
+    const beforeWhere = Query.slice(0, whereIndex).trim();
+    const afterWhere = Query.slice(whereIndex);
+
+    let newBeforeWhere = beforeWhere;
+
+    if (!beforeWhere.endsWith(',')) {
+        newBeforeWhere += ',';
+    }
+    newBeforeWhere += ' checked_out_at = NOW()';
+
+    return `${newBeforeWhere} ${afterWhere}`;
+}
+
+async function CheckoutOrder(Body: any) {
+
+    const OrderID = Body.order_id
+
+    const ProductsQuery = `SELECT * FROM order_items
+     JOIN menu ON order_items.product_id = menu.id
+      WHERE order_id=?`
+
+    const [OrderProducts] = await Database.execute<any[]>(ProductsQuery, [OrderID])
+
+    var TotalPrice = 0
+    for (const product of OrderProducts) {
+        TotalPrice += product.price
+    }
+
+
+    const TIN = Number(Body.TIN)
+
+    let [CheckoutQuery, Values] = SQLUtils.BuildUpdateQuery('orders', [
+        'total_price',
+        'TIN',
+        'discount',
+        'amount_paid',
+        'payment_method',
+
+        'checked_out_at',
+        'status',
+    ], {
+        total_price: TotalPrice,
+        TIN: TIN,
+        discount: Body.discount,
+        amount_paid: Body.amount_paid || TotalPrice,
+        payment_method: Body.payment_method,
+
+        status: 'Finished',
+
+        order_id: OrderID,
+    }, ['order_id'])
+
+    console.log(Values)
+
+    CheckoutQuery = AddCheckOutTimestamp(CheckoutQuery)
+    CheckoutQuery+=" AND status='OnGoing'"
+
+    const [CheckoutResult] = await Database.execute(CheckoutQuery, Values)
+
+
+    return CheckoutResult as any
+}
+
 
 /**
  * @displayname "Checkout Orders"
@@ -165,12 +208,16 @@ Router.post('/checkout', HandleEndpointFunction(async (req, res) => {
 
 
     const body = req.body
-    const order_id = body.tableid
 
-    const CheckoutResult = await CheckoutOrder(body.products)
+    const CheckoutResult = await CheckoutOrder(body)
 
-    OrdersWebsocket.SendGlobalMessage('update', { order_id: order_id })
-    res.send({ result: CheckoutResult })
+    if (CheckoutResult.affectedRows > 0) {
+        OrdersWebsocket.SendGlobalMessage('update', { order_id: body.order_id })
+        res.send({ result: CheckoutResult })
+    }else{
+        res.status(401).send({error:'This order was already closed'})
+    }
+
 }));
 
 

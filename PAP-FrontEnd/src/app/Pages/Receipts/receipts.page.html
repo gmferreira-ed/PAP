@@ -47,55 +47,98 @@
     }@else{
         <!-- DISPLAY RECEIPT INFO -->
         <div class="order-info">
-            <h2>Order - #{{ReceiptData.id}}</h2>
-            <div class="row fill space-between" style="width: 100%; align-items: start;">
-                <div class="collumn" style="align-items: start; flex: 1;">
-                    <div class="row">
-                        <status-tag [status]="ReceiptData.status">
-                            {{ReceiptData.status}}
-                        </status-tag>
-                    </div>
+            <div class="collumn" style="align-items: start; flex: 1;">
 
-                    <div class="row">
-                        <label>Created by: </label>
-                        <div class="tag">
-                            <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
-                                [src]="UserImagesURL+ReceiptData.username"
-                                onerror="this.src='Images/Icons/account.svg'">
-                            <strong>{{ReceiptData.username}}</strong>
-                        </div>
+                <div class="row space-between" style="width: 100%;">
+                    <h2>Order - #{{ReceiptData.order_id}}</h2>
+
+                    <button class="button" (click)="Receipt.Print()">
+                        <icon type="receipt"></icon> Print Receipt
+                    </button>
+                </div>
+                <div class="row">
+                    <status-tag [status]="ReceiptData.status">
+                        {{ReceiptData.status}}
+                    </status-tag>
+                </div>
+
+                <br>
+
+                <h2>Info</h2>
+
+                <div class="row">
+                    <label>Created by: </label>
+                    <div class="tag">
+                        <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
+                            [src]="UserImagesURL+ReceiptData.username" onerror="this.src='Images/Icons/account.svg'">
+                        <strong>{{ReceiptData.username}}</strong>
                     </div>
                 </div>
-                <div class="collumn" style="align-items: start; flex: 1;">
-                    <!-- <nz-table [nzData]="ReceiptData.items" [nzShowPagination]="false" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Total</th>
-                                <th>Price/un</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (ReceiptItem of ReceiptData.items; track $index) {
-                                <tr>
-                                    <td>
-                                        <span>{{ReceiptItem.name}}</span>
-                                    </td>
-                                    <td>
-                                        <span>{{ReceiptItem.price * ReceiptItem.quantity | currency}}</span>
-                                    </td>
-                                    <td>
-                                        <span>{{ReceiptItem.price | currency}}</span>
-                                    </td>
-                                    <td>
-                                        <span>{{ReceiptItem.quantity}}</span>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </nz-table> -->
+
+                <div class="row">
+                    <label>Created at: </label>
+                    <span>{{(ReceiptData.created_at | date:'dd-MM-yyyy HH:mm') || '-'}}</span>
                 </div>
+                <div class="row">
+                    <label>Checked Out: </label>
+                    <span>{{(ReceiptData.checked_out_at | date:'dd-MM-yyyy HH:mm') || '-'}}</span>
+                </div>
+                <div class="row">
+                    <label>TIN: </label>
+                    <span>{{ReceiptData.TIN || '-'}}</span>
+                </div>
+                <div class="row">
+                    <label>Total: </label>
+                    <span>{{ReceiptData.total_price && (ReceiptData.total_price | currency) || '-'}}</span>
+                </div>
+                <div class="row">
+                    <label>Payment Method: </label>
+                    <span>{{ReceiptData.payment_method || '-'}}</span>
+                </div>
+                <div class="row">
+                    <label>Discount: </label>
+                    <span>{{(ReceiptData.discount) || '-'}}</span>
+                </div>
+
+                <br>
+
+                <h2>Products</h2>
+                <nz-table [nzData]="ReceiptData.items" [nzShowPagination]="false" [nzBordered]="true"
+                    style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Total</th>
+                            <th>Price/un</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (ReceiptItem of ReceiptData.items; track $index) {
+                            <tr>
+                                <td>
+                                    <span>
+                                        <img [src]="MenuImagesURL+ReceiptItem.name" onerror="this.src='Images/Dish.png'"
+                                            style="object-fit: cover; width: 30px; height: 30px; border-radius: 100%;">
+                                        {{ReceiptItem.name}}</span>
+                                </td>
+                                <td>
+                                    <span>{{ReceiptItem.price * ReceiptItem.quantity | currency}}</span>
+                                </td>
+                                <td>
+                                    <span>{{ReceiptItem.price | currency}}</span>
+                                </td>
+                                <td>
+                                    <span>{{ReceiptItem.quantity}}</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </nz-table>
+            </div>
+            <div class="collumn" style="align-items: center; flex: 1;">
+
+                <receipt #Receipt style="margin-top: 0px;" [(ReceiptData)]="ReceiptData"></receipt>
             </div>
         </div>
     }

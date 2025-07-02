@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { AppSettings } from '../../Services/AppSettings';
 import { HttpService } from '../../Services/Http.service';
@@ -8,14 +8,18 @@ import { LoadingScreen } from '../../Components/loading-screen/loading-screen.co
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
+import { ReceiptComponent } from "../../Components/receipt/receipt.component";
+import { IconsModule } from "../../Components/icon/icon.component";
 
 @Component({
   selector: 'receipts-page',
-  imports: [PageLayoutComponent, NzTableModule, LoadingScreen, DatePipe, TranslatePipe, CurrencyPipe, StatusTagComponent],
+  imports: [PageLayoutComponent, NzTableModule, LoadingScreen, DatePipe, TranslatePipe, CurrencyPipe, StatusTagComponent, ReceiptComponent, IconsModule],
   templateUrl: './receipts.page.html',
   styleUrl: './receipts.page.less'
 })
 export class ReceiptsPage {
+
+  @ViewChild('Receipt') Receipt!: ReceiptComponent;
 
   // Services
   HttpService = inject(HttpService)
@@ -29,6 +33,7 @@ export class ReceiptsPage {
   // Variables
   ReceiptsURL = AppSettings.APIUrl + 'receipts'
   UserImagesURL = AppSettings.UserImagesURL
+  MenuImagesURL = AppSettings.ImagesURL+'menu/'
 
   // Receipts
   ReceiptsPageIndex = 1
@@ -62,8 +67,8 @@ export class ReceiptsPage {
     const [ReceiptData] = await this.HttpService.MakeRequest(this.ReceiptsURL + '/id', 'GET', 'Failed to load receipt data: ',
       { id: this.ReceiptId })
     if (ReceiptData) {
-      console.log(ReceiptData)
       this.ReceiptData = ReceiptData
+   
     }
 
     this.LoadingReceiptData = false
