@@ -141,7 +141,7 @@ Router.delete('/orders', HandleEndpointFunction(async (req, res) => {
     var Deleted = false
 
     if (OrderProducts?.length > 0) {
-        const UpdateQuery = `UPDATE orders SET status='cancelled' WHERE order_id=?`
+        const UpdateQuery = `UPDATE orders SET status='Cancelled' WHERE order_id=?`
         const [UpdateResult] = await Database.execute(UpdateQuery, [body.order_id])
     }else{
         Deleted = true

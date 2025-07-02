@@ -31,7 +31,7 @@
                     </label>
                     }
                     <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-60%, 60%);">
-                        @if (Table.status == 'ongoing'){
+                        @if (Table.status == 'OnGoing'){
                         <div class="clock" style="width: 25px; height: 25px;">
                             <span class="hour"></span>
                             <span class="min"></span>
@@ -132,7 +132,7 @@
                     <nz-select formControlName="payment_method" (ngModelChange)="MoveToCheckout()">
                         @for (PaymentMethod of PaymentMethods; track $index){
                         <nz-option nzCustomContent [nzValue]="PaymentMethod" [nzLabel]="PaymentMethod">
-                            <icon [type]="PaymentMethod"></icon>
+                            <icon [type]="PaymentMethod" [monotone]="false"></icon>
                             <label>{{PaymentMethod}}</label>
                         </nz-option>
                         }
@@ -162,26 +162,7 @@
 
         <div class="action-card vcenter" style="width: 40%;">
             <label class="header">Receipt</label>
-            <div class="receipt">
-                @for (ReceiptFunction of Receipt; track $index){
-                @if (ReceiptFunction.isTextData()){
-                @let FunctionData = ReceiptFunction.data;
-                <p [style.text-align]="FunctionData.align === 'CT' ? 'center' : FunctionData.align === 'RT' ? 'right' : 'left'"
-                    [style.font-size]="
-                    FunctionData.size[0] === 2 ? '35px' :
-                    FunctionData.size[0] === 1 ? '24px' : '14px'"
-                    [style.font-weight]="FunctionData.style.includes('B') ? 'bold' : 'normal'"
-                    [style.font-style]="FunctionData.style.includes('I') ? 'italic' : 'normal'"
-                    [style.text-decoration]="FunctionData.style.includes('U') ? 'underline' : 'none'"
-                    [style.letter-spacing]="FunctionData.justified ? '-1px' : ''">{{ReceiptFunction.data.text}}
-                </p>
-                }@else if (ReceiptFunction.name == 'drawLine') {
-                <p>{{"-".repeat(42)}}</p>
-                }@else if (ReceiptFunction.name == 'image') {
-                <img style="align-self:center; width: 100%; object-fit: none;" src="Images/RestroLinkPrinter.png">
-                }
-                }
-            </div>
+            <receipt [(ReceiptData)]="ReceiptData"></receipt>
         </div>
         }
         }

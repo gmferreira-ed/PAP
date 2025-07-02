@@ -1,0 +1,18 @@
+@for (ReceiptFunction of PrinterInstructions; track $index){
+    @if (ReceiptFunction.isTextData()){
+        @let FunctionData = ReceiptFunction.data;
+        <p [style.text-align]="FunctionData.align === 'CT' ? 'center' : FunctionData.align === 'RT' ? 'right' : 'left'"
+            [style.font-size]="
+            FunctionData.size[0] === 2 ? '35px' :
+            FunctionData.size[0] === 1 ? '24px' : '14px'"
+            [style.font-weight]="FunctionData.style.includes('B') ? 'bold' : 'normal'"
+            [style.font-style]="FunctionData.style.includes('I') ? 'italic' : 'normal'"
+            [style.text-decoration]="FunctionData.style.includes('U') ? 'underline' : 'none'"
+            [style.letter-spacing]="FunctionData.justified ? '-1px' : ''">{{ReceiptFunction.data.text}}
+    </p>
+}@else if (ReceiptFunction.name == 'drawLine') {
+    <p>{{"-".repeat(42)}}</p>
+}@else if (ReceiptFunction.name == 'image') {
+    <img style="align-self:center; width: 100%; object-fit: none;" src="Images/RestroLinkPrinter.png">
+}
+}

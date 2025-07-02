@@ -47,7 +47,7 @@ const SessionMiddleware = session({
 // MIDDLEWARE SETUP
 const Server = express();
 Server.use(cors({
-  origin: ['http://localhost:5000', 'http://localhost:7000'],
+  origin: ['http://localhost:5000', 'http://localhost:7000', 'http://192.168.1.99:5000'],
   credentials: true,
 }))
 Server.use(express.json())
@@ -99,8 +99,8 @@ const HttpServer = http.createServer(Server)
 WebSocketService.Connect(HttpServer, SessionMiddleware)
 
 // START SERVER
-HttpServer.listen(7000, async () => {
-  console.log('Server running on http://localhost:7000');
+HttpServer.listen(7000, '0.0.0.0', async () => {
+  console.log('Server running on port 7000');
 
 
 

@@ -39,7 +39,6 @@ export const routes: Routes = [
     },
 
     { path: 'dashboard', component: DashboardPage, canActivate: [PageAuthGuard] },
-    { path: 'receipts', component: ReceiptsPage, canActivate: [PageAuthGuard] },
     { path: 'tests', component: TestsPage, canActivate: [PageAuthGuard] },
 
 
@@ -62,6 +61,19 @@ export const routes: Routes = [
     },
 
 
+
+    {
+        path: 'receipts/:id',
+        component: ReceiptsPage,
+        canActivate: [PageAuthGuard],
+    },
+    {
+        path: 'receipts',
+        redirectTo: 'receipts/',  // redirect to the same route with optional param
+        pathMatch: 'full'
+    },
+
+    
     {
         path: 'orders', component: CheckoutPage, canActivate: [PageAuthGuard], data: {
             CreateEndpoint: 'api/orders',

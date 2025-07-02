@@ -1,2 +1,102 @@
 <page-layout>
+
+    <loading-screen [IsLoading]="LoadingReceiptData"></loading-screen>
+    @if (!ReceiptData){
+        <!-- RECEIPTS LIST -->
+
+        <nz-table [nzData]="Receipts" [nzShowPagination]="true" [nzLoading]="LoadingReceipts"
+            [(nzPageIndex)]="ReceiptsPageIndex" (nzPageIndexChange)="LoadReceipts()" [(nzPageSize)]="ReceiptsPageSize"
+            (nzPageSizeChange)="LoadReceipts()" [nzTotal]="TotalPages" [nzFrontPagination]="false" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Total Cost</th>
+                    <th>Discount</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (Receipt of Receipts; track $index) {
+                    <tr (click)="ReceiptId=Receipt.order_id">
+                        <td>
+                            <span>{{Receipt.order_id}}</span>
+                        </td>
+                        <td>
+                            <span>{{Receipt.created_at | date: 'dd-MM-yyyy HH:mm'}}</span>
+                        </td>
+                        <td>
+                            <span>{{Receipt.total_price | currency}}</span>
+                        </td>
+                        <td>
+                            <span>{{Receipt.discount}}</span>
+                        </td>
+                        <td>
+                            <status-tag [status]="Receipt.status">
+                                {{Receipt.status}}
+                            </status-tag>
+                        </td>
+                        <td>
+                            <span>{{Receipt.username}}</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </nz-table>
+    }@else{
+        <!-- DISPLAY RECEIPT INFO -->
+        <div class="order-info">
+            <h2>Order - #{{ReceiptData.id}}</h2>
+            <div class="row fill space-between" style="width: 100%; align-items: start;">
+                <div class="collumn" style="align-items: start; flex: 1;">
+                    <div class="row">
+                        <status-tag [status]="ReceiptData.status">
+                            {{ReceiptData.status}}
+                        </status-tag>
+                    </div>
+
+                    <div class="row">
+                        <label>Created by: </label>
+                        <div class="tag">
+                            <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
+                                [src]="UserImagesURL+ReceiptData.username"
+                                onerror="this.src='Images/Icons/account.svg'">
+                            <strong>{{ReceiptData.username}}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="collumn" style="align-items: start; flex: 1;">
+                    <!-- <nz-table [nzData]="ReceiptData.items" [nzShowPagination]="false" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Total</th>
+                                <th>Price/un</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (ReceiptItem of ReceiptData.items; track $index) {
+                                <tr>
+                                    <td>
+                                        <span>{{ReceiptItem.name}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ReceiptItem.price * ReceiptItem.quantity | currency}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ReceiptItem.price | currency}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ReceiptItem.quantity}}</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </nz-table> -->
+                </div>
+            </div>
+        </div>
+    }
 </page-layout>

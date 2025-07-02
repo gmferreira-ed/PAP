@@ -32,6 +32,7 @@ async function GetPaginatedResult(Table: string, SQLQuery:string, SQLValues:any,
   let PageSize = QueryParams.page_size ? Number(QueryParams.page_size) : 25
   let PageIndex= QueryParams.page ? Number(QueryParams.page) : 1
 
+
   PageSize = Math.min(PageSize, MaxPageSize)
 
   

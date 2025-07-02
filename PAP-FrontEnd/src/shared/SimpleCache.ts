@@ -6,7 +6,7 @@ export default class SimpleCache {
     CacheExpiration = 10
     FetchFunction
 
-    OngoingFunction: Promise<any>|undefined
+    OnGoingFunction: Promise<any>|undefined
     OnFetch: Function | undefined
 
     ResetExpiration() {
@@ -23,11 +23,11 @@ export default class SimpleCache {
             if (IsExpired || IgnoreCache) {
                 this.LastRequest = RequestTimestamp
 
-                this.OngoingFunction = this.FetchFunction()
+                this.OnGoingFunction = this.FetchFunction()
 
-                const Result = await this.OngoingFunction
+                const Result = await this.OnGoingFunction
 
-                this.OngoingFunction = undefined
+                this.OnGoingFunction = undefined
                 this.CachedData = Result
 
                 if (IgnoreCache) {
@@ -42,7 +42,7 @@ export default class SimpleCache {
                 return Result
             } else {
 
-                const Result = this.OngoingFunction ? await this.OngoingFunction : this.CachedData
+                const Result = this.OnGoingFunction ? await this.OnGoingFunction : this.CachedData
                 if (this.OnFetch) {
                     this.OnFetch(Result)
                 }

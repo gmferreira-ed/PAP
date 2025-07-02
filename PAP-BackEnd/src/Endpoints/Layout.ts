@@ -34,7 +34,7 @@ Router.get('/layout', HandleEndpointFunction(async (req, res) => {
 Router.get('/tables', HandleEndpointFunction(async (req, res) => {
 
     var LayoutQuery = `SELECT layout.*, orders.order_id, orders.status, orders.created_at FROM layout
-    LEFT JOIN orders ON orders.tableid = layout.tableid AND status='ongoing'
+    LEFT JOIN orders ON orders.tableid = layout.tableid AND status='OnGoing'
      WHERE type='table' or type='roundtable'`
 
     const [Tables] = await Database.query<any>(LayoutQuery);

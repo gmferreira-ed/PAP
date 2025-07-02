@@ -123,7 +123,7 @@ export class RestaurantLayout {
   Tables: Record<any, Table> = {}
 
   StatusDisplayNames: { [key: string]: string } = {
-    ongoing: 'Occupied'
+    OnGoing: 'Occupied'
   }
 
 
