@@ -32,37 +32,7 @@ export class ThemeService {
     private nzConfigService = inject(NzConfigService);
     Themes = Themes
 
-    LanguageInfo = {
-        'cs': 'cz',
-        'da': 'dk',
-        'de': 'de',
-        'el': 'gr',
-        'en': 'us',
-        'es': 'es',
-        'fi': 'fi',
-        'fr': 'fr',
-        'hi': 'in',
-        'hu': 'hu',
-        'it': 'it',
-        'ja': 'jp',
-        'ko': 'kr',
-        'nl': 'nl',
-        'no': 'no',
-        'pl': 'pl',
-        'pt-br': 'br',
-        'pt-pt': 'pt',
-        'ro': 'ro',
-        'ru': 'ru',
-        'sv': 'se',
-        'tr': 'tr',
-        'uk': 'ua',
-        'vi': 'vn',
-        'zh': 'cn',
-        'zh-tw': 'tw'
-    };
 
-    Languages = Object.keys(this.LanguageInfo)
-    Countries = Object.values(this.LanguageInfo)
 
     constructor() {
         const savedTheme = localStorage.getItem('theme') as NzThemes

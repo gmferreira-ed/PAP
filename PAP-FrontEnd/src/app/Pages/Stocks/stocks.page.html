@@ -30,7 +30,7 @@
                                 {{StockItem.name}}
                             </span>
                         </div>
-                        <span class="small-caption">{{StockItem.purchase_price | currency}}</span>
+                        <span class="small-caption">{{StockItem.purchase_price | dcurrency}}</span>
                     </div>
                 }@empty {
                     <no-data>
@@ -92,7 +92,7 @@
                                     </div>
                                     <div class="row space-between">
                                         <label>Purchase Price:</label>
-                                        <span>{{SelectedStockItem.purchase_price | currency}}/{{SelectedStockItem.unit_of_measure || 'pc'}}</span>
+                                        <span>{{SelectedStockItem.purchase_price | dcurrency}}/{{SelectedStockItem.unit_of_measure || 'pc'}}</span>
                                     </div>
                                     <div class="row space-between">
                                         <label>Supplier:</label>
@@ -179,7 +179,7 @@
                                         <div class="values row space-between title aself-center"
                                             style="margin-top: auto; width: 80%;">
                                             <span>+ {{OrdersInfo.received}}{{SelectedStockItem.unit_of_measure || 'pc'}}</span>
-                                            <span style="color: var(--error-color);">- {{OrdersInfo.expenses}}$</span>
+                                            <span style="color: var(--error-color);">- {{OrdersInfo.expenses | dcurrency}}</span>
                                         </div>
 
 
@@ -212,7 +212,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <label>Selling Price:</label>
-                                                        <span>{{SelectedStockItem.selling_price | currency}}</span>
+                                                        <span>{{SelectedStockItem.selling_price | dcurrency}}</span>
                                                     </div>
                                                     <div class="row">
                                                         <label>Category:</label>
@@ -359,7 +359,7 @@
                                             <span>{{StockOrderItem.quantity}}{{StockItem.unit_of_measure || 'pc'}}</span>
                                         </td>
                                         <td>
-                                            <span>{{StockOrderItem.cost | currency}}</span>
+                                            <span>{{StockOrderItem.cost | dcurrency}}</span>
                                         </td>
                                         </tr>
                                     }
@@ -559,7 +559,7 @@
                                                     <span>{{StockItem.quantity_in_stock}}{{StockItem.unit_of_measure || 'pc'}}</span>
                                                 </td>
                                                 <td>
-                                                    <span>{{StockItem.purchase_price | currency}}</span>
+                                                    <span>{{StockItem.purchase_price | dcurrency}}</span>
                                                 </td>
                                             </tr>
                                         }
@@ -593,7 +593,7 @@
                                                         [status]="PurchaseOrder.status">{{PurchaseOrder.status}}</status-tag>
                                                 </td>
                                                 <td>
-                                                    <span>{{PurchaseOrder.cost | currency}}</span>
+                                                    <span>{{PurchaseOrder.cost | dcurrency}}</span>
                                                 </td>
                                             </tr>
                                         }

@@ -1,5 +1,4 @@
-
-import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core'
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, DEFAULT_CURRENCY_CODE } from '@angular/core'
 import { provideAnimations } from "@angular/platform-browser/animations"
 import { FormsModule } from '@angular/forms'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
@@ -10,12 +9,14 @@ import player from 'lottie-web';
 
 
 // NGX translate
-import { provideTranslateService, TranslateLoader } from "@ngx-translate/core"
+import { provideTranslateService, TranslateLoader, TranslatePipe } from "@ngx-translate/core"
 import {TranslateHttpLoader} from '@ngx-translate/http-loader'
 
 // Ng zorro language
 import { NZ_I18N, en_US} from 'ng-zorro-antd/i18n'
-import { ScrollingModule } from '@angular/cdk/scrolling'
+import { AppSettings } from './Services/AppSettings'
+import { CurrencyPipe } from '@angular/common'
+import { DynamicCurrencyPipe } from './Pipes/dynamic-currency.pipe'
 
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
@@ -23,6 +24,8 @@ const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: Http
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    CurrencyPipe,
+    DynamicCurrencyPipe,
     provideAnimations(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideTranslateService({
@@ -39,7 +42,7 @@ export const appConfig: ApplicationConfig = {
     provideLottieOptions({
       player: () => player,
     }),
-    { provide: NZ_I18N, useValue: en_US }
-
+    { provide: NZ_I18N, useValue: en_US },
+    { provide: DEFAULT_CURRENCY_CODE, useValue: AppSettings.Currency}
   ]
 };

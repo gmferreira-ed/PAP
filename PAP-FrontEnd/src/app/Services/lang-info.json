@@ -1,0 +1,106 @@
+{
+    "Čeština": {
+        "language_code": "cs",
+        "flag_code": "cz"
+    },
+    "Dansk": {
+        "language_code": "da",
+        "flag_code": "dk"
+    },
+    "Deutsch": {
+        "language_code": "de",
+        "flag_code": "de"
+    },
+    "Ελληνικά": {
+        "language_code": "el",
+        "flag_code": "gr"
+    },
+    "English": {
+        "language_code": "en",
+        "flag_code": "us"
+    },
+    "Español": {
+        "language_code": "es",
+        "flag_code": "es"
+    },
+    "Suomi": {
+        "language_code": "fi",
+        "flag_code": "fi"
+    },
+    "Français": {
+        "language_code": "fr",
+        "flag_code": "fr"
+    },
+    "हिन्दी": {
+        "language_code": "hi",
+        "flag_code": "in"
+    },
+    "Magyar": {
+        "language_code": "hu",
+        "flag_code": "hu"
+    },
+    "Italiano": {
+        "language_code": "it",
+        "flag_code": "it"
+    },
+    "日本語": {
+        "language_code": "ja",
+        "flag_code": "jp"
+    },
+    "한국어": {
+        "language_code": "ko",
+        "flag_code": "kr"
+    },
+    "Nederlands": {
+        "language_code": "nl",
+        "flag_code": "nl"
+    },
+    "Norsk": {
+        "language_code": "no",
+        "flag_code": "no"
+    },
+    "Polski": {
+        "language_code": "pl",
+        "flag_code": "pl"
+    },
+    "Português (Brasil)": {
+        "language_code": "pt-br",
+        "flag_code": "br"
+    },
+    "Português (Portugal)": {
+        "language_code": "pt-pt",
+        "flag_code": "pt"
+    },
+    "Română": {
+        "language_code": "ro",
+        "flag_code": "ro"
+    },
+    "Русский": {
+        "language_code": "ru",
+        "flag_code": "ru"
+    },
+    "Svenska": {
+        "language_code": "sv",
+        "flag_code": "se"
+    },
+    "Türkçe": {
+        "language_code": "tr",
+        "flag_code": "tr"
+    },
+    "Українська": {
+        "language_code": "uk",
+        "flag_code": "ua"
+    },
+    "Tiếng Việt": {
+        "language_code": "vi",
+        "flag_code": "vn"
+    },
+    "中文": {
+        "language_code": "zh",
+        "flag_code": "cn"
+    },
+    "中文 (台灣)": {
+        "language_code": "zh-tw",
+        "flag_code": "tw"
+    }
+}

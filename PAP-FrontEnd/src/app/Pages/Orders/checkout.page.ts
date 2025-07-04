@@ -8,7 +8,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AppSettings } from '../../Services/AppSettings';
 import { IconsModule } from '../../Components/icon/icon.component';
-import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
+import {  DatePipe, NgTemplateOutlet } from '@angular/common';
 import { HttpService } from '../../Services/Http.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -22,13 +22,14 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { MenuProductSelect } from "../../../shared/product-selector/product-select";
 import { ReceiptComponent } from "../../Components/receipt/receipt.component";
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 
 
 
 @Component({
   selector: 'checkout-page',
-  imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule, CurrencyPipe, NzInputNumberModule,
+  imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule, DynamicCurrencyPipe, NzInputNumberModule,
     RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule, NzFormModule, MenuProductSelect, 
     ReceiptComponent],
   templateUrl: './checkout.page.html',

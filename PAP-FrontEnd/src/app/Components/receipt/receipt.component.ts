@@ -4,6 +4,8 @@ import { LoaderComponent } from '../loader/loader.component';
 import { ImageInfo, PrinterFunction, TextData } from './receipt-types';
 import { FormatPrice, JustifyLine } from './receipt.utils';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { AppSettings } from '../../Services/AppSettings';
 
 
 declare global {
@@ -13,7 +15,6 @@ declare global {
     };
   }
 }
-
 
 
 @Component({
@@ -32,6 +33,7 @@ export class ReceiptComponent implements OnChanges {
   @Output() ReceiptDataChange = new EventEmitter()
 
   MessageService = inject(NzMessageService)
+  DCurrencyPipe = inject(DynamicCurrencyPipe)
 
   CompileInstructions() {
     const PrinterInstructions: PrinterFunction[] = []
@@ -59,11 +61,11 @@ export class ReceiptComponent implements OnChanges {
 
       // BUILDING RECEIPT
       PrinterInstructions.push(new PrinterFunction('align', 'CT'))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Restaurant', { size: [1, 1] })))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Mock Address')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('3030-032 Coimbra')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Telef./Fax: 246 247 284')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Tax ID No: 23424423')))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(AppSettings.RestaurantName, { size: [1, 1] })))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(AppSettings.Adress)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`${AppSettings.PostalCode} ${AppSettings.City}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Telef./Fax: ${AppSettings.Contact}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Tax ID No: ${AppSettings.TaxID}`)))
       PrinterInstructions.push(new PrinterFunction('drawLine'))
       PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine([FormattedDate, 'RECEIPT N:']), { justified: true })))
       PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine(['Original ', String(ReceiptData.order_id)]), { justified: true })))
@@ -80,8 +82,8 @@ export class ReceiptComponent implements OnChanges {
 
       PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine(['Qt/Product', 'T/Price']), { justified: true })))
       for (const Product of ReceiptData.items) {
-        const QtPrice = FormatPrice(Product.price) + '/un'
-        const TotalProductPrice = FormatPrice(Product.price * Product.quantity)
+        const QtPrice = this.DCurrencyPipe.transform(Product.price) + '/un'
+        const TotalProductPrice = this.DCurrencyPipe.transform(Product.price * Product.quantity)
 
         PrinterInstructions.push(new PrinterFunction('text', new TextData(
           JustifyLine([
@@ -97,12 +99,12 @@ export class ReceiptComponent implements OnChanges {
       // PrinterInstructions.push(new PrinterFunction('text', new TextData('Subtotal: $12.50')))
       // PrinterInstructions.push(new PrinterFunction('text', new TextData('Tax (10%): $1.25')))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Sub-Total: ${FormatPrice(SubTotal)}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Sub-Total: ${this.DCurrencyPipe.transform(SubTotal)}`)))
       PrinterInstructions.push(new PrinterFunction('text', new TextData(`Discount: ${ReceiptData.discount || '-'}%`)))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Total: ${FormatPrice(TotalPrice)}`)))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Amount Paid: ' + FormatPrice(AmountPaid))))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Change: ' + FormatPrice(Math.max(AmountPaid - TotalPrice, 0)))))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Total: ${this.DCurrencyPipe.transform(TotalPrice)}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData('Amount Paid: ' + this.DCurrencyPipe.transform(AmountPaid))))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData('Change: ' + this.DCurrencyPipe.transform(Math.max(AmountPaid - TotalPrice, 0)))))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
 
       PrinterInstructions.push(new PrinterFunction('align', 'CT'))

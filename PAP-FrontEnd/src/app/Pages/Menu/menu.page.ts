@@ -1,6 +1,7 @@
 import { Component, inject, Renderer2, signal } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -29,7 +30,7 @@ import { FloatingContainer } from "../../Components/floating-container/floating-
 
 @Component({
   selector: 'menu-page',
-  imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,
+  imports: [PageLayoutComponent, DynamicCurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,
     NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule,
     CdkDropList, NzToolTipModule, CdkDropList, CdkDrag, CdkDragHandle,
     NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule, NzIconModule, FormsModule,

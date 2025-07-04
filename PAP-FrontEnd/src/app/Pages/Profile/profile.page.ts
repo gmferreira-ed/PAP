@@ -3,7 +3,7 @@ import { PageLayoutComponent } from '../../Components/page-layout/page-layout.co
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FileSelectComponent } from '../../Components/file-selector/file-select.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -23,6 +23,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { StatCardComponent } from "../../Components/stats-card/stat-card.component";
 import { ApexChartOptions } from '../../../types/apex-chart';
 import { Subscription } from 'rxjs';
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 type Shift = {
   start: Date
@@ -32,7 +33,7 @@ type Shift = {
 
 @Component({
   selector: 'profile-page',
-  imports: [PageLayoutComponent, DatePipe, TranslateModule, FileSelectComponent, NzIconModule, CurrencyPipe,
+  imports: [PageLayoutComponent, DatePipe, TranslateModule, FileSelectComponent, NzIconModule, DynamicCurrencyPipe,
     NzButtonModule, NzIconModule, LoadingScreen, IconsModule, NoDataComponent, LottieComponent, AtendanceViewer, StatCardComponent],
   templateUrl: './profile.page.html',
   styleUrl: './profile.page.less'
@@ -135,6 +136,34 @@ export class ProfilePage {
       curve: 'straight',
     },
 
+    annotations: {
+      yaxis: [
+        {
+          y: AppSettings.WorkHourLimit,
+          strokeDashArray: 0,
+          borderColor: "rgba(178, 34, 34, 0.8)",
+          label: {
+            text: "Limit",
+            style: {
+              color: "#fff",
+              background: "rgba(178, 34, 34, 0.9)"
+            }
+          }
+        },
+        {
+          y: AppSettings.WorkHours,
+          strokeDashArray: 0,
+          borderColor: "rgba(34, 139, 34, 0.8)",
+          label: {
+            text: "Normal Shift",
+            style: {
+              color: "#000",
+              background: "rgba(200, 200, 200, 0.6)"
+            }
+          }
+        }
+      ],
+    },
 
     markers: {
       size: 2,
@@ -222,7 +251,6 @@ export class ProfilePage {
   }
   EntriesChanged(UserEntries: any[], dateRange?: [number?, number?]) {
 
-    console.log('Calculating graph stats')
 
     let TotalHours = 0
     const ReversedEntries = [...UserEntries].reverse()

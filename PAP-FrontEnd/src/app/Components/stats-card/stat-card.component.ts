@@ -1,15 +1,16 @@
-import { CurrencyPipe, DatePipe, NgTemplateOutlet } from '@angular/common';
+import {  DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, inject, HostBinding, Input, input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { ApexXAxis, ChartComponent, NgApexchartsModule, XAxisAnnotations } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
 import { NoDataComponent } from '../no-data/no-data';
 import { IconsModule } from "../icon/icon.component";
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 
 
 @Component({
   selector: 'stat-card',
-  imports: [CurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet, IconsModule, DatePipe],
+  imports: [DynamicCurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet, IconsModule, DatePipe],
 
   templateUrl: 'stat-card.component.html',
   styleUrl: 'stat-card.component.less'

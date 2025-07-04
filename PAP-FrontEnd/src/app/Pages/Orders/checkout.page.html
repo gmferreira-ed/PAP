@@ -74,7 +74,7 @@
                                 <img [src]="MenuImagesURL+Product.name" decoding="async" loading="lazy">
                                 <div style="display: flex; flex-direction: column;">
                                     <label>{{Product.quantity}}x - {{Product.name}}</label>
-                                    <label class="price">{{Product.quantity * Product.price | currency}}</label>
+                                    <label class="price">{{Product.quantity * Product.price | dcurrency}}</label>
                                 </div>
 
                                 <button nz-button nzDanger nzType="text" nzShape="circle"
@@ -97,7 +97,7 @@
                     </div>
 
                     <div class="order-options">
-                        <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | currency}}</label>
+                        <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | dcurrency}}</label>
 
                         <div class="flex center">
                             <button nz-button class="button finish-button cancel" [nzLoading]="FinalizingCheckout"

@@ -20,7 +20,7 @@
                                 <div class="collumn">
                                     <div class="row">
                                         <label>Revenue: </label>
-                                        <span>{{RevenueInfo.total_revenue | currency}}</span>
+                                        <span>{{RevenueInfo.total_revenue | dcurrency}}</span>
                                     </div>
                                     <div class="row">
                                         <label>Quantity Sold: </label>
@@ -42,7 +42,7 @@
                     <section>
                         <div class="row revenue">
                             <icon type="arrow-up" size="24"></icon>
-                            <h1 style="margin-bottom: 0px;">{{Revenue | currency}}</h1>
+                            <h1 style="margin-bottom: 0px;">{{Revenue | dcurrency}}</h1>
                         </div>
                     </section>
                     <loading-screen [IsLoading]="LoadingRevenue"></loading-screen>
@@ -76,7 +76,6 @@
                 <section class="content">
                     @for (Reservation of Reservations; track $index){
                         @let ReservationTimestamp = Date(Reservation.date).getTime();
-                        @if (ReservationTimestamp > Now.getTime() ){
                             <div class="collumn reservation">
                                 <div class="row space-between">
                                     <label class="table">
@@ -96,7 +95,6 @@
                                 </div>
                             </div>
                             <div class="separator" style="margin: 0;"></div>
-                        }
                     }@empty {
                         <no-data>There are no reservations for today</no-data>
                     }

@@ -24,7 +24,7 @@ import { EditableDirective } from '../../Directives/editable-field.directive';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { ApexAxisChartSeries, ApexXAxis, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
@@ -42,6 +42,7 @@ import { MenuService } from '../../Services/menu.service';
 import { UFile } from '../../../types/ufile';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 
 
@@ -54,7 +55,8 @@ type StockTotalData = {
   selector: 'stocks-page',
   imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, DatePipe, NzToolTipModule,
     NzTabsModule, FileSelectComponent, NoDataComponent, NzSelectModule, NzDatePickerModule, NzTableModule, EditableDirective, StatusTagComponent, NzRadioModule,
-    NzInputNumberModule, NzCheckboxModule, CurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule, MenuProductSelect, OptionsBar, FloatingContainer],
+    NzInputNumberModule, NzCheckboxModule, DynamicCurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule, MenuProductSelect, 
+    FloatingContainer],
   templateUrl: './stocks.page.html',
   styleUrl: './stocks.page.less'
 })

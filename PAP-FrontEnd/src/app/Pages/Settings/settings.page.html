@@ -1,0 +1,118 @@
+<page-layout>
+    <div class="layout" style="width: 100%;">
+        <div class="collumn">
+            <h1>{{'Restaurant' | translate}}</h1>
+            <form nz-form [formGroup]="settingsForm" class="settings">
+                <div class="row">
+                    <div class="collumn">
+                        <label>Restaurant Name</label>
+                        <input nz-input formControlName="RestaurantName"  />
+                    </div>
+                    <div class="collumn">
+                        <label>City</label>
+                        <input nz-input formControlName="City" />
+                    </div>
+                    <div class="collumn">
+                        <label>Adress</label>
+                        <input nz-input formControlName="Adress" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="collumn">
+                        <label>Contact</label>
+                        <input nz-input type="tel" maxlength="20" formControlName="Contact" />
+                    </div>
+                    <div class="collumn">
+                        <label>Tax ID</label>
+                        <input nz-input style="width: 250px;" maxlength="20" formControlName="TaxID"  (keypress)="FormatNumb($event)"/>
+                    </div>
+                    <div class="collumn">
+                        <label>Postal Code</label>
+                        <input nz-input formControlName="PostalCode" />
+                    </div>
+                </div>
+                <div class="separator"></div>
+                <div class="row">
+                    <div class="collumn">
+                        <label>Work Hours</label>
+                        <nz-input-number formControlName="WorkHours" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"></nz-input-number>
+                    </div>
+                    <div class="collumn">
+                        <label>Work Hour Limit</label>
+                        <nz-input-number formControlName="WorkHourLimit" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"></nz-input-number>
+                    </div>
+                    <div class="collumn">
+                        <label>Pay Per Hour</label>
+                        <nz-input-number formControlName="PayPerHour" [nzMin]="0" [nzSize]="'large'"></nz-input-number>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="collumn">
+                        <label>Meal Allowance</label>
+                        <nz-input-number formControlName="MealAllowance" [nzMin]="0" [nzSize]="'large'"></nz-input-number>
+                    </div>
+                    <div class="collumn">
+                        <label>Extra Pay</label>
+                        <nz-input-number formControlName="ExtraPay" [nzMin]="0" [nzSize]="'large'"></nz-input-number>
+                    </div>
+                    <div class="collumn">
+                        <label>Extra Pay Minute Rate</label>
+                        <nz-input-number formControlName="ExtraPayMinuteRate" [nzMin]="1" [nzSize]="'large'"></nz-input-number>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="collumn">
+                        <label>Currency</label>
+                        <nz-select nzShowSearch formControlName="Currency" style="width: 100px;" nzSize="large">
+                            @for (CurrencyCode of CurrencyCodes; track $index){
+                                <nz-option [nzValue]="CurrencyCode.code" [nzLabel]="CurrencyCode.code"></nz-option>
+                            }
+                        </nz-select>
+                    </div>
+                </div>
+
+                <button style="width: 50%;" nz-button nzType="primary" nzShape="round" [disabled]="!FieldsChanged()" (click)="SaveSettings()"
+                    [nzLoading]="ModifyingSettings" class="aself-center" nzSize="large">Save</button>
+            </form>
+
+            <br>
+        </div>
+
+        <div class="separator vertical"></div>
+
+        <div class="collumn">
+            <h1>{{'Appearance' | translate}}</h1>
+
+            <h2>Language</h2>
+            <nz-select nzShowSearch ngModel="{{CurrentLanguage}}" (ngModelChange)="ChangeLanguage($event)"
+                style="width: 250px;" [ngModelOptions]="{standalone:true}">
+                @for (Language of AppSettings.Languages; track $index){
+                    @let LanguageInfo = AppSettings.LanguageInfo[Language];
+                        <nz-option nzCustomContent [nzLabel]="Language" [nzValue]="LanguageInfo.language_code">
+                            <img class="flag"
+                                [src]="'https://flagpedia.net/data/flags/h80/'+LanguageInfo.flag_code+'.png'"
+                                (click)="ChangeLanguage(Language)">
+                                {{Language}}
+                </nz-option>
+                }
+            </nz-select>
+
+            <br>
+            <br>
+
+            <h2>{{'Theme' | translate}}</h2>
+            <div class="themes-container">
+                @for (Theme of Themes; track $index){
+                    <div class="theme-card">
+                        <div class="row vcenter">
+                            <input class="radio" type="radio" (ngModelChange)="ThemeService.setTheme(Theme.Key)"
+                                [(ngModel)]="ThemeService.Theme" [value]="Theme.Key">
+                            <br>
+                            <label class="header">{{Theme.DisplayName |translate}} </label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</page-layout>

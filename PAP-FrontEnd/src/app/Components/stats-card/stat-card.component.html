@@ -7,7 +7,7 @@
                 <label>{{FormatCallback(StatTotalValue)}}</label>
             }@else {
                 @if (FormatType == 'currency'){
-                    <label>{{StatTotalValue | currency:'USD':'symbol':'1.0-2'}}</label>
+                    <label>{{StatTotalValue | dcurrency}}</label>
                 }@else{
                     <label>{{StatTotalValue}}</label>
                 }
@@ -69,7 +69,8 @@
                 [legend]="ChartOptions.legend || {}" [markers]="ChartOptions.markers || {}"
                 [fill]="ChartOptions.fill || {}" [labels]="ChartOptions.labels || []"
                 [subtitle]="ChartOptions.subtitle || {}" [theme]="ChartOptions.theme || {}"
-                [responsive]="ChartOptions.responsive || []" [plotOptions]="ChartOptions.plotOptions || {}">
+                [responsive]="ChartOptions.responsive || []" [plotOptions]="ChartOptions.plotOptions || {}"
+                [annotations]="ChartOptions.annotations || {}">
             </apx-chart>
         }@else {
             <no-data>

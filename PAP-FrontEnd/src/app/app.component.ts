@@ -34,7 +34,8 @@ export class AppComponent {
     const LanguageCode = localStorage.getItem('language') || 'en'
     translate.use(LanguageCode);
 
-    translate.addLangs(this.ThemeService.Languages);
+    const MappedLanguages = Object.values(AppSettings.LanguageInfo).map((lang)=>lang.language_code)
+    translate.addLangs(MappedLanguages);
   }
 
 

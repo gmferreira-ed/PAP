@@ -1,15 +1,33 @@
-
 ::ng-deep body {
     transition: background-color 0.2s ease-in;
 }
 
-.themes-container{
+.layout{
+    display: flex;
+    padding: 24px;
+
+    form{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    > .collumn{
+        width: 50%;
+    }
+     > .separator{
+        margin: 50px;
+    }
+}
+
+.themes-container {
     display: flex;
     justify-content: start;
     flex-wrap: wrap;
     gap: 30px;
 }
-.theme-card{
+
+.theme-card {
     width: 270px;
     height: 300px;
 
@@ -21,16 +39,29 @@
     box-shadow: 0px 0px 10px 2px var(--shadow-color);
 }
 
-.languages{
+.languages {
     display: flex;
     flex-wrap: wrap;
     gap: 10px
 }
-.flag{
-    width: 50px;
-    height: 50px;
+
+.flag {
+    width: 25px;
+    height: 25px;
     object-fit: contain;
 
     pointer-events: all;
-    cursor:pointer;
+    cursor: pointer;
+}
+
+
+
+.settings {
+    .row {
+        gap: 100px;
+        margin-top: 10px;
+    }
+    .collumn{
+        gap: 5px;
+    }
 }

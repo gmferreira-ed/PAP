@@ -48,6 +48,7 @@ var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
         Category: EndpointAttributes.Category || 'General',
         TypeLabel: EndpointAttributes.TypeLabel,
         Unprotected: EndpointAttributes.Unprotected,
+        Root: EndpointAttributes.Root,
         Permissions: [],
         Summary: EndpointAttributes.Summary,
       }
@@ -117,7 +118,6 @@ function VerifyUserCode(Request: ExpressRequest) {
   }
 }
 
-
 async function CheckPermissions(Route: string, Request: Request, ParamUser?: string) {
 
   const User = (ParamUser || Request.session.user) as string
@@ -136,8 +136,8 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
     }
   }
 
-  const IsAuthEndpoint = Route.includes('auth')
-  if (IsAuthEndpoint){
+  const IsRootEndpoint = Route.includes('auth')
+  if (IsRootEndpoint){
     return [true]
   }
 
@@ -148,7 +148,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
   }
 
 
-  if (User) {
+  if (User || EndpointData.Root) {
     try {
 
       if (EndpointData?.Unprotected){

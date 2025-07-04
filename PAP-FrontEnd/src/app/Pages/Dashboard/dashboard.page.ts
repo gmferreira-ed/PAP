@@ -4,7 +4,7 @@ import { RestaurantLayout } from "../../Components/layout/layout.component";
 import { AtendanceViewer } from "../../Components/attendance/attendance";
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { UserCard } from "../../Components/user-card/user-card";
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { DurationPipe } from '../../Pipes/duration.pipe';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
@@ -13,6 +13,7 @@ import GlobalUtils from '../../Services/GlobalUtils';
 import { IconsModule } from "../../Components/icon/icon.component";
 import { NoDataComponent } from '../../Components/no-data/no-data';
 import { OrdersService } from '../../Services/Orders.service';
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 type BestSeller = {
   name: string
@@ -21,9 +22,9 @@ type BestSeller = {
 @Component({
   selector: 'dashboard-page',
   imports: [PageLayoutComponent, RestaurantLayout, AtendanceViewer, ScrollingModule, UserCard, DatePipe, DurationPipe, LoadingScreen,
-    CurrencyPipe, IconsModule, NoDataComponent],
+    DynamicCurrencyPipe, IconsModule, NoDataComponent],
   templateUrl: './dashboard.page.html',
-  styleUrl: './dashboard.page.less'
+  styleUrl: './dashboard.page.less',
 })
 export class DashboardPage {
 
@@ -99,9 +100,13 @@ export class DashboardPage {
     const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', 'Failed to load reservations', {
       StartDate: GlobalUtils.ToSQLDate(this.Now),
       EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
-    })
+    }) as [any[]]
+
     if (Reservations) {
-      this.Reservations = Reservations
+      this.Reservations = Reservations.filter((Reservation)=>{
+        const ReservTimestamp = new Date(Reservation.date).getTime()
+        return this.Now.getTime()<ReservTimestamp
+      })
     }
 
 

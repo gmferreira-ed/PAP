@@ -85,6 +85,7 @@ fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
                 Category:AttributesObject.category,
                 TypeLabel:AttributesObject.type_label,
                 Unprotected:AttributesObject.unprotected=='true',
+                Root:AttributesObject.root=='true',
                 Summary:AttributesObject.summary
             }
         }

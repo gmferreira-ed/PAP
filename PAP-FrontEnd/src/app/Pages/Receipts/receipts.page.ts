@@ -5,15 +5,16 @@ import { HttpService } from '../../Services/Http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { LoadingScreen } from '../../Components/loading-screen/loading-screen.component';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
 import { ReceiptComponent } from "../../Components/receipt/receipt.component";
 import { IconsModule } from "../../Components/icon/icon.component";
+import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 
 @Component({
   selector: 'receipts-page',
-  imports: [PageLayoutComponent, NzTableModule, LoadingScreen, DatePipe, TranslatePipe, CurrencyPipe, StatusTagComponent, ReceiptComponent, IconsModule],
+  imports: [PageLayoutComponent, NzTableModule, LoadingScreen, DatePipe, TranslatePipe, DynamicCurrencyPipe, StatusTagComponent, ReceiptComponent, IconsModule],
   templateUrl: './receipts.page.html',
   styleUrl: './receipts.page.less'
 })

@@ -131,9 +131,9 @@
                 <stat-card StatName="Salary" [StatTotalValue]='TotalFinalPay' [ShowChartTimeOptions]="false"
                     [ShowTimeNavigation]="true" ViewType="Month" (ViewTypeChanged)="SalaryRangeChanged($event)"
                     FormatType="currency">
-                        <label>Work hours: {{TotalNormalPay | currency}}</label>
-                        <label>Extra work hours: {{TotalExtraPay | currency}}</label>
-                        <label>Meal allowance: {{TotalMealAllowance | currency}}</label>
+                        <label>Work hours: {{TotalNormalPay | dcurrency}}</label>
+                        <label>Extra work hours: {{TotalExtraPay | dcurrency}}</label>
+                        <label>Meal allowance: {{TotalMealAllowance | dcurrency}}</label>
                 </stat-card>
             </div>
 

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { UsersPage } from './Pages/Users/users.page';
 import { MenuPage } from './Pages/Menu/menu.page';
-import { UserSettingsPage } from './Pages/UserSettings/user-settings.page';
+import { SettingsPage } from './Pages/Settings/settings.page';
 import { StocksPage } from './Pages/Stocks/stocks.page';
 import { ProfilePage } from './Pages/Profile/profile.page';
 import { LoginPage } from './Pages/Login/login.page';
@@ -13,7 +13,6 @@ import { LayoutEditorPage } from './Pages/LayoutEditor/layout-editor.page';
 import { CheckoutPage } from './Pages/Orders/checkout.page';
 import { SchedulePage } from './Pages/Reservations/schedule.page';
 import { RoleManagementPage } from './Pages/RoleManager/role-manager.page';
-import { RestaurantSettingsPage } from './Pages/RestaurantSettings/restaurant-settings.page';
 import { TestsPage } from './Pages/Tests/tests.page';
 import { ErrorPage } from './Pages/Error/error.page';
 
@@ -107,8 +106,7 @@ export const routes: Routes = [
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
     { path: 'error', component: ErrorPage,  data: { NoLogin: true } },
 
-    { path: 'user-settings', component: UserSettingsPage, canActivate: [PageAuthGuard] },
-    { path: 'restaurant-settings', component: RestaurantSettingsPage, canActivate: [PageAuthGuard] },
+    { path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard] },
 
     {
         path: '**',

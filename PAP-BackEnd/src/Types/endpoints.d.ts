@@ -5,6 +5,7 @@ interface EndpointAttributes {
     Category?:string
     TypeLabel?:string
     Unprotected?: boolean
+    Root?: boolean
     Summary:string
 }
 
@@ -15,6 +16,7 @@ interface EndpointData {
     DisplayName: string
     TypeLabel?:string
     Unprotected?: boolean
+    Root?: boolean
     Permissions: string[]
     Summary:string
 }
