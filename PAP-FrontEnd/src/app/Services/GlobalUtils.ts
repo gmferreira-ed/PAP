@@ -1,4 +1,5 @@
 import { AbstractControl, FormGroup } from "@angular/forms";
+import { ApexChartOptions } from "../../types/apex-chart";
 
 function randomString(length = 8): string {
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -12,6 +13,32 @@ function randomString(length = 8): string {
 function randomNumber(min = 0, max = 1000): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+export var DefaultChartOptions: Partial<ApexChartOptions> = {
+  chart: {
+    type: 'area',
+    toolbar: { show: false },
+    height: '100%',
+    width: '100%'
+  },
+  markers: {
+    size: 0
+  },
+  dataLabels: {
+    enabled: false
+  },
+  tooltip: {
+    x: {
+      format: "dd MMM yyyy"
+    }
+  },
+  xaxis: {
+    tooltip: {
+      enabled: false
+    },
+    type: 'datetime',
+  },
+}
+
 
 const GlobalUtils = {
     ObjectInfo(obj: Record<string, Record<string, any>>): any[] {

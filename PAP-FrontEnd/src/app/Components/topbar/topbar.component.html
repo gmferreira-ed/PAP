@@ -14,9 +14,9 @@
                     <icon type="account" [fill]="true"></icon>
                     Profile
                 </div>
-                <div class="option" [routerLink]="'/user-settings'">
-                    <icon type="settings" [fill]="true"></icon>
-                    Settings
+                <div class="option" (click)="Reload()">
+                    <icon type="refresh-ccw" [fill]="false"></icon>
+                    Refresh
                 </div>
                 <div class="option" (click)="Logout()">
                     <icon type="logout" [fill]="true"></icon>

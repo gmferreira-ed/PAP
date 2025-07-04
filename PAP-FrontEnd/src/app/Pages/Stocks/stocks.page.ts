@@ -18,7 +18,7 @@ import { AppSettings } from '../../Services/AppSettings';
 import { StocksService } from '../../Services/Stocks.service';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import GlobalUtils from '../../Services/GlobalUtils';
+import GlobalUtils, { DefaultChartOptions } from '../../Services/GlobalUtils';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { EditableDirective } from '../../Directives/editable-field.directive';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
@@ -43,31 +43,6 @@ import { UFile } from '../../../types/ufile';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
-var DefaultChartOptions: Partial<ApexChartOptions> = {
-  chart: {
-    type: 'area',
-    toolbar: { show: false },
-    height: '100%',
-    width: '100%'
-  },
-  markers: {
-    size: 0
-  },
-  dataLabels: {
-    enabled: false
-  },
-  tooltip: {
-    x: {
-      format: "dd MMM yyyy"
-    }
-  },
-  xaxis: {
-    tooltip: {
-      enabled: false
-    },
-    type: 'datetime',
-  },
-}
 
 
 type StockTotalData = {
@@ -303,7 +278,7 @@ export class StocksPage {
 
   async CreateInventoryReport() {
     this.ReportingInventory = true
-    
+
     const [ReportResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'inventory-reports', 'POST', 'Failed to submit inventory report',
       { items: this.InventoryReportItems })
 
@@ -406,7 +381,7 @@ export class StocksPage {
     OrderItem.cost = StockItem.purchase_price * OrderItem.quantity
   }
 
-  SetTemplateImage(Event: Event, StockItem?: StockItem|ItemReport) {
+  SetTemplateImage(Event: Event, StockItem?: StockItem | ItemReport) {
     const ImageEl = (Event.target as HTMLImageElement)
 
     StockItem = StockItem || this.SelectedStockItem!
@@ -515,8 +490,16 @@ export class StocksPage {
     chart: {
       ...DefaultChartOptions.chart,
       type: 'bar',
-      height: '100%',
       width: '100%',
+      height: '',
+      stacked: true
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+            borderRadius: 4,
+            borderRadiusApplication: 'end',
+      }
     },
     series: []
   } as ApexChartOptions
@@ -547,8 +530,9 @@ export class StocksPage {
     const StockItemNames: string[] = [];
 
     for (const StockItem of this.StocksService.StockItems) {
-      StockItemsDistributionQuantitySeries.push(purchaseStats[StockItem.name]?.totalQuantity || 0);
-      StockItemsDistributionSpentSeries.push(purchaseStats[StockItem.name]?.totalSpent || 0);
+      const ItemStats = purchaseStats[StockItem.name]
+      StockItemsDistributionQuantitySeries.push(ItemStats?.totalQuantity || 0);
+      StockItemsDistributionSpentSeries.push(ItemStats?.totalSpent || 0);
       StockItemNames.push(StockItem.name);
     }
 
@@ -757,10 +741,10 @@ export class StocksPage {
     }
   }
 
-  GetOrdersInfo(StockItem:StockItem){  
+  GetOrdersInfo(StockItem: StockItem) {
     const FilteredItems = StockItem.Orders && StockItem.Orders.filter((order) => {
       const OrderDate = new Date(order.order_date)
-      return  OrderDate >= this.OrdersStartDate && OrderDate <= this.OrdersEndDate
+      return OrderDate >= this.OrdersStartDate && OrderDate <= this.OrdersEndDate
     });
     let Expenses = 0
     let Received = 0
@@ -770,7 +754,7 @@ export class StocksPage {
         Received += PurchaseOrderItem.quantity;
       }
     }
-    return {expenses:Expenses, received:Received};
+    return { expenses: Expenses, received: Received };
   }
 
   async CalculateItemStats(item: StockItem) {

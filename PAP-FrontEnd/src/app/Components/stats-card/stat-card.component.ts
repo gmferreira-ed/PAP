@@ -3,12 +3,13 @@ import { Component, inject, HostBinding, Input, input, Output, EventEmitter, Ele
 import { ApexXAxis, ChartComponent, NgApexchartsModule, XAxisAnnotations } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
 import { NoDataComponent } from '../no-data/no-data';
+import { IconsModule } from "../icon/icon.component";
 
 
 
 @Component({
   selector: 'stat-card',
-  imports: [CurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet],
+  imports: [CurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet, IconsModule, DatePipe],
 
   templateUrl: 'stat-card.component.html',
   styleUrl: 'stat-card.component.less'
@@ -19,37 +20,72 @@ export class StatCardComponent {
   @Input() StatName?: string
   @Input() StatTotalValue?: number
   @Input() FormatType?: 'currency'
+  @Input() FormatCallback?: Function
 
   @Input() ChartOptions?: ApexChartOptions
+  @Input() TimeOptions: string[] = ['Week', 'Month', 'Year', 'All']
   @Input() ChartsTimeOptions: { [key: string]: Partial<ApexXAxis> } = {}
-  @Input() ShowChartTimeOptions = true
 
-  @ViewChild("Chart", { static: false, read:ElementRef }) Chart!: ElementRef;
+  @Input() ShowChartTimeOptions = true
+  @Input() ShowTimeNavigation = true
+
+  @ViewChild("Chart", { static: false, read: ElementRef }) Chart!: ElementRef;
 
   @Input() ViewType = 'All'
   @Output() ViewTypeChanged = new EventEmitter<[number?, number?]>();
+
+  @Input() DateRange: [number?, number?] = [0, 0]
+
+  DateStart = new Date()
 
   UpdateChartView(ViewType: string) {
     this.ViewType = ViewType
     const ViewTypeInfo = this.ChartsTimeOptions[ViewType]!
 
-    this.ChartOptions!.xaxis = {
-      ...this.ChartOptions!.xaxis,
-      min: ViewTypeInfo.min,
-      max: ViewTypeInfo.max,
+    if (this.ChartOptions) {
+      this.ChartOptions.xaxis = {
+        ...this.ChartOptions!.xaxis,
+        min: ViewTypeInfo.min,
+        max: ViewTypeInfo.max,
+      }
     }
 
     this.ViewTypeChanged.emit([ViewTypeInfo.min, ViewTypeInfo.max])
+    this.DateRange = [ViewTypeInfo.min, ViewTypeInfo.max]
   }
 
-  GetObjectKeys = Object.keys
+  NavigateDate(direction: number) {
+    const date = new Date(this.DateStart);
+    switch (this.ViewType) {
+      case 'Day':
+        date.setDate(date.getDate() + (direction === 1 ? 1 : -1));
+        break;
+      case 'Week':
+        date.setDate(date.getDate() + (direction === 1 ? 7 : -7));
+        break;
+      case 'Month':
+        date.setMonth(date.getMonth() + (direction === 1 ? 1 : -1));
+        break;
+      case 'Year':
+        date.setFullYear(date.getFullYear() + (direction === 1 ? 1 : -1));
+        break;
+      default:
+        return;
+    }
+    this.DateStart = date;
+    this.UpdateTimeOptions();
+  }
 
-  ngOnInit(){
-     const today = new Date();
+  GetChartOptions(ViewType: string): Partial<ApexXAxis> {
+    return this.ChartsTimeOptions[ViewType]
+  }
+
+  UpdateTimeOptions() {
+    const today = this.DateStart;
+    today.setHours(0, 0, 0, 0);
 
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay() + 1);
-    weekStart.setHours(0, 0, 0, 0);
 
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
@@ -61,7 +97,17 @@ export class StatCardComponent {
     const yearStart = new Date(today.getFullYear(), 0, 1);
     const yearEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
 
+    const DayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
+    const DayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
     this.ChartsTimeOptions = {
+      "Day": {
+        min: DayStart.getTime(),
+        max: DayEnd.getTime(),
+        labels: {
+          format: 'HH:mm',
+        }
+      },
       "Week": {
         min: weekStart.getTime(),
         max: weekEnd.getTime(),
@@ -92,12 +138,17 @@ export class StatCardComponent {
       }
     }
 
-    this.UpdateChartView(this.ViewType)
+    if (this.ViewType != 'All') {
+      this.UpdateChartView(this.ViewType)
+    }
+  }
+  ngOnInit() {
+    this.UpdateTimeOptions()
   }
 
-    // Chart scroll error fix
+  // Chart scroll error fix
   ngAfterViewInit() {
-    if (this.Chart && this.Chart.nativeElement) {
+    if (this.Chart && this.Chart.nativeElement && this.ChartOptions?.chart.type != 'bar') {
       this.Chart.nativeElement.addEventListener('wheel', (e: Event) => {
         e.preventDefault();
       }, { passive: false });

@@ -1,12 +1,16 @@
 <section class="row space-between">
     <header>
-        
+
         <!-- VALUE -->
         <ng-template #StatTotal>
-            @if (FormatType == 'currency'){
-                <label>{{StatTotalValue | currency:'USD':'symbol':'1.0-2'}}</label>
-            }@else{
-                <label>{{StatTotalValue}}</label>
+            @if (FormatCallback){
+                <label>{{FormatCallback(StatTotalValue)}}</label>
+            }@else {
+                @if (FormatType == 'currency'){
+                    <label>{{StatTotalValue | currency:'USD':'symbol':'1.0-2'}}</label>
+                }@else{
+                    <label>{{StatTotalValue}}</label>
+                }
             }
         </ng-template>
 
@@ -27,14 +31,33 @@
             <ng-container *ngTemplateOutlet="StatTotal"></ng-container>
         }
     </header>
-    @if (ShowChartTimeOptions){
-        <div class="row viewbuttons">
-            @for (ButtonViewType of GetObjectKeys(ChartsTimeOptions); track $index){
+    <div class="row viewbuttons">
+        @if (ShowTimeNavigation && ViewType!='All'){
+            @if (ViewType == 'Day'){
+                {{DateRange[0] | date:'dd MMMM yyyy'}}
+            }@if (ViewType == 'Week'){
+                {{DateRange[0] | date:'dd MMM yy'}}
+                -
+                {{DateRange[1] | date:'dd MMM yy'}}
+            }@if (ViewType == 'Month'){
+                {{DateStart | date:'MMMM yyyy'}}
+            }@if (ViewType == 'Year'){
+                {{DateStart | date:'yyyy'}}
+            }
+            <button class="button transparent block" (click)="NavigateDate(-1)">
+                <icon type="arrow-left"></icon>
+            </button>
+            <button class="button transparent block" (click)="NavigateDate(1)">
+                <icon type="arrow-right"></icon>
+            </button>
+        }
+        @if (ShowChartTimeOptions){
+            @for (ButtonViewType of TimeOptions; track $index){
                 <button class="button" (click)="UpdateChartView(ButtonViewType)"
                     [class.selected]="ButtonViewType == ViewType">{{ButtonViewType}}</button>
             }
-        </div>
-    }
+        }
+    </div>
 </section>
 <div class="content">
     @if (ChartOptions){
@@ -46,14 +69,18 @@
                 [legend]="ChartOptions.legend || {}" [markers]="ChartOptions.markers || {}"
                 [fill]="ChartOptions.fill || {}" [labels]="ChartOptions.labels || []"
                 [subtitle]="ChartOptions.subtitle || {}" [theme]="ChartOptions.theme || {}"
-                [responsive]="ChartOptions.responsive || []">
+                [responsive]="ChartOptions.responsive || []" [plotOptions]="ChartOptions.plotOptions || {}">
             </apx-chart>
         }@else {
             <no-data>
                 <ng-content>
-                    
                 </ng-content>
             </no-data>
         }
+    }@else {
+        <div class="ngcontent">
+            <ng-content>
+            </ng-content>
+        </div>
     }
 </div>

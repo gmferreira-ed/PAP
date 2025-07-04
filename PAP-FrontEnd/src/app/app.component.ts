@@ -56,9 +56,9 @@ export class AppComponent {
       this.InputBuffer = ''
       if (CardID) {
 
-        console.log(CardID)
+        console.log('Scanned', CardID)
+        this.CardService.OnScan.emit(CardID)
         if (!this.CardService.PromptingCardRead) {
-          this.CardService.OnScan.emit(CardID)
           const [EntryResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'entries', 'POST', 'Error logging card entry', {
             card_id: CardID
           })
@@ -73,17 +73,14 @@ export class AppComponent {
               this.ErrorSound.play()
             }
             return
+          } else {
+            this.NotificationService.error('Error', 'There was an issue reading the provided card, please try again')
+            this.ErrorSound.play()
           }
-        } else {
-          this.CardService.OnScan.emit(CardID)
-          this.ScanSound.play()
-          return
         }
 
       }
 
-      this.NotificationService.error('Error', 'There was an issue reading the provided card, please try again')
-      this.ErrorSound.play()
 
 
     } else {

@@ -15,6 +15,7 @@ import { SchedulePage } from './Pages/Schedule/schedule.page';
 import { RoleManagementPage } from './Pages/RoleManager/role-manager.page';
 import { RestaurantSettingsPage } from './Pages/RestaurantSettings/restaurant-settings.page';
 import { TestsPage } from './Pages/Tests/tests.page';
+import { ErrorPage } from './Pages/Error/error.page';
 
 
 export const routes: Routes = [
@@ -104,7 +105,13 @@ export const routes: Routes = [
 
     { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
+    { path: 'error', component: ErrorPage,  data: { NoLogin: true } },
 
     { path: 'user-settings', component: UserSettingsPage, canActivate: [PageAuthGuard] },
     { path: 'restaurant-settings', component: RestaurantSettingsPage, canActivate: [PageAuthGuard] },
+
+    {
+        path: '**',
+        redirectTo: 'dashboard'
+    }
 ];

@@ -5,11 +5,13 @@ import { IconsModule } from '../icon/icon.component';
 import { LoadingScreen } from '../loading-screen/loading-screen.component';
 import { AppSettings } from '../../Services/AppSettings';
 import { HttpService } from '../../Services/Http.service';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 
 @Component({
   selector: 'attendance-view',
-  imports: [DatePipe, NoDataComponent, IconsModule, LoadingScreen],
+  imports: [DatePipe, NoDataComponent, IconsModule, LoadingScreen, NzToolTipModule, ScrollingModule],
 
   templateUrl: 'attendance.html',
   styleUrl: 'attendance.less'
@@ -20,32 +22,63 @@ export class AtendanceViewer {
   @Input() SelectedUser: Signal<User | null> = signal(null)
   @Input() AwaitUser = false
 
-  UserEntries: any = []
+  @Input() UserEntries: any = []
+  @Output() UserEntriesChange = new EventEmitter()
+
   LoadingEntries = true
 
   HttpService = inject(HttpService)
 
   UserImagesURL = AppSettings.UserImagesURL
+  AppSettings = AppSettings
 
   async LoadUserEntries() {
     this.LoadingEntries = true
 
-    const [UserEntries] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'entries', 'GET', 'Failed to load user attendance', {
+    let [UserEntries] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'entries', 'GET', 'Failed to load user attendance', {
       userid: this.SelectedUser()?.userid,
       page_size: 6,
     }) as [any[]]
 
+
     if (UserEntries) {
-      this.UserEntries = UserEntries.map((EntryInfo: any) => ({
+      UserEntries = UserEntries.map((EntryInfo: any) => ({
         ...EntryInfo,
         action: EntryInfo.action.charAt(0).toUpperCase() + EntryInfo.action.slice(1),
         timestamp: new Date(EntryInfo.timestamp)
       }))
+      this.UserEntries = UserEntries
+      this.UserEntriesChange.emit(UserEntries)
     }
 
     this.LoadingEntries = false
   }
 
+
+  constructor() {
+    effect(() => {
+      if (this.SelectedUser()) {
+        this.LoadUserEntries()
+      }
+    })
+  }
+
+  async ngOnInit() {
+    if (!this.AwaitUser) {
+      this.LoadUserEntries()
+    }
+
+    const EntriesWebsocket = await this.HttpService.ConnectToWebsocket('entries')
+    EntriesWebsocket.OnMessage = (Message, Data) => {
+      const CurrentUserInfo = this.SelectedUser()
+      if (!CurrentUserInfo || Data.userid == CurrentUserInfo?.userid) {
+        this.LoadUserEntries()
+      }
+    }
+  }
+
+
+  // Utils
   GetFormmatedTime(to: Date = new Date()): string {
     const fromDate = new Date();
     const diffInSeconds = Math.floor((fromDate.getTime() - to.getTime()) / 1000);
@@ -68,26 +101,5 @@ export class AtendanceViewer {
     return fromDate.toISOString().split('T')[0];
   }
 
-  constructor() {
-    effect(() => {
-      this.LoadUserEntries()
-    })
-  }
-
-  async ngOnInit() {
-    setTimeout(() => {
-      if (!this.AwaitUser) {
-        this.LoadUserEntries()
-      }
-    }, 1);
-
-    const EntriesWebsocket = await this.HttpService.ConnectToWebsocket('entries')
-    EntriesWebsocket.OnMessage = (Message, Data) => {
-      const CurrentUserInfo = this.SelectedUser()
-      if (!CurrentUserInfo || Data.userid == CurrentUserInfo?.userid) {
-        this.LoadUserEntries()
-      }
-    }
-  }
 }
 

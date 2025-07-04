@@ -79,12 +79,17 @@
   }
 
   &.block {
-    aspect-ratio: 1 / 1;
+  padding: 10px 10px;
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  &.text , &.transparent{
+    background-color: transparent;
+    border: unset;
   }
 }
 

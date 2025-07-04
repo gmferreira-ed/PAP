@@ -15,6 +15,7 @@
         <thead>
             <tr>
                 <th>{{'Name'| translate}}</th>
+                <th>{{'Username'| translate}}</th>
                 <th>{{'Role'| translate}}</th>
                 <th>{{'Email'| translate}}</th>
                 <th>{{'Phone'| translate}}</th>
@@ -31,6 +32,7 @@
                             onerror="this.src='Images/Profile.png'">
                         <label>{{UserInfo.fullname}}</label>
                     </td>
+                    <td>{{UserInfo.username}}</td>
                     <td>{{UserInfo.role}}</td>
                     <td>{{UserInfo.email}}</td>
                     <td>{{UserInfo.phone}}</td>

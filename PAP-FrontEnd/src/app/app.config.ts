@@ -15,6 +15,7 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader'
 
 // Ng zorro language
 import { NZ_I18N, en_US} from 'ng-zorro-antd/i18n'
+import { ScrollingModule } from '@angular/cdk/scrolling'
 
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>

@@ -19,12 +19,13 @@
     </div>
 
     <div class="menu-container">
-        <div class="menu-items">
-            <div class="menu-item" (click)="OpenUploadModel()">
+        <div class="menu-items" cdkDropList cdkDropListOrientation="mixed">
+            <div class="menu-item" (click)="OpenUploadModel()" style="order: -98237498726;">
                 <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)" />
             </div>
             @for (MenuItem of GetFilteredMenuItems(); track $index) {
-                <div class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
+                <div cdkDrag (cdkDragDropped)="ChangeProductOrder($event)"
+                class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
                     <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'"
                         class="menu-item-image-container">
 
@@ -35,6 +36,10 @@
                             <nz-icon nzType="eye" />
                         </button>
                     </div>
+
+                    <floating-container style="right: 0px; top: 0px;">
+                        <button nz-button cdkDragHandle nzType="text" nzSize="small"><nz-icon nzType="menu"></nz-icon></button>
+                    </floating-container>
                 </div>
             }
         </div>

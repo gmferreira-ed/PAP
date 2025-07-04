@@ -5,114 +5,143 @@
         [Fullscreen]="false">
     </loading-screen>
 
-    <div class="profile-page-layout">
-        <div class="profile-layout">
+    <div class="container" style="gap: 24px;">
+        <div class="user-info">
 
             <div class="user-image-container">
-                <img [src]="FileSelector.Files[0]?.imagebase64 || UserImagesURL+User()?.username"
-                    onerror="this.src='Images/Profile.png'" class="pfp">
-                <div class="overlay invisible">
-                    <file-select #FileSelector [override]="true" UploadDisplayMode="none"
-                        [disabled]="CurrentUser() == User()" (FilesChange)="ChangeUserImage($event)">
-                        <label>{{'Edit Image' | translate}}</label>
-                        <nz-icon nzType="edit"></nz-icon>
-                    </file-select>
-                </div>
-                @if (UploadingImage){
-                    <loading-screen LoaderStyle="Spinner" [IsLoading]="UploadingImage"></loading-screen>
+                @if (User()){
+                    <img [src]="FileSelector.Files[0]?.imagebase64 || UserImagesURL+User()?.username"
+                        onerror="this.src='Images/Profile.png'" class="pfp">
+                    <div class="overlay invisible">
+                        <file-select #FileSelector [override]="true" UploadDisplayMode="none"
+                            [disabled]="CurrentUser() == User()" (FilesChange)="ChangeUserImage($event)">
+                            <label>{{'Edit Image' | translate}}</label>
+                            <nz-icon nzType="edit"></nz-icon>
+                        </file-select>
+                    </div>
+                    @if (UploadingImage){
+                        <loading-screen LoaderStyle="Spinner" [IsLoading]="UploadingImage"></loading-screen>
+                    }
                 }
             </div>
 
-            <div class="profile-collumn" style="padding-left: 5px; justify-content: space-between;">
-                <div class="profile-collumn">
+            <div class="info collumn" style="height: 100%;">
+
+
+                <div class="collumn">
                     <div class="row wrap">
                         <label class="fullname">{{User()?.fullname}}</label>
+
+                        <!-- BUTTONS -->
                         <div class="row fill wrap" style="justify-content: end;">
                             @if (User()?.active){
-                            <button nz-button nzType="primary" [disabled]="User()?.username == CurrentUser()">
-                                <nz-icon nzType="security-scan" nzTheme="outline" />
-                                Change Permissions
-                            </button>
+                                <button nz-button nzType="primary" [disabled]="User()?.username == CurrentUser()">
+                                    <nz-icon nzType="security-scan" nzTheme="outline" />
+                                    Change Permissions
+                                </button>
 
-
-                            <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus" [disabled]="User()?.username== CurrentUser()">
-                                <nz-icon nzType="user-delete" nzTheme="outline" />
-                                Deactivate User
-                            </button>
+                                <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus"
+                                    [disabled]="User()?.username== CurrentUser()">
+                                    <nz-icon nzType="user-delete" nzTheme="outline" />
+                                    Deactivate User
+                                </button>
                             }@else {
-                            <button nz-button class="row green border" (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus">
-                                <icon type="user-round-check"></icon>
-                                Activate User
-                            </button>
+                                <button nz-button class="row green border" (click)="ToggleUserStatus()"
+                                    [nzLoading]="TogglingUserStatus">
+                                    <icon type="user-round-check"></icon>
+                                    Activate User
+                                </button>
                             }
                         </div>
                     </div>
+
+                    <!-- USERNAME / ROLE -->
                     <label class="username">{{User()?.username}} - {{User()?.role}}</label>
                 </div>
 
 
-                <div class="profile-row">
-                    <div class="profile-collumn">
+                <!-- USER INFO -->
+                <div class="row wrap user-info-fields" style="width: 100%;">
+                    <div class="collumn">
                         <label class="info-label">{{'Email' | translate }}</label>
                         <label id="email">{{User()?.email}}</label>
                     </div>
 
-                    <div class="profile-collumn">
+                    <div class="collumn">
                         <label class="info-label">{{'Phone Number' | translate }}</label>
                         <label id="phone">{{User()?.phone}}</label>
                     </div>
 
-                    <div class="profile-collumn">
+                    <div class="collumn">
                         <label class="info-label">{{'Register Date' | translate }}</label>
                         <label>{{User()?.created | date: 'longDate'}}</label>
                     </div>
 
                     @if (User()?.address){
-                    <div class="profile-collumn">
-                        <label class="info-label">Address</label>
-                        <label>{{User()?.address}} {{User()?.city}} {{User()?.country}} {{User()?.postalcode}}</label>
-                    </div>
+                        <div class="collumn">
+                            <label class="info-label">Address</label>
+                            <label>{{User()?.address}} {{User()?.city}} {{User()?.country}}
+                                {{User()?.postalcode}}</label>
+                        </div>
                     }
                 </div>
 
             </div>
         </div>
 
-        <div class="row space-between" style="width: 100%;">
-            <section class="action-card" style="min-width: 20%; max-height: 200px; min-height: 100%;">
-                <attendance-view [SelectedUser]="User" [AwaitUser]="true"></attendance-view>
+        <div class="user-stats">
+            <section class="action-card attendance-card">
+                <attendance-view (UserEntriesChange)="EntriesChanged($event)" [SelectedUser]="User"
+                    [AwaitUser]="true"></attendance-view>
             </section>
 
-            <section class="action-card" style="min-width: 30%; height: 100%;">
-                <label class="title">
-                    Keycard
-                </label>
+            <div class="collumn" style="width: 25%;">
+                <section class="action-card keycard-card" style="min-width: 30%;">
+                    <label class="title">
+                        Keycard
+                    </label>
 
-                <div class="collumn center vcenter fill">
-                    @let CardID = User()?.card_id;
+                    <div class="collumn center vcenter fill">
+                        @let CardID = User()?.card_id;
                     @if (CardID){
-                    <div class="card green border flex row center">
-                        <icon class="green" type="shield-check" size="35"
-                            style="position: absolute; left:5px; top: 5px;"></icon>
-                        <label style="position: absolute; right: 10px; bottom: 10px;">{{CardID}}</label>
-                        <button nz-button nzDanger="" (click)="RemoveCard()">Disassociate</button>
+                            <div class="card green border flex row center">
+                                <icon class="green" type="shield-check" size="35"
+                                    style="position: absolute; left:5px; top: 5px;"></icon>
+                                <label style="position: absolute; right: 10px; bottom: 10px;">{{CardID}}</label>
+                                <button nz-button nzDanger [nzLoading]="DisassociatingCard"
+                                    (click)="RemoveCard()">Disassociate</button>
+                            </div>
+                        }@else {
+                            <icon type="no-card" size="50"></icon>
+                            <label>This user has no keycard attributed</label>
+                            <div class="row" (click)="CardService.PromptingCardRead = true">
+                                <button class="button">
+                                    <icon type="credit-card" color="black"></icon>
+                                    New User Card
+                                </button>
+                                <button class="button">
+                                    <icon type="keytag"></icon>
+                                    New Key Tag
+                                </button>
+                            </div>
+                        }
                     </div>
-                    }@else {
-                    <icon type="no-card" size="50"></icon>
-                    <label>This user has no keycard attributed</label>
-                    <div class="row" (click)="CardService.PromptingCardRead = true">
-                        <button class="button">
-                            <icon type="credit-card" color="black"></icon>
-                            New User Card
-                        </button>
-                        <button class="button">
-                            <icon type="keytag"></icon>
-                            New Key Tag
-                        </button>
-                    </div>
-                    }
-                </div>
-            </section>
+                </section>
+
+                <stat-card StatName="Salary" [StatTotalValue]='TotalFinalPay' [ShowChartTimeOptions]="false"
+                    [ShowTimeNavigation]="true" ViewType="Month" (ViewTypeChanged)="SalaryRangeChanged($event)"
+                    FormatType="currency">
+                        <label>Work hours: {{TotalNormalPay | currency}}</label>
+                        <label>Extra work hours: {{TotalExtraPay | currency}}</label>
+                        <label>Meal allowance: {{TotalMealAllowance | currency}}</label>
+                </stat-card>
+            </div>
+
+            <stat-card StatName="Total Work Hours" #WorkHoursChart [TimeOptions]="['Day', 'Week', 'Month', 'All']"
+                [ChartOptions]="ShiftChartOptions" [StatTotalValue]='TotalHours'
+                (ViewTypeChanged)="EntriesChanged(this.UserEntries, $event)" [FormatCallback]="FormatTotal">
+
+            </stat-card>
         </div>
     </div>
 
@@ -121,10 +150,10 @@
 </page-layout>
 
 @if (CardService.PromptingCardRead){
-<div class="overlay" [class.invisible]="!CardService.PromptingCardRead">
-    <!-- <icon type="keytag" size="200" [fill]="true" color="white"></icon> -->
-    <ng-lottie [options]="CardAnimationOptions" width="300" height="300"></ng-lottie>
-    <h2 style="color: var(--secondary-color);">Please pass the card or key tag over the reader</h2>
-    <button nz-button (click)="CardService.PromptingCardRead=false">Cancel</button>
-</div>
+    <div class="overlay" [class.invisible]="!CardService.PromptingCardRead">
+        <!-- <icon type="keytag" size="200" [fill]="true" color="white"></icon> -->
+        <ng-lottie [options]="CardAnimationOptions" width="300" height="300"></ng-lottie>
+        <h2 style="color: var(--secondary-color);">Please pass the card or key tag over the reader</h2>
+        <button nz-button (click)="CardService.PromptingCardRead=false">Cancel</button>
+    </div>
 }

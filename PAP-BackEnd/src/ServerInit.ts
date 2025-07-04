@@ -47,7 +47,7 @@ const SessionMiddleware = session({
 // MIDDLEWARE SETUP
 const Server = express();
 Server.use(cors({
-  origin: ['http://localhost:5000', 'http://localhost:7000', 'http://192.168.1.99:5000'],
+  origin: ['http://localhost:5000',  'http://192.168.1.99:5000', 'http://172.22.224.1:5000'],
   credentials: true,
 }))
 Server.use(express.json())

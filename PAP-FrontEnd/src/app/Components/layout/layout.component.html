@@ -150,7 +150,7 @@
                 [style.background-size]="100*Zoom + 'px '+100*Zoom + 'px'"></div>
 
             <!-- GRID -->
-            @if (GridVisible){
+            @if (GridVisible && EditMode){
             <div class="background grid" [style.background-size]="Snapping*Zoom + 'px '+Snapping*Zoom + 'px'"></div>
             }
 

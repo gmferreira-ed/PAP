@@ -5,3 +5,35 @@
     height: 100px;
     max-height: 100%;
 }
+
+
+
+.entry {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 0.5px solid;
+  border-radius: 10px;
+
+  margin-bottom: 10px;
+
+  height: 90px;
+
+  .picture {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 5px;
+  }
+
+  &.Entry {
+    background-color: color-mix(in srgb, var(--success-color), transparent 80%);
+    border-color: var(--success-color);
+  }
+
+  &.Exit {
+    background-color: color-mix(in srgb, var(--error-color), transparent 80%);
+    border-color: var(--error-color);
+  }
+}

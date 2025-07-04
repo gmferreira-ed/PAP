@@ -77,6 +77,8 @@ export class AuthService {
 
     } else if (!ActivateRoute.data['NoLogin'] && ErrorInfo?.ErrorCode == 401) {
       this.router.navigate(['/login'])
+    }else{
+        this.router.navigate(['/error'])
     }
     return [null, {}]
   }

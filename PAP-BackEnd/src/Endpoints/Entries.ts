@@ -14,17 +14,21 @@ const EntriesWebsocket = new ExpressWebSocketServer('/entries')
  * @method GET
  */
 Router.get('/entries', HandleEndpointFunction(async (req, res) => {
-    const [InitialEntriesQuery, InitialEntriesValues] = SQLUtils.BuildSelectQuery('attendance', 
+    const [InitialEntriesQuery, InitialEntriesValues] = SQLUtils.BuildSelectQuery('attendance',
         req.query,
         ['attendance.userid'],
         ['attendance.entryid', 'attendance.userid', 'attendance.action', 'attendance.timestamp', 'users.fullname', 'users.username'],
-        'JOIN users ON attendance.userid = users.userid  '
+        'JOIN users ON attendance.userid = users.userid  ', ' ORDER BY timestamp DESC'
     )
 
-    console.log(InitialEntriesQuery)
-    const Entries  = await GetPaginatedResult('attendance', InitialEntriesQuery, InitialEntriesValues, req.query, undefined, ' ORDER BY timestamp DESC')
-    
-    res.send(Entries.Rows)
+    let Entries
+    if (req.query.page) {
+        Entries = await GetPaginatedResult('attendance', InitialEntriesQuery, InitialEntriesValues, req.query, undefined, ' ORDER BY timestamp DESC')
+    } else {
+        [Entries] = await Database.execute(InitialEntriesQuery, InitialEntriesValues)
+    }
+
+    res.send(Entries)
 }));
 
 
@@ -45,7 +49,7 @@ Router.post('/entries', HandleEndpointFunction(async (req, res) => {
     const User = UserInfo?.fullname
     let IsEntry = true
 
-    if (User){
+    if (User) {
         const LastEntryQuery = `SELECT action FROM attendance WHERE userid = ? ORDER BY timestamp DESC LIMIT 1`
         const [EntryResult] = await Database.execute<any>(LastEntryQuery, [UserInfo.userid])
         const LastEntry = EntryResult[0]
@@ -58,7 +62,7 @@ Router.post('/entries', HandleEndpointFunction(async (req, res) => {
 
         EntriesWebsocket.SendGlobalMessage(ActionType, UserInfo)
     }
-    res.send({user:User, is_entry:IsEntry})
+    res.send({ user: User, is_entry: IsEntry })
 }));
 
 

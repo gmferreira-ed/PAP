@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Renderer2, signal } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
@@ -18,21 +18,22 @@ import { TranslateModule } from '@ngx-translate/core';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { FileSelectComponent } from "../../Components/file-selector/file-select.component";
-import { CdkDrag, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { UFile } from '../../../types/ufile';
+import { FloatingContainer } from "../../Components/floating-container/floating-container";
 
 
 @Component({
   selector: 'menu-page',
   imports: [PageLayoutComponent, CurrencyPipe, NzSegmentedModule, NzInputModule, NzButtonModule,
     NzDrawerModule, TranslateModule, NzSwitchModule, NzTableModule,
-    CdkDropList, NzToolTipModule,
+    CdkDropList, NzToolTipModule, CdkDropList, CdkDrag, CdkDragHandle,
     NzSkeletonModule, NzModalModule, NzFormModule, NzSelectModule, NzIconModule, FormsModule,
-    CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen],
+    CommonModule, ReactiveFormsModule, FileSelectComponent, LoadingScreen, FloatingContainer],
   templateUrl: './menu.page.html',
   styleUrl: './menu.page.less'
 })
@@ -46,6 +47,7 @@ export class MenuPage {
   ModalService = inject(NzModalService)
   MenuService = inject(MenuService)
   MessageService = inject(NzMessageService)
+  Renderer = inject(Renderer2)
   HttpService = inject(HttpService)
 
 
@@ -144,6 +146,21 @@ export class MenuPage {
       await this.MenuService.SetImage(Product.name, File)
       Product.ImageURL = File.imagebase64
     }
+  }
+
+  async ChangeProductOrder(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.MenuProducts, event.previousIndex, event.currentIndex);
+
+    this.MenuProducts.forEach((product, index) => {
+      product.order = index + 1;
+    });
+
+    const [OrderUpdate] = await this.HttpService.MakeRequest(
+      AppSettings.APIUrl + 'menu/order',
+      'PATCH',
+      'Failed to update menu order',
+      { order: this.MenuProducts.map(item => ({ id: item.id, order: item.order })) }
+    );
   }
 
   async DeleteItem() {

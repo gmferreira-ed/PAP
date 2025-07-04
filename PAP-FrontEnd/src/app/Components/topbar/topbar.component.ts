@@ -34,4 +34,8 @@ export class Topbar {
       this.User.set(null)
     }
   }
+
+  Reload(){
+    window.location.reload()
+  }
 }

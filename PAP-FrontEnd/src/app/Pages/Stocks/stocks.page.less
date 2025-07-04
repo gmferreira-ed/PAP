@@ -206,12 +206,12 @@
 .general-view {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 47%);
     gap: 16px;
     padding: 24px;
     max-height: 100%;
     height: 100%;
-    overflow-y:scroll;
+    overflow-y:auto;
     align-items: stretch;
     justify-items: stretch;
     grid-template-areas:
@@ -280,6 +280,9 @@ nz-table {
 
 .purchase-distribution {
     grid-area: purchase;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
 
     ::ng-deep apx-chart {
         flex: 1;
