@@ -1,10 +1,121 @@
 <page-layout>
-    <div class="row" style="width: 100%; height: 50%;">
-        <div class="action-card" style="width: 70%; height: 100%; aspect-ratio: 1 / 1;">
-            <restaurant-layout></restaurant-layout>
+    <div class="collumn dashboard">
+        <div class="row" style="width: 100%; height: 50%;">
+            <div class="action-card" style="width: 70%; height: 100%; aspect-ratio: 1 / 1;">
+                <restaurant-layout></restaurant-layout>
+            </div>
+            <div class="action-card fill" style="height: 100%;">
+                <attendance-view #AttendanceView (UserEntriesChange)="LoadWorkingStaff($event)"></attendance-view>
+            </div>
         </div>
-        <div class="action-card fill" style="height: 100%;">
-            <attendance-view></attendance-view>
+        <div class="row" style="width: 100%; height: 45%;">
+            <div class="action-card fill" style="height: 100%;">
+                <h1>Best Sellers</h1>
+                <section class="content">
+                    @for (RevenueInfo of CategorizedRevenue; track $index){
+                        <div class="revenue-category">
+                            <h3>{{RevenueInfo.category || 'Others'}} - {{RevenueInfo.product_name}}</h3>
+                            <div class="row fill align-start">
+                                <img [src]="MenuImagesURL+RevenueInfo.product_name">
+                                <div class="collumn">
+                                    <div class="row">
+                                        <label>Revenue: </label>
+                                        <span>{{RevenueInfo.total_revenue | currency}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <label>Quantity Sold: </label>
+                                        <span>{{RevenueInfo.total_quantity_sold}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="separator"></div>
+                    }@empty {
+                        <no-data>You have no sales, for now</no-data>
+                    }
+                </section>
+                <loading-screen [IsLoading]="LoadingRevenue"></loading-screen>
+            </div>
+            <div class="collumn fill" style="height: 100%;">
+                <div class="action-card" style="height: 40%;">
+                    <h1>Today's Revenue</h1>
+                    <section>
+                        <div class="row revenue">
+                            <icon type="arrow-up" size="24"></icon>
+                            <h1 style="margin-bottom: 0px;">{{Revenue | currency}}</h1>
+                        </div>
+                    </section>
+                    <loading-screen [IsLoading]="LoadingRevenue"></loading-screen>
+                </div>
+                <div class="action-card fill">
+                    <h1>Tables</h1>
+                    <section>
+                        <div class="row">
+                            <h3>Available: 
+                                <span style="color: var(--success-color);">
+                                    {{AvailableTables}}
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="row" >
+                            <h3>Occupied: 
+                                <span style="color: var(--error-color);">
+                                    {{OccupiedTables}}
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="row">
+                            <h3>Total: {{TotalTables}}</h3>
+                        </div>
+                    </section>
+                </div>
+                <loading-screen [IsLoading]="LoadingTables"></loading-screen>
+            </div>
+            <div class="action-card fill" style="height: 100%;">
+                <h1>Reservations</h1>
+                <section class="content">
+                    @for (Reservation of Reservations; track $index){
+                        @let ReservationTimestamp = Date(Reservation.date).getTime();
+                        @if (ReservationTimestamp > Now.getTime() ){
+                            <div class="collumn reservation">
+                                <div class="row space-between">
+                                    <label class="table">
+                                        Table {{Reservation.tableid}}
+                                    </label>
+                                    <label class="guests">
+                                        {{Reservation.guest_count}} Guests
+                                    </label>
+                                </div>
+                                <div class="row space-between">
+                                    <label class="date">
+                                        {{Reservation.date | date:'HH:mm'}}
+                                    </label>
+                                    <label class="caption">
+                                        {{ReservationTimestamp-Now.getTime() | duration}}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="separator" style="margin: 0;"></div>
+                        }
+                    }@empty {
+                        <no-data>There are no reservations for today</no-data>
+                    }
+                </section>
+            </div>
+            <div class="action-card fill" style="height: 100%;">
+                <h1>Working Staff</h1>
+                <section class="content">
+                    @for (EntryInfo of WorkingStaff; track $index){
+                        <user-card [UserData]="EntryInfo">
+                            <label>{{Now.getTime()-EntryInfo.timestamp.getTime() | duration}}</label>
+                        </user-card>
+                        <div class="separator" style="margin: 0px;"></div>
+                    }@empty {
+                        <no-data>There is no staff working</no-data>
+                    }
+                </section>
+                <loading-screen [IsLoading]="AttendanceView.LoadingEntries"></loading-screen>
+            </div>
         </div>
     </div>
 </page-layout>

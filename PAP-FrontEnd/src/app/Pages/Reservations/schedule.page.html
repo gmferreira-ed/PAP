@@ -184,7 +184,7 @@
                             @if (Day.getDate() == Reservation.date.getDate() ){
                                 <div class="reservation">
                                     <label class="table">{{'Table'|translate}} {{Reservation.tableid}}</label>
-                                    <label class="time"> - {{Reservation.date|date:'hh:mm'}}</label>
+                                    <label class="time"> - {{Reservation.date|date:'HH:mm'}}</label>
                                 </div>
                             }
                         }

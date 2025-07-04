@@ -38,7 +38,6 @@ export class OrdersService {
       }
     }
 
-    console.log(ReservationsMap)
     return ReservationsMap
   }, 10)
 

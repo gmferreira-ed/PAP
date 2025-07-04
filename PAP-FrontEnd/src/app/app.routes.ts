@@ -11,7 +11,7 @@ import { DashboardPage } from './Pages/Dashboard/dashboard.page';
 import { ReceiptsPage } from './Pages/Receipts/receipts.page';
 import { LayoutEditorPage } from './Pages/LayoutEditor/layout-editor.page';
 import { CheckoutPage } from './Pages/Orders/checkout.page';
-import { SchedulePage } from './Pages/Schedule/schedule.page';
+import { SchedulePage } from './Pages/Reservations/schedule.page';
 import { RoleManagementPage } from './Pages/RoleManager/role-manager.page';
 import { RestaurantSettingsPage } from './Pages/RestaurantSettings/restaurant-settings.page';
 import { TestsPage } from './Pages/Tests/tests.page';

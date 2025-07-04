@@ -63,6 +63,7 @@
 
   &:hover {
     opacity: 0.8;
+
     &.sucess {
       box-shadow: 0px 0px 6px 0px color-mix(in srgb, var(--success-color), transparent 50%);
     }
@@ -79,7 +80,7 @@
   }
 
   &.block {
-  padding: 10px 10px;
+    padding: 10px 10px;
   }
 
   &:disabled {
@@ -87,7 +88,8 @@
     cursor: not-allowed;
   }
 
-  &.text , &.transparent{
+  &.text,
+  &.transparent {
     background-color: transparent;
     border: unset;
   }
@@ -138,6 +140,7 @@
   box-shadow: 0px 0px 5px 0px var(--shadow-color);
   border: 1px solid var(--border-color);
 
+
   &:has(> header) {
     padding: 0px;
   }
@@ -175,6 +178,24 @@
   .value {
     margin-top: 2px;
     font-size: 16px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
   }
 }
 

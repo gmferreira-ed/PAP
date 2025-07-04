@@ -156,7 +156,7 @@ export class RestaurantLayout {
 
   LayoutAPI = AppSettings.APIUrl + 'layout/'
 
-  DefaultViewportSize = new Vector2(1250, 1250)
+  DefaultViewportSize = new Vector2(2000, 2000)
 
 
   @Input() History: HistoryAction[] = [];

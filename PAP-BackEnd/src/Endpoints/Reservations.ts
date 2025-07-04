@@ -27,7 +27,7 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
     } else if (Query.StartDate) {
         ReservationsQuery += 'WHERE DATE(?) = DATE(`date`)'
     }
-
+    ReservationsQuery += `ORDER BY date ASC`
 
 
     const [Reservations] = await Database.execute<any>(ReservationsQuery, Values)

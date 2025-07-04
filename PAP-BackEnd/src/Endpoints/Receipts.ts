@@ -15,13 +15,33 @@ Router.get('/receipts', HandleEndpointFunction(async (req, res) => {
 
     const QueryParams = req.query
 
-    const OrdersQuery = `SELECT * FROM orders `
-
-    const Data = await GetPaginatedResult('orders', OrdersQuery, [], QueryParams, 100, 'ORDER BY created_at DESC')
+    let OrdersQuery = `SELECT * FROM orders `
 
 
-    res.send(Data)
 
+    if (QueryParams.page) {
+        const Data = await GetPaginatedResult('orders', OrdersQuery, [], QueryParams, 100, 'ORDER BY created_at DESC')
+        res.send(Data)
+    } else {
+
+        const Values: any[] = []
+        const Conditions = []
+        if (req.query.StartDate) {
+            Conditions.push('orders.created_at >= ?')
+            Values.push(req.query.StartDate)
+        }
+        if (req.query.EndDate) {
+            Conditions.push('orders.created_at <= ?')
+            Values.push(req.query.EndDate)
+        }
+
+        if (Conditions.length > 0){
+            OrdersQuery += 'WHERE '+Conditions.join(' AND ')
+        }
+
+        const [Data] = await Database.execute(OrdersQuery, Values)
+        res.send(Data)
+    }
 }))
 
 /**
@@ -33,8 +53,9 @@ Router.get('/receipts', HandleEndpointFunction(async (req, res) => {
 Router.get('/receipts/id', HandleEndpointFunction(async (req, res) => {
 
     const ReceiptID = req.query.id
+    const Values: any[] = [ReceiptID]
 
-    const OrderInfoQuery = `SELECT 
+    let OrderInfoQuery = `SELECT 
     orders.*, 
     item.*, 
     orders.order_id as id, 
@@ -46,9 +67,11 @@ Router.get('/receipts/id', HandleEndpointFunction(async (req, res) => {
     LEFT JOIN order_items item ON item.order_id = orders.order_id
     LEFT JOIN menu menu_item ON menu_item.id = item.product_id
     LEFT JOIN users user ON user.userid = orders.created_by
-    WHERE  orders.order_id = ?`
+    WHERE  orders.order_id = ? `
 
-    const [OrderItems] = await Database.execute(OrderInfoQuery, [ReceiptID]) as any[]
+
+
+    const [OrderItems] = await Database.execute(OrderInfoQuery, Values) as any[]
 
     const OrderData = OrderItems[0]
     if (OrderData) {
@@ -57,13 +80,13 @@ Router.get('/receipts/id', HandleEndpointFunction(async (req, res) => {
             id: OrderData.id,
             order_id: OrderData.order_id,
             tableid: OrderData.tableid,
-            
+
             TIN: OrderData.TIN,
             total_price: OrderData.total_price,
             amount_paid: OrderData.amount_paid,
             payment_method: OrderData.payment_method,
             discount: OrderData.discount,
-            
+
             created_at: OrderData.created_at,
             created_by: OrderData.created_by,
             checked_out_at: OrderData.checked_out_at,
