@@ -1,19 +1,25 @@
 export interface PermissionInfo {
   Enabled?: boolean, // Just for easier switch component manipulation
   Changing?: boolean,
-  TypeLabel?:string,  
   PermissionType: string,
   Summary: string,
   PermissionLevels: string[]
 }
 
+export interface UserRole{
+  name:string
+  administrator:boolean
+  permission_level:number
+  locked?:boolean
+}
+
 export interface EndpointData {
-  Endpoint: string,
+  ID: string,
   DisplayName: string,
   Category: string,
-  TypeLabel?:string,
   Summary: string,
-  PermissionTypes: PermissionInfo[]
+  Changing?:boolean
+  PermissionLevels: any[]
 }
 
 export interface EndpointCategory {

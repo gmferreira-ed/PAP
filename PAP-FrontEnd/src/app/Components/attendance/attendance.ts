@@ -7,11 +7,12 @@ import { AppSettings } from '../../Services/AppSettings';
 import { HttpService } from '../../Services/Http.service';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { AuthService } from '../../Services/Auth.service';
 
 
 @Component({
   selector: 'attendance-view',
-  imports: [DatePipe, NoDataComponent, IconsModule, LoadingScreen, NzToolTipModule, ScrollingModule],
+  imports: [DatePipe, NoDataComponent, IconsModule, LoadingScreen, NzToolTipModule, ScrollingModule, NoDataComponent],
 
   templateUrl: 'attendance.html',
   styleUrl: 'attendance.less'
@@ -28,6 +29,7 @@ export class AtendanceViewer {
   LoadingEntries = true
 
   HttpService = inject(HttpService)
+  AuthService = inject(AuthService)
 
   UserImagesURL = AppSettings.UserImagesURL
   AppSettings = AppSettings
@@ -35,7 +37,13 @@ export class AtendanceViewer {
   async LoadUserEntries() {
     this.LoadingEntries = true
 
-    let [UserEntries] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'entries', 'GET', 'Failed to load user attendance', {
+
+    let URL = AppSettings.APIUrl + 'entries/'
+    if (this.SelectedUser()?.userid) {
+      URL += 'user'
+    }
+
+    let [UserEntries] = await this.HttpService.MakeRequest(URL, 'GET', 'Failed to load user attendance', {
       userid: this.SelectedUser()?.userid,
       page_size: 6,
     }) as [any[]]

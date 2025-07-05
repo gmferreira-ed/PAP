@@ -24,8 +24,7 @@ export const routes: Routes = [
     {
         path: 'users', component: UsersPage, canActivate: [PageAuthGuard], data: {
             ViewEndpoint: 'api/users',
-            CreateEndpoint: 'api/users',
-            UpdateEndpoint: 'api/users',
+            ModifyEndpoint: 'api/users',
         }
     },
 
@@ -33,8 +32,7 @@ export const routes: Routes = [
     {
         path: 'menu', component: MenuPage, canActivate: [PageAuthGuard], data: {
             ViewEndpoint: 'api/menu',
-            CreateEndpoint: 'api/menu',
-            UpdateEndpoint: 'api/menu',
+            ModifyEndpoint: 'api/menu',
         }
     },
 
@@ -44,7 +42,8 @@ export const routes: Routes = [
 
     {
         path: 'reservations', component: SchedulePage, canActivate: [PageAuthGuard], data: {
-            CreateEndpoint: 'api/reservations',
+            ViewEndpoint: 'api/reservations',
+            ModifyEndpoint: 'api/reservations',
         }
     },
 
@@ -52,12 +51,19 @@ export const routes: Routes = [
         path: 'stocks/:itemid',
         component: StocksPage,
         canActivate: [PageAuthGuard],
-        data: { CreateEndpoint: 'api/stocks' }
+        data: {
+            ViewEndpoint: 'api/stocks',
+            ModifyEndpoint: 'api/stocks'
+        }
     },
     {
         path: 'stocks',
         redirectTo: 'stocks/',  // redirect to the same route with optional param
-        pathMatch: 'full'
+        pathMatch: 'full',
+        data: {
+            ViewEndpoint: 'api/stock-items',
+            ModifyEndpoint: 'api/stocks-items'
+        }
     },
 
 
@@ -66,20 +72,33 @@ export const routes: Routes = [
         path: 'receipts/:id',
         component: ReceiptsPage,
         canActivate: [PageAuthGuard],
+        data: {
+            ViewEndpoint: 'api/receipts',
+            ModifyEndpoint: 'api/receipts'
+        }
     },
     {
         path: 'receipts',
         redirectTo: 'receipts/',  // redirect to the same route with optional param
-        pathMatch: 'full'
-    },
-
-    
-    {
-        path: 'orders', component: CheckoutPage, canActivate: [PageAuthGuard], data: {
-            CreateEndpoint: 'api/orders',
+        pathMatch: 'full',
+        data: {
+            ViewEndpoint: 'api/receipts',
+            ModifyEndpoint: 'api/receipts'
         }
     },
-    { path: 'checkout/:table', component: CheckoutPage, canActivate: [PageAuthGuard] },
+
+
+    {
+        path: 'orders', component: CheckoutPage, canActivate: [PageAuthGuard], data: {
+            ViewEndpoint: 'api/orders',
+            ModifyEndpoint: 'api/orders',
+        }
+    },
+    {
+        path: 'checkout/:table', component: CheckoutPage, canActivate: [PageAuthGuard], data: {
+            ModifyEndpoint: 'api/orders',
+        }
+    },
 
 
 
@@ -87,14 +106,14 @@ export const routes: Routes = [
 
     {
         path: 'role-management', component: RoleManagementPage, canActivate: [PageAuthGuard], data: {
-            CreateEndpoint: 'api/role-permissions',
+            ModifyEndpoint: 'api/role-permissions',
         }
     },
 
 
     {
         path: 'layout-editor', component: LayoutEditorPage, canActivate: [PageAuthGuard], data: {
-            CreateEndpoint: 'api/layout',
+            ModifyEndpoint: 'api/layout',
         }
     },
 
@@ -102,11 +121,13 @@ export const routes: Routes = [
     { path: 'profile/:username', component: ProfilePage, canActivate: [PageAuthGuard] },
 
 
-    { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
+    { path: 'login', component: LoginPage, canActivate: [PageAuthGuard] },
     { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { NoLogin: true } },
-    { path: 'error', component: ErrorPage,  data: { NoLogin: true } },
+    { path: 'error', component: ErrorPage, data: { NoLogin: true } },
 
-    { path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard] },
+    {
+        path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard]
+    },
 
     {
         path: '**',

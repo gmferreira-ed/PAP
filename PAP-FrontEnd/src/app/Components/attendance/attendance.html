@@ -1,21 +1,24 @@
 <label class="title">
     Attendance
 </label>
-<cdk-virtual-scroll-viewport itemSize="90" class="collumn scroll" style="height: 100%;">
-    <div *cdkVirtualFor="let Entry of UserEntries; let i = index;" [class]="'entry '+Entry.action">
-        <div class="collumn fill">
-            <div class="row space-between" style="gap: 0px;">
-                <div class="row">
-                    <icon [type]="Entry.action"></icon>
-                    <label style="font-size: 16px; font-weight: 500;">{{Entry.action}}</label>
 
-                </div>
-                <div class="row">
-                    @let LastEntry = UserEntries[i+1];
+<loading-screen [IsLoading]="LoadingEntries" LoaderStyle="Spinner"></loading-screen>
+@if (UserEntries.length > 0){
+    <cdk-virtual-scroll-viewport itemSize="90" class="collumn scroll" style="height: 100%;">
+        <div *cdkVirtualFor="let Entry of UserEntries; let i = index;" [class]="'entry '+Entry.action">
+            <div class="collumn fill">
+                <div class="row space-between" style="gap: 0px;">
+                    <div class="row">
+                        <icon [type]="Entry.action"></icon>
+                        <label style="font-size: 16px; font-weight: 500;">{{Entry.action}}</label>
+
+                    </div>
+                    <div class="row">
+                        @let LastEntry = UserEntries[i+1];
                         @let Length = LastEntry && LastEntry.action == 'Entry' 
                         && (Entry.timestamp.getTime()-LastEntry.timestamp.getTime()) / 1000 / 60 / 60;
                         <!-- {{Length}} -->
-                        @if (Length > AppSettings.WorkHourLimit){
+                    @if (Length > AppSettings.WorkHourLimit){
                         <icon style="pointer-events: all;"
                             nz-tooltip="This shift was unusually long and past work hours." type="triangle-alert"
                             [color]="'rgb(255, 150,0)'"></icon>
@@ -27,18 +30,17 @@
                             <label class="name">{{FirstName}} {{LastName}}</label>
                     <img class="picture" [src]="UserImagesURL+Entry.username">
                     }
+                    </div>
+                </div>
+                <div class="row space-between">
+                    <label>{{Entry.timestamp | date:'HH:mm'}}</label>
+                    <label>{{Entry.timestamp | date:'dd MMMM yyyy'}}</label>
                 </div>
             </div>
-            <div class="row space-between">
-                <label>{{Entry.timestamp | date:'HH:mm'}}</label>
-                <label>{{Entry.timestamp | date:'dd MMMM yyyy'}}</label>
-            </div>
         </div>
-        @if (UserEntries.length == 0) {
-            @if (!LoadingEntries){
-                <no-data>This user has no entries</no-data>
-            }@else {
-                <loading-screen [IsLoading]="LoadingEntries" LoaderStyle="Spinner"></loading-screen>
-            }
-        }
-    </div>
+    </cdk-virtual-scroll-viewport>
+    }@else {
+    @if (!LoadingEntries){
+        <no-data>There are no registered entries</no-data>
+    }
+    }

@@ -132,7 +132,7 @@
             <button class="button block" nzType="default" (click)="CenterLayout()">
                 <icon type="locate"></icon>
             </button>
-            @if (!SelectionMode){
+            @if (!SelectionMode && CanEditLayout){
                 <button class="button block" nzType="default" routerLink="/layout-editor">
                     <icon type="pencil"></icon>
                 </button>

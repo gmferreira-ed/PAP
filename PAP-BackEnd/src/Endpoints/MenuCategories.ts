@@ -4,10 +4,11 @@ import { Database, HandleEndpointFunction } from '../Globals'
 
 
 /**
- * @displayname "Menu Categories"
+ * @displayname "View Menu Categories"
+ * @category "Menu"
  * @path /menu/categories
  * @method GET
- * @summary "View categories"
+ * @summary "View all menu categories"
  * @unprotected true
  */
 Router.get('/menu/categories', HandleEndpointFunction(async (req, res) => {
@@ -18,11 +19,12 @@ Router.get('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Add Menu Category"
+ * @displayname "Create/Modify Menu Categories"
  * @category "Menu"
- * @summary "Create a new menu category"
+ * @summary "Create new menu categories and delete existing ones"
  * @path /menu/categories
  * @method POST
+ * @connected POST/api/menu
  */
 Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
 
@@ -41,6 +43,7 @@ Router.post('/menu/categories', HandleEndpointFunction(async (req, res) => {
  * @summary "Delete a menu category"
  * @path /menu/categories
  * @method DELETE
+ * @connected POST/api/menu
  */
 Router.delete('/menu/categories', HandleEndpointFunction(async (req, res) => {
     const body = req.body

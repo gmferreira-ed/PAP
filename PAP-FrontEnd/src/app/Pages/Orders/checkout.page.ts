@@ -8,7 +8,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AppSettings } from '../../Services/AppSettings';
 import { IconsModule } from '../../Components/icon/icon.component';
-import {  DatePipe, NgTemplateOutlet } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { HttpService } from '../../Services/Http.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -23,14 +23,17 @@ import { MenuProductSelect } from "../../../shared/product-selector/product-sele
 import { ReceiptComponent } from "../../Components/receipt/receipt.component";
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { AuthService } from '../../Services/Auth.service';
 
 
 
 
 @Component({
   selector: 'checkout-page',
-  imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule, DynamicCurrencyPipe, NzInputNumberModule,
-    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule, NzFormModule, MenuProductSelect, 
+  imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule,
+    DynamicCurrencyPipe, NzInputNumberModule,
+    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule,
+    NzFormModule, MenuProductSelect,
     ReceiptComponent],
   templateUrl: './checkout.page.html',
   styleUrl: './checkout.page.less'
@@ -46,6 +49,7 @@ export class CheckoutPage {
   ActiveRoute = inject(ActivatedRoute)
   Router = inject(Router)
   OrdersService = inject(OrdersService)
+  AuthService = inject(AuthService)
 
 
   // Api URLS
@@ -69,6 +73,7 @@ export class CheckoutPage {
   PaymentMethods = ['Visa', 'Mastercard', 'MBWay', 'Cash']
 
   SelectedTable: null | any = null
+  CanModifyOrders = this.AuthService.HasEndpointPermission('orders', 'POST')
 
   // States
   ProcessingOrder = false
@@ -140,7 +145,7 @@ export class CheckoutPage {
     this.FinalizingCheckout = true
 
     const FormValues = this.CustomerInfoForm.value
-    const [Response] = await this.HttpService.MakeRequest(AppSettings.APIUrl+'checkout', 'POST', 'Failed to checkout', {
+    const [Response] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'checkout', 'POST', 'Failed to checkout', {
       products: this.OrderProducts,
       order_id: this.OrderInfo.order_id,
       payment_method: FormValues.payment_method,
@@ -191,7 +196,7 @@ export class CheckoutPage {
   }
 
   LeaveOrder() {
-    if (this.OrderProducts.length == 0) {
+    if (this.OrderProducts.length == 0 && this.CanModifyOrders) {
       this.MessageService.warning('You left an open table order with no items.\nTo cancel the order, click the cancel button')
     }
     if (this.CheckingOut) {
@@ -257,24 +262,30 @@ export class CheckoutPage {
 
     if (!ExistingOrder || ExistingOrder.length == 0) {
 
-      // CREATE AN ORDER
-      let [OrderInfo] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'POST', 'Could not create order', {
-        tableid: SelectedTable,
-      })
-      if (OrderInfo) {
-        // Order open sucess
-        this.OrderInfo = { order_id: OrderInfo.order_id, products: [] }
-        this.MessageService.info('Created a new order')
-        this.OrdersService.Tables.ResetExpiration()
+      if (this.CanModifyOrders) {
+        // CREATE AN ORDER
+        let [OrderInfo] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'POST', 'Could not create order', {
+          tableid: SelectedTable,
+        })
+        if (OrderInfo) {
+          // Order open sucess
+          this.OrderInfo = { order_id: OrderInfo.order_id, products: [] }
+          this.MessageService.info('Created a new order')
+          this.OrdersService.Tables.ResetExpiration()
+        }
+      } else {
+        this.MessageService.info('There are no open orders on this table')
       }
+
     } else {
 
       // USE EXISTING ORDER
       this.OrderInfo = ExistingOrder[0]
     }
 
-
-    this.OrderProducts = this.OrderInfo.products
+    if (this.OrderInfo) {
+      this.OrderProducts = this.OrderInfo.products
+    }
     this.ProcessingOrder = false
   }
 

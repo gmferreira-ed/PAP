@@ -82,12 +82,6 @@ function HandleEndpointFunction(EndpointFunction: AsyncEndpoint, DisplayServerEr
 
 let EndpointsAttributes:{[EndpointID: string]: EndpointAttributes} = {}
 
-const EndpointMatches:{[key: string]:string} = {
-  GET: 'VIEW',
-  PATCH: 'EDIT',
-  POST: 'CREATE',
-  DELETE: 'CREATE',
-}
 
 const EndpointRegex = '^(.*[^/*])$'
 
@@ -98,5 +92,4 @@ export {
   OrdersWebsocket,
   EndpointsAttributes,
   EndpointRegex,
-  EndpointMatches,
 };

@@ -6,11 +6,12 @@ import SQLUtils from '../Services/SQLUtils'
 
 
 /**
- * @displayname "Suppliers"
+ * @displayname "View Suppliers"
+ * @category "Suppliers"
  * @path /suppliers
  * @method GET
- * @summary "View suppliers"
- * @unprotected true
+ * @summary "View all stock suppliers and their contact information"
+ * @connected GET/api/stock-items
  */
 Router.get('/suppliers', HandleEndpointFunction(async (req, res) => {
     const SuppliersQuery = `SELECT * FROM suppliers`
@@ -19,9 +20,9 @@ Router.get('/suppliers', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Add Supplier"
- * @category "Suppliers"
- * @summary "Add a new supplier"
+ * @displayname "Create/Modify Suppliers"
+ * @category "Stocks"
+ * @summary "Create new suppliers and modify existing supplier information"
  * @path /suppliers
  * @method POST
  */
@@ -36,9 +37,10 @@ Router.post('/suppliers', HandleEndpointFunction(async (req, res) => {
 /**
  * @displayname "Update Supplier"
  * @category "Suppliers"
- * @summary "Update supplier information"
+ * @summary "Update supplier contact information and status"
  * @path /suppliers
  * @method PATCH
+ * @connected POST/api/suppliers
  */
 Router.patch('/suppliers', HandleEndpointFunction(async (req, res) => {
     const [Query, Values] = SQLUtils.BuildUpdateQuery('suppliers', [
@@ -48,17 +50,17 @@ Router.patch('/suppliers', HandleEndpointFunction(async (req, res) => {
     res.send()
 }))
 
-/**
- * @displayname "Delete Supplier"
- * @category "Suppliers"
- * @summary "Delete a supplier"
- * @path /suppliers
- * @method DELETE
- */
-Router.delete('/suppliers', HandleEndpointFunction(async (req, res) => {
-    const [Query, Values] = SQLUtils.BuildDeleteQuery('suppliers', req.body, ['id'])
-    const [Result] = await Database.execute(Query, Values)
-    res.send(Result)
-}))
+// /**
+//  * @displayname "Delete Supplier"
+//  * @category "Suppliers"
+//  * @summary "Delete a supplier"
+//  * @path /suppliers
+//  * @method DELETE
+//  */
+// Router.delete('/suppliers', HandleEndpointFunction(async (req, res) => {
+//     const [Query, Values] = SQLUtils.BuildDeleteQuery('suppliers', req.body, ['id'])
+//     const [Result] = await Database.execute(Query, Values)
+//     res.send(Result)
+// }))
 
 module.exports = Router

@@ -74,12 +74,14 @@ async function GetStockOrders(Fields: {}): Promise<StockOrder[]> {
 
     return FormattedStockOrders as StockOrder[]
 }
+
+
 /**
- * @displayname "Purchase Orders"
+ * @displayname "View Purchase Orders"
+ * @category "Stocks"
  * @path /stock-orders
  * @method GET
- * @summary "View purchase orders"
- * @unprotected true
+ * @summary "View all purchase orders with supplier and item details"
  */
 Router.get('/stock-orders', HandleEndpointFunction(async (req, res) => {
 
@@ -89,9 +91,9 @@ Router.get('/stock-orders', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Add Purchase Order"
- * @category "Purchase Orders"
- * @summary "Create a new purchase order with items"
+ * @displayname "Create/Modify Purchase Orders"
+ * @category "Stocks"
+ * @summary "Create new purchase orders and modify existing ones"
  * @path /stock-orders
  * @method POST
  */
@@ -125,9 +127,10 @@ Router.post('/stock-orders', HandleEndpointFunction(async (req, res) => {
 /**
  * @displayname "Update Purchase Order"
  * @category "Purchase Orders"
- * @summary "Update purchase order information"
+ * @summary "Update purchase order status and process received items"
  * @path /stock-orders
  * @method PATCH
+ * @connected POST/api/stock-orders
  */
 Router.patch('/stock-orders', HandleEndpointFunction(async (req, res) => {
     const OrderID = req.body.id

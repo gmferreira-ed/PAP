@@ -1,5 +1,5 @@
 import GlobalConfigs from '../Config/GlobalConfigs';
-import { Database, ErrorResponse, EndpointsAttributes, EndpointMatches, EndpointRegex } from '../Globals'
+import { Database, ErrorResponse, EndpointsAttributes, EndpointRegex } from '../Globals'
 import SimpleCache from "../../../PAP-FrontEnd/src/shared/SimpleCache"
 import nodemailer from 'nodemailer'
 const crypto = require('crypto');
@@ -21,16 +21,16 @@ var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
   const PermissionsQuery = `SELECT * FROM role_permissions ep`
   const [EndpointPermissionProfiles] = await Database.query<any>(PermissionsQuery);
 
-  const EndpointPermissionsObject: Record<string, string[]> = {};
+  const EndpointPermissionsObject: Record<string, string[]> = {} // Object with endpoints and the roles allowed to access it
 
   EndpointPermissionProfiles.forEach((info: any) => {
-    const id = `${info.method}/${info.endpoint}`;
+    const EndpointID = info.endpoint_id
 
-    if (!EndpointPermissionsObject[id]) {
-      EndpointPermissionsObject[id] = [];
+    if (!EndpointPermissionsObject[EndpointID]) {
+      EndpointPermissionsObject[EndpointID] = []
     }
 
-    EndpointPermissionsObject[id].push(info.role);
+    EndpointPermissionsObject[EndpointID].push(info.role)
   });
 
 
@@ -38,25 +38,22 @@ var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
 
   for (const [EndpointID, EndpointAttributes] of Object.entries(EndpointsAttributes)) {
 
-    const EndpointDBPermissions = EndpointPermissionsObject[EndpointID]
-    let EndpointInfo = FinalResult[EndpointID]
+    const EndpointDBPermissions = EndpointPermissionsObject[EndpointID] ||
+      (EndpointAttributes.Connected && EndpointPermissionsObject[EndpointAttributes.Connected])
 
-    if (!EndpointInfo) {
-      EndpointInfo = {
+    let EndpointData = FinalResult[EndpointID]
+
+    if (!EndpointData) {
+      EndpointData = {
         ID: EndpointID,
-        DisplayName: EndpointAttributes.DisplayName,
-        Category: EndpointAttributes.Category || 'General',
-        TypeLabel: EndpointAttributes.TypeLabel,
-        Unprotected: EndpointAttributes.Unprotected,
-        Root: EndpointAttributes.Root,
+        ...EndpointAttributes,
         Permissions: [],
-        Summary: EndpointAttributes.Summary,
       }
-      FinalResult[EndpointID] = EndpointInfo
+      FinalResult[EndpointID] = EndpointData
     }
 
     if (EndpointDBPermissions) {
-      EndpointInfo.Permissions = EndpointDBPermissions
+      EndpointData.Permissions = EndpointDBPermissions
     }
 
   }
@@ -123,7 +120,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
   const User = (ParamUser || Request.session.user) as string
 
   const Permissions: Endpoints = await EndpointsData.Get()
-  const EndpointData = Permissions[Route]
+  let EndpointData = Permissions[Route]
 
 
   // Support /* to include all endpoints after it
@@ -136,8 +133,12 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
     }
   }
 
-  const IsRootEndpoint = Route.includes('auth')
-  if (IsRootEndpoint){
+  if (EndpointData.Connected) {
+    EndpointData = Permissions[EndpointData.Connected]
+  }
+
+  const IsRootEndpoint = Route.includes('auth') || EndpointData.Root
+  if (IsRootEndpoint) {
     return [true]
   }
 
@@ -148,10 +149,12 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
   }
 
 
-  if (User || EndpointData.Root) {
+
+
+  if (User) {
     try {
 
-      if (EndpointData?.Unprotected){
+      if (EndpointData?.Unprotected) {
         return [true]
       }
 
@@ -185,9 +188,7 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
 async function PermissionsMiddleware(request: Request, response: Response, next: NextFunction): Promise<any> {
   const StartTS = Date.now()
 
-  const MethodMatch = EndpointMatches[request.method]
-
-  let Route = `${MethodMatch}${request.path}`
+  let Route = `${request.method}${request.path}`
   if (Route.endsWith('/')) {
     Route = Route.slice(0, -1);
   }

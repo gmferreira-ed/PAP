@@ -9,11 +9,11 @@ import fs from 'fs'
 
 
 /**
- * @displayname "Users"
+ * @displayname "View Users"
+ * @category "Users"
  * @path /users
  * @method GET
- * @summary "View all users and their info"
- * @unprotected true
+ * @summary "View all users and their info. Only administrators may view addresses"
  */
 Router.get('/users', HandleEndpointFunction(async (req, res) => {
     const query = req.query
@@ -35,6 +35,14 @@ Router.get('/users', HandleEndpointFunction(async (req, res) => {
 }))
 
 
+/**
+ * @displayname "View User by Username"
+ * @category "Users"
+ * @path /users/:user
+ * @method GET
+ * @summary "View specific user information by username"
+ * @connected GET/api/users
+ */
 Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
 
     const targetuser = req.params.user
@@ -45,17 +53,19 @@ Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
     res.send(UserInfo[0])
 }))
 
+
 /**
- * @displayname "Edit User"
+ * @displayname "Edit Users"
  * @category "Users"
- * @summary "Edit user information"
+ * @summary "Edit other users information"
  * @path /users
  * @method PATCH
+ * @connected POST/api/users
  */
 Router.patch('/users', HandleEndpointFunction(async (req, res) => {
     const userid = req.body.userid
 
-    const [UpdateQuery, Values] = SQLUtils.BuildUpdateQuery('users', ['active'], req.body, ['userid'])
+    const [UpdateQuery, Values] = SQLUtils.BuildUpdateQuery('users', ['active', 'role', 'email', 'phone'], req.body, ['userid'], true)
     const [UpdateResult] = await Database.execute(UpdateQuery, Values)
 
     res.send()
@@ -68,6 +78,7 @@ Router.patch('/users', HandleEndpointFunction(async (req, res) => {
  * @summary "Assign a keycard to a user"
  * @path /users/keycard
  * @method POST
+ * @connected POST/api/users
  */
 Router.post('/users/keycard', HandleEndpointFunction(async (req, res) => {
     const UserID = req.body.userid
@@ -92,6 +103,7 @@ Router.post('/users/keycard', HandleEndpointFunction(async (req, res) => {
  * @summary "Remove a user's keycard"
  * @path /users/keycard
  * @method DELETE
+ * @connected POST/api/users
  */
 Router.delete('/users/keycard', HandleEndpointFunction(async (req, res) => {
     const UserID = req.body.userid
@@ -103,9 +115,9 @@ Router.delete('/users/keycard', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Create User"
+ * @displayname "Create/Modify Users"
  * @category "Users"
- * @summary "Create a new user"
+ * @summary "Create new user accounts and modify existing user information"
  * @path /users
  * @method POST
  */

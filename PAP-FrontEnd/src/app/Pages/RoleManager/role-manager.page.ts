@@ -2,11 +2,11 @@ import { Component, inject } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
-import { EndpointCategory, EndpointData, PermissionInfo } from '../../../shared/permissions';
+import { EndpointCategory, EndpointData, PermissionInfo, UserRole } from '../../../shared/permissions';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PermissionsService } from '../../Services/Permissions.Service';
 import { AuthService } from '../../Services/Auth.service';
@@ -15,10 +15,17 @@ import { NoDataComponent } from '../../Components/no-data/no-data';
 import { TranslateModule } from '@ngx-translate/core';
 import { LoadingScreen } from '../../Components/loading-screen/loading-screen.component';
 import { UserCard } from "../../Components/user-card/user-card";
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'stocks-page',
-  imports: [PageLayoutComponent, NzDividerModule, NzSwitchModule, NzToolTipModule, FormsModule, IconsModule, NoDataComponent, TranslateModule,
+  imports: [PageLayoutComponent, NzDividerModule, NzSwitchModule, NzToolTipModule, FormsModule, IconsModule, NoDataComponent,
+    TranslateModule, NzModalModule, NzButtonModule, NzIconModule, NzFormModule, ReactiveFormsModule, NzInputModule, NzSelectModule,
     LoadingScreen, UserCard],
   templateUrl: './role-manager.page.html',
   styleUrl: './role-manager.page.less'
@@ -27,28 +34,30 @@ export class RoleManagementPage {
 
   RolePermissionsURL = AppSettings.APIUrl + 'role-permissions'
 
-  SelectedRole = 'User'
-
+  SelectedRole: UserRole = { name: 'Loading', administrator: false, permission_level: 1 }
   // DATA
-  Roles: any[] = []
-  RoleUsers:any[] = []
-  Permissions: EndpointData[] = []
+  Roles: UserRole[] = []
+  RoleUsers: any[] = []
   CategorizedPermissions: EndpointCategory[] = []
+  EndpointPermissions: {[key:string]:any} = []
 
   // SERVICES
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
   PermissionsService = inject(PermissionsService)
+  ModalService = inject(NzModalService)
   AuthService = inject(AuthService)
 
   // VARIABLES
-  CanCreate = this.AuthService.PagePermissions.CanCreate
+  CanModify = this.AuthService.PagePermissions.CanModify
+  CanCreateRoles = this.AuthService.HasEndpointPermission('roles', 'POST')
 
   // STATES
   LoadingRoles = true
   LoadingUsers = true
   LoadingPermissions = true
-
+  RoleCreationModalVisible = false
+  CreatingRole = false
 
   async LoadPermissions() {
     this.LoadingPermissions = true
@@ -56,58 +65,30 @@ export class RoleManagementPage {
     const [EndpointPermissions] =
       await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'GET', 'Failed to fetch role permissions') as [any[]]
 
+
     // Convert the backend data to have the required values
     const ConvertedResult: { [key: string]: EndpointData } = {}
 
     for (const EndpointData of Object.values(EndpointPermissions)) {
-      if (!EndpointData.Unprotected) {
+      if (!EndpointData.Unprotected && !EndpointData.Root && !EndpointData.Connected) {
         let ConvertedEndpointData: EndpointData = ConvertedResult[EndpointData.DisplayName]
 
-        const SplittedID = EndpointData.ID.split('/')
-        const PermissionType = SplittedID[0]
-        const Endpoint = SplittedID.slice(1, SplittedID.length).join('/')
 
         if (!ConvertedEndpointData) {
           ConvertedEndpointData = {
-            Endpoint: Endpoint,
+            ID: EndpointData.ID,
             DisplayName: EndpointData.DisplayName,
             Category: EndpointData.Category,
             Summary: EndpointData.Summary,
-            PermissionTypes: []
+            PermissionLevels: EndpointData.Permissions
           }
           ConvertedResult[EndpointData.DisplayName] = ConvertedEndpointData
         }
-
-        // Find array with the proper permission type
-        let PermissionTypesArray = ConvertedEndpointData.PermissionTypes.find((Info: any) => {
-          return Info.PermissionType == PermissionType
-        })
-
-        if (!PermissionTypesArray) {
-          ConvertedEndpointData.PermissionTypes.push({
-            Summary: EndpointData.Summary,
-            TypeLabel: EndpointData.TypeLabel,
-            PermissionType: PermissionType,
-            PermissionLevels: []
-          })
-          const ResultIndex = ConvertedEndpointData.PermissionTypes.length - 1
-          PermissionTypesArray = ConvertedEndpointData.PermissionTypes[ResultIndex]
-        }
-
-        PermissionTypesArray.PermissionLevels = [
-          ...PermissionTypesArray.PermissionLevels,
-          ...EndpointData.Permissions
-        ];
       }
     }
 
     // Sort display names by manual configuration
-    const config = ['Sessions', 'Stations', 'Meetings', 'Rooms'];
-    const FinalResult = Object.values(ConvertedResult).sort((a, b) => {
-      const indexA = config.indexOf(a.DisplayName);
-      const indexB = config.indexOf(b.DisplayName);
-      return (indexA === -1 ? Infinity : indexA) - (indexB === -1 ? Infinity : indexB);
-    });
+    const FinalResult = Object.values(ConvertedResult)
 
     // Build a categorized result for the HTML
     const CategorizedResult: EndpointCategory[] = []
@@ -135,33 +116,33 @@ export class RoleManagementPage {
 
 
     this.CategorizedPermissions = CategorizedResult
-    this.Permissions = FinalResult
+    this.EndpointPermissions = EndpointPermissions
+    console.log(EndpointPermissions)
 
     this.LoadingPermissions = false
   }
 
-  async PermissionSwitchTriggered(EndpointData: EndpointData, PermissionInfo: PermissionInfo, Enabled: Boolean) {
+  async PermissionSwitchTriggered(EndpointData: EndpointData, Enabled: Boolean) {
     if (Enabled)
-      this.AddEndpointPermissions(EndpointData, PermissionInfo)
+      this.AddEndpointPermissions(EndpointData)
     else
-      this.RemoveEndpointPermissions(EndpointData, PermissionInfo)
+      this.RemoveEndpointPermissions(EndpointData)
 
   }
 
   //DELETE/UNLINK PERMISSIONS
-  async RemoveEndpointPermissions(EndpointData: EndpointData, PermissionInfo: PermissionInfo) {
+  async RemoveEndpointPermissions(EndpointData: EndpointData) {
 
-    PermissionInfo.Changing = true
+    EndpointData.Changing = true
 
-    const DeleteSuccess = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'DELETE', `Failed to remove permissions for ${this.SelectedRole}`,
+    const [DeleteSuccess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'DELETE', `Failed to remove permissions for ${this.SelectedRole}`,
       {
-        endpoint: EndpointData.Endpoint,
-        method: PermissionInfo.PermissionType,
-        permission_name: this.SelectedRole
+        endpoint_id: EndpointData.ID,
+        role: this.SelectedRole.name
       }
     )
 
-    PermissionInfo.Changing = false
+    EndpointData.Changing = false
 
     if (DeleteSuccess) {
       this.MessageService.success('Sucessfully removed permissions')
@@ -171,19 +152,18 @@ export class RoleManagementPage {
 
 
   //ADD ENDPOINT PERMISSIONS
-  async AddEndpointPermissions(EndpointData: EndpointData, PermissionInfo: PermissionInfo) {
+  async AddEndpointPermissions(EndpointData: EndpointData) {
 
-    PermissionInfo.Changing = true
+    EndpointData.Changing = true
 
-    const InsertSuccess = await this.HttpService.MakeRequest(this.RolePermissionsURL, 'POST', 'Failed to add endpoint permissions',
+    const [InsertSuccess] = await this.HttpService.MakeRequest(this.RolePermissionsURL, 'POST', 'Failed to add endpoint permissions',
       {
-        endpoint: EndpointData.Endpoint,
-        method: PermissionInfo.PermissionType,
-        role: this.SelectedRole
+        endpoint_id: EndpointData.ID,
+        role: this.SelectedRole.name
       }
     )
 
-    PermissionInfo.Changing = false
+    EndpointData.Changing = false
 
     if (InsertSuccess) {
       this.MessageService.success("Successfully added endpoint permissions!")
@@ -191,12 +171,68 @@ export class RoleManagementPage {
     }
   }
 
+
+  RoleCreateFrom = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    permission_level: new FormControl('', [Validators.required])
+  })
+
+  // ROLE MOD
+  PromptDeleteRole(Role: UserRole, Event: MouseEvent) {
+    Event.stopPropagation()
+
+    this.ModalService.confirm({
+      nzTitle: 'Confirm Action',
+      nzContent: 'This may cause instability and remove multiple users from their respective permissions. Are you sure?',
+      nzCentered: true,
+
+      nzOnOk: async () => {
+        const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'roles', 'DELETE', 'Failed to delete role', {
+          name: Role.name,
+        })
+
+        if (Result) {
+          this.MessageService.success('Successfully deleteted role')
+          this.LoadRoles().then(() => {
+            this.LoadRoleUsers()
+          })
+        }
+      }
+    })
+  }
+
+  async CreateRole() {
+    this.CreatingRole = true
+    this.RoleCreateFrom.disable()
+
+
+    const FormVal = this.RoleCreateFrom.value
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'roles', 'POST', 'Failed to create role', {
+      name: FormVal.name,
+      permission_level: FormVal.permission_level
+    })
+
+    if (Result) {
+      this.MessageService.success('Sucessfully created role')
+      this.RoleCreationModalVisible = false
+      this.RoleCreateFrom.reset()
+
+      await this.LoadRoles()
+      this.LoadRoleUsers()
+    }
+
+    this.RoleCreateFrom.enable()
+    this.CreatingRole = false
+  }
+
+
+  // Loading
   async LoadRoleUsers() {
     this.LoadingUsers = true
 
     this.RoleUsers = []
     const [RoleUsers] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-users', 'GET', 'Failed to load role users', {
-      role: this.SelectedRole
+      role: this.SelectedRole.name
     })
     if (RoleUsers) {
       this.RoleUsers = RoleUsers.Rows
@@ -205,8 +241,8 @@ export class RoleManagementPage {
     this.LoadingUsers = false
   }
 
-  async ChangeRole(NewRole:string){
-    this.SelectedRole  = NewRole
+  async ChangeRole(NewRole: UserRole) {
+    this.SelectedRole = NewRole
     await this.LoadRoleUsers()
   }
 
@@ -216,14 +252,14 @@ export class RoleManagementPage {
     const Roles = await this.PermissionsService.LoadRoles()
     if (Roles) {
       this.Roles = Roles.reverse()
-      await this.ChangeRole(Roles[0]?.role)
+      await this.ChangeRole(Roles[0])
     }
 
     this.LoadingRoles = false
   }
 
   async ngOnInit() {
-     this.LoadRoles()
-     this.LoadPermissions()
+    this.LoadRoles()
+    this.LoadPermissions()
   }
 }

@@ -13,6 +13,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { HttpService } from '../../Services/Http.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { AuthService } from '../../Services/Auth.service';
 
 @Component({
   selector: 'settings-page',
@@ -30,7 +31,9 @@ export class SettingsPage {
   TranslateService = inject(TranslateService)
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
+  AuthService = inject(AuthService)
 
+  CanModifySettings = this.AuthService.HasEndpointPermission('settings', 'PATCH')
 
   AppSettings = AppSettings
   CurrencyCodes = CurrencyCodes
@@ -137,6 +140,12 @@ export class SettingsPage {
     const charCode = event.key.charCodeAt(0);
     if (charCode < 48 || charCode > 57) {
       event.preventDefault();
+    }
+  }
+
+  ngOnInit(){
+    if (!this.CanModifySettings){
+      this.settingsForm.disable()
     }
   }
 }

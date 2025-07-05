@@ -1,4 +1,4 @@
-import { Component, inject, Renderer2, signal } from '@angular/core';
+import { Component, inject, Renderer2, signal, ViewChild } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { CommonModule } from '@angular/common';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
@@ -26,6 +26,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { UFile } from '../../../types/ufile';
 import { FloatingContainer } from "../../Components/floating-container/floating-container";
+import { AuthService } from '../../Services/Auth.service';
 
 
 @Component({
@@ -48,6 +49,7 @@ export class MenuPage {
   ModalService = inject(NzModalService)
   MenuService = inject(MenuService)
   MessageService = inject(NzMessageService)
+  AuthService = inject(AuthService)
   Renderer = inject(Renderer2)
   HttpService = inject(HttpService)
 
@@ -55,13 +57,12 @@ export class MenuPage {
   // IMAGE UPLOADING / LOADING
   ThumbnailsUrl = AppSettings.ImagesURL + 'menu/'
   NewItemImage: string | null = null
-  LoadingThumbnail = false
   SelectedThumbnailUrl = ''
   InsertItemThumbnailFileName = ''
   CurrentCategory = ''
 
   // OBJECTS
-
+  @ViewChild('FileSelector') FileSelector?: FileSelectComponent
   Categories: any[] = []
 
   CategoryToInsert = ""
@@ -82,7 +83,10 @@ export class MenuPage {
   DrawerOpen = false
   InsertModalOpen = false
   CategoriesModalVisible = false
+  LoadingThumbnail = false
+  CreatingCategory = false
 
+  LoadingCategories = false
   LoadingMenu = false
   IsInsertingItem = false
   InsertingCategory = false
@@ -95,6 +99,8 @@ export class MenuPage {
   })
 
 
+  // Variables
+  CanModifyMenu = this.AuthService.HasEndpointPermission('menu', 'POST')
 
   MenuThumbnails = []
   async InsertMenuItem() {
@@ -121,12 +127,16 @@ export class MenuPage {
   }
 
   async CreateCategory() {
+
+    this.CreatingCategory = true
+
     const Category = this.CategoryToInsert
     let Categories = this.Categories
     let ValidLenght = this.CategoryToInsert.length >= 3
     let ValidName = !Categories.includes(Category)
 
     if (ValidLenght && ValidName) {
+
       const InsertSucess = await this.MenuService.InsertCategory(Category)
       if (InsertSucess) {
         this.CategoryInsertVisible = false
@@ -138,6 +148,8 @@ export class MenuPage {
     } else {
       this.MessageService.error("Your category must have 3 or more characters")
     }
+    
+    this.CreatingCategory = false
   }
 
 
@@ -196,7 +208,7 @@ export class MenuPage {
       nzOnOk: async () => {
         const [UpdateResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'menu', 'PATCH', 'Could not update menu item', {
           active: TargetActive,
-          name: SelectedProduct.id,
+          id: SelectedProduct.id,
         })
 
         if (UpdateResult) {
@@ -211,8 +223,10 @@ export class MenuPage {
     })
   }
 
-  async DeleteCategory(Category: string) {
+  async DeleteCategory(Category: any) {
+    Category.Deleting = true
     await this.MenuService.DeleteCategory(Category)
+    Category.Deleting = false
     this.LoadCategories()
   }
 
@@ -263,6 +277,8 @@ export class MenuPage {
 
   async LoadCategories() {
 
+    this.LoadingCategories = true
+
     let CategoriesResult = await this.MenuService.GetCategories()
 
     if (CategoriesResult) {
@@ -270,6 +286,9 @@ export class MenuPage {
 
       this.Categories = ConvertedResult
     }
+
+    
+    this.LoadingCategories = false
   }
 
 

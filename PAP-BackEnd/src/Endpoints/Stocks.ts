@@ -5,11 +5,11 @@ import SQLUtils from '../Services/SQLUtils'
 import { GetStockItems } from '../Services/StocksUtils';
 
 /**
- * @displayname "Stock Items"
+ * @displayname "View Stock Items"
+ * @category "Stocks"
  * @path /stock-items
  * @method GET
- * @summary "View stock items"
- * @unprotected true
+ * @summary "View all stock items with quantities and supplier information"
  */
 Router.get('/stock-items', HandleEndpointFunction(async (req, res) => {
     const StockItems = await GetStockItems()
@@ -17,9 +17,9 @@ Router.get('/stock-items', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Add Stock Item"
- * @category "Stock"
- * @summary "Add a new stock item"
+ * @displayname "Create/Modify Stock Items"
+ * @category "Stocks"
+ * @summary "Create new stock items and modify existing ones"
  * @path /stock-items
  * @method POST
  */
@@ -33,10 +33,11 @@ Router.post('/stock-items', HandleEndpointFunction(async (req, res) => {
 
 /**
  * @displayname "Update Stock Item"
- * @category "Stock"
+ * @category "Stocks"
  * @summary "Update stock item information"
  * @path /stock-items
  * @method PATCH
+ * @connected POST/api/stock-items
  */
 Router.patch('/stock-items', HandleEndpointFunction(async (req, res) => {
     const [Query, Values] = SQLUtils.BuildUpdateQuery('stock_items', [
@@ -50,10 +51,11 @@ Router.patch('/stock-items', HandleEndpointFunction(async (req, res) => {
 
 /**
  * @displayname "Delete Stock Item"
- * @category "Stock"
+ * @category "Stocks"
  * @summary "Delete a stock item"
  * @path /stock-items
  * @method DELETE
+ * @connected POST/api/stock-items
  */
 Router.delete('/stock-items', HandleEndpointFunction(async (req, res) => {
     const [Query, Values] = SQLUtils.BuildDeleteQuery('stock_items', req.body, ['id'])

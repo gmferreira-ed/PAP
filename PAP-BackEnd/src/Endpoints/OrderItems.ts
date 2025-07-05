@@ -10,10 +10,12 @@ import { ResultSetHeader } from 'mysql2';
 
 
 /**
- * @displayname "Orders"
+ * @displayname "Create/Modify Order Items"
+ * @category "Order Items"
  * @path /orders/items
  * @method POST
- * @summary "Add/remove items from orders"
+ * @summary "Add items to orders and modify order item quantities"
+ * @connected POST/api/orders
  */
 Router.post('/orders/items', HandleEndpointFunction(async (req, res) => {
 
@@ -32,10 +34,12 @@ Router.post('/orders/items', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Orders"
+ * @displayname "Update Order Item"
+ * @category "Order Items"
  * @path /orders/items
  * @method PATCH
  * @summary "Modify quantity of items in an order"
+ * @connected POST/api/orders
  */
 Router.patch('/orders/items', HandleEndpointFunction(async (req, res) => {
     const body = req.body
@@ -53,10 +57,12 @@ Router.patch('/orders/items', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Orders"
+ * @displayname "Delete Order Item"
+ * @category "Order Items"
  * @path /orders/items
  * @method DELETE
- * @summary "Add/remove items from orders"
+ * @summary "Remove items from an order"
+ * @connected POST/api/orders
  */
 Router.delete('/orders/items', HandleEndpointFunction(async (req, res) => {
 

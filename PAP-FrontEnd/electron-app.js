@@ -79,9 +79,9 @@ function StartAppWindow() {
         title: "Restro Link",
         width: 800,
         height: 600,
-
         icon: path.join(__dirname, 'public', 'favicon.ico'),
-
+        frame: false,
+        kiosk: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -89,11 +89,11 @@ function StartAppWindow() {
             enableRemoteModule: false,
             devTools: true
         }
-    });
+    })
 
-
-    win.maximize();
-    win.loadURL('http://localhost:5000');
+    win.maximize()
+    win.loadURL('http://localhost:5000')
+    // win.setMenu(null)
 }
 
 app.whenReady().then(StartAppWindow);

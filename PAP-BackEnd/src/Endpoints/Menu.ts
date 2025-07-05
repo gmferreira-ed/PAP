@@ -11,10 +11,11 @@ import fs from 'fs';
 
 
 /**
- * @displayname "Menu"
+ * @displayname "View Menu"
+ * @category "Menu"
  * @path /menu
  * @method GET
- * @summary "View menu"
+ * @summary "View all menu items with categories and stock information"
  * @unprotected true
  */
 Router.get('/menu', HandleEndpointFunction(async (req, res) => {
@@ -34,9 +35,9 @@ Router.get('/menu', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Add Menu Item"
+ * @displayname "Create/Modify Menu Items"
  * @category "Menu"
- * @summary "Create a new item on the menu"
+ * @summary "Create new menu items and modify existing ones"
  * @path /menu
  * @method POST
  */
@@ -66,12 +67,13 @@ Router.post('/menu', HandleEndpointFunction(async (req, res) => {
  * @summary "Change menu item information"
  * @path /menu
  * @method PATCH
+ * @connected POST/api/menu
  */
 Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
 
-    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category', 'order'], body, ['id'])
+    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category', 'order'], body, ['id'], true)
 
 
     const [rows] = await Database.execute(SQLQuery, Values);
@@ -79,11 +81,12 @@ Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Update Menu Item"
+ * @displayname "Update Menu Order"
  * @category "Menu"
- * @summary "Change menu item information"
+ * @summary "Change menu item display order"
  * @path /menu/order
  * @method PATCH
+ * @connected POST/api/menu
  */
 Router.patch('/menu/order', HandleEndpointFunction(async (req, res) => {
     const NewOrder = req.body.order as any[]
@@ -122,6 +125,7 @@ Router.patch('/menu/order', HandleEndpointFunction(async (req, res) => {
  * @summary "Delete an item from the menu"
  * @path /menu
  * @method DELETE
+ * @connected POST/api/menu
  */
 Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
 

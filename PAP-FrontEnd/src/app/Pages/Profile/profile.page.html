@@ -35,10 +35,22 @@
                         <!-- BUTTONS -->
                         <div class="row fill wrap" style="justify-content: end;">
                             @if (User()?.active){
-                                <button nz-button nzType="primary" [disabled]="User()?.username == CurrentUser()">
+                                <button nz-button nzType="primary" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"
+                                    [disabled]="User()?.username == CurrentUser()" [nzLoading]="ChangingUserRole">
                                     <nz-icon nzType="security-scan" nzTheme="outline" />
                                     Change Permissions
                                 </button>
+                                <nz-dropdown-menu #menu="nzDropdownMenu">
+                                    <ul nz-menu>
+                                        @for (Role of Roles; track $index){
+                                            <li nz-menu-item
+                                                [nzDisabled]="Role.permission_level>AuthService.UserPermissions.permission_level"
+                                                (click)="ChangeUserRole(Role.name)">
+                                                {{Role.name}}
+                                            </li>
+                                        }
+                                    </ul>
+                                </nz-dropdown-menu>
 
                                 <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus"
                                     [disabled]="User()?.username== CurrentUser()">
@@ -91,8 +103,12 @@
 
         <div class="user-stats">
             <section class="action-card attendance-card">
-                <attendance-view (UserEntriesChange)="EntriesChanged($event)" [SelectedUser]="User"
-                    [AwaitUser]="true"></attendance-view>
+                @if (CanViewEntries){
+                    <attendance-view (UserEntriesChange)="EntriesChanged($event)" [SelectedUser]="User"
+                        [AwaitUser]="true"></attendance-view>
+                }@else {
+                    <unavailable-info>You don't have permission to view this information</unavailable-info>
+                }
             </section>
 
             <div class="collumn" style="width: 25%;">
@@ -131,16 +147,22 @@
                 <stat-card StatName="Salary" [StatTotalValue]='TotalFinalPay' [ShowChartTimeOptions]="false"
                     [ShowTimeNavigation]="true" ViewType="Month" (ViewTypeChanged)="SalaryRangeChanged($event)"
                     FormatType="currency">
+                    @if (CanViewEntries){
                         <label>Work hours: {{TotalNormalPay | dcurrency}}</label>
                         <label>Extra work hours: {{TotalExtraPay | dcurrency}}</label>
                         <label>Meal allowance: {{TotalMealAllowance | dcurrency}}</label>
+                    }@else{
+                        <unavailable-info>Unavailable Info</unavailable-info>
+                    }
                 </stat-card>
             </div>
 
             <stat-card StatName="Total Work Hours" #WorkHoursChart [TimeOptions]="['Day', 'Week', 'Month', 'All']"
-                [ChartOptions]="ShiftChartOptions" [StatTotalValue]='TotalHours'
+                [ChartOptions]="CanViewEntries ? ShiftChartOptions : undefined" [StatTotalValue]='TotalHours'
                 (ViewTypeChanged)="EntriesChanged(this.UserEntries, $event)" [FormatCallback]="FormatTotal">
-
+                @if (!CanViewEntries){
+                    <unavailable-info>Unavailable Info</unavailable-info>
+                }
             </stat-card>
         </div>
     </div>

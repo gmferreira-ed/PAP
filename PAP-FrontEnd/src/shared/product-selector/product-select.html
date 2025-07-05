@@ -18,7 +18,8 @@
 <div class="products">
     <loading-screen [IsLoading]="MenuService.LoadingMenuItems"></loading-screen>
     @for (Product of GetFilteredMenuProducts(); track $index){
-        <div class="product" (click)="ProductSelected.emit(Product)" [class.disabled]="Product.active == 0">
+        <div class="product" (click)="ProductSelected.emit(Product)" [class.disabled]="Product.active == 0" 
+        [style.pointer-events]="CanSelect && 'all' || 'none'">
             <img [src]="Product.ImageURL">
             <label>{{Product.name}}</label>
             <div class="overlay invisible">

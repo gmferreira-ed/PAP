@@ -8,13 +8,13 @@
 
 .roles,
 .users,
-.permissions {
+.permissions-container {
   display: flex;
   flex-direction: column;
   position: relative;
   height: 100%;
   padding: 10px;
-  padding-top: 5px;
+  padding: 12px;
 
   overflow-y: auto;
 
@@ -28,6 +28,40 @@
     font-size: 25px;
   }
 }
+
+
+
+// PERMISSIONS 
+.permissions-container {
+  width: 65%;
+}
+
+.permissions{
+  padding: 0px 0px 0px 12px;
+}
+
+.category-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  padding: 5px;
+
+  gap: 50px;
+}
+
+.permission-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary-color);
+  border-radius: 5px;
+  box-shadow: 0px 0px 4px var(--shadow-color);
+  width: 250px;
+  max-width: 300px;
+  padding: 20px;
+  flex-grow: 1;
+}
+
 
 .roles {
   width: 15%;
@@ -78,51 +112,4 @@
   flex-direction: column;
   overflow-y: auto;
   padding-bottom: 10px;
-}
-
-
-// PERMISSIONS 
-.permissions {
-  width: 65%;
-}
-
-.permissions-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-
-  padding: 5px;
-
-  gap: 50px;
-  margin-bottom: 50px;
-}
-
-.permission {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--secondary-color);
-  border-radius: 5px;
-  box-shadow: 0px 0px 4px var(--shadow-color);
-  width: 250px;
-  max-width: 300px;
-  padding: 20px;
-  flex-grow: 1;
-}
-
-.permission-types {
-  display: flex;
-  justify-content: space-between;
-  padding-left: 10px;
-  padding-right: 10px;
-  gap: 20px;
-}
-
-.permission-type {
-  display: flex;
-  flex-direction: column;
-}
-
-.permission-type-label {
-  position: relative;
-  text-align: center;
 }

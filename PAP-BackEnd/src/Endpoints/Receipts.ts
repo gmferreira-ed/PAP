@@ -6,10 +6,11 @@ import SQLUtils from '../Services/SQLUtils';
 // Modified version of orders, used for receipt logs instead
 
 /**
- * @displayname "Receipts"
+ * @displayname "View Receipts"
+ * @category "Orders"
  * @path /receipts
  * @method GET
- * @summary "View orders"
+ * @summary "View all receipts with optional date filtering and pagination"
  */
 Router.get('/receipts', HandleEndpointFunction(async (req, res) => {
 
@@ -45,10 +46,12 @@ Router.get('/receipts', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Receipts"
+ * @displayname "View Receipt Details"
+ * @category "Receipts"
  * @path /receipts/id
  * @method GET
- * @summary "View orders"
+ * @summary "View detailed receipt information including items and customer data"
+ * @connected GET/api/receipts
  */
 Router.get('/receipts/id', HandleEndpointFunction(async (req, res) => {
 

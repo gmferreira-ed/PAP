@@ -11,6 +11,7 @@ import { StatusTagComponent } from "../../Components/status-tag/status-tag.compo
 import { ReceiptComponent } from "../../Components/receipt/receipt.component";
 import { IconsModule } from "../../Components/icon/icon.component";
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { AuthService } from '../../Services/Auth.service';
 
 @Component({
   selector: 'receipts-page',

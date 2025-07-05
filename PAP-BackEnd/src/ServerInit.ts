@@ -12,7 +12,7 @@ import { parse as CommentParser } from 'comment-parser'
 
 import multer from 'multer'
 
-import { EndpointMatches, EndpointRegex, EndpointsAttributes } from './Globals'
+import { EndpointRegex, EndpointsAttributes } from './Globals'
 import Configs from './Config/EnviromentConfigs'
 import PermissionsService from './Services/PermissionsService';
 import SQLUtils from './Services/SQLUtils';
@@ -77,13 +77,12 @@ fs.readdirSync(EndpointsFolder).forEach((Endpoint: string) => {
             const Method:string = AttributesObject.method!
             const Path = AttributesObject.path
 
-            const MethodMatch = EndpointMatches[Method]
-            const EndpointID = `${MethodMatch}/api${Path}`.replace(EndpointRegex, '$1/')
+            const EndpointID = `${Method}/api${Path}`.replace(EndpointRegex, '$1/')
             
             EndpointsAttributes[EndpointID] = {
                 DisplayName:AttributesObject.displayname,
                 Category:AttributesObject.category,
-                TypeLabel:AttributesObject.type_label,
+                Connected:AttributesObject.connected,
                 Unprotected:AttributesObject.unprotected=='true',
                 Root:AttributesObject.root=='true',
                 Summary:AttributesObject.summary
@@ -105,6 +104,6 @@ HttpServer.listen(7000, '0.0.0.0', async () => {
 
 
 
-  //const EndpointsData=  await PermissionsService.EndpointsData.Get()
-  //console.log(EndpointsData)
+  const EndpointsData=  await PermissionsService.EndpointsData.Get()
+  console.log(EndpointsData)
 });

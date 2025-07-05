@@ -200,7 +200,19 @@
 
     .charts {
         gap: 24px;
+        height: 60%;
+
+        ::ng-deep stat-card {
+            height: 100%;
+        }
     }
+
+    .other-stats {
+        display: flex;
+        gap: 24px;
+        flex: 1 1;
+    }
+
 }
 
 .general-view {
@@ -211,7 +223,7 @@
     padding: 24px;
     max-height: 100%;
     height: 100%;
-    overflow-y:auto;
+    overflow-y: auto;
     align-items: stretch;
     justify-items: stretch;
     grid-template-areas:
@@ -230,14 +242,16 @@
     }
 }
 
-.report-item{
-    span{
+.report-item {
+    span {
         width: 50px;
     }
-    .name{
+
+    .name {
         width: 200px;
     }
 }
+
 nz-table {
     img {
         margin-right: 5px;
@@ -246,16 +260,9 @@ nz-table {
     }
 }
 
-.other-stats {
-    display: flex;
-    gap: 24px;
-    flex: 1 1;
-}
 
 .stocks-summary {
     grid-area: stocks;
-
-
 }
 
 ::ng-deep apx-chart {
@@ -341,7 +348,7 @@ nz-table {
         overflow-y: auto;
         padding: 50px;
 
-        span{
+        span {
             font-weight: 500;
         }
     }

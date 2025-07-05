@@ -3,20 +3,22 @@
 interface EndpointAttributes {
     DisplayName: string
     Category?:string
-    TypeLabel?:string
     Unprotected?: boolean
     Root?: boolean
+    Connected?: string
     Summary:string
 }
 
 // Finalized endpoint data
 interface EndpointData {
     ID: string
-    Category:string
     DisplayName: string
-    TypeLabel?:string
-    Unprotected?: boolean
+    Category?:string
+
     Root?: boolean
+    Unprotected?: boolean
+    Connected?: string
+
     Permissions: string[]
     Summary:string
 }

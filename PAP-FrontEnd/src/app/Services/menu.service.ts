@@ -99,13 +99,13 @@ export class MenuService {
     return false
   }
 
-  async DeleteCategory(Category: String) {
+  async DeleteCategory(Category: any) {
     const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'DELETE', 'Failed to delete category', {
-      category: Category,
+      category_id: Category.id,
     })
 
     if (Result) {
-      this.MessageService.success(`Sucessfully removed category ${Category}`)
+      this.MessageService.success(`Sucessfully removed category ${Category.name}`)
     }
     return Result
   }

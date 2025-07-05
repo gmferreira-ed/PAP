@@ -43,6 +43,8 @@ import { UFile } from '../../../types/ufile';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { AuthService } from '../../Services/Auth.service';
+import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
 
 
 
@@ -55,8 +57,9 @@ type StockTotalData = {
   selector: 'stocks-page',
   imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, DatePipe, NzToolTipModule,
     NzTabsModule, FileSelectComponent, NoDataComponent, NzSelectModule, NzDatePickerModule, NzTableModule, EditableDirective, StatusTagComponent, NzRadioModule,
-    NzInputNumberModule, NzCheckboxModule, DynamicCurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule, MenuProductSelect, 
-    FloatingContainer],
+    NzInputNumberModule, NzCheckboxModule, DynamicCurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule,
+    MenuProductSelect, FloatingContainer, UnavailableInfo
+  ],
   templateUrl: './stocks.page.html',
   styleUrl: './stocks.page.less'
 })
@@ -75,6 +78,7 @@ export class StocksPage {
   ThemeService = inject(ThemeService)
   ModalService = inject(NzModalService)
   NotificationService = inject(NzNotificationService)
+  AuthService = inject(AuthService)
   GlobalUtils = GlobalUtils
 
   // DATA
@@ -107,6 +111,16 @@ export class StocksPage {
   ConsumptionEndDate = new Date()
   OrdersStartDate = new Date()
   OrdersEndDate = new Date()
+
+  CanViewOrders = this.AuthService.HasEndpointPermission('stock-orders', 'GET')
+  CanMakeOrders = this.AuthService.HasEndpointPermission('stock-orders', 'POST')
+
+  CanViewAdjustments = this.AuthService.HasEndpointPermission('inventory-reports', 'GET')
+  CanMakeAdjustments = this.AuthService.HasEndpointPermission('inventory-reports', 'POST')
+
+  CanModifySuppliers = this.AuthService.HasEndpointPermission('suppliers', 'POST')
+
+  CanCreateItems = this.AuthService.HasEndpointPermission('stock-items', 'POST')
 
   UserImagesURL = AppSettings.UserImagesURL
 
@@ -448,24 +462,28 @@ export class StocksPage {
   async LoadData(): Promise<void> {
     await Promise.all([
       this.StocksService.LoadSuppliers(),
-      this.StocksService.LoadReportsHistory(),
+      this.CanViewAdjustments && this.StocksService.LoadReportsHistory(),
       this.LoadStockItems(),
       this.LoadStockOrders()
     ]);
   }
 
   async LoadStockOrders() {
-    await this.StocksService.LoadStockOrders()
 
-    const SelectedStockOrderID = this.SelectedStockOrder?.id
+    if (this.CanViewOrders) {
+      await this.StocksService.LoadStockOrders()
 
-    if (SelectedStockOrderID) {
-      const NewOrderInfo = this.StocksService.StockOrders.find((Order) => Order.id == SelectedStockOrderID)
+      const SelectedStockOrderID = this.SelectedStockOrder?.id
 
-      if (NewOrderInfo) {
-        this.SelectedStockOrder = NewOrderInfo
+      if (SelectedStockOrderID) {
+        const NewOrderInfo = this.StocksService.StockOrders.find((Order) => Order.id == SelectedStockOrderID)
+
+        if (NewOrderInfo) {
+          this.SelectedStockOrder = NewOrderInfo
+        }
       }
     }
+
   }
 
   async ngOnInit() {
@@ -499,57 +517,60 @@ export class StocksPage {
     plotOptions: {
       bar: {
         horizontal: true,
-            borderRadius: 4,
-            borderRadiusApplication: 'end',
+        borderRadius: 4,
+        borderRadiusApplication: 'end',
       }
     },
     series: []
   } as ApexChartOptions
 
   LoadPurchaseDistributionChart(dateRange?: [number?, number?]) {
-    const purchaseStats: { [itemName: string]: { totalQuantity: number, totalSpent: number } } = {};
+    if (this.CanViewOrders) {
+      const purchaseStats: { [itemName: string]: { totalQuantity: number, totalSpent: number } } = {};
 
-    for (const StockOrder of this.StocksService.StockOrders) {
-      const orderDate = new Date(StockOrder.order_date).getTime()
+      for (const StockOrder of this.StocksService.StockOrders) {
+        const orderDate = new Date(StockOrder.order_date).getTime()
 
-      if (dateRange && dateRange[0] && dateRange[1] && (orderDate < dateRange[0] || orderDate > dateRange[1])) continue;
+        if (dateRange && dateRange[0] && dateRange[1] && (orderDate < dateRange[0] || orderDate > dateRange[1])) continue;
 
-      for (const StockOrderItem of StockOrder.items) {
-        const StockItem = this.GetStockItemByID(StockOrderItem.item_id!);
-        if (StockItem) {
-          if (!purchaseStats[StockItem.name]) {
-            purchaseStats[StockItem.name] = { totalQuantity: 0, totalSpent: 0 };
+        for (const StockOrderItem of StockOrder.items) {
+          const StockItem = this.GetStockItemByID(StockOrderItem.item_id!);
+          if (StockItem) {
+            if (!purchaseStats[StockItem.name]) {
+              purchaseStats[StockItem.name] = { totalQuantity: 0, totalSpent: 0 };
+            }
+            purchaseStats[StockItem.name].totalQuantity += StockOrderItem.quantity || 0;
+            purchaseStats[StockItem.name].totalSpent += StockOrderItem.cost || 0;
           }
-          purchaseStats[StockItem.name].totalQuantity += StockOrderItem.quantity || 0;
-          purchaseStats[StockItem.name].totalSpent += StockOrderItem.cost || 0;
         }
       }
+
+
+
+      const StockItemsDistributionQuantitySeries: number[] = [];
+      const StockItemsDistributionSpentSeries: number[] = [];
+      const StockItemNames: string[] = [];
+
+      for (const StockItem of this.StocksService.StockItems) {
+        const ItemStats = purchaseStats[StockItem.name]
+        StockItemsDistributionQuantitySeries.push(ItemStats?.totalQuantity || 0);
+        StockItemsDistributionSpentSeries.push(ItemStats?.totalSpent || 0);
+        StockItemNames.push(StockItem.name);
+      }
+
+
+      if (StockItemNames.length > 0)
+        this.StockOrdersDisChartOptions = {
+          ...this.StockOrdersDisChartOptions,
+          xaxis: {
+            categories: StockItemNames,
+          },
+          series: [
+            { name: 'Total Quantity Bought', data: StockItemsDistributionQuantitySeries },
+            { name: 'Total Money Spent', data: StockItemsDistributionSpentSeries }
+          ]
+        };
     }
-
-
-    const StockItemsDistributionQuantitySeries: number[] = [];
-    const StockItemsDistributionSpentSeries: number[] = [];
-    const StockItemNames: string[] = [];
-
-    for (const StockItem of this.StocksService.StockItems) {
-      const ItemStats = purchaseStats[StockItem.name]
-      StockItemsDistributionQuantitySeries.push(ItemStats?.totalQuantity || 0);
-      StockItemsDistributionSpentSeries.push(ItemStats?.totalSpent || 0);
-      StockItemNames.push(StockItem.name);
-    }
-
-
-    if (StockItemNames.length > 0)
-      this.StockOrdersDisChartOptions = {
-        ...this.StockOrdersDisChartOptions,
-        xaxis: {
-          categories: StockItemNames,
-        },
-        series: [
-          { name: 'Total Quantity Bought', data: StockItemsDistributionQuantitySeries },
-          { name: 'Total Money Spent', data: StockItemsDistributionSpentSeries }
-        ]
-      };
   }
 
   LoadStocksPieChart() {
@@ -762,7 +783,7 @@ export class StocksPage {
   async CalculateItemStats(item: StockItem) {
 
     this._selectedStockItem = item;
-    if (!item.Orders) {
+    if (!item.Orders && this.CanViewOrders) {
 
       this.LoadingItemStats = true
 

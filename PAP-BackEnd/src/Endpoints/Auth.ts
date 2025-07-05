@@ -7,10 +7,11 @@ import { ResultSetHeader } from 'mysql2';
 
 
 /**
- * @displayname "Authentication"
+ * @displayname "Check Authentication"
+ * @category "Authentication"
  * @path /auth
  * @method POST
- * @summary "Authenticates in the application"
+ * @summary "Check if user is authenticated and return user data with permissions"
  * @unprotected true
  */
 Router.post('/auth', HandleEndpointFunction(async (req, res) => {
@@ -28,9 +29,10 @@ Router.post('/auth', HandleEndpointFunction(async (req, res) => {
 
 /**
  * @displayname "Login"
+ * @category "Authentication"
  * @path /auth/login
  * @method POST
- * @summary "Authenticates in the application"
+ * @summary "Authenticate user with username and password"
  * @unprotected true
  */
 Router.post('/auth/login', HandleEndpointFunction(async (req, res) => {
@@ -70,9 +72,10 @@ Router.post('/auth/login', HandleEndpointFunction(async (req, res) => {
 
 /**
  * @displayname "Sign Up"
+ * @category "Authentication"
  * @path /auth/signup
  * @method POST
- * @summary "Creates an account and authenticates in the application"
+ * @summary "Create a new user account and authenticate"
  * @unprotected true
  */
 Router.post('/auth/signup', HandleEndpointFunction(async (req, res) => {
@@ -100,10 +103,11 @@ Router.post('/auth/signup', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Verify account"
+ * @displayname "Verify Account"
+ * @category "Authentication"
  * @path /auth/verify
  * @method POST
- * @summary "Creates an account and authenticates in the application"
+ * @summary "Verify user account with verification code"
  * @unprotected true
  */
 Router.post('/auth/verify', HandleEndpointFunction(async (req, res) => {

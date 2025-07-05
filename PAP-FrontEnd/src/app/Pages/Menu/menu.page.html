@@ -7,9 +7,11 @@
 
     <!-- CATEGORY SELECTION -->
     <div class="row-layout">
-        <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true" style="margin-right: 5px;">
-            <nz-icon nzType="menu" />
-        </button>
+        @if (CanModifyMenu){
+            <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true" style="margin-right: 5px;">
+                <nz-icon nzType="menu" />
+            </button>
+        }
         <nz-segmented [(ngModel)]="CurrentCategory">
             <label nz-segmented-item [nzValue]="'All'">{{'All' | translate}}</label>
             @for (Category of Categories; track $index){
@@ -20,12 +22,14 @@
 
     <div class="menu-container">
         <div class="menu-items" cdkDropList cdkDropListOrientation="mixed">
-            <div class="menu-item" (click)="OpenUploadModel()" style="order: -98237498726;">
-                <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)" />
-            </div>
+            @if (CanModifyMenu){
+                <div class="menu-item" (click)="OpenUploadModel()" style="order: -98237498726;">
+                    <img src="Images/Icons/plus.svg" style="width: 50%;height: 50%; filter: brightness(50%)" />
+                </div>
+            }
             @for (MenuItem of GetFilteredMenuItems(); track $index) {
-                <div cdkDrag (cdkDragDropped)="ChangeProductOrder($event)"
-                class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
+                <div cdkDrag [cdkDragDisabled]="!CanModifyMenu" (cdkDragDropped)="ChangeProductOrder($event)"
+                    class="menu-item" (click)="DisplayItemInfo(MenuItem)" [class.disabled]="MenuItem.active==0">
                     <img [src]="MenuItem.ImageURL" onerror="this.src='Images/Dish.png'"
                         class="menu-item-image-container">
 
@@ -38,7 +42,10 @@
                     </div>
 
                     <floating-container style="right: 0px; top: 0px;">
-                        <button nz-button cdkDragHandle nzType="text" nzSize="small"><nz-icon nzType="menu"></nz-icon></button>
+                        @if (CanModifyMenu){
+                            <button nz-button cdkDragHandle nzType="text" nzSize="small"><nz-icon
+                                    nzType="menu"></nz-icon></button>
+                        }
                     </floating-container>
                 </div>
             }
@@ -52,15 +59,18 @@
     [nzTitle]="'Item Info' | translate" (nzOnClose)="DrawerOpen = false">
     <div class="menu-item-info-display" *nzDrawerContent>
         <div class="menu-item-image-container">
-            <img [src]="FileSelector.Files[0]?.imagebase64 || SelectedItemInfo.ImageURL"
+            <img [src]="FileSelector && FileSelector.Files[0]?.imagebase64 || SelectedItemInfo.ImageURL"
                 onerror="this.src='Images/Dish.png'" class="menu-item-image">
-            <div class="overlay invisible">
-                <file-select #FileSelector [override]="true" UploadDisplayMode="none"
-                    (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
-                    <label>{{'Edit Image' | translate}}</label>
-                    <nz-icon nzType="edit"></nz-icon>
-                </file-select>
-            </div>
+
+                @if (CanModifyMenu){
+                        <div class="overlay invisible">
+                        <file-select #FileSelector [override]="true" UploadDisplayMode="none"
+                            (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
+                            <label>{{'Edit Image' | translate}}</label>
+                            <nz-icon nzType="edit"></nz-icon>
+                        </file-select>
+                    </div>
+                }
         </div>
 
         <label class="menu-item-title">{{SelectedItemInfo.name}}</label>
@@ -71,20 +81,23 @@
         @if (!SelectedItemInfo.active){
             <label class="menu-item-category">{{'Inactive' | translate}}</label>
         }
-        <nz-row style="gap:10px">
-            <button nz-button nzType="primary" nzShape="circle" nz-tooltip
-                [nzTooltipTitle]="'Edit product info' | translate">
-                <nz-icon nzType="edit" nzTheme="fill" />
-            </button>
-            <button nz-button nzType="dashed" nzShape="circle" (click)="PromptToggleItemActive()" nz-tooltip
-                [nzTooltipTitle]="'Toggle product availability' | translate">
-                <nz-icon nzType="stop" nzTheme="fill" />
-            </button>
-            <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()" nz-tooltip
-                [nzTooltipTitle]="'Delete product' | translate">
-                <nz-icon nzType="delete" nzTheme="fill" />
-            </button>
-        </nz-row>
+
+        @if (CanModifyMenu){
+            <nz-row style="gap:10px">
+                <button nz-button nzType="primary" nzShape="circle" nz-tooltip
+                    [nzTooltipTitle]="'Edit product info' | translate">
+                    <nz-icon nzType="edit" nzTheme="fill" />
+                </button>
+                <button nz-button nzType="dashed" nzShape="circle" (click)="PromptToggleItemActive()" nz-tooltip
+                    [nzTooltipTitle]="'Toggle product availability' | translate">
+                    <nz-icon nzType="stop" nzTheme="fill" />
+                </button>
+                <button nz-button nzDanger nzType="primary" nzShape="circle" (click)="DeleteItem()" nz-tooltip
+                    [nzTooltipTitle]="'Delete product' | translate">
+                    <nz-icon nzType="delete" nzTheme="fill" />
+                </button>
+            </nz-row>
+        }
 
         <br>
 
@@ -99,11 +112,12 @@
     <ng-container *nzModalContent>
         <div style="text-align: center;">
 
+            <loading-screen [IsLoading]="LoadingCategories"></loading-screen>
             <div cdkDropList class="list">
                 @for (Category of Categories; track $index){
                     <div class="list-item">
                         <label>{{Category.name}}</label>
-                        <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)">
+                        <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)" [nzLoading]="Category.Deleting">
                             <nz-icon nzType="delete"></nz-icon>
                         </button>
                     </div>
@@ -122,7 +136,7 @@
 </nz-modal>
 
 <nz-modal nzDraggable [nzVisible]="CategoryInsertVisible" [nzTitle]="'Insert new category' | translate" nzCentered
-    nzCancelText="Close" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false">
+    nzCancelText="Close" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false"  [nzOkLoading]="CreatingCategory">
     <ng-container *nzModalContent>
         <input #CategoryInput [(ngModel)]="CategoryToInsert" nz-input placeholder="New Category Name">
     </ng-container>

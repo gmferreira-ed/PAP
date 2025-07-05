@@ -23,6 +23,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 export class MenuProductSelect {
   // Component variables
+  @Input() CanSelect = true
   @Output() ProductSelected = new EventEmitter<any>()
 
   //Services

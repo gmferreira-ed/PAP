@@ -8,10 +8,11 @@ import path from 'path';
 
 
 /**
- * @displayname "Restaurant Layout"
+ * @displayname "View Restaurant Layout"
+ * @category "Layout"
  * @path /layout
  * @method GET
- * @summary "View restaurant layout"
+ * @summary "View restaurant layout components and positioning"
  * @unprotected true
  */
 Router.get('/layout', HandleEndpointFunction(async (req, res) => {
@@ -25,10 +26,11 @@ Router.get('/layout', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Tables"
+ * @displayname "View Tables"
+ * @category "Layout"
  * @path /tables
  * @method GET
- * @summary "View restaurant tables"
+ * @summary "View restaurant tables with current order status"
  * @unprotected true
  */
 Router.get('/tables', HandleEndpointFunction(async (req, res) => {
@@ -45,9 +47,9 @@ Router.get('/tables', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Edit Layout"
+ * @displayname "Modify Restaurant Layout"
  * @category "Layout"
- * @summary "Add a new layout component"
+ * @summary "Allows the user to change the layout of the restaurant, including tables, walls and other components"
  * @path /layout
  * @method POST
  */
@@ -82,11 +84,12 @@ Router.post('/layout', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Import Layout"
+ * @displayname "Import Layout Component"
  * @category "Layout"
- * @summary "Import a layout component"
+ * @summary "Import a layout component from external source"
  * @path /layout/import
  * @method POST
+ * @connected POST/api/layout
  */
 Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 
@@ -110,11 +113,12 @@ Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Update Layout"
+ * @displayname "Update Layout Component"
  * @category "Layout"
- * @summary "Update layout component properties"
+ * @summary "Update layout component position and dimensions"
  * @path /layout
  * @method PATCH
+ * @connected POST/api/layout
  */
 Router.patch('/layout', HandleEndpointFunction(async (req, res) => {
     const body = req.body
@@ -129,11 +133,12 @@ Router.patch('/layout', HandleEndpointFunction(async (req, res) => {
 
 
 /**
- * @displayname "Delete Layout"
+ * @displayname "Delete Layout Component"
  * @category "Layout"
- * @summary "Delete a layout component or clear all"
- * @path /menu
+ * @summary "Delete a specific layout component or clear all components"
+ * @path /layout
  * @method DELETE
+ * @connected POST/api/layout
  */
 Router.delete('/layout', HandleEndpointFunction(async (Request, Response) => {
 

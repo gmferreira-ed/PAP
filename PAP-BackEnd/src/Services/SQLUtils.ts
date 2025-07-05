@@ -26,7 +26,7 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
 
             const CorrespondingValue = Data[AbsoluteCollumnName(Column)]
 
-            if (CorrespondingValue != undefined && CorrespondingValue!='undefined' || CorrespondingValue === null) {
+            if (CorrespondingValue != undefined && CorrespondingValue != 'undefined' || CorrespondingValue === null) {
 
                 Values.push(CorrespondingValue);
                 rowPlaceholders.push('?')
@@ -48,13 +48,18 @@ function QueryArray(ExpectedColumns: string[], RequestData: Request['body'] | an
     return [Columns, Values, Placeholders]
 }
 
-function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: string[]): [string, any[]] {
+function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: string[], RequiredConditions: string[] | Boolean = false): [string, any[]] {
     const Conditions: string[] = []
     const Values: any[] = []
 
+
     ConditionKeys.forEach((Collumn) => {
         const Val = RequestData[AbsoluteCollumnName(Collumn)]
-        if (Val != undefined && Val!='undefined') {
+        const isRequired =
+            RequiredConditions === true ||
+            (Array.isArray(RequiredConditions) && RequiredConditions.includes(Collumn));
+
+        if (isRequired || (Val !== undefined && Val !== 'undefined')) {
             Conditions.push(Collumn)
             Values.push(Val)
         }
@@ -66,12 +71,20 @@ function GetWhereClause(RequestData: { [key: string]: any }, ConditionKeys: stri
     return [WhereClause, Values]
 }
 
-function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[], CollumnsToReturn: string[] = ['*'], Join: string = '', OrderBy: string=''): [string, any[]] {
+function BuildSelectQuery(
+    TargetTable: string,
+    RequestData: Request['body'],
+    ConditionKeys: string[],
+    CollumnsToReturn: string[] = ['*'],
+    Join: string = '',
+    OrderBy: string = '',
+    RequiredConditions?: string[] | Boolean): [string, any[]] {
+
     let [Columns, Values] = QueryArray([], RequestData)
 
     const CollumnsToReturnString = CollumnsToReturn.join(',')
-    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
-    let Query = `SELECT ${CollumnsToReturnString} FROM  ${TargetTable} ${Join} ${WhereClause} ${OrderBy}` ;
+    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys, RequiredConditions)
+    let Query = `SELECT ${CollumnsToReturnString} FROM  ${TargetTable} ${Join} ${WhereClause} ${OrderBy}`;
 
 
 
@@ -81,7 +94,7 @@ function BuildSelectQuery(TargetTable: string, RequestData: Request['body'], Con
 function BuildDeleteQuery(TargetTable: string, RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
     let [Columns, Values] = QueryArray([], RequestData)
 
-    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
+    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys, true)
     const Query = `DELETE FROM ${TargetTable} ${WhereClause}`;
 
 
@@ -89,13 +102,19 @@ function BuildDeleteQuery(TargetTable: string, RequestData: Request['body'], Con
 }
 
 
-function BuildUpdateQuery(TargetTable: string, ExpectedColumns: string[], RequestData: Request['body'], ConditionKeys: string[]): [string, any[]] {
+function BuildUpdateQuery(
+
+    TargetTable: string,
+    ExpectedColumns: string[],
+    RequestData: Request['body'],
+    ConditionKeys: string[],
+    RequiredConditions?: string[] | Boolean): [string, any[]] {
 
 
     let [Columns, Values] = QueryArray(ExpectedColumns, RequestData)
 
 
-    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys)
+    const [WhereClause, WClauseValues] = GetWhereClause(RequestData, ConditionKeys, RequiredConditions)
     const SetClause = Columns.map(col => `${col}=?`).join(", ")
 
     const Query = `UPDATE ${TargetTable} SET ${SetClause} ${WhereClause}`;

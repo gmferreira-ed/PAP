@@ -23,6 +23,7 @@ import { AppSettings } from '../../Services/AppSettings';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { Vector2 } from '../../../types/vector';
+import { AuthService } from '../../Services/Auth.service';
 
 
 function ToSQLDate(Date: Date) {
@@ -60,6 +61,7 @@ export class SchedulePage {
   OrdersService = inject(OrdersService)
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
+  AuthService = inject(AuthService)
 
   // DATA
   Reservations: any[] = []
@@ -73,6 +75,9 @@ export class SchedulePage {
   ReservationsModalVisible = false
   DeletingReservation = false
   TableSelectVisible = false
+
+  // VARIABLES
+  CanModifyReservations = this.AuthService.HasEndpointPermission('reservations', 'POST')
 
 
   // FORMS
@@ -179,36 +184,38 @@ export class SchedulePage {
 
 
   PromptBookReservation(Event: MouseEvent, DayDate: Date) {
-    const ScheduleContainer = this.ScheduleContainer.nativeElement as HTMLElement
-    const SchedulePrompt = this.SchedulePrompt.nativeElement as HTMLElement
+    if (this.CanModifyReservations) {
+      const ScheduleContainer = this.ScheduleContainer.nativeElement as HTMLElement
+      const SchedulePrompt = this.SchedulePrompt.nativeElement as HTMLElement
 
-    const ContainerRect = ScheduleContainer.getBoundingClientRect()
-    const PromptRect = SchedulePrompt.getBoundingClientRect()
+      const ContainerRect = ScheduleContainer.getBoundingClientRect()
+      const PromptRect = SchedulePrompt.getBoundingClientRect()
 
-    const TargetY = Event.clientY - ContainerRect.top + ScheduleContainer.scrollTop
-    const SchedulePercentage = TargetY / (ScheduleContainer.scrollHeight)
+      const TargetY = Event.clientY - ContainerRect.top + ScheduleContainer.scrollTop
+      const SchedulePercentage = TargetY / (ScheduleContainer.scrollHeight)
 
 
-    const TargetAbsoluteHour = this.TotalHoursOpen * SchedulePercentage
-    const minutes = Math.round((TargetAbsoluteHour % 1) * 60) // Offset
-    const roundedMinutes = Math.round(minutes / 15) * 15;
+      const TargetAbsoluteHour = this.TotalHoursOpen * SchedulePercentage
+      const minutes = Math.round((TargetAbsoluteHour % 1) * 60) // Offset
+      const roundedMinutes = Math.round(minutes / 15) * 15;
 
-    const TargetDate = new Date(this.OpeningHours)
+      const TargetDate = new Date(this.OpeningHours)
 
-    TargetDate.setHours(TargetDate.getHours() + Math.floor(TargetAbsoluteHour))
-    TargetDate.setMinutes(TargetDate.getMinutes() + roundedMinutes)
-    TargetDate.setFullYear(DayDate.getFullYear())
-    TargetDate.setMonth(DayDate.getMonth())
-    TargetDate.setDate(DayDate.getDate())
+      TargetDate.setHours(TargetDate.getHours() + Math.floor(TargetAbsoluteHour))
+      TargetDate.setMinutes(TargetDate.getMinutes() + roundedMinutes)
+      TargetDate.setFullYear(DayDate.getFullYear())
+      TargetDate.setMonth(DayDate.getMonth())
+      TargetDate.setDate(DayDate.getDate())
 
-    this.PromptingSchedule = true
-    this.SelectedReservation = false
+      this.PromptingSchedule = true
+      this.SelectedReservation = false
 
-    this.SchedulePromptTop = Math.min(TargetY, ScheduleContainer.scrollHeight - PromptRect.height - 20)
-    this.SchedulePromptLeft = Math.min(Event.clientX - ContainerRect.left, ContainerRect.width - PromptRect.width - 20)
+      this.SchedulePromptTop = Math.min(TargetY, ScheduleContainer.scrollHeight - PromptRect.height - 20)
+      this.SchedulePromptLeft = Math.min(Event.clientX - ContainerRect.left, ContainerRect.width - PromptRect.width - 20)
 
-    this.ReservationForm.get('date')?.setValue(TargetDate)
-    this.ReservationForm.get('time')?.setValue(TargetDate)
+      this.ReservationForm.get('date')?.setValue(TargetDate)
+      this.ReservationForm.get('time')?.setValue(TargetDate)
+    }
   }
 
 
@@ -229,14 +236,14 @@ export class SchedulePage {
     this.DeletingReservation = true
     this.SelectedReservation = undefined
 
-    const [DeleteResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl+'reservations', 'DELETE', 'Failed to cancel reservation',{
+    const [DeleteResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'DELETE', 'Failed to cancel reservation', {
       reservation_id: Reservation.id
     })
 
-    if (DeleteResult){
+    if (DeleteResult) {
       this.MessageService.success('Successfully canceled reservation')
       this.LoadReservations()
-      if (this.IsSameDate(Reservation.date, this.Today)){
+      if (this.IsSameDate(Reservation.date, this.Today)) {
         this.LoadTodayReservations()
       }
     }
@@ -247,6 +254,7 @@ export class SchedulePage {
 
   SetView(ViewType: string) {
     this.ViewType = ViewType as string
+    this.SelectedReservation = undefined
     localStorage.setItem('calendar_view', ViewType)
     this.LoadReservations()
   }
@@ -327,6 +335,7 @@ export class SchedulePage {
 
   NavigateTime(Amount: 1 | -1, Event: MouseEvent) {
     Event.stopPropagation()
+    this.SelectedReservation = undefined
     const NewDate = new Date(this.CurrentDate)
     if (this.ViewType == 'Month') {
       NewDate.setMonth(NewDate.getMonth() + Amount)

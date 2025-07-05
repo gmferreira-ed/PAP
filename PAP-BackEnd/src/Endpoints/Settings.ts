@@ -8,10 +8,11 @@ import path from 'path';
 
 
 /**
- * @displayname "Settings"
+ * @displayname "View Settings"
+ * @category "Settings"
  * @path /settings
  * @method GET
- * @summary "View restaurant settings"
+ * @summary "View restaurant configuration settings"
  * @unprotected true
  * @root true
  */
@@ -26,10 +27,11 @@ Router.get('/settings', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Settings"
+ * @displayname "Update Settings"
+ * @category "Settings"
  * @path /settings
  * @method PATCH
- * @summary "Change restaurant settings"
+ * @summary "Modify restaurant settings such as work hours, pay per hour, contact info, etc."
  */
 Router.patch('/settings', HandleEndpointFunction(async (req, res) => {
 

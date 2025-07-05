@@ -3,13 +3,12 @@ import { AppSettings } from './AppSettings';
 import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot } from '@angular/router';
 import { HttpService } from './Http.service';
 
-const PermissionTypes = ['GET', 'POST', 'PATCH', 'DELETE']
-type PermissionType = typeof PermissionTypes[number]
+const RequestTypes = ['GET', 'POST']
+type RequestType = typeof RequestTypes[number]
 
 type PagePermissions = {
   CanView?: boolean,
-  CanUpdate?: boolean,
-  CanCreate?: boolean,
+  CanModify?: boolean,
 }
 
 @Injectable({
@@ -27,15 +26,19 @@ export class AuthService {
   EndpointPermissions: any = []
 
   PagePermissions: PagePermissions = {}
-  PermissionTypes = PermissionTypes
 
-  GetEndpointIdentifier(Endpoint: string, PermissionType: PermissionType) {
-    const NormalizedEndpoint = Endpoint.replace(/^\/+/, '');
-    return `${PermissionType}/${NormalizedEndpoint}`
+  GetEndpointIdentifier(Endpoint: string, RequestType: RequestType) {
+    let NormalizedEndpoint = Endpoint.replace(/^\/+/, '');
+
+    if (!NormalizedEndpoint.startsWith('api/')) {
+      NormalizedEndpoint = 'api/' + NormalizedEndpoint;
+    }
+
+    return `${RequestType}/${NormalizedEndpoint}`;
   }
 
-  HasEndpointPermission(Endpoint: string, PermissionType: PermissionType) {
-    const EndpointID = this.GetEndpointIdentifier(Endpoint, PermissionType)
+  HasEndpointPermission(Endpoint: string, RequestType: RequestType) {
+    const EndpointID = this.GetEndpointIdentifier(Endpoint, RequestType)
 
     const UserPerms = this.UserPermissions
     const EndpointInfo = this.EndpointPermissions[EndpointID]
@@ -69,7 +72,7 @@ export class AuthService {
       const EndpointPermissions = AuthSuccess.role_permissions
       this.EndpointPermissions = EndpointPermissions
 
-      if (TargetPageURL == 'login' || TargetPageURL=='register') {
+      if (TargetPageURL == 'login' || TargetPageURL == 'register') {
         this.router.navigate(['/dashboard'])
       }
 
@@ -77,8 +80,8 @@ export class AuthService {
 
     } else if (!ActivateRoute.data['NoLogin'] && ErrorInfo?.ErrorCode == 401) {
       this.router.navigate(['/login'])
-    }else{
-        this.router.navigate(['/error'])
+    } else {
+      this.router.navigate(['/error'])
     }
     return [null, {}]
   }
@@ -135,17 +138,14 @@ export class AuthService {
 
           if (RouterData) {
             const ViewEndpoint = RouterData['ViewEndpoint']
-            const CreateEndpoint = RouterData['CreateEndpoint']
-            const UpdateEndpoint = RouterData['UpdateEndpoint']
+            const ModifyEndpoint = RouterData['ModifyEndpoint']
 
-            const CanView = (!ViewEndpoint && !CreateEndpoint) || (ViewEndpoint && this.HasEndpointPermission(ViewEndpoint, 'VIEW'))
-            const CanCreate = CreateEndpoint && this.HasEndpointPermission(CreateEndpoint, 'CREATE')
-            const CanUpdate = UpdateEndpoint && this.HasEndpointPermission(UpdateEndpoint, 'UPDATE')
+            const CanView = (!ViewEndpoint && !ModifyEndpoint) || (ViewEndpoint && this.HasEndpointPermission(ViewEndpoint, 'GET'))
+            const CanModify = ModifyEndpoint && this.HasEndpointPermission(ModifyEndpoint, 'POST')
 
             this.AccessibleRoutes[RouterPath] = {
-              CanView: CanView || CanCreate, // Allow access in case there is only a create endpoint
-              CanCreate: CanCreate,
-              CanUpdate: CanUpdate
+              CanView: CanView || CanModify, // Allow access in case there is only a create endpoint
+              CanModify: CanModify,
             }
           } else {
             this.AccessibleRoutes[RouterPath] = { CanView: true }

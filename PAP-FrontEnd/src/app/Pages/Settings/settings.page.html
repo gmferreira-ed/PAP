@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="collumn">
                         <label>Restaurant Name</label>
-                        <input nz-input formControlName="RestaurantName"  />
+                        <input nz-input formControlName="RestaurantName" />
                     </div>
                     <div class="collumn">
                         <label>City</label>
@@ -24,7 +24,8 @@
                     </div>
                     <div class="collumn">
                         <label>Tax ID</label>
-                        <input nz-input style="width: 250px;" maxlength="20" formControlName="TaxID"  (keypress)="FormatNumb($event)"/>
+                        <input nz-input style="width: 250px;" maxlength="20" formControlName="TaxID"
+                            (keypress)="FormatNumb($event)" />
                     </div>
                     <div class="collumn">
                         <label>Postal Code</label>
@@ -35,29 +36,35 @@
                 <div class="row">
                     <div class="collumn">
                         <label>Work Hours</label>
-                        <nz-input-number formControlName="WorkHours" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"></nz-input-number>
+                        <nz-input-number formControlName="WorkHours" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"
+                            [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                     <div class="collumn">
                         <label>Work Hour Limit</label>
-                        <nz-input-number formControlName="WorkHourLimit" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"></nz-input-number>
+                        <nz-input-number formControlName="WorkHourLimit" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"
+                            [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                     <div class="collumn">
                         <label>Pay Per Hour</label>
-                        <nz-input-number formControlName="PayPerHour" [nzMin]="0" [nzSize]="'large'"></nz-input-number>
+                        <nz-input-number formControlName="PayPerHour" [nzMin]="0" [nzSize]="'large'"
+                            [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                 </div>
                 <div class="row">
                     <div class="collumn">
                         <label>Meal Allowance</label>
-                        <nz-input-number formControlName="MealAllowance" [nzMin]="0" [nzSize]="'large'"></nz-input-number>
+                        <nz-input-number formControlName="MealAllowance" [nzMin]="0" [nzDisabled]="!CanModifySettings"
+                            [nzSize]="'large'"></nz-input-number>
                     </div>
                     <div class="collumn">
                         <label>Extra Pay</label>
-                        <nz-input-number formControlName="ExtraPay" [nzMin]="0" [nzSize]="'large'"></nz-input-number>
+                        <nz-input-number formControlName="ExtraPay" [nzMin]="0" [nzSize]="'large'"
+                            [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                     <div class="collumn">
                         <label>Extra Pay Minute Rate</label>
-                        <nz-input-number formControlName="ExtraPayMinuteRate" [nzMin]="1" [nzSize]="'large'"></nz-input-number>
+                        <nz-input-number formControlName="ExtraPayMinuteRate" [nzMin]="1"
+                            [nzDisabled]="!CanModifySettings" [nzSize]="'large'"></nz-input-number>
                     </div>
                 </div>
                 <div class="row">
@@ -71,8 +78,13 @@
                     </div>
                 </div>
 
-                <button style="width: 50%;" nz-button nzType="primary" nzShape="round" [disabled]="!FieldsChanged()" (click)="SaveSettings()"
-                    [nzLoading]="ModifyingSettings" class="aself-center" nzSize="large">Save</button>
+                @if (CanModifySettings){
+                    <button style="width: 50%;" nz-button nzType="primary" nzShape="round" [disabled]="!FieldsChanged()"
+                        (click)="SaveSettings()" [nzLoading]="ModifyingSettings" class="aself-center"
+                        nzSize="large">
+                        Save
+                    </button>
+                }
             </form>
 
             <br>
@@ -84,18 +96,22 @@
             <h1>{{'Appearance' | translate}}</h1>
 
             <h2>Language</h2>
-            <nz-select nzShowSearch ngModel="{{CurrentLanguage}}" (ngModelChange)="ChangeLanguage($event)"
-                style="width: 250px;" [ngModelOptions]="{standalone:true}">
-                @for (Language of AppSettings.Languages; track $index){
-                    @let LanguageInfo = AppSettings.LanguageInfo[Language];
+            <div class="row">
+                <!-- @let SelectedLanguageInfo = AppSettings.LanguageInfo[CurrentLanguage];
+                <img class="flag" [src]="'https://flagpedia.net/data/flags/h80/'+SelectedLanguageInfo?.flag_code+'.png'"> -->
+
+                <nz-select nzShowSearch ngModel="{{CurrentLanguage}}" (ngModelChange)="ChangeLanguage($event)"
+                    style="width: 250px;" [ngModelOptions]="{standalone:true}">
+                    @for (Language of AppSettings.Languages; track $index){
+                        @let LanguageInfo = AppSettings.LanguageInfo[Language];
                         <nz-option nzCustomContent [nzLabel]="Language" [nzValue]="LanguageInfo.language_code">
                             <img class="flag"
-                                [src]="'https://flagpedia.net/data/flags/h80/'+LanguageInfo.flag_code+'.png'"
-                                (click)="ChangeLanguage(Language)">
+                                [src]="'https://flagpedia.net/data/flags/h80/'+LanguageInfo.flag_code+'.png'">
                                 {{Language}}
-                </nz-option>
-                }
-            </nz-select>
+                    </nz-option>
+                    }
+                </nz-select>
+            </div>
 
             <br>
             <br>

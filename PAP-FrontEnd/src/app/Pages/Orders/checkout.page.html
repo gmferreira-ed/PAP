@@ -58,7 +58,7 @@
                 <div class="product-select">
                     <!-- GO BACK BUTTON -->
                     <ng-container *ngTemplateOutlet="BackButton"></ng-container>
-                    <menu-product-select (ProductSelected)="AddToOrder($event)"
+                    <menu-product-select (ProductSelected)="AddToOrder($event)" [CanSelect]="CanModifyOrders"
                         style="height: 90%;"></menu-product-select>
                 </div>
 
@@ -77,18 +77,20 @@
                                     <label class="price">{{Product.quantity * Product.price | dcurrency}}</label>
                                 </div>
 
-                                <button nz-button nzDanger nzType="text" nzShape="circle"
-                                    (click)="DecreaseOrderItem(Product)">
-                                    <nz-icon nzType="delete"></nz-icon>
-                                </button>
+                                @if (CanModifyOrders){
+                                    <button nz-button nzDanger nzType="text" nzShape="circle"
+                                        (click)="DecreaseOrderItem(Product)">
+                                        <nz-icon nzType="delete"></nz-icon>
+                                    </button>
+                                }
 
                                 <div class="actions">
-
-
-                                    <button nz-button nzType="text" nzShape="circle" nzSize="large"
-                                        (click)="RemoveOrderItem(Product)">
-                                        <nz-icon nzType="close"></nz-icon>
-                                    </button>
+                                    @if (CanModifyOrders){
+                                        <button nz-button nzType="text" nzShape="circle" nzSize="large"
+                                            (click)="RemoveOrderItem(Product)">
+                                            <nz-icon nzType="close"></nz-icon>
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         }@empty {
@@ -100,20 +102,22 @@
                         <label class="total">{{'TOTAL' | translate}} - {{CalculateTotal() | dcurrency}}</label>
 
                         <div class="flex center">
-                            <button nz-button class="button finish-button cancel" [nzLoading]="FinalizingCheckout"
-                                (click)="CancelOrder()">
+                            @if (CanModifyOrders){
+                                <button nz-button class="button finish-button cancel" [nzLoading]="FinalizingCheckout"
+                                    (click)="CancelOrder()">
 
-                                <icon type="trash" size="25"></icon>
-                                {{'Cancel' | translate}}
+                                    <icon type="trash" size="25"></icon>
+                                    {{'Cancel' | translate}}
 
-                            </button>
+                                </button>
 
-                            <button class="button finish-button" (click)="MoveToCheckout()"
-                                [disabled]="OrderProducts.length < 1 || FinalizingCheckout">
+                                <button class="button finish-button" (click)="MoveToCheckout()"
+                                    [disabled]="OrderProducts.length < 1 || FinalizingCheckout">
 
-                                {{'Checkout' | translate}}
-                                <icon type="circle-arrow-right" size="25"></icon>
-                            </button>
+                                    {{'Checkout' | translate}}
+                                    <icon type="circle-arrow-right" size="25"></icon>
+                                </button>
+                            }
                         </div>
                     </div>
 
@@ -122,7 +126,7 @@
             @else {
                 <div class="action-card" style="width: 60%;">
                     <!-- GO BACK BUTTON -->
-                     <loading-screen [IsLoading]="FinalizingCheckout"></loading-screen>
+                    <loading-screen [IsLoading]="FinalizingCheckout"></loading-screen>
                     <ng-container *ngTemplateOutlet="BackButton"></ng-container>
 
                     <form nz-form [formGroup]="CustomerInfoForm" class="info-form">
@@ -153,8 +157,8 @@
                             <nz-form-item>
                                 <nz-form-control>
                                     <nz-form-label>{{'Amount Paid' | translate}}</nz-form-label>
-                                    <input nz-input [placeholder]="'Amount paid' | translate" formControlName="amount_paid"
-                                        (ngModelChange)="OnInfoChange()">
+                                    <input nz-input [placeholder]="'Amount paid' | translate"
+                                        formControlName="amount_paid" (ngModelChange)="OnInfoChange()">
                                 </nz-form-control>
                             </nz-form-item>
                         }
@@ -164,7 +168,7 @@
                                 <nz-form-label>{{'Discount' | translate}}</nz-form-label>
                                 <nz-input-number formControlName="discount" nzMin="0" nzMax="100" nzInputSuffix="%"
                                     (ngModelChange)="OnInfoChange()">
-                                     <nz-icon nzInputAddonAfter nzType="percentage" />
+                                    <nz-icon nzInputAddonAfter nzType="percentage" />
                                 </nz-input-number>
                             </nz-form-control>
                         </nz-form-item>

@@ -28,6 +28,7 @@ export class EditableDirective {
   @Input() IgnoreInputField: Boolean = false
   @Input() Editing: Boolean = false
   @Input() NumberOnly: Boolean = false
+  @Input() Editable: Boolean = true
 
   private OriginalText: string = ''
   private loaderEl?: HTMLElement
@@ -47,7 +48,7 @@ export class EditableDirective {
     event.stopPropagation()
     this.Editing = true
 
-    if (!this.IgnoreInputField) {
+    if (!this.IgnoreInputField && this.Editable) {
 
       this.OriginalText = this.el.nativeElement.innerText
       this.renderer.addClass(this.el.nativeElement, 'editing-content')
@@ -78,39 +79,42 @@ export class EditableDirective {
   }
 
   private FinalizeChange() {
-    var newValue = this.el.nativeElement.innerText.trim()
-    this.renderer.removeClass(this.el.nativeElement, 'editing-content')
-    this.renderer.removeAttribute(this.el.nativeElement, 'contenteditable')
+
+    if (this.Editable) {
+      var newValue = this.el.nativeElement.innerText.trim()
+      this.renderer.removeClass(this.el.nativeElement, 'editing-content')
+      this.renderer.removeAttribute(this.el.nativeElement, 'contenteditable')
 
 
 
-    if (this.NumberOnly) {
-      newValue = toNumber(newValue)
-    }
-
-
-    if (newValue == this.OriginalText || (this.NumberOnly && newValue == toNumber(this.OriginalText))) {
-      //if (this.NumberOnly)
-      this.el.nativeElement.innerText = this.OriginalText
-      return
-    }
-
-    if (newValue || newValue == '') {
-
-      this.ValueChanged.emit(newValue)
-
-      if (this.onEditCallback && typeof (this.onEditCallback) != 'string') {
-        this.showLoader()
-
-        const CallbackResult = this.onEditCallback(newValue)
-        if (CallbackResult instanceof Promise) {
-          CallbackResult.then((result) => { this.CallbackEnd(result) })
-        } else {
-          this.CallbackEnd(CallbackResult)
-        }
+      if (this.NumberOnly) {
+        newValue = toNumber(newValue)
       }
-    } else {
-      this.el.nativeElement.innerText = this.OriginalText
+
+
+      if (newValue == this.OriginalText || (this.NumberOnly && newValue == toNumber(this.OriginalText))) {
+        //if (this.NumberOnly)
+        this.el.nativeElement.innerText = this.OriginalText
+        return
+      }
+
+      if (newValue || newValue == '') {
+
+        this.ValueChanged.emit(newValue)
+
+        if (this.onEditCallback && typeof (this.onEditCallback) != 'string') {
+          this.showLoader()
+
+          const CallbackResult = this.onEditCallback(newValue)
+          if (CallbackResult instanceof Promise) {
+            CallbackResult.then((result) => { this.CallbackEnd(result) })
+          } else {
+            this.CallbackEnd(CallbackResult)
+          }
+        }
+      } else {
+        this.el.nativeElement.innerText = this.OriginalText
+      }
     }
   }
 
@@ -121,9 +125,9 @@ export class EditableDirective {
     this.loaderComponentRef.instance.Loading = true;
     this.loaderComponentRef.instance.LoaderStyle = 'Spinner';
     this.renderer.insertBefore(
-      this.el.nativeElement,                      
-      this.loaderComponentRef.location.nativeElement,  
-      this.el.nativeElement.firstChild           
+      this.el.nativeElement,
+      this.loaderComponentRef.location.nativeElement,
+      this.el.nativeElement.firstChild
     );
   }
 
@@ -137,6 +141,14 @@ export class EditableDirective {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['Editing'] && this.Editing) {
       this.onClick(new MouseEvent('a'))
+    } else if (changes['Editable']) {
+      if (this.Editable) {
+        this.renderer.setAttribute(this.el.nativeElement, 'tabindex', '0')
+        this.renderer.addClass(this.el.nativeElement, 'editable-field')
+      } else {
+        this.renderer.setAttribute(this.el.nativeElement, 'tabindex', '0')
+        this.renderer.removeClass(this.el.nativeElement, 'editable-field')
+      }
     }
   }
 }

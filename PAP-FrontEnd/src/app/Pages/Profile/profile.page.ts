@@ -1,4 +1,4 @@
-import { Component, inject, signal, SimpleChanges } from '@angular/core';
+import { Component, effect, inject, signal, SimpleChanges } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../Services/Http.service';
@@ -24,6 +24,10 @@ import { StatCardComponent } from "../../Components/stats-card/stat-card.compone
 import { ApexChartOptions } from '../../../types/apex-chart';
 import { Subscription } from 'rxjs';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { UserRole } from '../../../shared/permissions';
+import { PermissionsService } from '../../Services/Permissions.Service';
+import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
 
 type Shift = {
   start: Date
@@ -33,8 +37,9 @@ type Shift = {
 
 @Component({
   selector: 'profile-page',
-  imports: [PageLayoutComponent, DatePipe, TranslateModule, FileSelectComponent, NzIconModule, DynamicCurrencyPipe,
-    NzButtonModule, NzIconModule, LoadingScreen, IconsModule, NoDataComponent, LottieComponent, AtendanceViewer, StatCardComponent],
+  imports: [PageLayoutComponent, DatePipe, TranslateModule, FileSelectComponent, NzIconModule, DynamicCurrencyPipe, NzDropDownModule,
+    NzButtonModule, NzIconModule, LoadingScreen, IconsModule, NoDataComponent, LottieComponent, AtendanceViewer, StatCardComponent,
+    UnavailableInfo],
   templateUrl: './profile.page.html',
   styleUrl: './profile.page.less'
 })
@@ -50,6 +55,7 @@ export class ProfilePage {
   AuthService = inject(AuthService)
   HttpService = inject(HttpService)
   NotificationService = inject(NzNotificationService)
+  PermissionsService = inject(PermissionsService)
   MessageService = inject(NzMessageService)
 
   CurrentUser = this.AuthService.User
@@ -59,9 +65,17 @@ export class ProfilePage {
   UploadingImage = false
   TogglingUserStatus = false
   DisassociatingCard = false
+  ChangingUserRole = false
 
   // Data
   Shifts: any = []
+  Roles: UserRole[] = []
+
+  // Variables
+  CanViewEntries = this.AuthService.HasEndpointPermission('entries', 'GET') || this.CurrentUser() == this.User()?.username
+
+
+
 
   CardAnimationOptions: AnimationOptions = {
     path: 'Animations/card_read.json',
@@ -90,16 +104,40 @@ export class ProfilePage {
     this.UploadingImage = false
   }
 
+  async UpdateUserInfo(DataArray: any, ErrorMessage: string) {
+    const [Sucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users', 'PATCH', ErrorMessage,
+      DataArray
+    )
+    return Sucess
+  }
+
+  async ChangeUserRole(RoleName: string) {
+    this.ChangingUserRole = true
+
+    const ActiveToggleSucess = await this.UpdateUserInfo({
+      role: RoleName,
+      userid: this.User()?.userid,
+    }, 'Failed to change user role')
+
+    if (ActiveToggleSucess) {
+      this.MessageService.success("Sucessfully changed user role")
+      this.LoadUserInfo()
+    }
+
+    this.ChangingUserRole = false
+  }
+
   async ToggleUserStatus() {
     this.TogglingUserStatus = true
 
     const CurrentActive = this.User()!.active
     const Action = CurrentActive ? 'deactivated' : 'activated'
 
-    const [ActiveToggleSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users', 'PATCH', 'Failed to deactivate user', {
+    const ActiveToggleSucess = await this.UpdateUserInfo({
       userid: this.User()!.userid,
       active: !CurrentActive
-    })
+    }, 'Failed to toggle user status')
+
     if (ActiveToggleSucess) {
       this.MessageService.success("Sucessfully " + Action + ' user')
       this.User()!.active = !CurrentActive
@@ -307,9 +345,13 @@ export class ProfilePage {
   ErrorSound = new Audio('Sounds/scan-error.mp3');
 
   // LOADING
-  async ngOnInit() {
-    // User Info
+
+  async LoadUserInfo() {
     this.LoadingInfo = true
+
+    // When navigating from a profile page to another, this needs to be reset in case of missing permissions
+    this.TotalFinalPay = 0
+    this.TotalHours = 0
 
     const UserToSearch = this.ActiveRoute.snapshot.paramMap.get('username')
 
@@ -320,15 +362,35 @@ export class ProfilePage {
 
     if (UserInfo) {
       this.User.set(UserInfo)
-      this.LoadingInfo = false
     }
 
+    this.LoadingInfo = false
+  }
+
+
+  async ngOnInit() {
+
+    this.ActiveRoute.params.subscribe((params) => {
+      const Username = params['username']
+      if (Username){
+        this.LoadUserInfo()
+      }
+    })
+
+    this.LoadUserInfo()
+    const Roles = await this.PermissionsService.LoadRoles()
+    this.Roles = Roles
   }
 
 
   private ScanConnection?: Subscription;
 
   constructor() {
+
+    effect(() => {
+      this.CanViewEntries = this.AuthService.HasEndpointPermission('entries', 'GET') || this.CurrentUser() == this.User()?.username
+    })
+
     console.log('Connected scan event')
     this.ScanConnection = this.CardService.OnScan.subscribe(async (CardID) => {
       console.log('Scan event received')

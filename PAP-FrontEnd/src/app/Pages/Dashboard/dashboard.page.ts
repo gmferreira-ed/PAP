@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { RestaurantLayout } from "../../Components/layout/layout.component";
 import { AtendanceViewer } from "../../Components/attendance/attendance";
@@ -14,6 +14,8 @@ import { IconsModule } from "../../Components/icon/icon.component";
 import { NoDataComponent } from '../../Components/no-data/no-data';
 import { OrdersService } from '../../Services/Orders.service';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { AuthService } from '../../Services/Auth.service';
+import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
 
 type BestSeller = {
   name: string
@@ -22,7 +24,7 @@ type BestSeller = {
 @Component({
   selector: 'dashboard-page',
   imports: [PageLayoutComponent, RestaurantLayout, AtendanceViewer, ScrollingModule, UserCard, DatePipe, DurationPipe, LoadingScreen,
-    DynamicCurrencyPipe, IconsModule, NoDataComponent],
+    DynamicCurrencyPipe, IconsModule, NoDataComponent, UnavailableInfo],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.less',
 })
@@ -31,6 +33,9 @@ export class DashboardPage {
   // Services
   HttpService = inject(HttpService)
   OrdersService = inject(OrdersService)
+  AuthService = inject(AuthService)
+
+  @ViewChild('AttendanceView') AttendanceView?:AtendanceViewer
 
   // Data
   WorkingStaff: any[] = []
@@ -50,6 +55,10 @@ export class DashboardPage {
   TodayEnd = new Date()
 
   MenuImagesURL = AppSettings.ImagesURL + 'menu/'
+
+  CanViewRevenue = this.AuthService.HasEndpointPermission('revenue-categorized', 'GET')
+  CanViewEntries = this.AuthService.HasEndpointPermission('entries', 'GET')
+  CanViewReservations = this.AuthService.HasEndpointPermission('reservations', 'GET')
 
   // States
   LoadingReservations = false
@@ -95,53 +104,59 @@ export class DashboardPage {
   }
 
   async LoadReservations() {
-    this.LoadingReservations = true
 
-    const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', 'Failed to load reservations', {
-      StartDate: GlobalUtils.ToSQLDate(this.Now),
-      EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
-    }) as [any[]]
+    if (this.CanViewReservations){
+      this.LoadingReservations = true
 
-    if (Reservations) {
-      this.Reservations = Reservations.filter((Reservation)=>{
-        const ReservTimestamp = new Date(Reservation.date).getTime()
-        return this.Now.getTime()<ReservTimestamp
-      })
+      const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', 'Failed to load reservations', {
+        StartDate: GlobalUtils.ToSQLDate(this.Now),
+        EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
+      }) as [any[]]
+
+      if (Reservations) {
+        this.Reservations = Reservations.filter((Reservation) => {
+          const ReservTimestamp = new Date(Reservation.date).getTime()
+          return this.Now.getTime() < ReservTimestamp
+        })
+      }
+
+
+      this.LoadingReservations = false
     }
-
-
-    this.LoadingReservations = false
   }
 
   async LoadRevenue() {
-    this.LoadingRevenue = true
 
-    const [CategorizedRevenue] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'revenue-categorized',
-      'GET', 'Failed to load revenue', {
-      StartDate: GlobalUtils.ToSQLDate(this.TodayStart),
-      EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
-    }) as [any[]]
+    if (this.CanViewRevenue) {
+      this.LoadingRevenue = true
 
-    this.CategorizedRevenue = CategorizedRevenue
-    this.Revenue = CategorizedRevenue[0]?.total_revenue_all_products || 0
+      const [CategorizedRevenue] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'revenue-categorized',
+        'GET', 'Failed to load revenue', {
+        StartDate: GlobalUtils.ToSQLDate(this.TodayStart),
+        EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
+      }) as [any[]]
 
-    this.LoadingRevenue = false
+      this.CategorizedRevenue = CategorizedRevenue
+      this.Revenue = CategorizedRevenue[0]?.total_revenue_all_products || 0
+
+      this.LoadingRevenue = false
+    }
   }
 
   async LoadTables() {
     this.LoadingTables = true
 
-    const Tables = await this.OrdersService.Tables.Get()  as Record<string, any>;
+    const Tables = await this.OrdersService.Tables.Get() as Record<string, any>;
 
     let Occupied = 0
     let Available = 0
     let Total = 0
 
     for (const Table of Object.values(Tables)) {
-      Total+=1
+      Total += 1
       if (Table.status == 'OnGoing') {
         Occupied += 1
-      }else{
+      } else {
         Available += 1
       }
     }

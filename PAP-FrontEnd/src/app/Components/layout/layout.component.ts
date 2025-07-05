@@ -61,6 +61,7 @@ import { RouterModule } from '@angular/router';
 import { OrdersService } from '../../Services/Orders.service';
 import { Table } from '../../../shared/table';
 import { DatePipe } from '@angular/common';
+import { AuthService } from '../../Services/Auth.service';
 
 @Component({
   selector: 'restaurant-layout',
@@ -111,6 +112,7 @@ export class RestaurantLayout {
 
   // Services
   MessageService = inject(NzMessageService)
+  AuthService = inject(AuthService)
   OrdersService = inject(OrdersService)
   HttpService = inject(HttpService)
   Renderer = inject(Renderer2)
@@ -126,6 +128,7 @@ export class RestaurantLayout {
     OnGoing: 'Occupied'
   }
 
+  CanEditLayout = this.AuthService.HasEndpointPermission('layout', 'PATCH')
 
   //Imports
   GlobalUtils = GlobalUtils

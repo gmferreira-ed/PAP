@@ -8,11 +8,11 @@ import path from 'path';
 
 
 /**
- * @displayname "Reservations"
+ * @displayname "View Reservations"
+ * @category "Reservations"
  * @path /reservations
  * @method GET
- * @summary "View reservations"
- * @unprotected true
+ * @summary "View all reservations"
  */
 Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
 
@@ -37,9 +37,9 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Add Reservation"
+ * @displayname "Create/Modify Reservations"
  * @category "Reservations"
- * @summary "Create a new reservation"
+ * @summary "Create new table reservations and manage existing ones"
  * @path /reservations
  * @method POST
  */
@@ -66,26 +66,14 @@ Router.post('/reservations', HandleEndpointFunction(async (req, res) => {
 
 }));
 
-/**
- * @displayname "Update Reservation"
- * @category "Reservations"
- * @summary "Change reservation information"
- * @path /reservations
- * @method PATCH
- */
-Router.patch('/reservations', HandleEndpointFunction(async (req, res) => {
-
-
-
-}));
-
 
 /**
  * @displayname "Delete Reservation"
  * @category "Reservations"
- * @summary "Delete a reservation"
+ * @summary "Delete a reservation by ID"
  * @path /reservations
  * @method DELETE
+ * @connected POST/api/reservations
  */
 Router.delete('/reservations', HandleEndpointFunction(async (Request, Response) => {
 

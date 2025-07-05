@@ -34,12 +34,12 @@ export class NavbarComponent {
           this.Renderer.removeClass(el, 'active');
       }
 
-      // if (routerLink) {
-      //   const CanAccesRouter = await this.AuthService.CanAccessRoute(`/${routerLink!}`)
-      //   if (!CanAccesRouter) {
-      //     this.Renderer.setStyle(el, 'display', 'none')
-      //   }
-      // }
+      if (routerLink) {
+        const CanAccesRouter = await this.AuthService.CanAccessRoute(`${routerLink!}`)
+        if (!CanAccesRouter) {
+          this.Renderer.setStyle(el, 'display', 'none')
+        }
+      }
     });
   }
 

@@ -1,67 +1,134 @@
 <page-layout>
+    
+    <loading-screen [IsLoading]="LoadingPermissions"></loading-screen>
+
     <div class="horizontal-container">
         <div class="roles">
             <loading-screen [IsLoading]="LoadingRoles" LoaderStyle="Spinner" [ShowBackground]="false"></loading-screen>
             <h2>Roles</h2>
             @for (Role of Roles; track $index){
-            <div class="role" [class.selected]="SelectedRole == Role.role" (click)="ChangeRole(Role.role)">
+                <div class="role" [class.selected]="SelectedRole.name == Role.name" (click)="ChangeRole(Role)">
 
-                @if (Role.administrator){<icon type="star" [fill]="true"></icon>}
-                {{Role.role}}
-            </div>
-            }
-        </div>
+                    @if (Role.administrator){
+                        <icon type="star" [fill]="true"></icon>
+                    }
+                    {{Role.name}}
 
-        <div class="permissions">
-            <loading-screen [IsLoading]="LoadingPermissions" LoaderStyle="Spinner"
-                [ShowBackground]="false"></loading-screen>
-            <h2>{{SelectedRole}} Permissions</h2>
-            @for (CategoryInfo of CategorizedPermissions; track $index){
-            <nz-divider></nz-divider>
-            <h2>{{CategoryInfo.Category}}</h2>
-            <div class="permissions-container">
-                @for (EndpointData of CategoryInfo.Endpoints; track $index){
-
-
-                <div class="permission">
-                    <h3>{{EndpointData.DisplayName}}</h3>
-                    <div class="divisor"></div>
-                    <div class="permission-types">
-                        @for (PermissionInfo of EndpointData.PermissionTypes; track $index){
-                        <div class="permission-type">
-                            <label class="permission-type-label" nz-tooltip [nzTooltipTitle]="PermissionInfo.Summary">
-                                {{PermissionInfo.TypeLabel || PermissionInfo.PermissionType}}
-                            </label>
-                            <nz-switch
-                                [ngModel]="PermissionInfo.PermissionLevels.includes(SelectedRole) || PermissionInfo.PermissionLevels.includes('User')"
-                                [nzLoading]="PermissionInfo.Changing"
-                                (ngModelChange)="PermissionSwitchTriggered(EndpointData, PermissionInfo, $event)"
-                                [disabled]="!CanCreate || PermissionInfo.PermissionLevels.includes('User') && SelectedRole!='User'"
-                                nz-tooltip
-                                [nzTooltipTitle]="PermissionInfo.PermissionLevels.includes('User') && SelectedRole!='User' ? 'Normal users have this permission' : ''"></nz-switch>
+                    @if (CanCreateRoles){
+                        <div class="row fill" style="justify-content: end;">
+                            @if (!Role.locked){
+                                <button nz-button nzType="text" nzDanger (click)="PromptDeleteRole(Role, $event)"
+                                    [disabled]="Role.permission_level >= AuthService.UserPermissions.permission_level">
+                                    <nz-icon nzType="delete">
+                                    </nz-icon>
+                                </button>
+                            }@else {
+                                <icon type="lock" nz-tooltip="This is a default system role, it cannot be modified"
+                                    style="pointer-events: all; margin-right: 6px;"></icon>
+                            }
                         </div>
-                        }
+                    }
+                </div>
+            }
+            @if (CanCreateRoles){
+                <div class="role" (click)="RoleCreationModalVisible = true">
+                    <div class="row fill center">
+                        <icon type="plus" size="24"></icon>
                     </div>
                 </div>
-                }
-            </div>
             }
         </div>
+        <div class="permissions-container">
+            <h2>{{SelectedRole.name}} Permissions</h2>
+            <div class="permissions">
+                @for (CategoryInfo of CategorizedPermissions; track $index){
+                    <h2>{{CategoryInfo.Category}}</h2>
+                    <div class="category-container">
+                        @for (EndpointData of CategoryInfo.Endpoints; track $index){
+                            <div class="permission-card">
+                                <h3>{{EndpointData.DisplayName}}</h3>
+                                <div class="divisor" style="margin-bottom: 5px;"></div>
+                                <caption>{{EndpointData.Summary}}</caption>
+                                <div class="permission-type">
+                                    @let StockError = CategoryInfo.Category == 'Stocks' 
+                                    && EndpointData.ID != 'GET/api/stock-items'
+                                    && !EndpointPermissions['GET/api/stock-items']?.Permissions.includes(SelectedRole.name);
+                                    <nz-switch 
+                                    
+                                    [ngModel]="EndpointData.PermissionLevels.includes(SelectedRole.name) 
+                                    || EndpointData.PermissionLevels.includes('User')
+                                    || SelectedRole.administrator" 
+                                    
+                                    [nzLoading]="EndpointData.Changing"
+                                    (ngModelChange)="PermissionSwitchTriggered(EndpointData, $event)"
+                                    
+                                    [disabled]="!CanModify || 
+                                    (EndpointData.PermissionLevels.includes('User') && SelectedRole.name!='User')
+                                    || SelectedRole.administrator 
+                                    || SelectedRole.permission_level >= AuthService.UserPermissions.permission_level
+                                    || StockError" 
+                                    
+                                    nz-tooltip
+
+                                    [nzTooltipTitle]="EndpointData.PermissionLevels.includes('User') && SelectedRole.name!='User' 
+                                    ? 'Normal users have this permission' 
+                                    : SelectedRole.administrator ? 'Administrator roles have all permissions' : 
+                                    StockError ? 'The user must be able to view stocks for this permission to be valid' : ''"></nz-switch>
+                                    
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="separator"></div>
+                }
+            </div>
+        </div>
+
         <div class="users">
             <loading-screen [IsLoading]="LoadingUsers" LoaderStyle="Spinner" [ShowBackground]="false"></loading-screen>
             <h2>Users</h2>
             <div class="users-container">
                 @for (User of RoleUsers; track $index){
-                <user-card [UserData]="User"></user-card>
-                <div class="separator" style="width: 75%; align-self: center;"></div>
+                    <user-card [UserData]="User"></user-card>
+                    <div class="separator" style="width: 75%; align-self: center;"></div>
                 }@empty {
-                @if (!LoadingUsers){
-                <no-data>
-                    <label>{{'There are no users with this role' | translate}}</label>
-                </no-data>
-                }
+                    @if (!LoadingUsers){
+                        <no-data>
+                            <label>{{'There are no users with this role' | translate}}</label>
+                        </no-data>
+                    }
                 }
             </div>
         </div>
     </div>
 </page-layout>
+
+<!-- Role Creation -->
+<nz-modal [nzOkText]="'Submit'" nzCancelText="Cancel" [nzVisible]="RoleCreationModalVisible"
+    [nzOkLoading]="CreatingRole" nzTitle="Create Role" nzCentered [nzOkDisabled]="RoleCreateFrom.invalid"
+    (nzOnOk)="CreateRole()" (nzOnCancel)="RoleCreationModalVisible=false">
+    <ng-container *nzModalContent>
+        <form [formGroup]="RoleCreateFrom">
+            <nz-form-item>
+                <nz-form-label>Role Name</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="name">
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label>Permission Level</nz-form-label>
+                <nz-form-control>
+                    <nz-select formControlName="permission_level">
+                        @for (Role of Roles; track $index){
+                            @if (!Role.administrator){
+                                <nz-option [nzLabel]="'After '+Role.name" [nzValue]="Role.permission_level+1"
+                                    [nzDisabled]="Role.permission_level >= AuthService.UserPermissions.permission_level"></nz-option>
+                            }
+                        }
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>

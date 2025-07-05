@@ -11,10 +11,11 @@ import { ResultSetHeader } from 'mysql2';
 
 
 /**
- * @displayname "Orders"
+ * @displayname "View Orders"
+ * @category "Orders"
  * @path /orders
  * @method GET
- * @summary "View orders"
+ * @summary "View all orders with optional filtering by status and table"
  */
 Router.get('/orders', HandleEndpointFunction(async (req, res) => {
 
@@ -72,10 +73,11 @@ async function CreateOrder(TableID: number, UserID?: number) {
 
 
 /**
- * @displayname "Orders"
+ * @displayname "Create/Modify Orders"
+ * @category "Orders"
  * @path /orders
  * @method POST
- * @summary "Create/Cancel orders"
+ * @summary "Create a new order and modify order details"
  */
 Router.post('/orders', HandleEndpointFunction(async (req, res) => {
 
@@ -90,21 +92,15 @@ Router.post('/orders', HandleEndpointFunction(async (req, res) => {
 
 
 
-/**
- * @displayname "Orders"
- * @path /orders
- * @method PATCH
- * @summary "Modify order details"
- */
-Router.patch('/orders', HandleEndpointFunction(async (req, res) => {
-}));
 
 
 /**
- * @displayname "Orders"
+ * @displayname "Cancel Order"
+ * @category "Orders"
  * @path /orders
  * @method DELETE
- * @summary "Create/Cancel orders"
+ * @summary "Cancel or delete an order"
+ * @connected POST/api/orders
  */
 Router.delete('/orders', HandleEndpointFunction(async (req, res) => {
 
@@ -210,10 +206,12 @@ async function CheckoutOrder(Body: any) {
 
 
 /**
- * @displayname "Checkout Orders"
+ * @displayname "Checkout Order"
+ * @category "Orders"
  * @path /checkout
  * @method POST
- * @summary "Checkout orders"
+ * @summary "Process order checkout with payment and finalize order"
+ * @connected POST/api/orders
  */
 Router.post('/checkout', HandleEndpointFunction(async (req, res) => {
 
@@ -232,10 +230,11 @@ Router.post('/checkout', HandleEndpointFunction(async (req, res) => {
 }));
 
 /**
- * @displayname "Orders"
+ * @displayname "View Revenue"
+ * @category "Orders"
  * @path /revenue-categorized
  * @method GET
- * @summary "View orders"
+ * @summary "View revenue statistics categorized by menu categories"
  */
 Router.get('/revenue-categorized', HandleEndpointFunction(async (req, res) => {
 const Query = `

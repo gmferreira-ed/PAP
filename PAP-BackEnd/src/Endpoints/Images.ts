@@ -153,6 +153,7 @@ Router.post('/images/users', UserImages.single('image'), HandleEndpointFunction(
  * @path /images/menu
  * @method POST
  * @summary "Create/Delete items on the menu"
+* @connected POST/api/menu
  */
 Router.post('/images/menu', MenuImages.single('image'), HandleEndpointFunction(async (req, res) => {
     ProcessImage(req, res, [300, 300])
@@ -163,6 +164,7 @@ Router.post('/images/menu', MenuImages.single('image'), HandleEndpointFunction(a
  * @path /images/stocks
  * @method POST
  * @summary "Create/Delete items on the menu"
+* @connected POST/api/stock-items
  */
 Router.post('/images/stocks', StockImages.single('image'), HandleEndpointFunction(async (req, res) => {
     ProcessImage(req, res, [300, 300])

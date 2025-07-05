@@ -7,9 +7,9 @@ import { ModifyStocksQuantity } from '../Services/StocksUtils';
 
 
 /**
- * @displayname "Inventory Report"
+ * @displayname "View Inventory Reports"
  * @category "Stocks"
- * @summary "Fetches inventory reports and their info."
+ * @summary "View all inventory reports with item details and user information"
  * @path /inventory-reports
  * @method GET
  */
@@ -24,9 +24,9 @@ Router.get('/inventory-reports', HandleEndpointFunction(async (req, res) => {
     menu.name AS product_name
     
     FROM inventory_reports report
-     LEFT JOIN  inventory_report_items item ON item.report_id = report.id
-     LEFT JOIN  users user ON user.userid = report.created_by
-     LEFT JOIN  stock_items stock_item ON stock_item.id = item.item_id
+    LEFT JOIN inventory_report_items item ON item.report_id = report.id
+    LEFT JOIN users user ON user.userid = report.created_by
+    LEFT JOIN stock_items stock_item ON stock_item.id = item.item_id
     LEFT JOIN menu ON menu.id = stock_item.connected_product_id`
 
     const [InventoryReports] = await Database.execute(Query) as any[]
@@ -65,9 +65,9 @@ Router.get('/inventory-reports', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Inventory Report"
+ * @displayname "Create Inventory Report"
  * @category "Stocks"
- * @summary "Create an inventory report. Modifies stock items quantity"
+ * @summary "Create an inventory report and modify stock item quantities"
  * @path /inventory-reports
  * @method POST
  */
