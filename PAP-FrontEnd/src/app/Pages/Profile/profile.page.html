@@ -38,7 +38,7 @@
                                 <button nz-button nzType="primary" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"
                                     [disabled]="User()?.username == CurrentUser()" [nzLoading]="ChangingUserRole">
                                     <nz-icon nzType="security-scan" nzTheme="outline" />
-                                    Change Permissions
+                                    {{'Change Permissions' | translate}}
                                 </button>
                                 <nz-dropdown-menu #menu="nzDropdownMenu">
                                     <ul nz-menu>
@@ -46,7 +46,7 @@
                                             <li nz-menu-item
                                                 [nzDisabled]="Role.permission_level>AuthService.UserPermissions.permission_level"
                                                 (click)="ChangeUserRole(Role.name)">
-                                                {{Role.name}}
+                                                {{Role.name | translate}}
                                             </li>
                                         }
                                     </ul>
@@ -55,13 +55,13 @@
                                 <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus"
                                     [disabled]="User()?.username== CurrentUser()">
                                     <nz-icon nzType="user-delete" nzTheme="outline" />
-                                    Deactivate User
+                                    {{'Deactivate User' | translate}}
                                 </button>
                             }@else {
                                 <button nz-button class="row green border" (click)="ToggleUserStatus()"
                                     [nzLoading]="TogglingUserStatus">
                                     <icon type="user-round-check"></icon>
-                                    Activate User
+                                    {{'Activate User' | translate}}
                                 </button>
                             }
                         </div>
@@ -91,7 +91,7 @@
 
                     @if (User()?.address){
                         <div class="collumn">
-                            <label class="info-label">Address</label>
+                            <label class="info-label">{{'Address' | translate}}</label>
                             <label>{{User()?.address}} {{User()?.city}} {{User()?.country}}
                                 {{User()?.postalcode}}</label>
                         </div>
@@ -107,14 +107,14 @@
                     <attendance-view (UserEntriesChange)="EntriesChanged($event)" [SelectedUser]="User"
                         [AwaitUser]="true"></attendance-view>
                 }@else {
-                    <unavailable-info>You don't have permission to view this information</unavailable-info>
+                    <unavailable-info>{{'You don\'t have permission to view this information' | translate}}</unavailable-info>
                 }
             </section>
 
             <div class="collumn" style="width: 25%;">
                 <section class="action-card keycard-card" style="min-width: 30%;">
                     <label class="title">
-                        Keycard
+                        {{'Keycard' | translate}}
                     </label>
 
                     <div class="collumn center vcenter fill">
@@ -125,43 +125,43 @@
                                     style="position: absolute; left:5px; top: 5px;"></icon>
                                 <label style="position: absolute; right: 10px; bottom: 10px;">{{CardID}}</label>
                                 <button nz-button nzDanger [nzLoading]="DisassociatingCard"
-                                    (click)="RemoveCard()">Disassociate</button>
+                                    (click)="RemoveCard()">{{'Disassociate' | translate}}</button>
                             </div>
                         }@else {
                             <icon type="no-card" size="50"></icon>
-                            <label>This user has no keycard attributed</label>
+                            <label>{{'This user has no keycard attributed' | translate}}</label>
                             <div class="row" (click)="CardService.PromptingCardRead = true">
                                 <button class="button">
                                     <icon type="credit-card" color="black"></icon>
-                                    New User Card
+                                    {{'New User Card' | translate}}
                                 </button>
                                 <button class="button">
                                     <icon type="keytag"></icon>
-                                    New Key Tag
+                                    {{'New Key Tag' | translate}}
                                 </button>
                             </div>
                         }
                     </div>
                 </section>
 
-                <stat-card StatName="Salary" [StatTotalValue]='TotalFinalPay' [ShowChartTimeOptions]="false"
+                <stat-card StatName="{{'Salary' | translate}}" [StatTotalValue]='TotalFinalPay' [ShowChartTimeOptions]="false"
                     [ShowTimeNavigation]="true" ViewType="Month" (ViewTypeChanged)="SalaryRangeChanged($event)"
                     FormatType="currency">
                     @if (CanViewEntries){
-                        <label>Work hours: {{TotalNormalPay | dcurrency}}</label>
-                        <label>Extra work hours: {{TotalExtraPay | dcurrency}}</label>
-                        <label>Meal allowance: {{TotalMealAllowance | dcurrency}}</label>
+                        <label>{{'Work hours:' | translate}} {{TotalNormalPay | dcurrency}}</label>
+                        <label>{{'Extra work hours:' | translate}} {{TotalExtraPay | dcurrency}}</label>
+                        <label>{{'Meal allowance:' | translate}} {{TotalMealAllowance | dcurrency}}</label>
                     }@else{
-                        <unavailable-info>Unavailable Info</unavailable-info>
+                        <unavailable-info>{{'Unavailable Info' | translate}}</unavailable-info>
                     }
                 </stat-card>
             </div>
 
-            <stat-card StatName="Total Work Hours" #WorkHoursChart [TimeOptions]="['Day', 'Week', 'Month', 'All']"
+            <stat-card StatName="{{'Total Work Hours' | translate}}" #WorkHoursChart [TimeOptions]="['Day', 'Week', 'Month', 'All']"
                 [ChartOptions]="CanViewEntries ? ShiftChartOptions : undefined" [StatTotalValue]='TotalHours'
                 (ViewTypeChanged)="EntriesChanged(this.UserEntries, $event)" [FormatCallback]="FormatTotal">
                 @if (!CanViewEntries){
-                    <unavailable-info>Unavailable Info</unavailable-info>
+                    <unavailable-info>{{'Unavailable Info' | translate}}</unavailable-info>
                 }
             </stat-card>
         </div>
@@ -175,7 +175,7 @@
     <div class="overlay" [class.invisible]="!CardService.PromptingCardRead">
         <!-- <icon type="keytag" size="200" [fill]="true" color="white"></icon> -->
         <ng-lottie [options]="CardAnimationOptions" width="300" height="300"></ng-lottie>
-        <h2 style="color: var(--secondary-color);">Please pass the card or key tag over the reader</h2>
-        <button nz-button (click)="CardService.PromptingCardRead=false">Cancel</button>
+        <h2 style="color: var(--secondary-color);">{{'Please pass the card or key tag over the reader' | translate}}</h2>
+        <button nz-button (click)="CardService.PromptingCardRead=false">{{'Cancel' | translate}}</button>
     </div>
 }

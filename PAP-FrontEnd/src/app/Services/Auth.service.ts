@@ -2,6 +2,7 @@ import { inject, Injectable, isDevMode, signal } from '@angular/core';
 import { AppSettings } from './AppSettings';
 import { ActivatedRouteSnapshot, Route, Router, RouterStateSnapshot } from '@angular/router';
 import { HttpService } from './Http.service';
+import { TranslateService } from '@ngx-translate/core';
 
 const RequestTypes = ['GET', 'POST']
 type RequestType = typeof RequestTypes[number]
@@ -19,6 +20,7 @@ export class AuthService {
 
   router = inject(Router)
   HttpService = inject(HttpService)
+  TranslateService = inject(TranslateService)
   User = signal<string | null>(null)
   UserPermissions: any = {}
   IsPageAdmin = signal<boolean>(false)
@@ -63,7 +65,7 @@ export class AuthService {
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', 'Failed to authenticate. Please try again')
+    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', this.TranslateService.instant('Failed to authenticate. Please try again'))
 
     const TargetPageURL = ActivateRoute.routeConfig?.path
 
@@ -125,7 +127,7 @@ export class AuthService {
 
       const AuthURL = new URL(`role-permissions/user`, AppSettings.APIUrl)
 
-      const [UserPermissions] = await this.HttpService.MakeRequest(AuthURL, 'GET', 'Failed to load user permissions. Please try again')
+      const [UserPermissions] = await this.HttpService.MakeRequest(AuthURL, 'GET', this.TranslateService.instant('Failed to load user permissions. Please try again'))
 
       if (UserPermissions) {
         this.UserPermissions = UserPermissions

@@ -6,10 +6,10 @@
                 
             <img [src]="File.imagebase64" class="uploaded-image"/>
             @if (FailedUploads[File.uid]){
-                <label class="error">Failed to upload</label>
+                <label class="error">{{'Failed to upload' | translate}}</label>
             }@else if (Uploading){
                 <div [style.z-index]="1" style="padding: 5px;" class="overlay">
-                    <label class="uploading-label">Uploading...</label>
+                    <label class="uploading-label">{{'Uploading...' | translate}}</label>
                     <progress-viewer [Progress]="UploadsProgress[File.uid] || 0"></progress-viewer>
                 </div>
             }

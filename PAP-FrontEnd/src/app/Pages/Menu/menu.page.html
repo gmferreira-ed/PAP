@@ -15,7 +15,7 @@
         <nz-segmented [(ngModel)]="CurrentCategory">
             <label nz-segmented-item [nzValue]="'All'">{{'All' | translate}}</label>
             @for (Category of Categories; track $index){
-                <label nz-segmented-item [nzValue]="Category.name">{{Category.name}}</label>
+                <label nz-segmented-item [nzValue]="Category.name">{{Category.name | translate}}</label>
             }
         </nz-segmented>
     </div>
@@ -107,8 +107,8 @@
 
 
 <!-- CATEGORIES MODAL -->
-<nz-modal [(nzVisible)]="CategoriesModalVisible" nzOkText="" [nzTitle]="'Categories' | translate"
-    (nzOnCancel)="CategoriesModalVisible = false" nzCancelText="Close" nzCentered [nzFooter]="null">
+<nz-modal [(nzVisible)]="CategoriesModalVisible" [nzOkText]="null" [nzTitle]="'Categories' | translate"
+    (nzOnCancel)="CategoriesModalVisible = false" [nzCancelText]="'Close' | translate" nzCentered [nzFooter]="null">
     <ng-container *nzModalContent>
         <div style="text-align: center;">
 
@@ -136,15 +136,15 @@
 </nz-modal>
 
 <nz-modal nzDraggable [nzVisible]="CategoryInsertVisible" [nzTitle]="'Insert new category' | translate" nzCentered
-    nzCancelText="Close" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false"  [nzOkLoading]="CreatingCategory">
+    [nzCancelText]="'Close' | translate" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false" [nzOkLoading]="CreatingCategory">
     <ng-container *nzModalContent>
-        <input #CategoryInput [(ngModel)]="CategoryToInsert" nz-input placeholder="New Category Name">
+        <input #CategoryInput [(ngModel)]="CategoryToInsert" nz-input [placeholder]="'New Category Name' | translate">
     </ng-container>
 </nz-modal>
 
 <!-- ITEM SUBMISSION MODAL -->
 <nz-modal [(nzVisible)]="InsertModalOpen" [nzOkLoading]="IsInsertingItem" [nzTitle]="'Create menu item' | translate"
-    (nzOnCancel)="InsertModalOpen = false" nzCancelText="Cancel" (nzOnOk)="InsertMenuItem()" nzOkText="Insert"
+    (nzOnCancel)="InsertModalOpen = false" [nzCancelText]="'Cancel' | translate" (nzOnOk)="InsertMenuItem()" [nzOkText]="'Insert' | translate"
     [nzOkDisabled]="ItemCreationForm.invalid" nzClosable=false nzCentered>
     <!-- INSERT FORM -->
     <ng-container *nzModalContent>
@@ -152,7 +152,7 @@
             <nz-form-item>
                 <nz-form-control>
                     <nz-form-label>{{'Item Name' | translate}}</nz-form-label>
-                    <input nz-input formControlName="product" placeholder="Ex: Hamburger" />
+                    <input nz-input formControlName="product" [placeholder]="'Ex: Hamburger' | translate" />
                 </nz-form-control>
             </nz-form-item>
 
@@ -176,7 +176,7 @@
                 </nz-form-control>
 
                 <nz-form-control style="display: flex; align-items: bottom;">
-                    <nz-form-label>Active</nz-form-label>
+                    <nz-form-label>{{'Active' | translate}}</nz-form-label>
                     <nz-input-group>
                         <nz-switch formControlName="active"></nz-switch>
                     </nz-input-group>
@@ -192,7 +192,7 @@
                     <file-select [(Files)]="MenuThumbnails">
                         @if (!SelectedThumbnailUrl) {
                             <nz-icon class="upload-icon" [nzType]="LoadingThumbnail ? 'loading' : 'plus'" />
-                            <div class="ant-upload-text">Upload</div>
+                            <div class="ant-upload-text">{{'Upload' | translate}}</div>
                         } @else {
                             <img [src]="SelectedThumbnailUrl" style="width: 100%" />
                         }

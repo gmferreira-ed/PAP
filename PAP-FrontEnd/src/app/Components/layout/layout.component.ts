@@ -7,6 +7,7 @@ import { Vector2 } from '../../../types/vector';
 import { LoadingScreen } from '../loading-screen/loading-screen.component';
 import { AppSettings } from '../../Services/AppSettings';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 
 
@@ -53,7 +54,6 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzDividerComponent } from 'ng-zorro-antd/divider';
 import { IconsModule } from "../icon/icon.component";
-import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FloatingContainer } from "../floating-container/floating-container";
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -62,12 +62,12 @@ import { OrdersService } from '../../Services/Orders.service';
 import { Table } from '../../../shared/table';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../Services/Auth.service';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 @Component({
   selector: 'restaurant-layout',
   imports: [LoadingScreen, NzInputNumberModule, NzSliderModule, NzGridModule, FormsModule, NzIconModule, IconsModule, TranslateModule,
-    RouterModule, NzButtonModule, FloatingContainer, DatePipe],
-
+    RouterModule, NzButtonModule, FloatingContainer, DynamicDatePipe],
   templateUrl: 'layout.component.html',
   styleUrl: 'layout.component.less'
 })
@@ -116,6 +116,7 @@ export class RestaurantLayout {
   OrdersService = inject(OrdersService)
   HttpService = inject(HttpService)
   Renderer = inject(Renderer2)
+  TranslateService = inject(TranslateService)
 
 
 
@@ -216,7 +217,7 @@ export class RestaurantLayout {
     this.Components = []
 
     this.LoadingLayout = true
-    const [DeleteResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'DELETE', 'Failed to clear layout', {
+    const [DeleteResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'DELETE', this.TranslateService.instant('Failed to clear layout'), {
       clear: true,
     })
     this.LoadingLayout = false
@@ -457,7 +458,7 @@ export class RestaurantLayout {
           componentid: Component.id
         }
 
-        this.HttpService.MakeRequest(this.LayoutAPI, 'PATCH', 'Failed to update component data', Body)
+        this.HttpService.MakeRequest(this.LayoutAPI, 'PATCH', this.TranslateService.instant('Failed to update component data'), Body)
       } else {
         console.warn('Component doesnt have ID, ignoring save')
       }
@@ -535,7 +536,7 @@ export class RestaurantLayout {
   async DeleteComponent(Component: LayoutComponent, IgnoreTrack: boolean = false) {
     if (Component.id) {
       Component.processing = true
-      const [DeleteResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'DELETE', 'Failed to delete component', {
+      const [DeleteResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'DELETE', this.TranslateService.instant('Failed to delete component'), {
         componentid: Component.id,
       })
     }
@@ -669,7 +670,7 @@ export class RestaurantLayout {
     component.processing = true
 
 
-    const [CreateResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'POST', 'Failed to save component data', {
+    const [CreateResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'POST', this.TranslateService.instant('Failed to save component data'), {
       left: component.Position.X,
       top: component.Position.Y,
       width: component.Size.X,
@@ -806,9 +807,9 @@ export class RestaurantLayout {
 
           this.CenterLayout()
 
-          this.MessageService.success('Sucessfully imported layout!')
+          this.MessageService.success(this.TranslateService.instant('Sucessfully imported layout!'))
         } catch (error) {
-          this.MessageService.error('Failed to import layout. Invalid content format.')
+          this.MessageService.error(this.TranslateService.instant('Failed to import layout. Invalid content format.'))
         }
       };
 
@@ -869,7 +870,7 @@ export class RestaurantLayout {
 
       this.CenterLayout()
     } else {
-      this.MessageService.error('Failed to load restaurant layout')
+      this.MessageService.error(this.TranslateService.instant('Failed to load restaurant layout'))
     }
 
 

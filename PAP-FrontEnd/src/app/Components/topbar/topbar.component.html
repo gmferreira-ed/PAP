@@ -12,15 +12,15 @@
             <div class="dropdown">
                 <div class="option" [routerLink]="'/profile/'+User()">
                     <icon type="account" [fill]="true"></icon>
-                    Profile
+                    {{'Profile' | translate}}
                 </div>
                 <div class="option" (click)="Reload()">
                     <icon type="refresh-ccw" [fill]="false"></icon>
-                    Refresh
+                    {{'Refresh' | translate}}
                 </div>
                 <div class="option" (click)="Logout()">
                     <icon type="logout" [fill]="true"></icon>
-                    Logout
+                    {{'Logout' | translate}}
                 </div>
             </div>
         }

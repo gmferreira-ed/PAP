@@ -5,17 +5,18 @@ import { HttpService } from '../../Services/Http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { LoadingScreen } from '../../Components/loading-screen/loading-screen.component';
-import { DatePipe } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
 import { ReceiptComponent } from "../../Components/receipt/receipt.component";
 import { IconsModule } from "../../Components/icon/icon.component";
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
-import { AuthService } from '../../Services/Auth.service';
+import { TranslateService } from '@ngx-translate/core';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 @Component({
   selector: 'receipts-page',
-  imports: [PageLayoutComponent, NzTableModule, LoadingScreen, DatePipe, TranslatePipe, DynamicCurrencyPipe, StatusTagComponent, ReceiptComponent, IconsModule],
+  imports: [PageLayoutComponent, NzTableModule, LoadingScreen, TranslateModule, DynamicCurrencyPipe, StatusTagComponent, 
+    ReceiptComponent, IconsModule, DynamicDatePipe],
   templateUrl: './receipts.page.html',
   styleUrl: './receipts.page.less'
 })
@@ -27,6 +28,7 @@ export class ReceiptsPage {
   HttpService = inject(HttpService)
   ActiveRoute = inject(ActivatedRoute)
   Router = inject(Router)
+  TranslateService = inject(TranslateService)
 
   // States
   LoadingReceiptData = false
@@ -46,7 +48,7 @@ export class ReceiptsPage {
   async LoadReceipts() {
     this.LoadingReceipts = true
 
-    const [Result] = await this.HttpService.MakeRequest(this.ReceiptsURL, 'GET', 'Failed to load receipts: ', {
+    const [Result] = await this.HttpService.MakeRequest(this.ReceiptsURL, 'GET', this.TranslateService.instant('Failed to load receipts: '), {
       page_size: this.ReceiptsPageSize,
       page: this.ReceiptsPageIndex
     })
@@ -66,7 +68,7 @@ export class ReceiptsPage {
   async LoadReceiptData() {
     this.LoadingReceiptData = true
 
-    const [ReceiptData] = await this.HttpService.MakeRequest(this.ReceiptsURL + '/id', 'GET', 'Failed to load receipt data: ',
+    const [ReceiptData] = await this.HttpService.MakeRequest(this.ReceiptsURL + '/id', 'GET', this.TranslateService.instant('Failed to load receipt data: '),
       { id: this.ReceiptId })
     if (ReceiptData) {
       this.ReceiptData = ReceiptData

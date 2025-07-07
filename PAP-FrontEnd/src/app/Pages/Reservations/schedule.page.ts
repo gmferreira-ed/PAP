@@ -11,7 +11,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { IconsModule } from '../../Components/icon/icon.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -24,6 +24,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { Vector2 } from '../../../types/vector';
 import { AuthService } from '../../Services/Auth.service';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 
 function ToSQLDate(Date: Date) {
@@ -34,7 +35,7 @@ function ToSQLDate(Date: Date) {
   selector: 'schedule-page',
   imports: [PageLayoutComponent, DatePipe, NzRadioModule, FormsModule, NzEmptyModule, NoDataComponent, NzButtonModule, NzIconModule, IconsModule,
     TranslateModule, NzModalModule, ReactiveFormsModule, NzFormModule, NzInputModule, NzDatePickerModule, NzInputNumberModule, RestaurantLayout,
-    NzTimePickerModule, LoadingScreen],
+    NzTimePickerModule, LoadingScreen, DynamicDatePipe],
   templateUrl: './schedule.page.html',
   styleUrl: './schedule.page.less'
 })
@@ -62,6 +63,7 @@ export class SchedulePage {
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
   AuthService = inject(AuthService)
+  TranslateService = inject(TranslateService)
 
   // DATA
   Reservations: any[] = []
@@ -117,7 +119,7 @@ export class SchedulePage {
       notes: FormValues.notes,
     }
 
-    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'POST', 'Failed to book reservations', Data
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'POST', this.TranslateService.instant('Failed to book reservations'), Data
     )
 
     if (Result) {
@@ -125,7 +127,7 @@ export class SchedulePage {
       this.ReservationsModalVisible = false
       this.PromptingSchedule = false
 
-      this.MessageService.success("Sucessfully booked reservation")
+      this.MessageService.success(this.TranslateService.instant('Sucessfully booked reservation'))
       this.LoadReservations()
       if (this.IsSameDate(FinalDate, this.Today)) {
         this.LoadTodayReservations()
@@ -236,12 +238,12 @@ export class SchedulePage {
     this.DeletingReservation = true
     this.SelectedReservation = undefined
 
-    const [DeleteResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'DELETE', 'Failed to cancel reservation', {
+    const [DeleteResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'DELETE', this.TranslateService.instant('Failed to cancel reservation'), {
       reservation_id: Reservation.id
     })
 
     if (DeleteResult) {
-      this.MessageService.success('Successfully canceled reservation')
+      this.MessageService.success(this.TranslateService.instant('Successfully canceled reservation'))
       this.LoadReservations()
       if (this.IsSameDate(Reservation.date, this.Today)) {
         this.LoadTodayReservations()
@@ -318,7 +320,7 @@ export class SchedulePage {
   async LoadTodayReservations() {
     this.LoadingTodayReservations = true
 
-    const [TodayReservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', `Failed to load today's reservations`, {
+    const [TodayReservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', this.TranslateService.instant("Failed to load today's reservations"), {
       StartDate: ToSQLDate(new Date()),
     })
 
@@ -371,7 +373,7 @@ export class SchedulePage {
     const StartSQLDate = ToSQLDate(StartDate)
     const EndSQLDate = EndDate && ToSQLDate(EndDate)
 
-    const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', 'Failed to get reservations', {
+    const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', this.TranslateService.instant('Failed to get reservations'), {
       StartDate: StartSQLDate,
       EndDate: EndSQLDate
     })
@@ -400,7 +402,7 @@ export class SchedulePage {
         reservationDate.setDate(reservationDate.getDate() + 1)
         diff = reservationDate.getTime() - this.Today.getTime()
       } else {
-        return 'Now'
+        return this.TranslateService.instant('Now')
       }
     }
 
@@ -410,9 +412,9 @@ export class SchedulePage {
     const seconds = totalSeconds % 60;
 
     let parts: string[] = [];
-    if (hours) parts.push(`${hours}h`);
-    if (minutes) parts.push(`${minutes}m`);
-    if (seconds || parts.length === 0) parts.push(`${seconds}s`);
+    if (hours) parts.push(`${hours}${this.TranslateService.instant('h')}`);
+    if (minutes) parts.push(`${minutes}${this.TranslateService.instant('m')}`);
+    if (seconds || parts.length === 0) parts.push(`${seconds}${this.TranslateService.instant('s')}`);
 
     return parts.join(' ');
   }

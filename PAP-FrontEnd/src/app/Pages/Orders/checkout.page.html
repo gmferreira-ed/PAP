@@ -10,8 +10,8 @@
                     <label class="title">{{'Table Select' | translate}}</label>
                     <nz-radio-group nzButtonStyle="solid" [(ngModel)]="ViewType"
                         (ngModelChange)="SelectionViewChanged()">
-                        <label nz-radio-button nzValue="Layout">Layout</label>
-                        <label nz-radio-button nzValue="Grid">Grid</label>
+                        <label nz-radio-button nzValue="Layout">{{'Layout' | translate}}</label>
+                        <label nz-radio-button nzValue="Grid">{{'Grid' | translate}}</label>
                     </nz-radio-group>
                 </div>
 
@@ -29,7 +29,7 @@
                                 {{'Table' | translate}} {{Table.tableid}}
                                 @if (Table.status){
                                     <label style="font-size: 14px; color: rgb(176, 207, 0);">
-                                        {{Table.time | date:'HH:mm:ss':'UTC'}}
+                                        {{Table.time | ddate:'HH:mm:ss':'UTC'}}
                                     </label>
                                 }
                                 <floating-container
@@ -65,7 +65,7 @@
 
                 <!-- ORDER VIEW -->
                 <div class="order">
-                    <h1>Order</h1>
+                    <h1>{{'Order' | translate}}</h1>
                     <label class="small-caption">ID:{{OrderInfo?.order_id}}</label>
                     <loading-screen [IsLoading]="ProcessingOrder" LoaderStyle="ThinkingDots"></loading-screen>
                     <div class="order-products">
@@ -146,7 +146,7 @@
                                     @for (PaymentMethod of PaymentMethods; track $index){
                                         <nz-option nzCustomContent [nzValue]="PaymentMethod" [nzLabel]="PaymentMethod">
                                             <icon [type]="PaymentMethod" [monotone]="false"></icon>
-                                            <label>{{PaymentMethod}}</label>
+                                            <label>{{PaymentMethod | translate}}</label>
                                         </nz-option>
                                     }
                                 </nz-select>
@@ -177,17 +177,17 @@
                     <div class="row right">
                         <button class="button large" (click)="PrinptReceipt()">
                             <icon type="receipt_long" [fill]="true"></icon>
-                            {{'Receipt'}}
+                            {{'Receipt' | translate}}
                         </button>
                         <button class="button large sucess" nzType="primary" (click)="FinalizeCheckout()">
                             <icon type="circle-check-big"></icon>
-                            {{'Finalize'}}
+                            {{'Finalize' | translate}}
                         </button>
                     </div>
                 </div>
 
                 <div class="action-card vcenter" style="width: 40%;">
-                    <label class="header">Receipt</label>
+                    <label class="header">{{'Receipt' | translate}}</label>
                     <receipt #Receipt [(ReceiptData)]="ReceiptData"></receipt>
                 </div>
             }

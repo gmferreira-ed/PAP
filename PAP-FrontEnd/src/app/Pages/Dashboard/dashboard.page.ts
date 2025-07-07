@@ -16,6 +16,8 @@ import { OrdersService } from '../../Services/Orders.service';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 import { AuthService } from '../../Services/Auth.service';
 import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 type BestSeller = {
   name: string
@@ -23,8 +25,8 @@ type BestSeller = {
 }
 @Component({
   selector: 'dashboard-page',
-  imports: [PageLayoutComponent, RestaurantLayout, AtendanceViewer, ScrollingModule, UserCard, DatePipe, DurationPipe, LoadingScreen,
-    DynamicCurrencyPipe, IconsModule, NoDataComponent, UnavailableInfo],
+  imports: [PageLayoutComponent, RestaurantLayout, AtendanceViewer, ScrollingModule, UserCard, DurationPipe, LoadingScreen,
+    DynamicCurrencyPipe, IconsModule, NoDataComponent, UnavailableInfo, TranslateModule, DynamicDatePipe],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.less',
 })
@@ -34,6 +36,7 @@ export class DashboardPage {
   HttpService = inject(HttpService)
   OrdersService = inject(OrdersService)
   AuthService = inject(AuthService)
+  TranslateService = inject(TranslateService)
 
   @ViewChild('AttendanceView') AttendanceView?:AtendanceViewer
 
@@ -108,7 +111,7 @@ export class DashboardPage {
     if (this.CanViewReservations){
       this.LoadingReservations = true
 
-      const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', 'Failed to load reservations', {
+      const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', this.TranslateService.instant('Failed to load reservations'), {
         StartDate: GlobalUtils.ToSQLDate(this.Now),
         EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
       }) as [any[]]
@@ -131,7 +134,7 @@ export class DashboardPage {
       this.LoadingRevenue = true
 
       const [CategorizedRevenue] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'revenue-categorized',
-        'GET', 'Failed to load revenue', {
+        'GET', this.TranslateService.instant('Failed to load revenue'), {
         StartDate: GlobalUtils.ToSQLDate(this.TodayStart),
         EndDate: GlobalUtils.ToSQLDate(this.TodayEnd),
       }) as [any[]]

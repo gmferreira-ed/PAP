@@ -12,7 +12,7 @@
                 <icon type="calendar" style="margin-right: 5px;"></icon>}
             <div class="month">
                 @if (ViewType != 'All'){
-                    <label>{{CurrentDate | date:'fullDate'}}</label>
+                    <label>{{CurrentDate | ddate:'fullDate'}}</label>
                     <button nz-button (click)="NavigateTime(-1, $event)"><nz-icon nzType="left"></nz-icon></button>
                     <button nz-button (click)="NavigateTime(1, $event)"><nz-icon nzType="right"></nz-icon></button>
                 }@else {
@@ -37,7 +37,7 @@
             <!-- FILLER -->
             <section class="hours collumn" style="justify-content: end;">
                 @if (SheduleScroll <= 20){ <label style="transform: translateY(50%);">
-                        {{OpeningHours | date: 'HH:mm'}}
+                        {{OpeningHours | ddate: 'HH:mm'}}
                     </label>
                 }
             </section>
@@ -49,7 +49,7 @@
                         <label class="number"
                             [class.active]="DayDate.getDate() == CurrentDate.getDate()">{{DayDate.getDate()}}</label>
                 <label class="name">
-                    {{DayDate.toLocaleDateString(undefined, { weekday: 'long' })}}
+                    {{DayDate | ddate:'EEEE'}}
                 </label>
             </div>
         }
@@ -65,7 +65,7 @@
                     <div class="interval-hour">
                         @if ($index != 0){
                             <label>
-                                {{Time | date: 'HH:mm'}}
+                                {{Time | ddate: 'HH:mm'}}
                             </label>
                             <div class="line"></div>
                         }
@@ -96,7 +96,7 @@
                                     (click)="PromptReservationInfo($event, Reservation)">
                                     Table {{Reservation.tableid}}
                                     @if (ReservationRect.Width!>=MinFullContentWidth){ -
-                                        {{Reservation.date | date:'HH:mm'}} {{Reservation.X}}}
+                                        {{Reservation.date | ddate:'HH:mm'}} {{Reservation.X}}}
                                 </div>
                             }
                         }
@@ -108,22 +108,22 @@
     <!-- SCHEDULING PROMPT -->
     <div class="prompt" #SchedulePrompt [class.visible]="PromptingSchedule" [style.top]="SchedulePromptTop+'px'"
         [style.left]="SchedulePromptLeft+'px'">
-        <label class="header">Schedule Reservation</label>
+        <label class="header">{{'Schedule Reservation' | translate}}</label>
 
         <form [formGroup]="ReservationForm" nz-form nzLayout="vertical" (ngSubmit)="BookReservation()">
 
             <div class="row" style="gap:30px">
                 <nz-form-item>
-                    <nz-form-label>Table ID</nz-form-label>
+                    <nz-form-label>{{'Table ID' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-input-group nzSearch [nzAddOnAfter]="SearchSuffix">
-                            <input nz-input formControlName="tableid" placeholder="Table ID" />
+                            <input nz-input formControlName="tableid" [placeholder]="'Table ID' | translate" />
                         </nz-input-group>
                     </nz-form-control>
                 </nz-form-item>
 
                 <nz-form-item>
-                    <nz-form-label>Guest Count</nz-form-label>
+                    <nz-form-label>{{'Guest Count' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count" />
                     </nz-form-control>
@@ -133,14 +133,14 @@
 
             <div class="row" style="gap:30px">
                 <nz-form-item>
-                    <nz-form-label>Date</nz-form-label>
+                    <nz-form-label>{{'Date' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-date-picker nz-input formControlName="date"></nz-date-picker>
                     </nz-form-control>
                 </nz-form-item>
 
                 <nz-form-item>
-                    <nz-form-label>Time</nz-form-label>
+                    <nz-form-label>{{'Time' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-time-picker nzFormat="HH:mm" formControlName="time"></nz-time-picker>
                     </nz-form-control>
@@ -149,14 +149,14 @@
 
             <nz-form-item>
                 <nz-form-control>
-                    <a (click)="ReservationsModalVisible = true; PromptingSchedule = false">More details</a>
+                    <a (click)="ReservationsModalVisible = true; PromptingSchedule = false">{{'More details' | translate}}</a>
                     <button style="float: right;" nz-button nzType="primary" [disabled]="ReservationForm.invalid"
                         [nzLoading]="BookingReservation">
-                        Submit
+                        {{'Submit' | translate}}
                     </button>
                     <button nz-button style="float: right;  margin-right: 10px;" (click)="PromptingSchedule=false"
                         [disabled]="BookingReservation">
-                        Cancel
+                        {{'Cancel' | translate}}
                     </button>
                 </nz-form-control>
             </nz-form-item>
@@ -177,7 +177,7 @@
                         @if (Day.getDate() == Reservation.date.getDate() ){
                             <div class="reservation">
                                 <label class="table">{{'Table'|translate}} {{Reservation.tableid}}</label>
-                                <label class="time"> - {{Reservation.date|date:'HH:mm'}}</label>
+                                <label class="time"> - {{Reservation.date|ddate:'HH:mm'}}</label>
                             </div>
                         }
                     }
@@ -200,7 +200,7 @@
         <loading-screen [IsLoading]="LoadingTodayReservations" LoaderStyle="Spinner"></loading-screen>
 
         <div class="row space-between" style="align-items: start;">
-            <h2>Today</h2>
+            <h2>{{'Today' | translate}}</h2>
             @if (CanModifyReservations){
                 <button nz-button (click)="ReservationsModalVisible = true">
                     {{'Book Reservation ' | translate}}<nz-icon nzType="plus"></nz-icon>
@@ -236,7 +236,7 @@
 
 <!-- RESERVATION BOOKING MODAL -->
 <nz-modal nzDraggable [nzVisible]="ReservationsModalVisible" [nzTitle]="'Book New Reservation' | translate" nzCentered
-    nzCancelText="Cancel" nzWidth="50%" [nzOkDisabled]="ReservationForm.invalid" [nzCancelDisabled]="BookingReservation"
+    [nzCancelText]="'Cancel' | translate" nzWidth="50%" [nzOkDisabled]="ReservationForm.invalid" [nzCancelDisabled]="BookingReservation"
     [nzOkLoading]="BookingReservation" (nzOnOk)="BookReservation()" (nzOnCancel)="ReservationsModalVisible = false">
 
     <ng-container *nzModalContent>
@@ -244,19 +244,18 @@
 
             <div class="row" style="gap:30px">
                 <nz-form-item>
-                    <nz-form-label>Table ID</nz-form-label>
+                    <nz-form-label>{{'Table ID' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-input-group nzSize="large" nzSearch [nzAddOnAfter]="SearchSuffix">
-                            <input nz-input formControlName="tableid" placeholder="Table ID" />
+                            <input nz-input formControlName="tableid" [placeholder]="'Table ID' | translate" />
                         </nz-input-group>
                     </nz-form-control>
                 </nz-form-item>
 
                 <nz-form-item>
-                    <nz-form-label>Guest Count</nz-form-label>
+                    <nz-form-label>{{'Guest Count' | translate}}</nz-form-label>
                     <nz-form-control>
-                        <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count" nzSize="large"
-                            placeholder="Ex: 1" />
+                        <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count" nzSize="large" />
                     </nz-form-control>
                 </nz-form-item>
 
@@ -264,14 +263,14 @@
 
             <div class="row" style="gap:30px">
                 <nz-form-item>
-                    <nz-form-label>Date</nz-form-label>
+                    <nz-form-label>{{'Date' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-date-picker nz-input formControlName="date" nzSize="large"></nz-date-picker>
                     </nz-form-control>
                 </nz-form-item>
 
                 <nz-form-item>
-                    <nz-form-label>Time</nz-form-label>
+                    <nz-form-label>{{'Time' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-time-picker nzFormat="HH:mm" formControlName="time" nzSize="large"></nz-time-picker>
                     </nz-form-control>
@@ -282,36 +281,36 @@
 
 
 
-            <h3>Customer</h3>
+            <h3>{{'Customer' | translate}}</h3>
             <div style="width: 80%; ">
                 <div class="row" style="gap:30px">
                     <nz-form-item>
-                        <nz-form-label>Name</nz-form-label>
+                        <nz-form-label>{{'Name' | translate}}</nz-form-label>
                         <nz-form-control>
-                            <input nz-input formControlName="name" nzSize="large" placeholder="Name" />
+                            <input nz-input formControlName="name" nzSize="large" [placeholder]="'Name' | translate" />
                         </nz-form-control>
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label>Phone</nz-form-label>
+                        <nz-form-label>{{'Phone' | translate}}</nz-form-label>
                         <nz-form-control>
-                            <input nz-input formControlName="phone" nzSize="large" placeholder="Phone Number" />
+                            <input nz-input formControlName="phone" nzSize="large" [placeholder]="'Phone Number' | translate" />
                         </nz-form-control>
                     </nz-form-item>
                 </div>
 
                 <nz-form-item>
-                    <nz-form-label>Email</nz-form-label>
+                    <nz-form-label>{{'Email' | translate}}</nz-form-label>
                     <nz-form-control>
-                        <input nz-input formControlName="email" nzSize="large" placeholder="Email" />
+                        <input nz-input formControlName="email" nzSize="large" [placeholder]="'Email' | translate" />
                     </nz-form-control>
                 </nz-form-item>
             </div>
 
             <nz-form-item>
-                <nz-form-label>Notes</nz-form-label>
+                <nz-form-label>{{'Notes' | translate}}</nz-form-label>
                 <nz-form-control>
-                    <textarea nz-input formControlName="notes" rows="3" placeholder="Additional notes"></textarea>
+                    <textarea nz-input formControlName="notes" rows="3" [placeholder]="'Additional notes' | translate"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </form>
@@ -321,7 +320,7 @@
 
 
 <!-- TABLE SELECT MODAL -->
-<nz-modal [nzOkText]="null" nzCancelText="Close" [nzVisible]="TableSelectVisible" nzTitle="Select Table" nzCentered
+<nz-modal [nzOkText]="null" [nzCancelText]="'Close' | translate" [nzVisible]="TableSelectVisible" [nzTitle]="'Select Table' | translate" nzCentered
     nzDraggable nzWidth="70%" (nzOnCancel)="TableSelectVisible=false">
 
     <ng-container *nzModalContent>
@@ -350,11 +349,11 @@
         </div>
         <div class="flex collumn space-between">
             <div class="row space-between">
-                <label class="time">{{SelectedReservation.date | date:'HH:mm'}}</label>
+                <label class="time">{{SelectedReservation.date | ddate:'HH:mm'}}</label>
             </div>
             <div class="row space-between">
                 <label class="guests">{{SelectedReservation.guest_count}} {{'Guests'|translate}}</label>
-                <label class="date">{{SelectedReservation.date | date:'dd/MM/yyyy'}}</label>
+                <label class="date">{{SelectedReservation.date | ddate:'dd/MM/yyyy'}}</label>
             </div>
         </div>
     }

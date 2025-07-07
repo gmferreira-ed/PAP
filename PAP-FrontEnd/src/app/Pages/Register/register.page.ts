@@ -14,6 +14,7 @@ import { NgOtpInputModule } from 'ng-otp-input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'register-page',
@@ -32,6 +33,7 @@ export class RegisterPage {
   VerifyingAccount = false
 
   HttpService = inject(HttpService)
+  TranslateService = inject(TranslateService)
 
   EmailSentOptions: AnimationOptions = {
     path: 'Animations/MailSent.json',
@@ -70,7 +72,7 @@ export class RegisterPage {
     this.CreatingAccount = true
 
     const BirthDate = new Date(this.RegisterForm.value.personnal_info?.birthdate!).toISOString().slice(0, 19).replace('T', ' ')
-    const [AccountCreateSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/signup', 'POST', 'Failed to create account', {
+    const [AccountCreateSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/signup', 'POST', this.TranslateService.instant('Failed to create account'), {
       ...this.RegisterForm.value.account_info,
       ...this.RegisterForm.value.personnal_info,
       birthdate: BirthDate
@@ -85,7 +87,7 @@ export class RegisterPage {
   async Verify() {
     this.VerifyingAccount = true
 
-    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST', 'Failed to verify', {
+    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST', this.TranslateService.instant('Failed to verify'), {
       verificationcode: this.RegisterForm.value.verification_code
     })
     if (VerifiedSucessfully) {

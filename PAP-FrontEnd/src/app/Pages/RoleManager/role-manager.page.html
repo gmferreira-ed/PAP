@@ -1,18 +1,18 @@
 <page-layout>
-    
+
     <loading-screen [IsLoading]="LoadingPermissions"></loading-screen>
 
     <div class="horizontal-container">
         <div class="roles">
             <loading-screen [IsLoading]="LoadingRoles" LoaderStyle="Spinner" [ShowBackground]="false"></loading-screen>
-            <h2>Roles</h2>
+            <h2>{{'Roles' | translate}}</h2>
             @for (Role of Roles; track $index){
                 <div class="role" [class.selected]="SelectedRole.name == Role.name" (click)="ChangeRole(Role)">
 
                     @if (Role.administrator){
                         <icon type="star" [fill]="true"></icon>
                     }
-                    {{Role.name}}
+                    <label>{{Role.name | translate}}</label>
 
                     @if (CanCreateRoles){
                         <div class="row fill" style="justify-content: end;">
@@ -39,16 +39,16 @@
             }
         </div>
         <div class="permissions-container">
-            <h2>{{SelectedRole.name}} Permissions</h2>
+            <h2>{{SelectedRole.name | translate}} - {{'Permissions' | translate}}</h2>
             <div class="permissions">
                 @for (CategoryInfo of CategorizedPermissions; track $index){
-                    <h2>{{CategoryInfo.Category}}</h2>
+                    <h2>{{CategoryInfo.Category | translate}}</h2>
                     <div class="category-container">
                         @for (EndpointData of CategoryInfo.Endpoints; track $index){
                             <div class="permission-card">
-                                <h3>{{EndpointData.DisplayName}}</h3>
+                                <h3>{{EndpointData.DisplayName | translate}}</h3>
                                 <div class="divisor" style="margin-bottom: 5px;"></div>
-                                <caption>{{EndpointData.Summary}}</caption>
+                                <caption>{{EndpointData.Summary | translate}}</caption>
                                 <div class="permission-type">
                                     @let StockError = CategoryInfo.Category == 'Stocks' 
                                     && EndpointData.ID != 'GET/api/stock-items'
@@ -86,43 +86,44 @@
 
         <div class="users">
             <loading-screen [IsLoading]="LoadingUsers" LoaderStyle="Spinner" [ShowBackground]="false"></loading-screen>
-            <h2>Users</h2>
-            <div class="users-container">
-                @for (User of RoleUsers; track $index){
-                    <user-card [UserData]="User"></user-card>
-                    <div class="separator" style="width: 75%; align-self: center;"></div>
-                }@empty {
-                    @if (!LoadingUsers){
-                        <no-data>
-                            <label>{{'There are no users with this role' | translate}}</label>
-                        </no-data>
-                    }
-                }
-            </div>
-        </div>
-    </div>
+            <h2>{{'Users' | translate}}
+                                </h2>
+                                <div class="users-container">
+                                    @for (User of RoleUsers; track $index){
+                                        <user-card [UserData]="User"></user-card>
+                                        <div class="separator" style="width: 75%; align-self: center;"></div>
+                                    }@empty {
+                                        @if (!LoadingUsers){
+                                            <no-data>
+                                                <label>{{'There are no users with this role' | translate}}</label>
+                                            </no-data>
+                                        }
+                                    }
+                                </div>
+                                </div>
+                            </div>
 </page-layout>
 
 <!-- Role Creation -->
-<nz-modal [nzOkText]="'Submit'" nzCancelText="Cancel" [nzVisible]="RoleCreationModalVisible"
-    [nzOkLoading]="CreatingRole" nzTitle="Create Role" nzCentered [nzOkDisabled]="RoleCreateFrom.invalid"
+<nz-modal [nzOkText]="'Submit' | translate" [nzCancelText]="'Cancel' | translate" [nzVisible]="RoleCreationModalVisible"
+    [nzOkLoading]="CreatingRole" [nzTitle]="'Create Role' | translate" nzCentered [nzOkDisabled]="RoleCreateFrom.invalid"
     (nzOnOk)="CreateRole()" (nzOnCancel)="RoleCreationModalVisible=false">
     <ng-container *nzModalContent>
         <form [formGroup]="RoleCreateFrom">
             <nz-form-item>
-                <nz-form-label>Role Name</nz-form-label>
+                <nz-form-label>{{'Role Name' | translate}}</nz-form-label>
                 <nz-form-control>
                     <input nz-input formControlName="name">
                 </nz-form-control>
             </nz-form-item>
 
             <nz-form-item>
-                <nz-form-label>Permission Level</nz-form-label>
+                <nz-form-label>{{'Permission Level' | translate}}</nz-form-label>
                 <nz-form-control>
                     <nz-select formControlName="permission_level">
                         @for (Role of Roles; track $index){
                             @if (!Role.administrator){
-                                <nz-option [nzLabel]="'After '+Role.name" [nzValue]="Role.permission_level+1"
+                                <nz-option [nzLabel]="('After'|translate)+' '+Role.name" [nzValue]="Role.permission_level+1"
                                     [nzDisabled]="Role.permission_level >= AuthService.UserPermissions.permission_level"></nz-option>
                             }
                         }

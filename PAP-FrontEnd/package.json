@@ -41,7 +41,7 @@
     "@angular/cli": "^19.1.8",
     "@angular/compiler-cli": "^19.1.0",
     "@types/jasmine": "~5.1.0",
-    "@vendure/ngx-translate-extract": "^9.4.0",
+    "@vendure/ngx-translate-extract": "^9.4.2",
     "concurrently": "^9.1.2",
     "electron": "^36.3.2",
     "jasmine-core": "~5.5.0",

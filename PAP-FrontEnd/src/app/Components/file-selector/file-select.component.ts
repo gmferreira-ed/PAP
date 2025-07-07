@@ -4,6 +4,7 @@ import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { IconsModule } from '../icon/icon.component';
 import { UFile } from '../../../types/ufile';
+import { TranslateModule } from '@ngx-translate/core';
 
 type UploadsProgress = { [key: string]: number }
 type Images = { [key: string]:  string | null}
@@ -13,7 +14,7 @@ type FailedUploads = { [key: string]: boolean }
 
 @Component({
   selector: 'file-select',
-  imports: [ProgressComponent, CommonModule, IconsModule],
+  imports: [ProgressComponent, CommonModule, IconsModule, TranslateModule],
 
   templateUrl: 'file-select.component.html',
   styleUrl: 'file-select.component.less'

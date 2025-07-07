@@ -1,9 +1,10 @@
-
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject, HostBinding, Input, input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
     selector: 'loader',
-    imports: [NgTemplateOutlet],
+    imports: [NgTemplateOutlet, TranslateModule],
 
     templateUrl: 'loader.component.html',
     styleUrl: 'loader.component.less'

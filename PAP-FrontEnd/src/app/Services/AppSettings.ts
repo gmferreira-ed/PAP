@@ -1,7 +1,7 @@
 import { isDevMode } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { HttpService } from './Http.service';
-import LanguageInfo from './lang-info.json'
+import LanguageInfo from '../Data/lang-info.json'
 const APIPort = 7000
 
 type LanguageDetails = {

@@ -24,7 +24,6 @@ import { EditableDirective } from '../../Directives/editable-field.directive';
 import { StatusTagComponent } from "../../Components/status-tag/status-tag.component";
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-import { DatePipe } from '@angular/common';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { ApexAxisChartSeries, ApexXAxis, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
@@ -45,7 +44,8 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 import { AuthService } from '../../Services/Auth.service';
 import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
-
+import { TranslateService } from '@ngx-translate/core';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 
 type StockTotalData = {
@@ -55,10 +55,10 @@ type StockTotalData = {
 
 @Component({
   selector: 'stocks-page',
-  imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, DatePipe, NzToolTipModule,
+  imports: [PageLayoutComponent, NzModalModule, NzButtonModule, NzInputModule, NzFormModule, FormsModule, ReactiveFormsModule, NzIconModule, NzToolTipModule,
     NzTabsModule, FileSelectComponent, NoDataComponent, NzSelectModule, NzDatePickerModule, NzTableModule, EditableDirective, StatusTagComponent, NzRadioModule,
     NzInputNumberModule, NzCheckboxModule, DynamicCurrencyPipe, LoadingScreen, NgApexchartsModule, StatCardComponent, TranslatePipe, IconsModule, NzDropDownModule,
-    MenuProductSelect, FloatingContainer, UnavailableInfo
+    MenuProductSelect, FloatingContainer, UnavailableInfo, DynamicDatePipe
   ],
   templateUrl: './stocks.page.html',
   styleUrl: './stocks.page.less'
@@ -80,6 +80,7 @@ export class StocksPage {
   NotificationService = inject(NzNotificationService)
   AuthService = inject(AuthService)
   GlobalUtils = GlobalUtils
+  TranslateService = inject(TranslateService)
 
   // DATA
   Items: StockItem[] = []
@@ -184,9 +185,9 @@ export class StocksPage {
   async AddSupplier() {
     this.AddingSuplier = true
 
-    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'suppliers', 'POST', 'Failed to add supplier', this.SupplierForm.value);
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'suppliers', 'POST', this.TranslateService.instant('Failed to add supplier'), this.SupplierForm.value);
     if (Result) {
-      this.MessageService.success('Supplier added');
+      this.MessageService.success(this.TranslateService.instant('Supplier added'));
       this.SupplierAddModalVisible = false;
       this.SupplierForm.reset()
       this.StocksService.LoadSuppliers();
@@ -198,9 +199,9 @@ export class StocksPage {
   async AddStockItem() {
     this.AddingStockItem = true
 
-    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'POST', 'Failed to add stock item', this.StockItemForm.value);
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'POST', this.TranslateService.instant('Failed to add stock item'), this.StockItemForm.value);
     if (Result) {
-      this.MessageService.success('Stock item added');
+      this.MessageService.success(this.TranslateService.instant('Stock item added'));
       this.StockItemAddModalVisible = false;
       this.StockItemForm.reset()
       this.StocksService.LoadStocks();
@@ -219,9 +220,9 @@ export class StocksPage {
       delivery_date: GlobalUtils.ToSQLDate(FormValues.delivery_date),
       items: this.StockOrderItems,
     };
-    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-orders', 'POST', 'Failed to add stock order', order);
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-orders', 'POST', this.TranslateService.instant('Failed to add stock order'), order);
     if (Result) {
-      this.MessageService.success('Stock order added');
+      this.MessageService.success(this.TranslateService.instant('Stock order added'));
       this.StockOrderAddModalVisible = false;
       this.StockOrderForm.reset()
       this.StocksService.LoadStockOrders()
@@ -242,7 +243,9 @@ export class StocksPage {
 
     Supplier.TogglingActive = false
   }
-  ChangeSupplierData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'suppliers', 'Failed to update supplier', 'Sucessfully updated supplier')
+  ChangeSupplierData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'suppliers',
+    this.TranslateService.instant('Failed to update supplier'),
+    this.TranslateService.instant('Sucessfully updated supplier'))
 
 
 
@@ -253,12 +256,15 @@ export class StocksPage {
   async UnlinkLinkItemToProduct() {
     this.UnlinkingProduct = true
 
-    const [UnlinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to disconnect product', {
+    const [UnlinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH',
+      this.TranslateService.instant('Failed to disconnect product'), {
       connected_product_id: null,
       id: this.SelectedStockItem!.id
     })
     if (UnlinkResult) {
-      this.MessageService.success('Sucessfully disconnected ' + this.SelectedStockItem!.name)
+      this.MessageService.success(this.TranslateService.instant('DISCONNECT_SUCCESS', {
+        name: this.SelectedStockItem!.name
+      }))
       this.SelectedStockItem!.product_name = undefined
 
       const ProductImage = this.StockItemImage.nativeElement
@@ -273,12 +279,17 @@ export class StocksPage {
   async LinkItemToProduct(ProductInfo: any) {
     this.LinkingProduct = true
 
-    const [LinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', 'Failed to link product', {
+    const [LinkResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', this.TranslateService.instant('Failed to link product'), {
       connected_product_id: ProductInfo.id,
       id: this.SelectedStockItem!.id
     })
     if (LinkResult) {
-      this.MessageService.success('Sucessfully connected ' + this.SelectedStockItem!.name + ' to ' + ProductInfo.name)
+      this.MessageService.success(
+        this.TranslateService.instant('CONNECT_SUCCESS', {
+          stock: this.SelectedStockItem!.name,
+          product: ProductInfo.name
+        })
+      );
       this.MenuItemSelectModalVisible = false
       this.SelectedStockItem!.product_name = ProductInfo.name
       this.SelectedStockItem!.selling_price = ProductInfo.price
@@ -295,42 +306,48 @@ export class StocksPage {
   async CreateInventoryReport() {
     this.ReportingInventory = true
 
-    const [ReportResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'inventory-reports', 'POST', 'Failed to submit inventory report',
+    const [ReportResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'inventory-reports', 'POST', this.TranslateService.instant('Failed to submit inventory report'),
       { items: this.InventoryReportItems })
 
     if (ReportResult) {
-      this.MessageService.success('Sucessfully submitted inventory report')
+      this.MessageService.success(this.TranslateService.instant('Sucessfully submitted inventory report'))
       await this.LoadStockItems()
       await this.StocksService.LoadReportsHistory()
       this.InventoryReportModalVisible = false
+      this.InventoryReportItems = []
     }
     this.ReportingInventory = false
   }
 
   PromptInventoryReportSubmit() {
+
     const NegativeItem = this.InventoryReportItems.find((RItem) => {
       const StockItem = this.GetStockItemByID(RItem.item_id)!
       const TargetAmount = RItem.action == 'REMOVE' ? StockItem.quantity_in_stock - RItem.amount : RItem.amount
-      if (TargetAmount < 0) {
-
-        this.ModalService.confirm({
-          nzTitle: 'Confirm Inventory Report',
-          nzContent: 'You have one or more items that reach a negative stock amount. Are you sure? <br>This may tamper with certain RestroLink features',
-          nzOnOk: async () => this.CreateInventoryReport,
-          nzOkLoading: this.ReportingInventory,
-          nzCentered: true
-        })
-      } else {
-        this.CreateInventoryReport()
-      }
+      return TargetAmount < 0
     })
+
+    if (NegativeItem) {
+      this.ModalService.confirm({
+        nzTitle: this.TranslateService.instant('Confirm Inventory Report'),
+        nzContent: this.TranslateService.instant('You have one or more items that reach a negative stock amount. Are you sure? <br>This may tamper with certain RestroLink features'),
+        nzOnOk: async () => { await this.CreateInventoryReport() },
+        nzOkLoading: this.ReportingInventory,
+        nzCentered: true
+      })
+    } else {
+      this.CreateInventoryReport()
+    }
+
   }
 
 
   PromptStockStatusChange(StockOrder: StockOrder, Status: string) {
     this.ModalService.confirm({
-      nzTitle: 'Are you sure?',
-      nzContent: `Once you mark this order as <b>${Status}</b>, you won't be able to change it again`,
+      nzTitle: this.TranslateService.instant('Are you sure?'),
+      nzContent: this.TranslateService.instant(`ORDER_STATE_UPDATE`, {
+        state: this.TranslateService.instant(Status)
+      }),
       nzOnOk: async () => {
         await this.ChangeStockOrderData(StockOrder, 'status')(Status)
         this.LoadStockOrders()
@@ -339,7 +356,7 @@ export class StocksPage {
       nzCentered: true
     })
   }
-  ChangeStockOrderData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'stock-orders', 'Failed to update stock order', 'Sucessfully updated stock order')
+  ChangeStockOrderData = this.HttpService.GetInstancePatchCallback(AppSettings.APIUrl + 'stock-orders', this.TranslateService.instant('Failed to update stock order'), this.TranslateService.instant('Sucessfully updated stock order'))
 
 
 
@@ -350,10 +367,10 @@ export class StocksPage {
       FileData.append('name', Product.name)
       FileData.append('image', File);
 
-      const [UploadResult] = await this.HttpService.MakeRequest(this.StockImagesURL, 'POST', 'Failed to upload stock item image', FileData)
+      const [UploadResult] = await this.HttpService.MakeRequest(this.StockImagesURL, 'POST', this.TranslateService.instant('Failed to upload stock item image'), FileData)
 
       if (UploadResult) {
-        this.MessageService.success('Successfully changed item image')
+        this.MessageService.success(this.TranslateService.instant('Successfully changed item image'))
       }
     }
   }
@@ -368,10 +385,10 @@ export class StocksPage {
       if (DefaultItem) {
         this.StockOrderItems.push({ item_id: DefaultItem.id, quantity: 1, cost: DefaultItem.purchase_price })
       } else {
-        this.NotificationService.error('Error', `This supplier doesn't have linked items. Switch suppliers or link stock items first`)
+        this.NotificationService.error('Error', this.TranslateService.instant(`This supplier doesn't have linked items. Switch suppliers or link stock items first`))
       }
     } else {
-      this.NotificationService.error('Error', 'Selected a valid supplier first')
+      this.NotificationService.error('Error', this.TranslateService.instant('Selected a valid supplier first'))
     }
   }
 
@@ -566,8 +583,8 @@ export class StocksPage {
             categories: StockItemNames,
           },
           series: [
-            { name: 'Total Quantity Bought', data: StockItemsDistributionQuantitySeries },
-            { name: 'Total Money Spent', data: StockItemsDistributionSpentSeries }
+            { name: this.TranslateService.instant('Total Quantity Bought'), data: StockItemsDistributionQuantitySeries },
+            { name: this.TranslateService.instant('Total Money Spent'), data: StockItemsDistributionSpentSeries }
           ]
         };
     }
@@ -581,6 +598,7 @@ export class StocksPage {
       Labels.push(StockItem.name);
       StockItemsSeries.push(StockItem.quantity_in_stock);
     }
+
 
     this.StockItemsChartOptions = {
       ...this.StockItemsChartOptions,
@@ -787,7 +805,7 @@ export class StocksPage {
 
       this.LoadingItemStats = true
 
-      const [StockItemOrders] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-orders', 'GET', 'Failed to load product stats', {
+      const [StockItemOrders] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-orders', 'GET', this.TranslateService.instant('Failed to load product stats'), {
         item_id: item.id
       }) as [StockOrder[]]
       item.Orders = StockItemOrders

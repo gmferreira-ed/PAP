@@ -1,6 +1,6 @@
 <!-- SEARCH -->
 <nz-input-group style="margin-bottom:10px;" nzSearch [nzAddOnAfter]="suffixIconButton">
-    <input type="text" nz-input placeholder="Search for a product" />
+    <input type="text" nz-input [placeholder]="'Search for a product' | translate" />
 </nz-input-group>
 <ng-template #suffixIconButton>
     <button nz-button nzType="primary" nzSearch><nz-icon nzType="search" /></button>
@@ -10,7 +10,7 @@
 <nz-radio-group nzButtonStyle="solid" [(ngModel)]="SelectedCategory">
     <label nz-radio-button nzValue="All">{{'All' | translate}}</label>
     @for (Category of MenuService.Categories ; track $index){
-        <label nz-radio-button [nzValue]="Category.name">{{Category.name}}</label>
+        <label nz-radio-button [nzValue]="Category.name">{{Category.name | translate}}</label>
     }
 </nz-radio-group>
 

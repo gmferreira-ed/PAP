@@ -3,11 +3,12 @@ import { ProgressComponent } from '../progress/progress.component';
 import { HttpClient, HttpEventType, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { IconsModule } from '../icon/icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'image-cropper',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
 
   templateUrl: 'image-cropper.component.html',
   styleUrl: 'image-cropper.component.less'

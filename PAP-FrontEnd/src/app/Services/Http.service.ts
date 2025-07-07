@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AppSettings } from './AppSettings';
-import { ActivatedRouteSnapshot, Route, Router } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { TranslateService } from '@ngx-translate/core';
 
 type ErrorInfo = {
   ErrorCode: number,
@@ -15,6 +15,7 @@ type ErrorInfo = {
 export class HttpService {
 
   private MessageService = inject(NzMessageService)
+  private TranslateService = inject(TranslateService)
 
   private readonly DefaultHeaders = {
     'Content-Type': 'application/json'
@@ -85,16 +86,16 @@ export class HttpService {
           resolve([Result])
         } else {
           if (ErrorSuffix)
-            this.MessageService.error(`${ErrorSuffix}\n${Result.error}`)
+            this.MessageService.error(`${ErrorSuffix}\n${this.TranslateService.instant(Result.error)}`)
           resolve([false, {
             ErrorCode: Response.status,
             ErrorMessage: Result.error
-        }])
+          }])
         }
 
         // ERROR
       }).catch((Error: Error) => {
-        this.MessageService.error(`Could not connect to the server. Please try again later`)
+        this.MessageService.error(this.TranslateService.instant(`Could not connect to the server. Please try again later`))
         resolve([false, {
           ErrorCode: -1,
           ErrorMessage: 'Connection Error'
@@ -158,8 +159,8 @@ export class HttpService {
   }
 
   // Utils
-   GetInstancePatchCallback(URL: URL | string, Error?:string, SucessMessage?:string, Method:string='PATCH') {
-    return (Instance: any, FieldName: string, IdField:string='id') => {
+  GetInstancePatchCallback(URL: URL | string, Error?: string, SucessMessage?: string, Method: string = 'PATCH') {
+    return (Instance: any, FieldName: string, IdField: string = 'id') => {
       return async (NewValue: any) => {
         const [UpdateResult] = await this.MakeRequest(URL, Method, Error, {
           [FieldName]: NewValue,

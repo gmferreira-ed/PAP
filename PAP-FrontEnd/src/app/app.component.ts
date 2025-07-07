@@ -26,6 +26,7 @@ export class AppComponent {
   ThemeService = inject(ThemeService)
   NotificationService = inject(NzNotificationService)
   HttpService = inject(HttpService)
+  TranslateService = inject(TranslateService)
 
   constructor(
     private translate: TranslateService) {
@@ -60,7 +61,7 @@ export class AppComponent {
         console.log('Scanned', CardID)
         this.CardService.OnScan.emit(CardID)
         if (!this.CardService.PromptingCardRead) {
-          const [EntryResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'entries', 'POST', 'Error logging card entry', {
+          const [EntryResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'entries', 'POST', this.TranslateService.instant('Error logging card entry'), {
             card_id: CardID
           })
           if (EntryResult) {
@@ -70,12 +71,12 @@ export class AppComponent {
               this.NotificationService.success(State, `${State} from ${User}`)
               this.ScanSound.play()
             } else {
-              this.NotificationService.warning('Ignored entry', 'There is no user linked to the card ' + CardID)
+              this.NotificationService.warning(this.TranslateService.instant('Ignored entry'), this.TranslateService.instant('There is no user linked to the card') + ' ' + CardID)
               this.ErrorSound.play()
             }
             return
           } else {
-            this.NotificationService.error('Error', 'There was an issue reading the provided card, please try again')
+            this.NotificationService.error(this.TranslateService.instant('Error'), this.TranslateService.instant('There was an issue reading the provided card, please try again'))
             this.ErrorSound.play()
           }
         }

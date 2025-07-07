@@ -15,7 +15,7 @@ import { NzSelectModule, NzSelectSizeType } from 'ng-zorro-antd/select';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MenuService } from '../../Services/menu.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { FileSelectComponent } from "../../Components/file-selector/file-select.component";
@@ -52,6 +52,7 @@ export class MenuPage {
   AuthService = inject(AuthService)
   Renderer = inject(Renderer2)
   HttpService = inject(HttpService)
+  TranslateService = inject(TranslateService)
 
 
   // IMAGE UPLOADING / LOADING
@@ -143,10 +144,10 @@ export class MenuPage {
         this.LoadCategories()
       }
     } else if (!ValidName) {
-      this.MessageService.error("This category already exists")
+      this.MessageService.error(this.TranslateService.instant('This category already exists'))
 
     } else {
-      this.MessageService.error("Your category must have 3 or more characters")
+      this.MessageService.error(this.TranslateService.instant('Your category must have 3 or more characters'))
     }
     
     this.CreatingCategory = false
@@ -171,7 +172,7 @@ export class MenuPage {
     const [OrderUpdate] = await this.HttpService.MakeRequest(
       AppSettings.APIUrl + 'menu/order',
       'PATCH',
-      'Failed to update menu order',
+      this.TranslateService.instant('Failed to update menu order'),
       { order: this.MenuProducts.map(item => ({ id: item.id, order: item.order })) }
     );
   }
@@ -180,9 +181,9 @@ export class MenuPage {
     let SelectedProduct = this.SelectedItemInfo.name
     this.DrawerOpen = false
     this.ModalService.confirm({
-      nzTitle: `Delete ${SelectedProduct}?`,
+      nzTitle: this.TranslateService.instant('Delete') + ` ${SelectedProduct}?`,
       nzCentered: true,
-      nzContent: 'This action cannot be reversed!',
+      nzContent: this.TranslateService.instant('This action cannot be reversed!'),
       nzOnOk: () => {
         return this.MenuService.DeleteMenuItem(SelectedProduct)
           .then(() => {
@@ -197,25 +198,25 @@ export class MenuPage {
     const SelectedProduct = this.SelectedItemInfo
     const TargetActive = !SelectedProduct.active
 
-    const PromptTitle = TargetActive ? 'Activate' : 'Deactivate'
-    const PromptContent = TargetActive ? 'The product will be back available on the menu.'
-      : 'This will make the product become unavailable on the menu.'
+    const PromptTitle = TargetActive ? this.TranslateService.instant('Activate') : this.TranslateService.instant('Deactivate')
+    const PromptContent = TargetActive ? this.TranslateService.instant('The product will be back available on the menu.')
+      : this.TranslateService.instant('This will make the product become unavailable on the menu.')
 
     this.ModalService.confirm({
       nzTitle: `${PromptTitle} ${this.SelectedItemInfo.name}?`,
       nzContent: PromptContent,
       nzCentered: true,
       nzOnOk: async () => {
-        const [UpdateResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'menu', 'PATCH', 'Could not update menu item', {
+        const [UpdateResult] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'menu', 'PATCH', this.TranslateService.instant('Could not update menu item'), {
           active: TargetActive,
           id: SelectedProduct.id,
         })
 
         if (UpdateResult) {
           if (TargetActive)
-            this.MessageService.success("Product activated")
+            this.MessageService.success(this.TranslateService.instant('Product activated'))
           else
-            this.MessageService.success("Product deactivated")
+            this.MessageService.success(this.TranslateService.instant('Product deactivated'))
 
           this.LoadMenuItems()
         }

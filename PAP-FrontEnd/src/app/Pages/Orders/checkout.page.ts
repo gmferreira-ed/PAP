@@ -14,7 +14,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LoadingScreen } from "../../Components/loading-screen/loading-screen.component";
 import { RestaurantLayout } from '../../Components/layout/layout.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { OrdersService } from '../../Services/Orders.service';
 import { FloatingContainer } from '../../Components/floating-container/floating-container';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -24,6 +24,7 @@ import { ReceiptComponent } from "../../Components/receipt/receipt.component";
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 import { AuthService } from '../../Services/Auth.service';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 
 
@@ -31,8 +32,8 @@ import { AuthService } from '../../Services/Auth.service';
 @Component({
   selector: 'checkout-page',
   imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule,
-    DynamicCurrencyPipe, NzInputNumberModule,
-    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, DatePipe, NgTemplateOutlet, NzSelectModule,
+    DynamicCurrencyPipe, NzInputNumberModule, DynamicDatePipe,
+    RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, NgTemplateOutlet, NzSelectModule,
     NzFormModule, MenuProductSelect,
     ReceiptComponent],
   templateUrl: './checkout.page.html',
@@ -50,6 +51,7 @@ export class CheckoutPage {
   Router = inject(Router)
   OrdersService = inject(OrdersService)
   AuthService = inject(AuthService)
+  TranslateService = inject(TranslateService)
 
 
   // Api URLS
@@ -108,7 +110,7 @@ export class CheckoutPage {
       // ADD TO ORDER
       Product.quantity = 1
       this.OrderProducts.push(Product)
-      await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders/items', 'POST', 'Failed to add item to order', {
+      await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders/items', 'POST', this.TranslateService.instant('Failed to add item to order'), {
         order_id: this.OrderInfo.order_id,
         product_id: Product.id,
       })
@@ -145,7 +147,7 @@ export class CheckoutPage {
     this.FinalizingCheckout = true
 
     const FormValues = this.CustomerInfoForm.value
-    const [Response] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'checkout', 'POST', 'Failed to checkout', {
+    const [Response] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'checkout', 'POST', this.TranslateService.instant('Failed to checkout'), {
       products: this.OrderProducts,
       order_id: this.OrderInfo.order_id,
       payment_method: FormValues.payment_method,
@@ -154,7 +156,7 @@ export class CheckoutPage {
       discount: Number(FormValues.discount)
     })
     if (Response) {
-      this.MessageService.success('Sucessfullly checked out')
+      this.MessageService.success(this.TranslateService.instant('Sucessfullly checked out'))
       this.OrderProducts = []
 
       this.Router.navigate(['/orders'])
@@ -170,7 +172,7 @@ export class CheckoutPage {
       product_id: Product.id,
       quantity: Product.quantity
     }
-    await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders/items', 'PATCH', 'Failed to update order item quantity', Data)
+    await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders/items', 'PATCH', this.TranslateService.instant('Failed to update order item quantity'), Data)
 
   }
 
@@ -178,7 +180,7 @@ export class CheckoutPage {
     const ExistingProductIndex = this.OrderProducts.findIndex((Prod) => { return Prod.id == Product.id })
     if (ExistingProductIndex != -1) {
       this.OrderProducts.splice(ExistingProductIndex, 1)
-      await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders/items', 'DELETE', 'Failed to remove item from order', {
+      await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders/items', 'DELETE', this.TranslateService.instant('Failed to remove item from order'), {
         order_id: this.OrderInfo.order_id,
         product_id: Product.id,
       })
@@ -197,7 +199,7 @@ export class CheckoutPage {
 
   LeaveOrder() {
     if (this.OrderProducts.length == 0 && this.CanModifyOrders) {
-      this.MessageService.warning('You left an open table order with no items.\nTo cancel the order, click the cancel button')
+      this.MessageService.warning(this.TranslateService.instant('You left an open table order with no items.\nTo cancel the order, click the cancel button'))
     }
     if (this.CheckingOut) {
       this.Router.navigate(['/orders/' + this.SelectedTable])
@@ -231,17 +233,17 @@ export class CheckoutPage {
   async CancelOrder() {
     if (this.OrderInfo) {
 
-      let [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'DELETE', 'Failed to cancel order', {
+      let [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'DELETE', this.TranslateService.instant('Failed to cancel order'), {
         order_id: this.OrderInfo.order_id,
       })
       if (Result) {
         this.OrdersService.Tables.ResetExpiration()
         this.Router.navigate(['/orders'])
         if (Result.deleted)
-          this.MessageService.warning('Your order was empty, therefore it was not saved in the registry')
+          this.MessageService.warning(this.TranslateService.instant('Your order was empty, therefore it was not saved in the registry'))
 
       }
-      this.MessageService.success('Your order has been sucessfully Cancelled')
+      this.MessageService.success(this.TranslateService.instant('Your order has been sucessfully Cancelled'))
     }
   }
 
@@ -255,7 +257,7 @@ export class CheckoutPage {
 
     this.ProcessingOrder = true
 
-    let [ExistingOrder] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'GET', 'Could not get order details', {
+    let [ExistingOrder] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'GET', this.TranslateService.instant('Could not get order details'), {
       tableid: SelectedTable,
       status: 'OnGoing'
     })
@@ -264,17 +266,17 @@ export class CheckoutPage {
 
       if (this.CanModifyOrders) {
         // CREATE AN ORDER
-        let [OrderInfo] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'POST', 'Could not create order', {
+        let [OrderInfo] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'orders', 'POST', this.TranslateService.instant('Could not create order'), {
           tableid: SelectedTable,
         })
         if (OrderInfo) {
           // Order open sucess
           this.OrderInfo = { order_id: OrderInfo.order_id, products: [] }
-          this.MessageService.info('Created a new order')
+          this.MessageService.info(this.TranslateService.instant('Created a new order'))
           this.OrdersService.Tables.ResetExpiration()
         }
       } else {
-        this.MessageService.info('There are no open orders on this table')
+        this.MessageService.info(this.TranslateService.instant('There are no open orders on this table'))
       }
 
     } else {

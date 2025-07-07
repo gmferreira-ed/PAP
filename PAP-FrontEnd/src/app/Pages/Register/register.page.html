@@ -2,10 +2,10 @@
 
 <div class="row" style="width: 50%; height: 10%; margin-bottom: 2%;">
   <nz-steps [nzCurrent]="StepIndex" (nzIndexChange)="StepIndex = $event">
-    <nz-step nzTitle="Account Info" nzIcon="user" [nzDisabled]="CurrentStepIndex<3"></nz-step>
-    <nz-step nzTitle="Personnal Info" [nzDisabled]="CurrentStepIndex<1 || CurrentStepIndex<3"></nz-step>
-    <nz-step nzTitle="Verification" [nzDisabled]="CurrentStepIndex<2"></nz-step>
-    <nz-step nzTitle="Done" [nzDisabled]="CurrentStepIndex<3"></nz-step>
+    <nz-step [nzTitle]="'Account Info' | translate" nzIcon="user" [nzDisabled]="CurrentStepIndex<3"></nz-step>
+    <nz-step [nzTitle]="'Personal Info' | translate" [nzDisabled]="CurrentStepIndex<1 || CurrentStepIndex<3"></nz-step>
+    <nz-step [nzTitle]="'Verification' | translate" [nzDisabled]="CurrentStepIndex<2"></nz-step>
+    <nz-step [nzTitle]="'Done' | translate" [nzDisabled]="CurrentStepIndex<3"></nz-step>
   </nz-steps>
 </div>
 
@@ -72,7 +72,7 @@
       </button>
 
       <br>
-      <a routerLink="/login">Login Instead</a>
+      <a routerLink="/login">{{'Login Instead' | translate}}</a>
     </fieldset>
     }
 
@@ -153,8 +153,8 @@
     [nzLoading]="VerifyingAccount" 
     [disabled]="RegisterForm.get('verification_code')?.invalid" 
     (click)="Verify()">
-      Verify
-  </button>
+      {{'Verify' | translate}}
+    </button>
 
     <br>
 

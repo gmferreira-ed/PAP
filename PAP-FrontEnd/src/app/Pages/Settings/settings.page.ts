@@ -129,7 +129,7 @@ export class SettingsPage {
       AppSettings.Adress = formValue.Adress!
       AppSettings.RestaurantName = formValue.RestaurantName!
       AppSettings.PostalCode = formValue.PostalCode!
-      this.MessageService.success('Successfully changed settings!')
+      this.MessageService.success(this.TranslateService.instant('Successfully changed settings!'))
     }
 
     this.settingsForm.enable()

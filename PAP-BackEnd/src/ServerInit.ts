@@ -104,6 +104,6 @@ HttpServer.listen(7000, '0.0.0.0', async () => {
 
 
 
-  const EndpointsData=  await PermissionsService.EndpointsData.Get()
-  console.log(EndpointsData)
+  // const EndpointsData=  await PermissionsService.EndpointsData.Get()
+  // console.log(EndpointsData)
 });

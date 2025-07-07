@@ -1,7 +1,7 @@
 @if (EditMode){
 <div class="editor-settings">
     <div class="section">
-        <label>Snapping</label>
+        <label>{{'Snapping' | translate}}</label>
         <div class="row fill">
             <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;" [nzMin]="0" [nzMax]="10" [nzStep]="1"
                 [(ngModel)]="Snapping"></nz-input-number>
@@ -15,14 +15,14 @@
         <button class="button block" [disabled]="CurrentHistoryIndex == -1" (click)="NavigateHistory(-1)">
             <icon type="undo"></icon>
         </button>
-        <label>Undo</label>
+        <label>{{'Undo' | translate}}</label>
     </div>
 
     <div class="action">
         <button class="button block" [disabled]="CurrentHistoryIndex == History.length-1" (click)="NavigateHistory(1)">
             <icon type="redo"></icon>
         </button>
-        <label>Redo</label>
+        <label>{{'Redo' | translate}}</label>
     </div>
 
     <div class="separator vertical"></div>
@@ -31,28 +31,28 @@
         <button class="button block" (click)="CenterLayout()">
             <icon type="locate"></icon>
         </button>
-        <label>Center</label>
+        <label>{{'Center' | translate}}</label>
     </div>
 
     <div class="action">
         <button class="button block" (click)="ChangeZoom(undefined, -100)">
             <icon type="zoom-in"></icon>
         </button>
-        <label>Zoom In</label>
+        <label>{{'Zoom In' | translate}}</label>
     </div>
 
     <div class="action">
         <button class="button block" (click)="ChangeZoom(undefined, 100)">
             <icon type="zoom-out"></icon>
         </button>
-        <label>Zoom Out</label>
+        <label>{{'Zoom Out' | translate}}</label>
     </div>
 
     <div class="action">
         <button class="button block" (click)="ToggleGrid()">
             <icon type="grid"></icon>
         </button>
-        <label>Grid</label>
+        <label>{{'Grid' | translate}}</label>
     </div>
 
     <div class="separator vertical"></div>
@@ -61,14 +61,14 @@
         <button class="button block" (click)="ExportLayout()">
             <icon type="export"></icon>
         </button>
-        <label>Export</label>
+        <label>{{'Export' | translate}}</label>
     </div>
 
     <div class="action">
         <button class="button block" (click)="FileSelector.click()">
             <icon type="import"></icon>
         </button>
-        <label>Import</label>
+        <label>{{'Import' | translate}}</label>
         <input #FileSelector type="file" id="fileInput" style="display: none" accept=".dl"
             (change)="ImportLayout($event)">
     </div>
@@ -79,14 +79,14 @@
         <button class="button block" (click)="ClearLayout()">
             <icon type="brush-cleaning"></icon>
         </button>
-        <label>Clear Layout</label>
+        <label>{{'Clear Layout' | translate}}</label>
     </div>
 
     <div class="action">
         <button class="button block">
             <icon type="circle-help"></icon>
         </button>
-        <label>Help</label>
+        <label>{{'Help' | translate}}</label>
     </div>
 </div>
 }
@@ -101,7 +101,7 @@
         @let PseudoComponent = NewComponent(ComponentType, true);
 
         <div class="component-info">
-            <h3>{{GlobalUtils.FormatName(ComponentInfo.Key)}}</h3>
+            <h3>{{GlobalUtils.FormatName(ComponentInfo.Key | translate)}}</h3>
             <div [class]="'component '+ComponentInfo.Key" [style.width]="PseudoComponent.Size.X*Scaling +'px'"
                 [style.height]="PseudoComponent.Size.Y*Scaling +'px'" [style.left]="PseudoComponent.Position.X +'px'"
                 [style.top]="PseudoComponent.Position.Y +'px'" [style.cursor]="'pointer'"
@@ -180,7 +180,7 @@
                             <label [class]="'table-status '+Table?.status" [style.font-size]="2.5*Zoom+'px'">
                                 {{TableStatus}}
                                 <br>
-                                {{Table.time | date:'HH:mm:ss':'UTC'}}
+                                {{Table.time | ddate:'HH:mm:ss':'UTC'}}
                             </label>
                         }
                         @if (!EditMode && Zoom>2){
@@ -215,17 +215,17 @@
     @if (ShowProperties && EditMode){
     <div class="sidebar properties">
         @if (SelectedComponent){
-        <h2>{{GlobalUtils.FormatName(SelectedComponent.Type)}}</h2>
-        <h3>Properties</h3>
+        <h2>{{GlobalUtils.FormatName(SelectedComponent.Type | translate)}}</h2>
+        <h3>{{'Properties' | translate}}</h3>
 
         <div>
-            <h4>Position</h4>
+            <h4>{{'Position'| translate}}</h4>
             <label>X: {{SelectedComponent.Position.X}}</label>
             <label> | Y: {{SelectedComponent.Position.Y}}</label>
         </div>
 
         <div>
-            <h4>Size</h4>
+            <h4>{{'Size' | translate}}</h4>
             <label>X: {{SelectedComponent.Size.X}}</label>
             <label> | Y: {{SelectedComponent.Size.Y}}</label>
         </div>
@@ -238,13 +238,16 @@
 @if (ContextMenuVisible){
 <div class="context-menu" [style.left]="DragStartMousePosition.X+'px'" [style.top]="DragStartMousePosition.Y+'px'">
     <button class="context-menu-item" [disabled]="!SelectedComponent"
-        (click)="DeleteComponent(SelectedComponent!)">Delete</button>
-    <button class="context-menu-item" [disabled]="!SelectedComponent" (click)="CopySelectedComponent()">Copy</button>
-    <button class="context-menu-item" [disabled]="!SelectedComponent" (click)="CutSelectedComponent()">Cut</button>
+        (click)="DeleteComponent(SelectedComponent!)">{{'Delete' | translate}}</button>
+    <button class="context-menu-item" [disabled]="!SelectedComponent" 
+        (click)="CopySelectedComponent()">{{'Copy' | translate}}</button>
+    <button class="context-menu-item" [disabled]="!SelectedComponent" 
+        (click)="CutSelectedComponent()">{{'Cut' | translate}}</button>
     <button class="context-menu-item" [disabled]="!HasClipboardContent"
-        (click)="PasteClipboardComponent($event)">Paste</button>
+        (click)="PasteClipboardComponent($event)">{{'Paste' | translate}}</button>
     @if (SelectedComponent){
-    <button class="context-menu-item" (click)="DuplicateComponent(SelectedComponent)">Duplicate</button>
+    <button class="context-menu-item" 
+        (click)="DuplicateComponent(SelectedComponent)">{{'Duplicate' | translate}}</button>
     }
 </div>
 }

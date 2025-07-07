@@ -6,6 +6,7 @@ import { FormatPrice, JustifyLine } from './receipt.utils';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 import { AppSettings } from '../../Services/AppSettings';
+import { TranslateService } from '@ngx-translate/core';
 
 
 declare global {
@@ -34,6 +35,7 @@ export class ReceiptComponent implements OnChanges {
 
   MessageService = inject(NzMessageService)
   DCurrencyPipe = inject(DynamicCurrencyPipe)
+  TranslateService = inject(TranslateService)
 
   CompileInstructions() {
     const PrinterInstructions: PrinterFunction[] = []
@@ -65,22 +67,22 @@ export class ReceiptComponent implements OnChanges {
       PrinterInstructions.push(new PrinterFunction('text', new TextData(AppSettings.Adress)))
       PrinterInstructions.push(new PrinterFunction('text', new TextData(`${AppSettings.PostalCode} ${AppSettings.City}`)))
       PrinterInstructions.push(new PrinterFunction('text', new TextData(`Telef./Fax: ${AppSettings.Contact}`)))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Tax ID No: ${AppSettings.TaxID}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`${this.TranslateService.instant('Tax ID')} No: ${AppSettings.TaxID}`)))
       PrinterInstructions.push(new PrinterFunction('drawLine'))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine([FormattedDate, 'RECEIPT N:']), { justified: true })))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine(['Original ', String(ReceiptData.order_id)]), { justified: true })))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine([FormattedDate, this.TranslateService.instant('RECEIPT N:')]), { justified: true })))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine([this.TranslateService.instant('Original'), String(ReceiptData.order_id)]), { justified: true })))
       PrinterInstructions.push(new PrinterFunction('align', 'LT'))
       PrinterInstructions.push(new PrinterFunction('text', new TextData(`${hours}:${minutes}`)))
       PrinterInstructions.push(new PrinterFunction('drawLine'))
 
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Taxpayer ID: ' + (ReceiptData.TIN || '-'))))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Payment Method: ' + (ReceiptData.payment_method || '-'))))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(this.TranslateService.instant('Taxpayer ID') + ': ' + (ReceiptData.TIN || '-'))))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(this.TranslateService.instant('Payment Method') + ': ' + (ReceiptData.payment_method ? this.TranslateService.instant(ReceiptData.payment_method) : '-'))))
 
 
       PrinterInstructions.push(new PrinterFunction('drawLine'))
 
 
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine(['Qt/Product', 'T/Price']), { justified: true })))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(JustifyLine([this.TranslateService.instant('Qt/Product'), this.TranslateService.instant('T/Price')]), { justified: true })))
       for (const Product of ReceiptData.items) {
         const QtPrice = this.DCurrencyPipe.transform(Product.price) + '/un'
         const TotalProductPrice = this.DCurrencyPipe.transform(Product.price * Product.quantity)
@@ -99,24 +101,24 @@ export class ReceiptComponent implements OnChanges {
       // PrinterInstructions.push(new PrinterFunction('text', new TextData('Subtotal: $12.50')))
       // PrinterInstructions.push(new PrinterFunction('text', new TextData('Tax (10%): $1.25')))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Sub-Total: ${this.DCurrencyPipe.transform(SubTotal)}`)))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Discount: ${ReceiptData.discount || '-'}%`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`${this.TranslateService.instant('Sub-Total')}: ${this.DCurrencyPipe.transform(SubTotal)}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`${this.TranslateService.instant('Discount')}: ${ReceiptData.discount || '-'}%`)))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData(`Total: ${this.DCurrencyPipe.transform(TotalPrice)}`)))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Amount Paid: ' + this.DCurrencyPipe.transform(AmountPaid))))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Change: ' + this.DCurrencyPipe.transform(Math.max(AmountPaid - TotalPrice, 0)))))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(`${this.TranslateService.instant('Total')}: ${this.DCurrencyPipe.transform(TotalPrice)}`)))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(this.TranslateService.instant('Amount Paid') + ': ' + this.DCurrencyPipe.transform(AmountPaid))))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(this.TranslateService.instant('Change') + ': ' + this.DCurrencyPipe.transform(Math.max(AmountPaid - TotalPrice, 0)))))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
 
       PrinterInstructions.push(new PrinterFunction('align', 'CT'))
       PrinterInstructions.push(new PrinterFunction('drawLine'))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('Thank you for your visit')))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(this.TranslateService.instant('Thank you for your visit'))))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
       PrinterInstructions.push(new PrinterFunction('drawLine'))
 
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
-      PrinterInstructions.push(new PrinterFunction('text', new TextData('This receipt was powered by')))
+      PrinterInstructions.push(new PrinterFunction('text', new TextData(this.TranslateService.instant('This receipt was powered by'))))
       PrinterInstructions.push(new PrinterFunction('text', new TextData('')))
       const Image = new ImageInfo(600, 300, new Uint8Array(RestroLinkLogo.data.buffer))
       PrinterInstructions.push(new PrinterFunction('image', Image))
@@ -130,7 +132,7 @@ export class ReceiptComponent implements OnChanges {
     try {
       window.electronAPI.printReceipt(this.PrinterInstructions)
     } catch (Error) {
-      this.MessageService.error('Failed to print receipt. Please check if your printer is connected properly')
+      this.MessageService.error(this.TranslateService.instant('Failed to print receipt. Please check if your printer is connected properly'))
     }
   }
 

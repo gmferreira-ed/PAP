@@ -28,6 +28,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { UserRole } from '../../../shared/permissions';
 import { PermissionsService } from '../../Services/Permissions.Service';
 import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
+import { TranslateService } from '@ngx-translate/core';
 
 type Shift = {
   start: Date
@@ -57,6 +58,7 @@ export class ProfilePage {
   NotificationService = inject(NzNotificationService)
   PermissionsService = inject(PermissionsService)
   MessageService = inject(NzMessageService)
+  TranslateService = inject(TranslateService)
 
   CurrentUser = this.AuthService.User
 
@@ -92,12 +94,12 @@ export class ProfilePage {
       FileData.append('image', File);
 
       const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'users', 'POST',
-        'Failed to upload user image',
+        this.TranslateService.instant('Failed to upload user image'),
         FileData
       )
 
       if (UploadResult) {
-        this.MessageService.success('Successfully changed user image')
+        this.MessageService.success(this.TranslateService.instant('Successfully changed user image'))
       }
     }
 
@@ -117,10 +119,10 @@ export class ProfilePage {
     const ActiveToggleSucess = await this.UpdateUserInfo({
       role: RoleName,
       userid: this.User()?.userid,
-    }, 'Failed to change user role')
+    }, this.TranslateService.instant('Failed to change user role'))
 
     if (ActiveToggleSucess) {
-      this.MessageService.success("Sucessfully changed user role")
+      this.MessageService.success(this.TranslateService.instant('Sucessfully changed user role'))
       this.LoadUserInfo()
     }
 
@@ -136,10 +138,11 @@ export class ProfilePage {
     const ActiveToggleSucess = await this.UpdateUserInfo({
       userid: this.User()!.userid,
       active: !CurrentActive
-    }, 'Failed to toggle user status')
+    }, this.TranslateService.instant('Failed to toggle user status'))
 
     if (ActiveToggleSucess) {
-      this.MessageService.success("Sucessfully " + Action + ' user')
+      const ActionMessage = `Successfully ${Action} user`
+      this.MessageService.success(this.TranslateService.instant(ActionMessage))
       this.User()!.active = !CurrentActive
     }
 
@@ -154,7 +157,7 @@ export class ProfilePage {
   async RemoveCard() {
     this.DisassociatingCard = true
 
-    const [RemoveSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users/keycard', 'DELETE', 'Failed to disassociate keycard', {
+    const [RemoveSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users/keycard', 'DELETE', this.TranslateService.instant('Failed to disassociate keycard'), {
       userid: this.User()!.userid
     })
     if (RemoveSucess)
@@ -358,7 +361,7 @@ export class ProfilePage {
     const UsersURL = new URL('users', AppSettings.APIUrl)
     UsersURL.searchParams.append('user', UserToSearch || '')
 
-    const [UserInfo] = await this.HttpService.MakeRequest(UsersURL, 'GET', 'Failed to fetch user info') as [User]
+    const [UserInfo] = await this.HttpService.MakeRequest(UsersURL, 'GET', this.TranslateService.instant('Failed to fetch user info')) as [User]
 
     if (UserInfo) {
       this.User.set(UserInfo)
@@ -399,14 +402,14 @@ export class ProfilePage {
         const UserId = UserInfo.userid
         const FullName = UserInfo.fullname
 
-        const [AttributeSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users/keycard', 'POST', 'Failed to attribute keycard: ', {
+        const [AttributeSucess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'users/keycard', 'POST', this.TranslateService.instant('Failed to attribute keycard: '), {
           userid: UserId,
           card_id: CardID
         })
 
         if (AttributeSucess) {
           UserInfo.card_id = CardID
-          this.NotificationService.success('Attribution sucess', 'The keycard ' + CardID + ' has been successfully attributed to ' + FullName)
+          this.NotificationService.success(this.TranslateService.instant('Attribution sucess'), this.TranslateService.instant('The keycard') + ' ' + CardID + this.TranslateService.instant('has been successfully attributed to') + ' ' + FullName)
           this.ScanSound.play()
         } else {
           this.ErrorSound.play()

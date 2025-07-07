@@ -9,12 +9,12 @@
             (nzPageSizeChange)="LoadReceipts()" [nzTotal]="TotalPages" [nzFrontPagination]="false" style="width: 100%;">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Total Cost</th>
-                    <th>Discount</th>
-                    <th>Status</th>
-                    <th>Created By</th>
+                    <th>{{'ID' | translate}}</th>
+                    <th>{{'Date' | translate}}</th>
+                    <th>{{'Total Cost' | translate}}</th>
+                    <th>{{'Discount' | translate}}</th>
+                    <th>{{'Status' | translate}}</th>
+                    <th>{{'Created By' | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,7 +24,7 @@
                             <span>{{Receipt.order_id}}</span>
                         </td>
                         <td>
-                            <span>{{Receipt.created_at | date: 'dd-MM-yyyy HH:mm'}}</span>
+                            <span>{{Receipt.created_at | ddate: 'dd-MM-yyyy HH:mm'}}</span>
                         </td>
                         <td>
                             <span>{{Receipt.total_price | dcurrency}}</span>
@@ -34,7 +34,7 @@
                         </td>
                         <td>
                             <status-tag [status]="Receipt.status">
-                                {{Receipt.status}}
+                                {{Receipt.status | translate}}
                             </status-tag>
                         </td>
                         <td>
@@ -50,24 +50,24 @@
             <div class="collumn" style="align-items: start; flex: 1;">
 
                 <div class="row space-between" style="width: 100%;">
-                    <h2>Order - #{{ReceiptData.order_id}}</h2>
+                    <h2>{{'Order' | translate}} - #{{ReceiptData.order_id}}</h2>
 
                     <button class="button" (click)="Receipt.Print()">
-                        <icon type="receipt"></icon> Print Receipt
+                        <icon type="receipt"></icon> {{'Print Receipt' | translate}}
                     </button>
                 </div>
                 <div class="row">
                     <status-tag [status]="ReceiptData.status">
-                        {{ReceiptData.status}}
+                        {{ReceiptData.status | translate}}
                     </status-tag>
                 </div>
 
                 <br>
 
-                <h2>Info</h2>
+                <h2>{{'Info' | translate}}</h2>
 
                 <div class="row">
-                    <label>Created by: </label>
+                    <label>{{'Created by' | translate}}: </label>
                     <div class="tag">
                         <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
                             [src]="UserImagesURL+ReceiptData.username" onerror="this.src='Images/Icons/account.svg'">
@@ -76,41 +76,41 @@
                 </div>
 
                 <div class="row">
-                    <label>Created at: </label>
-                    <span>{{(ReceiptData.created_at | date:'dd-MM-yyyy HH:mm') || '-'}}</span>
+                    <label>{{'Created at' | translate}}: </label>
+                    <span>{{(ReceiptData.created_at | ddate:'dd-MM-yyyy HH:mm') || '-'}}</span>
                 </div>
                 <div class="row">
-                    <label>Checked Out: </label>
-                    <span>{{(ReceiptData.checked_out_at | date:'dd-MM-yyyy HH:mm') || '-'}}</span>
+                    <label>{{'Checked Out' | translate}}: </label>
+                    <span>{{(ReceiptData.checked_out_at | ddate:'dd-MM-yyyy HH:mm') || '-'}}</span>
                 </div>
                 <div class="row">
-                    <label>TIN: </label>
+                    <label>{{'TIN' | translate}}: </label>
                     <span>{{ReceiptData.TIN || '-'}}</span>
                 </div>
                 <div class="row">
-                    <label>Total: </label>
+                    <label>{{'Total' | translate}}: </label>
                     <span>{{ReceiptData.total_price && (ReceiptData.total_price | dcurrency) || '-'}}</span>
                 </div>
                 <div class="row">
-                    <label>Payment Method: </label>
+                    <label>{{'Payment Method' | translate}}: </label>
                     <span>{{ReceiptData.payment_method || '-'}}</span>
                 </div>
                 <div class="row">
-                    <label>Discount: </label>
+                    <label>{{'Discount' | translate}}: </label>
                     <span>{{(ReceiptData.discount) || '-'}}</span>
                 </div>
 
                 <br>
 
-                <h2>Products</h2>
+                <h2>{{'Products' | translate}}</h2>
                 <nz-table [nzData]="ReceiptData.items" [nzShowPagination]="false" [nzBordered]="true"
                     style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Total</th>
-                            <th>Price/un</th>
-                            <th>Quantity</th>
+                            <th>{{'Name' | translate}}</th>
+                            <th>{{'Total' | translate}}</th>
+                            <th>{{'Price/un' | translate}}</th>
+                            <th>{{'Quantity' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody>

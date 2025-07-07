@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'error-page',
-  imports: [],
+  imports: [TranslateModule],
   templateUrl: './error.page.html',
   styleUrl: './error.page.less'
 })

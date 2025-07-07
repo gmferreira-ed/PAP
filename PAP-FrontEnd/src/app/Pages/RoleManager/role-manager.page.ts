@@ -21,6 +21,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'stocks-page',
@@ -39,7 +40,7 @@ export class RoleManagementPage {
   Roles: UserRole[] = []
   RoleUsers: any[] = []
   CategorizedPermissions: EndpointCategory[] = []
-  EndpointPermissions: {[key:string]:any} = []
+  EndpointPermissions: { [key: string]: any } = []
 
   // SERVICES
   HttpService = inject(HttpService)
@@ -47,6 +48,7 @@ export class RoleManagementPage {
   PermissionsService = inject(PermissionsService)
   ModalService = inject(NzModalService)
   AuthService = inject(AuthService)
+  TranslateService = inject(TranslateService)
 
   // VARIABLES
   CanModify = this.AuthService.PagePermissions.CanModify
@@ -63,7 +65,7 @@ export class RoleManagementPage {
     this.LoadingPermissions = true
 
     const [EndpointPermissions] =
-      await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'GET', 'Failed to fetch role permissions') as [any[]]
+      await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'GET', this.TranslateService.instant('Failed to fetch role permissions')) as [any[]]
 
 
     // Convert the backend data to have the required values
@@ -135,7 +137,7 @@ export class RoleManagementPage {
 
     EndpointData.Changing = true
 
-    const [DeleteSuccess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'DELETE', `Failed to remove permissions for ${this.SelectedRole}`,
+    const [DeleteSuccess] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-permissions', 'DELETE', this.TranslateService.instant('Failed to remove permissions for') + ` ${this.SelectedRole}`,
       {
         endpoint_id: EndpointData.ID,
         role: this.SelectedRole.name
@@ -145,7 +147,7 @@ export class RoleManagementPage {
     EndpointData.Changing = false
 
     if (DeleteSuccess) {
-      this.MessageService.success('Sucessfully removed permissions')
+      this.MessageService.success(this.TranslateService.instant('Sucessfully removed permissions'))
       this.LoadPermissions()
     }
   }
@@ -156,7 +158,7 @@ export class RoleManagementPage {
 
     EndpointData.Changing = true
 
-    const [InsertSuccess] = await this.HttpService.MakeRequest(this.RolePermissionsURL, 'POST', 'Failed to add endpoint permissions',
+    const [InsertSuccess] = await this.HttpService.MakeRequest(this.RolePermissionsURL, 'POST', this.TranslateService.instant('Failed to add endpoint permissions'),
       {
         endpoint_id: EndpointData.ID,
         role: this.SelectedRole.name
@@ -166,7 +168,7 @@ export class RoleManagementPage {
     EndpointData.Changing = false
 
     if (InsertSuccess) {
-      this.MessageService.success("Successfully added endpoint permissions!")
+      this.MessageService.success(this.TranslateService.instant('Successfully added endpoint permissions!'))
       this.LoadPermissions()
     }
   }
@@ -187,12 +189,12 @@ export class RoleManagementPage {
       nzCentered: true,
 
       nzOnOk: async () => {
-        const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'roles', 'DELETE', 'Failed to delete role', {
+        const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'roles', 'DELETE', this.TranslateService.instant('Failed to delete role'), {
           name: Role.name,
         })
 
         if (Result) {
-          this.MessageService.success('Successfully deleteted role')
+          this.MessageService.success(this.TranslateService.instant('Successfully deleteted role'))
           this.LoadRoles().then(() => {
             this.LoadRoleUsers()
           })
@@ -207,13 +209,13 @@ export class RoleManagementPage {
 
 
     const FormVal = this.RoleCreateFrom.value
-    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'roles', 'POST', 'Failed to create role', {
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'roles', 'POST', this.TranslateService.instant('Failed to create role'), {
       name: FormVal.name,
       permission_level: FormVal.permission_level
     })
 
     if (Result) {
-      this.MessageService.success('Sucessfully created role')
+      this.MessageService.success(this.TranslateService.instant('Sucessfully created role'))
       this.RoleCreationModalVisible = false
       this.RoleCreateFrom.reset()
 
@@ -231,7 +233,7 @@ export class RoleManagementPage {
     this.LoadingUsers = true
 
     this.RoleUsers = []
-    const [RoleUsers] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-users', 'GET', 'Failed to load role users', {
+    const [RoleUsers] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'role-users', 'GET', this.TranslateService.instant('Failed to load role users'), {
       role: this.SelectedRole.name
     })
     if (RoleUsers) {

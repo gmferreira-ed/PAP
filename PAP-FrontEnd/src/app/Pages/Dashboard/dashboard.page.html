@@ -8,7 +8,7 @@
                 @if (CanViewEntries){
                     <attendance-view (UserEntriesChange)="LoadWorkingStaff($event)"></attendance-view>
                 }@else {
-                    <unavailable-info>You don't have access to the Restaurant's employee entries</unavailable-info>
+                    <unavailable-info>{{'You don\'t have access to the Restaurant\'s employee entries' | translate}}</unavailable-info>
                 }
             </div>
         </div>
@@ -16,23 +16,23 @@
             <div class="action-card fill" style="height: 100%;">
 
                 @if (!CanViewRevenue){
-                    <unavailable-info>You don't have access to this information</unavailable-info>
+                    <unavailable-info>{{'You don\'t have access to this information' | translate}}</unavailable-info>
                 }
-                <h1>Best Sellers</h1>
+                <h1>{{'Best Sellers' | translate}}</h1>
                 <section class="content">
                     @if (CanViewRevenue){
                         @for (RevenueInfo of CategorizedRevenue; track $index){
                             <div class="revenue-category">
-                                <h3>{{RevenueInfo.category || 'Others'}} - {{RevenueInfo.product_name}}</h3>
+                                <h3>{{(RevenueInfo.category | translate) || ('Others' | translate)}} - {{RevenueInfo.product_name}}</h3>
                                 <div class="row fill align-start">
                                     <img [src]="MenuImagesURL+RevenueInfo.product_name">
                                     <div class="collumn">
                                         <div class="row">
-                                            <label>Revenue: </label>
+                                            <label>{{'Revenue:' | translate}} </label>
                                             <span>{{RevenueInfo.total_revenue | dcurrency}}</span>
                                         </div>
                                         <div class="row">
-                                            <label>Quantity Sold: </label>
+                                            <label>{{'Quantity Sold:' | translate}} </label>
                                             <span>{{RevenueInfo.total_quantity_sold}}</span>
                                         </div>
                                     </div>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="separator"></div>
                         }@empty {
-                            <no-data>You have no sales, for now</no-data>
+                            <no-data>{{'You have no sales, for now' | translate}}</no-data>
                         }
                     }
                 </section>
@@ -48,7 +48,7 @@
             </div>
             <div class="collumn fill" style="height: 100%;">
                 <div class="action-card" style="height: 40%;">
-                    <h1>Today's Revenue</h1>
+                    <h1>{{'Today\'s Revenue' | translate}}</h1>
                     @if (CanViewRevenue){
                         <section>
                             <div class="row revenue">
@@ -57,29 +57,29 @@
                             </div>
                         </section>
                     }@else {
-                        <unavailable-info>You don't have access to the restaurant's revenue</unavailable-info>
+                        <unavailable-info>{{'You don\'t have access to the restaurant\'s revenue' | translate}}</unavailable-info>
                     }
                     <loading-screen [IsLoading]="LoadingRevenue"></loading-screen>
                 </div>
                 <div class="action-card fill">
-                    <h1>Tables</h1>
+                    <h1>{{'Tables' | translate}}</h1>
                     <section>
                         <div class="row">
-                            <h3>Available:
+                            <h3>{{'Available:' | translate}}
                                 <span style="color: var(--success-color);">
                                     {{AvailableTables}}
                                 </span>
                             </h3>
                         </div>
                         <div class="row">
-                            <h3>Occupied:
+                            <h3>{{'Occupied:' | translate}}
                                 <span style="color: var(--error-color);">
                                     {{OccupiedTables}}
                                 </span>
                             </h3>
                         </div>
                         <div class="row">
-                            <h3>Total: {{TotalTables}}</h3>
+                            <h3>{{'Total:' | translate}} {{TotalTables}}</h3>
                         </div>
                     </section>
                 </div>
@@ -88,7 +88,7 @@
 
 
             <div class="action-card fill" style="height: 100%;">
-                <h1>Reservations</h1>
+                <h1>{{'Reservations' | translate}}</h1>
                 @if (CanViewReservations){
                     <section class="content">
                         @for (Reservation of Reservations; track $index){
@@ -96,15 +96,15 @@
                             <div class="collumn reservation">
                             <div class="row space-between">
                             <label class="table">
-                                Table {{Reservation.tableid}}
+                                {{'Table' | translate}} {{Reservation.tableid}}
                             </label>
                             <label class="guests">
-                                {{Reservation.guest_count}} Guests
+                                {{Reservation.guest_count}} {{'Guests' | translate}}
                             </label>
                             </div>
                             <div class="row space-between">
                                 <label class="date">
-                                    {{Reservation.date | date:'HH:mm'}}
+                                    {{Reservation.date | ddate:'HH:mm'}}
                                 </label>
                                 <label class="caption">
                                     {{ReservationTimestamp-Now.getTime() | duration}}
@@ -113,15 +113,15 @@
                             </div>
                             <div class="separator" style="margin: 0;"></div>
                         }@empty {
-                            <no-data>There are no reservations for today</no-data>
+                            <no-data>{{'There are no reservations for today' | translate}}</no-data>
                         }
                     </section>
                 }@else {
-                    <unavailable-info>This content is unavailable</unavailable-info>
+                    <unavailable-info>{{'This content is unavailable' | translate}}</unavailable-info>
                 }
             </div>
     <div class="action-card fill" style="height: 100%;">
-        <h1>Working Staff</h1>
+        <h1>{{'Working Staff' | translate}}</h1>
         @if (CanViewEntries){
             <section class="content">
                 @for (EntryInfo of WorkingStaff; track $index){
@@ -130,11 +130,11 @@
                     </user-card>
                     <div class="separator" style="margin: 0px;"></div>
                 }@empty {
-                    <no-data>There is no staff working</no-data>
+                    <no-data>{{'There is no staff working' | translate}}</no-data>
                 }
             </section>
         }@else {
-            <unavailable-info>This content is unavailable</unavailable-info>
+            <unavailable-info>{{'This content is unavailable' | translate}}</unavailable-info>
         }
 
         @if (AttendanceView){

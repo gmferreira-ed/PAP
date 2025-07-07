@@ -4,6 +4,7 @@ import { HttpService } from './Http.service';
 import { AppSettings } from './AppSettings';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import SimpleCache from '../../shared/SimpleCache';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class MenuService {
 
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
+  TranslateService = inject(TranslateService)
 
   FailedMenuItems = false
 
@@ -30,7 +32,7 @@ export class MenuService {
       MenuURL.searchParams.append('category', category);
     }
 
-    const [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', 'Could not get menu items. Please try again')
+    const [Result] = await this.HttpService.MakeRequest(MenuURL, 'GET', this.TranslateService.instant('Could not get menu items. Please try again'))
 
     if (Array.isArray(Result)) {
       for (const MenuItem of Result)
@@ -48,11 +50,11 @@ export class MenuService {
   LastMenuFetch = 0
 
   async DeleteMenuItem(ProductName: string) {
-    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', 'Failed to delete menu item', {
+    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', this.TranslateService.instant('Failed to delete menu item'), {
       name: ProductName,
     })
     if (Result) {
-      this.MessageService.success(`Sucessfully removed ${ProductName} from the menu`)
+      this.MessageService.success(this.TranslateService.instant('Sucessfully removed') + ` ${ProductName} ` + this.TranslateService.instant('from the menu'))
     }
     return Result
   }
@@ -63,10 +65,10 @@ export class MenuService {
     FileData.append('name', product)
     FileData.append('image', File);
 
-    const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', 'Failed to upload menu item image', FileData)
+    const [UploadResult] = await this.HttpService.MakeRequest(AppSettings.ImagesURL + 'menu', 'POST', this.TranslateService.instant('Failed to upload menu item image'), FileData)
 
     if (UploadResult) {
-      this.MessageService.success('Successfully changed product image')
+      this.MessageService.success(this.TranslateService.instant('Successfully changed product image'))
     }
     return UploadResult
   }
@@ -87,10 +89,10 @@ export class MenuService {
       formData.append('price', String(price))
       formData.append('active', 'true')
 
-      const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'POST', 'Failed to insert menu item', formData)
+      const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'POST', this.TranslateService.instant('Failed to insert menu item'), formData)
 
       if (Result) {
-        this.MessageService.success(`Sucessfully added ${name} to the menu`)
+        this.MessageService.success(this.TranslateService.instant('Sucessfully added') + ` ${name} ` + this.TranslateService.instant('to the menu'))
         return true
       }
     }
@@ -100,23 +102,23 @@ export class MenuService {
   }
 
   async DeleteCategory(Category: any) {
-    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'DELETE', 'Failed to delete category', {
+    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'DELETE', this.TranslateService.instant('Failed to delete category'), {
       category_id: Category.id,
     })
 
     if (Result) {
-      this.MessageService.success(`Sucessfully removed category ${Category.name}`)
+      this.MessageService.success(this.TranslateService.instant('Sucessfully removed category') + ` ${Category.name}`)
     }
     return Result
   }
 
   async InsertCategory(Category: String) {
-    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'POST', 'Failed to insert category', {
+    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'POST', this.TranslateService.instant('Failed to insert category'), {
       category: Category,
     })
 
     if (Result) {
-      this.MessageService.success(`Sucessfully added category ${Category}`)
+      this.MessageService.success(this.TranslateService.instant('Sucessfully added category') + ` ${Category}`)
     }
 
     return Result
@@ -128,7 +130,7 @@ export class MenuService {
     const CategoriesUrl = new URL(this.CategoriesURL);
     CategoriesUrl.searchParams.append('category', category);
 
-    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', 'Failed to load categories')
+    const [Result] = await this.HttpService.MakeRequest(this.CategoriesURL, 'GET', this.TranslateService.instant('Failed to load categories'))
 
     if (Result)
       this.Categories = Result

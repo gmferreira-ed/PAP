@@ -77,11 +77,11 @@ async function GetStockOrders(Fields: {}): Promise<StockOrder[]> {
 
 
 /**
- * @displayname "View Purchase Orders"
+ * @displayname "View Stock Orders"
  * @category "Stocks"
  * @path /stock-orders
  * @method GET
- * @summary "View all purchase orders with supplier and item details"
+ * @summary "View all stock orders with supplier and item details"
  */
 Router.get('/stock-orders', HandleEndpointFunction(async (req, res) => {
 
@@ -91,9 +91,9 @@ Router.get('/stock-orders', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Create/Modify Purchase Orders"
+ * @displayname "Create/Modify Stock Orders"
  * @category "Stocks"
- * @summary "Create new purchase orders and modify existing ones"
+ * @summary "Create new stock orders and modify existing ones"
  * @path /stock-orders
  * @method POST
  */
@@ -125,9 +125,9 @@ Router.post('/stock-orders', HandleEndpointFunction(async (req, res) => {
 }))
 
 /**
- * @displayname "Update Purchase Order"
- * @category "Purchase Orders"
- * @summary "Update purchase order status and process received items"
+ * @displayname "Update Stock Order"
+ * @category "Stock Orders"
+ * @summary "Update stock order status and process received items"
  * @path /stock-orders
  * @method PATCH
  * @connected POST/api/stock-orders
@@ -150,7 +150,7 @@ Router.patch('/stock-orders', HandleEndpointFunction(async (req, res) => {
         }
 
 
-        const Query = `UPDATE purchase_orders SET status=?, delivery_date=CURRENT_TIMESTAMP() WHERE id=? AND delivery_date IS NULL`
+        const Query = `UPDATE purchase_orders SET status=?, delivery_date=CURRENT_TIMESTAMP() WHERE id=? AND status='Pending'`
         const [Result] = await Database.execute<any>(Query, [Status, OrderID])
 
         if (Status == 'Received') {

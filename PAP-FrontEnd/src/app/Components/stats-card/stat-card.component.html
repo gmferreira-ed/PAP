@@ -34,15 +34,15 @@
     <div class="row viewbuttons">
         @if (ShowTimeNavigation && ViewType!='All'){
             @if (ViewType == 'Day'){
-                {{DateRange[0] | date:'dd MMMM yyyy'}}
+                {{DateRange[0] | ddate:'dd MMMM yyyy'}}
             }@if (ViewType == 'Week'){
-                {{DateRange[0] | date:'dd MMM yy'}}
+                {{DateRange[0] | ddate:'dd MMM yy'}}
                 -
-                {{DateRange[1] | date:'dd MMM yy'}}
+                {{DateRange[1] | ddate:'dd MMM yy'}}
             }@if (ViewType == 'Month'){
-                {{DateStart | date:'MMMM yyyy'}}
+                {{DateStart | ddate:'MMMM yyyy'}}
             }@if (ViewType == 'Year'){
-                {{DateStart | date:'yyyy'}}
+                {{DateStart | ddate:'yyyy'}}
             }
             <button class="button transparent block" (click)="NavigateDate(-1)">
                 <icon type="arrow-left"></icon>
@@ -54,7 +54,7 @@
         @if (ShowChartTimeOptions){
             @for (ButtonViewType of TimeOptions; track $index){
                 <button class="button" (click)="UpdateChartView(ButtonViewType)"
-                    [class.selected]="ButtonViewType == ViewType">{{ButtonViewType}}</button>
+                    [class.selected]="ButtonViewType == ViewType">{{ButtonViewType | translate}}</button>
             }
         }
     </div>

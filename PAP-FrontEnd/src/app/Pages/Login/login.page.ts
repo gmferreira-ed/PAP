@@ -20,6 +20,7 @@ export class LoginPage {
 
   HttpService = inject(HttpService)
   AuthService = inject(AuthService)
+  TranslateService = inject(TranslateService)
 
   router = inject(Router)
   LoggingIn = false
@@ -33,14 +34,19 @@ export class LoginPage {
     this.LoginForm.disable()
     this.LoggingIn = true
 
-    const [LoginResult, LoginError] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/login', 'POST', 'Failed to log in', this.LoginForm.value)
+    const [LoginResult, LoginError] = await this.HttpService.MakeRequest(
+      AppSettings.APIUrl + 'auth/login',
+      'POST',
+      this.TranslateService.instant('Failed to log in'),
+      this.LoginForm.value
+    )
     if (LoginResult){
       this.router.navigate(['/dashboard'])
     }else{
-      if (LoginError?.ErrorMessage == 'Incorrect password'){
+      if (LoginError?.ErrorMessage == this.TranslateService.instant('Incorrect password')){
          this.LoginForm.get('password')?.reset()
 
-      }else if(LoginError?.ErrorMessage == 'User does not exist'){
+      }else if(LoginError?.ErrorMessage == this.TranslateService.instant('User does not exist')){
          this.LoginForm.get('username')?.reset()
       }
     }

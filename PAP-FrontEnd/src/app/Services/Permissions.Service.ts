@@ -3,6 +3,7 @@ import { HttpService } from './Http.service'
 import { AppSettings } from './AppSettings'
 import { AuthService } from './Auth.service'
 import { UserRole } from '../../shared/permissions'
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class PermissionsService {
   HttpService = inject(HttpService)
   AuthService = inject(AuthService)
   Roles = []
+  TranslateService = inject(TranslateService)
   
 
   FilterPermissions = (AcceptedPermissions: string[], UserInfo: any) => {
@@ -48,7 +50,7 @@ export class PermissionsService {
 
   async LoadRoles():Promise<UserRole[]> {
     const RolesURL = new URL('roles', AppSettings.APIUrl)
-    let [Roles] = await this.HttpService.MakeRequest(RolesURL, 'GET', 'Failed to fetch roles')
+    let [Roles] = await this.HttpService.MakeRequest(RolesURL, 'GET', this.TranslateService.instant('Failed to fetch roles'))
 
     if (Roles) {
       Roles = Roles.map((Role: any) => ({

@@ -5,6 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { StockItem } from '../../shared/stock-item';
 import { StockOrder } from '../../shared/stock-order';
 import { Supplier } from '../../types/supplier';
+import { TranslateService } from '@ngx-translate/core';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,6 +15,7 @@ export class StocksService {
   // SERVICES
   HttpService = inject(HttpService)
   MessageService = inject(NzMessageService)
+  TranslateService = inject(TranslateService)
 
   // DATA
   StockItems: StockItem[] = []
@@ -32,7 +34,7 @@ export class StocksService {
 
   async LoadStocks(){
     this.LoadingStocks = true
-    const [Stocks]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-items', 'GET', 'Failed to load stock items')
+    const [Stocks]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-items', 'GET', this.TranslateService.instant('Failed to load stock items'))
 
     this.StockItems = Stocks
     this.LoadingStocks = false
@@ -42,7 +44,7 @@ export class StocksService {
 
   async LoadSuppliers(){
     this.LoadingSuppliers = true
-    const [Suppliers]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'suppliers', 'GET', 'Failed to load suppliers')
+    const [Suppliers]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'suppliers', 'GET', this.TranslateService.instant('Failed to load suppliers'))
     this.Suppliers = Suppliers
     
     this.LoadingSuppliers = false
@@ -52,7 +54,7 @@ export class StocksService {
 
   async LoadStockOrders(){
     this.LoadingStockOrders = true
-    const [StockOrders]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-orders', 'GET', 'Failed to load stock orders')
+    const [StockOrders]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'stock-orders', 'GET', this.TranslateService.instant('Failed to load stock orders'))
 
     this.StockOrders = StockOrders
     this.LoadingStockOrders = false
@@ -63,8 +65,7 @@ export class StocksService {
   
   async LoadReportsHistory(){
     this.LoadingReportsHistory = true
-    const [InventoryReports]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'inventory-reports', 'GET',
-       'Failed to load inventory reports')
+    const [InventoryReports]= await this.HttpService.MakeRequest(AppSettings.APIUrl+'inventory-reports', 'GET', this.TranslateService.instant('Failed to load inventory reports'))
 
     this.InventoryReports = InventoryReports
     this.LoadingReportsHistory = false

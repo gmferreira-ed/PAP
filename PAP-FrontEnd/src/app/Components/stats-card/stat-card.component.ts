@@ -5,12 +5,14 @@ import { ApexChartOptions } from '../../../types/apex-chart';
 import { NoDataComponent } from '../no-data/no-data';
 import { IconsModule } from "../icon/icon.component";
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 
 
 @Component({
   selector: 'stat-card',
-  imports: [DynamicCurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet, IconsModule, DatePipe],
+  imports: [DynamicCurrencyPipe, NgApexchartsModule, NoDataComponent, NgTemplateOutlet, IconsModule, DynamicDatePipe, TranslateModule],
 
   templateUrl: 'stat-card.component.html',
   styleUrl: 'stat-card.component.less'

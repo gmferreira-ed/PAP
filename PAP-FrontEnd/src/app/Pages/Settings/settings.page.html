@@ -5,71 +5,71 @@
             <form nz-form [formGroup]="settingsForm" class="settings">
                 <div class="row">
                     <div class="collumn">
-                        <label>Restaurant Name</label>
+                        <label>{{'Restaurant Name' | translate}}</label>
                         <input nz-input formControlName="RestaurantName" />
                     </div>
                     <div class="collumn">
-                        <label>City</label>
+                        <label>{{'City' | translate}}</label>
                         <input nz-input formControlName="City" />
                     </div>
                     <div class="collumn">
-                        <label>Adress</label>
+                        <label>{{'Address' | translate}}</label>
                         <input nz-input formControlName="Adress" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="collumn">
-                        <label>Contact</label>
+                        <label>{{'Contact' | translate}}</label>
                         <input nz-input type="tel" maxlength="20" formControlName="Contact" />
                     </div>
                     <div class="collumn">
-                        <label>Tax ID</label>
+                        <label>{{'Tax ID' | translate}}</label>
                         <input nz-input style="width: 250px;" maxlength="20" formControlName="TaxID"
                             (keypress)="FormatNumb($event)" />
                     </div>
                     <div class="collumn">
-                        <label>Postal Code</label>
+                        <label>{{'Postal Code' | translate}}</label>
                         <input nz-input formControlName="PostalCode" />
                     </div>
                 </div>
                 <div class="separator"></div>
                 <div class="row">
                     <div class="collumn">
-                        <label>Work Hours</label>
+                        <label>{{'Work Hours' | translate}}</label>
                         <nz-input-number formControlName="WorkHours" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"
                             [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                     <div class="collumn">
-                        <label>Work Hour Limit</label>
+                        <label>{{'Work Hour Limit' | translate}}</label>
                         <nz-input-number formControlName="WorkHourLimit" [nzMin]="1" [nzMax]="24" [nzSize]="'large'"
                             [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                     <div class="collumn">
-                        <label>Pay Per Hour</label>
+                        <label>{{'Pay Per Hour' | translate}}</label>
                         <nz-input-number formControlName="PayPerHour" [nzMin]="0" [nzSize]="'large'"
                             [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                 </div>
                 <div class="row">
                     <div class="collumn">
-                        <label>Meal Allowance</label>
+                        <label>{{'Meal Allowance' | translate}}</label>
                         <nz-input-number formControlName="MealAllowance" [nzMin]="0" [nzDisabled]="!CanModifySettings"
                             [nzSize]="'large'"></nz-input-number>
                     </div>
                     <div class="collumn">
-                        <label>Extra Pay</label>
+                        <label>{{'Extra Pay' | translate}}</label>
                         <nz-input-number formControlName="ExtraPay" [nzMin]="0" [nzSize]="'large'"
                             [nzDisabled]="!CanModifySettings"></nz-input-number>
                     </div>
                     <div class="collumn">
-                        <label>Extra Pay Minute Rate</label>
+                        <label>{{'Extra Pay Minute Rate' | translate}}</label>
                         <nz-input-number formControlName="ExtraPayMinuteRate" [nzMin]="1"
                             [nzDisabled]="!CanModifySettings" [nzSize]="'large'"></nz-input-number>
                     </div>
                 </div>
                 <div class="row">
                     <div class="collumn">
-                        <label>Currency</label>
+                        <label>{{'Currency' | translate}}</label>
                         <nz-select nzShowSearch formControlName="Currency" style="width: 100px;" nzSize="large">
                             @for (CurrencyCode of CurrencyCodes; track $index){
                                 <nz-option [nzValue]="CurrencyCode.code" [nzLabel]="CurrencyCode.code"></nz-option>
@@ -82,7 +82,7 @@
                     <button style="width: 50%;" nz-button nzType="primary" nzShape="round" [disabled]="!FieldsChanged()"
                         (click)="SaveSettings()" [nzLoading]="ModifyingSettings" class="aself-center"
                         nzSize="large">
-                        Save
+                        {{'Save' | translate}}
                     </button>
                 }
             </form>
@@ -95,7 +95,7 @@
         <div class="collumn">
             <h1>{{'Appearance' | translate}}</h1>
 
-            <h2>Language</h2>
+            <h2>{{'Language' | translate}}</h2>
             <div class="row">
                 <!-- @let SelectedLanguageInfo = AppSettings.LanguageInfo[CurrentLanguage];
                 <img class="flag" [src]="'https://flagpedia.net/data/flags/h80/'+SelectedLanguageInfo?.flag_code+'.png'"> -->

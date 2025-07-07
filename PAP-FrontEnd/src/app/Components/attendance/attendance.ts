@@ -8,11 +8,13 @@ import { HttpService } from '../../Services/Http.service';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthService } from '../../Services/Auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 
 
 @Component({
   selector: 'attendance-view',
-  imports: [DatePipe, NoDataComponent, IconsModule, LoadingScreen, NzToolTipModule, ScrollingModule, NoDataComponent],
+  imports: [DynamicDatePipe, NoDataComponent, IconsModule, LoadingScreen, NzToolTipModule, ScrollingModule, NoDataComponent, TranslateModule],
 
   templateUrl: 'attendance.html',
   styleUrl: 'attendance.less'
@@ -30,6 +32,7 @@ export class AtendanceViewer {
 
   HttpService = inject(HttpService)
   AuthService = inject(AuthService)
+  TranslateService = inject(TranslateService)
 
   UserImagesURL = AppSettings.UserImagesURL
   AppSettings = AppSettings
@@ -43,7 +46,7 @@ export class AtendanceViewer {
       URL += 'user'
     }
 
-    let [UserEntries] = await this.HttpService.MakeRequest(URL, 'GET', 'Failed to load user attendance', {
+    let [UserEntries] = await this.HttpService.MakeRequest(URL, 'GET', this.TranslateService.instant('Failed to load user attendance'), {
       userid: this.SelectedUser()?.userid,
       page_size: 6,
     }) as [any[]]

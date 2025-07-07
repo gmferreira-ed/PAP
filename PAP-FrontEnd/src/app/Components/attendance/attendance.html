@@ -1,5 +1,5 @@
 <label class="title">
-    Attendance
+    {{'Attendance' | translate}}
 </label>
 
 <loading-screen [IsLoading]="LoadingEntries" LoaderStyle="Spinner"></loading-screen>
@@ -10,7 +10,7 @@
                 <div class="row space-between" style="gap: 0px;">
                     <div class="row">
                         <icon [type]="Entry.action"></icon>
-                        <label style="font-size: 16px; font-weight: 500;">{{Entry.action}}</label>
+                        <label style="font-size: 16px; font-weight: 500;">{{Entry.action | translate}}</label>
 
                     </div>
                     <div class="row">
@@ -33,14 +33,14 @@
                     </div>
                 </div>
                 <div class="row space-between">
-                    <label>{{Entry.timestamp | date:'HH:mm'}}</label>
-                    <label>{{Entry.timestamp | date:'dd MMMM yyyy'}}</label>
+                    <label>{{Entry.timestamp | ddate:'HH:mm'}}</label>
+                    <label>{{Entry.timestamp | ddate:'dd MMMM yyyy'}}</label>
                 </div>
             </div>
         </div>
     </cdk-virtual-scroll-viewport>
     }@else {
     @if (!LoadingEntries){
-        <no-data>There are no registered entries</no-data>
+        <no-data>{{'There are no registered entries' | translate}}</no-data>
     }
     }
