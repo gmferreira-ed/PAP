@@ -294,7 +294,7 @@
 	"Sucessfully added category": "Sucessfully added category",
 	"Failed to load categories": "Failed to load categories",
 	"Could not connect to the server. Please try again later": "Could not connect to the server. Please try again later",
-	"Failed to authenticate. Please try again": "Failed to authenticate. Please try again",
+	"Failed to authenticate Please try again": "Failed to authenticate Please try again",
 	"Failed to load user permissions. Please try again": "Failed to load user permissions. Please try again",
 	"Failed to add supplier": "Failed to add supplier",
 	"Supplier added": "Supplier added",

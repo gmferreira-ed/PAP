@@ -273,7 +273,7 @@
   "Sucessfully added category": "Categorie adăugată cu succes",
   "Failed to load categories": "Încărcarea categoriilor a eșuat",
   "Could not connect to the server. Please try again later": "Nu s-a putut conecta la server. Încearcă din nou mai târziu",
-  "Failed to authenticate. Please try again": "Autentificarea a eșuat. Încearcă din nou",
+  "Failed to authenticate Please try again": "Autentificarea a eșuat. Încearcă din nou",
   "Failed to load user permissions. Please try again": "Încărcarea permisiunilor utilizatorului a eșuat. Încearcă din nou",
   "Failed to add supplier": "Adăugarea furnizorului a eșuat",
   "Supplier added": "Furnizor adăugat",

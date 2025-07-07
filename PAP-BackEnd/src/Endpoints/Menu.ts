@@ -61,6 +61,12 @@ Router.post('/menu', HandleEndpointFunction(async (req, res) => {
 
 }));
 
+
+
+const UploadsFolder = path.join(__dirname, "../Uploads")
+const MenuFolder = UploadsFolder + '/menu/'
+
+
 /**
  * @displayname "Update Menu Item"
  * @category "Menu"
@@ -72,12 +78,32 @@ Router.post('/menu', HandleEndpointFunction(async (req, res) => {
 Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
+    let PreviousName: string | undefined
+    if (body.id && body.name) {
+        const [rows]: any = await Database.execute('SELECT name FROM menu WHERE id = ?', [body.id]);
+        if (rows && rows.length > 0) {
+            PreviousName = rows[0].name
+        }
+    }
 
-    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category', 'order'], body, ['id'], true)
+    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('menu', ['active', 'price', 'category_id', 'order', 'name', 'description'], body, ['id'], true)
 
+    const [Result] = await Database.execute(SQLQuery, Values) as any
 
-    const [rows] = await Database.execute(SQLQuery, Values);
-    res.send(rows)
+    if (Result.affectedRows > 0 && PreviousName && body.name) {
+
+        const oldFilePath = path.join(MenuFolder, `${PreviousName}.webp`);
+        const newFilePath = path.join(MenuFolder, `${body.name}.webp`);
+        if (fs.existsSync(oldFilePath)) {
+            try {
+                fs.renameSync(oldFilePath, newFilePath);
+            } catch (err) {
+                res.send({error:'Failed to update linked image'})
+            }
+        }
+    }
+
+    res.send()
 }));
 
 /**
@@ -93,7 +119,7 @@ Router.patch('/menu/order', HandleEndpointFunction(async (req, res) => {
 
 
     const WhenCases = NewOrder.map(u => `WHEN ? THEN ?`).join(' ');
-    let WhereInPlaceholders:any[] = []
+    let WhereInPlaceholders: any[] = []
 
     const Values: any[] = [];
     NewOrder.forEach(u => {

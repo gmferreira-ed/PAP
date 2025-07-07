@@ -73,8 +73,10 @@ export class MenuPage {
     name: "None",
     price: 0,
     category: "Dish",
+    category_id: 1,
     ImageURL: "",
     image_path: "",
+    description: "",
     active: true,
   }
 
@@ -86,6 +88,8 @@ export class MenuPage {
   CategoriesModalVisible = false
   LoadingThumbnail = false
   CreatingCategory = false
+  EditingFields = false
+  UpdatingProductInfo = false
 
   LoadingCategories = false
   LoadingMenu = false
@@ -149,7 +153,7 @@ export class MenuPage {
     } else {
       this.MessageService.error(this.TranslateService.instant('Your category must have 3 or more characters'))
     }
-    
+
     this.CreatingCategory = false
   }
 
@@ -231,6 +235,56 @@ export class MenuPage {
     this.LoadCategories()
   }
 
+  EditInfoForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    price: new FormControl(0, [Validators.required]),
+    category_id: new FormControl(1, [Validators.required]),
+    description: new FormControl('', []),
+  })
+
+  async EditButton() {
+    if (this.EditingFields) {
+      this.EditingFields = false
+
+      const formValue = this.EditInfoForm.value;
+      const Product = this.SelectedItemInfo
+      const changed =
+        formValue.name !== Product.name ||
+        Number(formValue.price) !== Number(Product.price) ||
+        Number(formValue.category_id) !== Number(Product.category_id) ||
+        (formValue.description || '') !== (Product.description || '');
+
+      if (!changed) {
+        this.MessageService.info(this.TranslateService.instant('No changes detected'));
+        return;
+      }
+
+      this.UpdatingProductInfo = true
+
+      const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'menu', 'PATCH',
+        this.TranslateService.instant('Failed to update menu product info'),
+        {
+          ...formValue,
+          id: this.SelectedItemInfo.id
+        })
+
+      if (Result) {
+        this.MessageService.success(this.TranslateService.instant('Sucessfully updated item info'))
+        this.LoadMenuItems()
+      }
+
+      this.UpdatingProductInfo = false
+    } else {
+      this.EditingFields = true
+      const item = this.SelectedItemInfo;
+      this.EditInfoForm.patchValue({
+        name: item.name,
+        price: item.price,
+        category_id: item.category_id ?? 1,
+        description: item.description
+      });
+    }
+  }
 
 
   DisplayItemInfo(ItemInfo: any) {
@@ -288,7 +342,7 @@ export class MenuPage {
       this.Categories = ConvertedResult
     }
 
-    
+
     this.LoadingCategories = false
   }
 

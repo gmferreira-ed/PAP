@@ -273,7 +273,7 @@
   "Sucessfully added category": "श्रेणी सफलतापूर्वक जोड़ी गई",
   "Failed to load categories": "श्रेणियाँ लोड करने में विफल",
   "Could not connect to the server. Please try again later": "सर्वर से कनेक्ट नहीं हो सका, कृपया बाद में पुनः प्रयास करें",
-  "Failed to authenticate. Please try again": "प्रमाणीकरण विफल, कृपया पुनः प्रयास करें",
+  "Failed to authenticate Please try again": "प्रमाणीकरण विफल, कृपया पुनः प्रयास करें",
   "Failed to load user permissions. Please try again": "उपयोगकर्ता अनुमतियाँ लोड करने में विफल, कृपया पुनः प्रयास करें",
   "Failed to add supplier": "आपूर्तिकर्ता जोड़ने में विफल",
   "Supplier added": "आपूर्तिकर्ता जोड़ा गया",

@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategoria lisätty onnistuneesti",
   "Failed to load categories": "Kategorioiden lataus epäonnistui",
   "Could not connect to the server. Please try again later": "Yhteyttä palvelimeen ei voitu muodostaa, yritä myöhemmin uudelleen",
-  "Failed to authenticate. Please try again": "Todennus epäonnistui, yritä uudelleen",
+  "Failed to authenticate Please try again": "Todennus epäonnistui, yritä uudelleen",
   "Failed to load user permissions. Please try again": "Käyttöoikeuksien lataus epäonnistui, yritä uudelleen",
   "Failed to add supplier": "Toimittajan lisäys epäonnistui",
   "Supplier added": "Toimittaja lisätty",

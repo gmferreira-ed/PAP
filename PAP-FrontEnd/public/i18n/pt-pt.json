@@ -70,7 +70,7 @@
 	"Failed to add stock order": "Falha ao adicionar pedido de stock",
 	"Failed to add supplier": "Falha ao adicionar fornecedor",
 	"Failed to attribute keycard: ": "Falha ao atribuir cartão: ",
-	"Failed to authenticate. Please try again": "Falha ao autenticar, por favor tente mais tarde",
+	"Failed to authenticate Please try again": "Falha ao autenticar: ",
 	"Failed to book reservations": "Falha ao reservar mesas",
 	"Failed to cancel order": "Falha ao cancelar pedido",
 	"Failed to cancel reservation": "Falha ao cancelar reserva",

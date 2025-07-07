@@ -28,16 +28,6 @@ export class AppComponent {
   HttpService = inject(HttpService)
   TranslateService = inject(TranslateService)
 
-  constructor(
-    private translate: TranslateService) {
-    translate.setDefaultLang('en');
-
-    const LanguageCode = localStorage.getItem('language') || 'en'
-    translate.use(LanguageCode);
-
-    const MappedLanguages = Object.values(AppSettings.LanguageInfo).map((lang)=>lang.language_code)
-    translate.addLangs(MappedLanguages);
-  }
 
 
   InputBuffer: string = ''

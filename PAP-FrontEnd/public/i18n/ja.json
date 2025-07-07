@@ -273,7 +273,7 @@
   "Sucessfully added category": "カテゴリーが正常に追加されました",
   "Failed to load categories": "カテゴリーの読み込みに失敗しました",
   "Could not connect to the server. Please try again later": "サーバーに接続できませんでした。後で再試行してください",
-  "Failed to authenticate. Please try again": "認証に失敗しました。再試行してください",
+  "Failed to authenticate Please try again": "認証に失敗しました。再試行してください",
   "Failed to load user permissions. Please try again": "ユーザー権限の読み込みに失敗しました。再試行してください",
   "Failed to add supplier": "仕入先の追加に失敗しました",
   "Supplier added": "仕入先が追加されました",

@@ -274,7 +274,7 @@
 	"Sucessfully added category": "Đã thêm danh mục thành công",
 	"Failed to load categories": "Tải danh mục không thành công",
 	"Could not connect to the server. Please try again later": "Không thể kết nối tới máy chủ. Vui lòng thử lại sau",
-	"Failed to authenticate. Please try again": "Xác thực không thành công. Vui lòng thử lại",
+	"Failed to authenticate Please try again": "Xác thực không thành công. Vui lòng thử lại",
 	"Failed to load user permissions. Please try again": "Tải quyền hạn người dùng không thành công. Vui lòng thử lại",
 	"Failed to add supplier": "Thêm nhà cung cấp không thành công",
 	"Supplier added": "Nhà cung cấp đã được thêm",

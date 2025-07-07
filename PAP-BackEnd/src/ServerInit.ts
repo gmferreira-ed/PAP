@@ -12,7 +12,7 @@ import { parse as CommentParser } from 'comment-parser'
 
 import multer from 'multer'
 
-import { EndpointRegex, EndpointsAttributes } from './Globals'
+import { DBOptions, EndpointRegex, EndpointsAttributes } from './Globals'
 import Configs from './Config/EnviromentConfigs'
 import PermissionsService from './Services/PermissionsService';
 import SQLUtils from './Services/SQLUtils';
@@ -22,16 +22,7 @@ const MySQLStore = expressmysqlsession(session as any)
 
 
 // SESSION SETUP
-const SessionDBOptions = {
-  host: Configs.DB_Host,
-
-  user: Configs.DB_User,
-  password: Configs.DB_Password,
-
-  database: 'sessions',
-};
-
-const SessionStore = new MySQLStore(SessionDBOptions);
+const SessionStore = new MySQLStore(DBOptions);
 const SessionMiddleware = session({
   secret: 'uh*&T*8787GT^hk0a(#R)@',
 

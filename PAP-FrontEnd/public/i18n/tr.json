@@ -274,7 +274,7 @@
 	"Sucessfully added category": "Kategori başarıyla eklendi",
 	"Failed to load categories": "Kategoriler yüklenemedi",
 	"Could not connect to the server. Please try again later": "Sunucuya bağlanılamadı. Lütfen daha sonra tekrar deneyin",
-	"Failed to authenticate. Please try again": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin",
+	"Failed to authenticate Please try again": "Kimlik doğrulama başarısız. Lütfen tekrar deneyin",
 	"Failed to load user permissions. Please try again": "Kullanıcı izinleri yüklenemedi. Lütfen tekrar deneyin",
 	"Failed to add supplier": "Tedarikçi eklenemedi",
 	"Supplier added": "Tedarikçi eklendi",

@@ -9,8 +9,8 @@ import sharp from 'sharp'
 
 
 const UploadsFolder = path.join(__dirname, "../Uploads")
-const UsersFolder = UploadsFolder + '/users/'
 const MenuFolder = UploadsFolder + '/menu/'
+const UsersFolder = UploadsFolder + '/users/'
 const StocksFolder = UploadsFolder + '/stocks/'
 
 // STORAGE SETUP

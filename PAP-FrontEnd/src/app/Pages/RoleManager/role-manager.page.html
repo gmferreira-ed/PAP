@@ -48,7 +48,7 @@
                             <div class="permission-card">
                                 <h3>{{EndpointData.DisplayName | translate}}</h3>
                                 <div class="divisor" style="margin-bottom: 5px;"></div>
-                                <caption>{{EndpointData.Summary | translate}}</caption>
+                                <span class="caption" style="margin: 5px; font-size: 14px; font-weight: 300;">{{EndpointData.Summary | translate}}</span>
                                 <div class="permission-type">
                                     @let StockError = CategoryInfo.Category == 'Stocks' 
                                     && EndpointData.ID != 'GET/api/stock-items'

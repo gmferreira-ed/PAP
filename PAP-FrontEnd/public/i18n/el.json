@@ -273,7 +273,7 @@
   "Sucessfully added category": "Η κατηγορία προστέθηκε με επιτυχία",
   "Failed to load categories": "Απέτυχε η φόρτωση κατηγοριών",
   "Could not connect to the server. Please try again later": "Αδυναμία σύνδεσης με τον διακομιστή. Δοκιμάστε ξανά αργότερα",
-  "Failed to authenticate. Please try again": "Αποτυχία αυθεντικοποίησης. Δοκιμάστε ξανά",
+  "Failed to authenticate Please try again": "Αποτυχία αυθεντικοποίησης. Δοκιμάστε ξανά",
   "Failed to load user permissions. Please try again": "Απέτυχε η φόρτωση δικαιωμάτων χρήστη. Δοκιμάστε ξανά",
   "Failed to add supplier": "Απέτυχε η προσθήκη προμηθευτή",
   "Supplier added": "Προμηθευτής προστέθηκε",

@@ -8,7 +8,8 @@
     <!-- CATEGORY SELECTION -->
     <div class="row-layout">
         @if (CanModifyMenu){
-            <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true" style="margin-right: 5px;">
+            <button nz-button nzType="primary" nzSearch (click)="CategoriesModalVisible = true"
+                style="margin-right: 5px;">
                 <nz-icon nzType="menu" />
             </button>
         }
@@ -36,9 +37,7 @@
                     <label class="menu-item-title">{{MenuItem.name}}</label>
                     <label class="menu-item-price">{{MenuItem.price | dcurrency}}</label>
                     <div>
-                        <button nz-button nzType="primary" nzShape="circle">
-                            <nz-icon nzType="eye" />
-                        </button>
+                        <label class="caption" style="font-size: 12px;">{{MenuItem.category | translate}}</label>
                     </div>
 
                     <floating-container style="right: 0px; top: 0px;">
@@ -62,31 +61,55 @@
             <img [src]="FileSelector && FileSelector.Files[0]?.imagebase64 || SelectedItemInfo.ImageURL"
                 onerror="this.src='Images/Dish.png'" class="menu-item-image">
 
-                @if (CanModifyMenu){
-                        <div class="overlay invisible">
-                        <file-select #FileSelector [override]="true" UploadDisplayMode="none"
-                            (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
-                            <label>{{'Edit Image' | translate}}</label>
-                            <nz-icon nzType="edit"></nz-icon>
-                        </file-select>
-                    </div>
-                }
+            @if (CanModifyMenu){
+                <div class="overlay invisible">
+                    <file-select #FileSelector [override]="true" UploadDisplayMode="none"
+                        (FilesChange)="ChangeProductImage(SelectedItemInfo, $event)">
+                        <label>{{'Edit Image' | translate}}</label>
+                        <nz-icon nzType="edit"></nz-icon>
+                    </file-select>
+                </div>
+            }
         </div>
 
-        <label class="menu-item-title">{{SelectedItemInfo.name}}</label>
-        <label class="menu-item-category">{{SelectedItemInfo.category}}</label>
-        <label class="menu-item-price"
-            [style.text-decoration]="!SelectedItemInfo.active ? 'line-through' : ''">{{SelectedItemInfo.price |
+        @if (!EditingFields){
+            <label class="menu-item-title">{{SelectedItemInfo.name}}</label>
+            <label class="menu-item-category">{{SelectedItemInfo.category | translate}}</label>
+            <label class="menu-item-price"
+                [style.text-decoration]="!SelectedItemInfo.active ? 'line-through' : ''">{{SelectedItemInfo.price |
             currency}}</label>
+        }@else {
+            <form [formGroup]="EditInfoForm" class="collumn vcenter">
+
+                <br>
+                <input nz-input formControlName="name">
+
+                <nz-select nzShowSearch nzAllowClear formControlName="category_id" class="menu-item-category"
+                    style="min-width: 150px;">
+                    @for (Category of Categories; track $index){
+                        <nz-option [nzLabel]="Category.name | translate" [nzValue]="Category.id"></nz-option>
+                    }
+                </nz-select>
+
+                <input formControlName="price" type="number" nz-input />
+                <br>
+            </form>
+        }
         @if (!SelectedItemInfo.active){
             <label class="menu-item-category">{{'Inactive' | translate}}</label>
         }
 
         @if (CanModifyMenu){
             <nz-row style="gap:10px">
-                <button nz-button nzType="primary" nzShape="circle" nz-tooltip
-                    [nzTooltipTitle]="'Edit product info' | translate">
-                    <nz-icon nzType="edit" nzTheme="fill" />
+                <button nz-button nzType="primary" nzShape="circle" nz-tooltip [nzLoading]="UpdatingProductInfo"
+                    [nzTooltipTitle]="!EditingFields && ('Edit product info' | translate)" (click)="EditButton()">
+                    @if (!UpdatingProductInfo){
+                        @if (EditingFields){
+                            <nz-icon nzType="check" />
+                        }@else{
+                            <nz-icon nzType="edit" nzTheme="fill" />
+                        }
+                    }
                 </button>
                 <button nz-button nzType="dashed" nzShape="circle" (click)="PromptToggleItemActive()" nz-tooltip
                     [nzTooltipTitle]="'Toggle product availability' | translate">
@@ -101,7 +124,14 @@
 
         <br>
 
-        <nz-skeleton></nz-skeleton>
+        @if (!EditingFields){
+            <label>{{SelectedItemInfo.description || ('No description' | translate)}}</label>
+        }@else {
+            <form [formGroup]="EditInfoForm" style="width: 80%;">
+                <textarea style=" min-height: 200px;" nz-input formControlName='description'
+                    [placeholder]="'Description' | translate"></textarea>
+            </form>
+        }
     </div>
 </nz-drawer>
 
@@ -117,7 +147,8 @@
                 @for (Category of Categories; track $index){
                     <div class="list-item">
                         <label>{{Category.name}}</label>
-                        <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)" [nzLoading]="Category.Deleting">
+                        <button nz-button nzDanger nzType="text" nzShape="circle" (click)="DeleteCategory(Category)"
+                            [nzLoading]="Category.Deleting">
                             <nz-icon nzType="delete"></nz-icon>
                         </button>
                     </div>
@@ -136,7 +167,8 @@
 </nz-modal>
 
 <nz-modal nzDraggable [nzVisible]="CategoryInsertVisible" [nzTitle]="'Insert new category' | translate" nzCentered
-    [nzCancelText]="'Close' | translate" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false" [nzOkLoading]="CreatingCategory">
+    [nzCancelText]="'Close' | translate" (nzOnOk)="CreateCategory()" (nzOnCancel)="CategoryInsertVisible = false"
+    [nzOkLoading]="CreatingCategory">
     <ng-container *nzModalContent>
         <input #CategoryInput [(ngModel)]="CategoryToInsert" nz-input [placeholder]="'New Category Name' | translate">
     </ng-container>
@@ -144,8 +176,8 @@
 
 <!-- ITEM SUBMISSION MODAL -->
 <nz-modal [(nzVisible)]="InsertModalOpen" [nzOkLoading]="IsInsertingItem" [nzTitle]="'Create menu item' | translate"
-    (nzOnCancel)="InsertModalOpen = false" [nzCancelText]="'Cancel' | translate" (nzOnOk)="InsertMenuItem()" [nzOkText]="'Insert' | translate"
-    [nzOkDisabled]="ItemCreationForm.invalid" nzClosable=false nzCentered>
+    (nzOnCancel)="InsertModalOpen = false" [nzCancelText]="'Cancel' | translate" (nzOnOk)="InsertMenuItem()"
+    [nzOkText]="'Insert' | translate" [nzOkDisabled]="ItemCreationForm.invalid" nzClosable=false nzCentered>
     <!-- INSERT FORM -->
     <ng-container *nzModalContent>
         <form [formGroup]="ItemCreationForm" nz-form nzLayout="horizontal">
@@ -160,7 +192,7 @@
             <nz-form-item nzGutter="20">
                 <nz-form-control>
                     <nz-form-label>{{'Category' | translate}}</nz-form-label>
-                    <nz-select formControlName="category" nzShowSearch nzAllowClear
+                    <nz-select formControlName="category" nzAllowClear
                         [nzPlaceHolder]="'Select a category' | translate">
                         @for (Category of Categories; track Category) {
                             <nz-option [nzLabel]="Category.name" [nzValue]="Category.id"></nz-option>
@@ -175,12 +207,12 @@
                     </nz-input-group>
                 </nz-form-control>
 
-                <nz-form-control style="display: flex; align-items: bottom;">
+                <!-- <nz-form-control style="display: flex; align-items: bottom;">
                     <nz-form-label>{{'Active' | translate}}</nz-form-label>
                     <nz-input-group>
                         <nz-switch formControlName="active"></nz-switch>
                     </nz-input-group>
-                </nz-form-control>
+                </nz-form-control> -->
             </nz-form-item>
 
 

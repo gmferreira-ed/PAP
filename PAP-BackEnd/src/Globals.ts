@@ -5,37 +5,40 @@ import EnviromentConfigs from './Config/EnviromentConfigs';
 import WebsocketService from './Services/WebsocketService';
 import { ExpressWebSocketServer } from './Types/websocket';
 
+const DBOptions = {
 
-// SQL AND DATABASE SETUP
-const Database = mysql.createPool({
   host: EnviromentConfigs.DB_Host,
   port: EnviromentConfigs.DB_PORT,
 
   user: EnviromentConfigs.DB_User,
   password: EnviromentConfigs.DB_Password,
+  database: 'restaurant',
+}
+
+// SQL AND DATABASE SETUP
+const Database = mysql.createPool({
+  ...DBOptions,
 
   timezone: 'Z',
-  database: 'restaurant',
-
-  enableKeepAlive:true,
+  enableKeepAlive: true,
 
 }).promise()
 
 
 
-async function GetPaginatedResult(Table: string, SQLQuery:string, SQLValues:any, QueryParams: any, 
-  MaxPageSize: number = 100, 
+async function GetPaginatedResult(Table: string, SQLQuery: string, SQLValues: any, QueryParams: any,
+  MaxPageSize: number = 100,
   OrderBy?: string)
-:Promise<PaginatedResult> {
+  : Promise<PaginatedResult> {
 
 
   let PageSize = QueryParams.page_size ? Number(QueryParams.page_size) : 25
-  let PageIndex= QueryParams.page ? Number(QueryParams.page) : 1
+  let PageIndex = QueryParams.page ? Number(QueryParams.page) : 1
 
 
   PageSize = Math.min(PageSize, MaxPageSize)
 
-  
+
   if (OrderBy) {
     SQLQuery = SQLQuery + `\n${OrderBy}`
   }
@@ -44,12 +47,12 @@ async function GetPaginatedResult(Table: string, SQLQuery:string, SQLValues:any,
       LIMIT ${PageSize} OFFSET ${(PageIndex - 1) * PageSize}`
   }
 
-  const [rows] = await Database.execute<any[]>(SQLQuery,SQLValues);
+  const [rows] = await Database.execute<any[]>(SQLQuery, SQLValues);
 
   const PagesSQLQuery = `SELECT CEIL(COUNT(*) / ${PageSize}) AS total_pages FROM ${Table};`
   let [CountResult] = await Database.query<any[]>(PagesSQLQuery);
 
-  const TotalPages:number = CountResult[0].total_pages
+  const TotalPages: number = CountResult[0].total_pages
 
   return { Rows: rows, Pages: TotalPages }
 }
@@ -80,7 +83,7 @@ function HandleEndpointFunction(EndpointFunction: AsyncEndpoint, DisplayServerEr
 }
 
 
-let EndpointsAttributes:{[EndpointID: string]: EndpointAttributes} = {}
+let EndpointsAttributes: { [EndpointID: string]: EndpointAttributes } = {}
 
 
 const EndpointRegex = '^(.*[^/*])$'
@@ -92,4 +95,5 @@ export {
   OrdersWebsocket,
   EndpointsAttributes,
   EndpointRegex,
+  DBOptions
 };

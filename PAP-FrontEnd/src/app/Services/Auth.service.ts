@@ -65,7 +65,10 @@ export class AuthService {
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', this.TranslateService.instant('Failed to authenticate. Please try again'))
+    
+    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', 
+      this.TranslateService.instant('Failed to authenticate Please try again')
+    )
 
     const TargetPageURL = ActivateRoute.routeConfig?.path
 

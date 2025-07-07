@@ -12,33 +12,33 @@
 <div class="action-card center container">
 
   @if (StepIndex == 0 || StepIndex == 1){
-  <label class="signup-header">{{"SIGN UP" | translate}}</label>
-  <label class="smallcaption">{{"Create an account to continue" | translate}}</label>
+    <label class="signup-header">{{"SIGN UP" | translate}}</label>
+    <label class="smallcaption">{{"Create an account to continue" | translate}}</label>
 
-  <div class="separator"></div>
+    <div class="separator"></div>
   }
 
   <!-- ...existing code... -->
   <form [formGroup]="RegisterForm" nz-form nzLayout="vertical" style="width: 100%;">
     @switch(StepIndex){
 
-    @case(0){
-    <fieldset formGroupName="account_info">
-      <nz-form-item>
-        <nz-form-label nzRequired>{{"Username" | translate}}</nz-form-label>
-        <nz-form-control nzErrorTip="Please input your username!">
-          <input nz-input formControlName="username" placeholder="Username" />
-        </nz-form-control>
-      </nz-form-item>
+      @case(0){
+        <fieldset formGroupName="account_info">
+          <nz-form-item>
+            <nz-form-label nzRequired>{{"Username" | translate}}</nz-form-label>
+            <nz-form-control nzErrorTip="Please input your username!">
+              <input nz-input formControlName="username" placeholder="Username" />
+            </nz-form-control>
+          </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-label nzRequired>{{"Password" | translate}}</nz-form-label>
-        <nz-form-control nzErrorTip="Please input your password!">
-          <input nz-input type="password" formControlName="password" placeholder="Password" />
-        </nz-form-control>
-      </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzRequired>{{"Password" | translate}}</nz-form-label>
+            <nz-form-control nzErrorTip="Please input your password!">
+              <input nz-input type="password" formControlName="password" placeholder="Password" />
+            </nz-form-control>
+          </nz-form-item>
 
-      <!-- <nz-form-item>
+          <!-- <nz-form-item>
       <nz-form-label >Active</nz-form-label>
       <nz-form-control >
         <label nz-checkbox formControlName="active">Active</label>
@@ -52,122 +52,122 @@
       </nz-form-control>
     </nz-form-item> -->
 
-      <nz-form-item>
-        <nz-form-label nzRequired>{{"Email" | translate}}</nz-form-label>
-        <nz-form-control nzErrorTip="Please input a valid email!">
-          <input nz-input formControlName="email" placeholder="Email" />
-        </nz-form-control>
-      </nz-form-item>
+          <nz-form-item>
+            <nz-form-label nzRequired>{{"Email" | translate}}</nz-form-label>
+            <nz-form-control nzErrorTip="Please input a valid email!">
+              <input nz-input formControlName="email" placeholder="Email" />
+            </nz-form-control>
+          </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-label>{{"Phone" | translate}}</nz-form-label>
-        <nz-form-control>
-          <input nz-input formControlName="phone" maxlength="9" placeholder="Phone number" />
-        </nz-form-control>
-      </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>{{"Phone" | translate}}</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="phone" maxlength="9" placeholder="Phone number" />
+            </nz-form-control>
+          </nz-form-item>
 
-      <button nz-button [disabled]="RegisterForm.get('account_info')?.invalid" (click)="AdvanceStep(1)">
-        {{"Next" | translate}}
-        <nz-icon nzType="right"></nz-icon>
-      </button>
+          <button nz-button [disabled]="RegisterForm.get('account_info')?.invalid" (click)="AdvanceStep(1)">
+            {{"Next" | translate}}
+            <nz-icon nzType="right"></nz-icon>
+          </button>
 
-      <br>
-      <a routerLink="/login">{{'Login Instead' | translate}}</a>
-    </fieldset>
-    }
+          <br>
+          <a routerLink="/login">{{'Login Instead' | translate}}</a>
+        </fieldset>
+      }
 
-    @case(1){
-    <fieldset formGroupName="personnal_info">
-      <nz-form-item>
-        <nz-form-label nzRequired>{{"Full Name" | translate}}</nz-form-label>
-        <nz-form-control nzErrorTip="Please input your full name!">
-          <input nz-input formControlName="fullname" placeholder="Full Name" />
-        </nz-form-control>
-      </nz-form-item>
+      @case(1){
+        <fieldset formGroupName="personnal_info">
+          <nz-form-item>
+            <nz-form-label nzRequired>{{"Full Name" | translate}}</nz-form-label>
+            <nz-form-control nzErrorTip="Please input your full name!">
+              <input nz-input formControlName="fullname" placeholder="Full Name" />
+            </nz-form-control>
+          </nz-form-item>
 
 
-      <div class="row">
-        <nz-form-item>
-          <nz-form-label>{{"Country" | translate}}</nz-form-label>
-          <nz-form-control>
-            <input nz-input formControlName="country" placeholder="Country" />
-          </nz-form-control>
-        </nz-form-item>
+          <div class="row">
+            <nz-form-item>
+              <nz-form-label>{{"Country" | translate}}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="country" placeholder="Country" />
+              </nz-form-control>
+            </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label>{{"City" | translate}}</nz-form-label>
-          <nz-form-control>
-            <input nz-input formControlName="city" placeholder="City" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
+            <nz-form-item>
+              <nz-form-label>{{"City" | translate}}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="city" placeholder="City" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-      <nz-form-item>
-        <nz-form-label>{{"Address" | translate}}</nz-form-label>
-        <nz-form-control>
-          <input nz-input formControlName="address" placeholder="Address" />
-        </nz-form-control>
-      </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>{{"Address" | translate}}</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="address" placeholder="Address" />
+            </nz-form-control>
+          </nz-form-item>
 
-      <div class="row">
-        <nz-form-item>
-          <nz-form-label>{{"Postal Code" | translate}}</nz-form-label>
-          <nz-form-control>
-            <input nz-input formControlName="postalcode" placeholder="Postal Code" />
-          </nz-form-control>
-        </nz-form-item>
+          <div class="row">
+            <nz-form-item>
+              <nz-form-label>{{"Postal Code" | translate}}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="postalcode" placeholder="Postal Code" />
+              </nz-form-control>
+            </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label>{{"Birthdate" | translate}}</nz-form-label>
-          <nz-form-control>
-            <nz-date-picker nz-input formControlName="birthdate" placeholder="Birthdate" style="width: 100%;" />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
+            <nz-form-item>
+              <nz-form-label>{{"Birthdate" | translate}}</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker nz-input formControlName="birthdate" placeholder="Birthdate" style="width: 100%;" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-      <div class="row">
-        <button nz-button (click)="AdvanceStep(0)">
-          {{"Back" | translate}}
-          <nz-icon nzType="left"></nz-icon>
+          <div class="row">
+            <button nz-button (click)="AdvanceStep(0)">
+              {{"Back" | translate}}
+              <nz-icon nzType="left"></nz-icon>
+            </button>
+            <button nz-button [disabled]="RegisterForm.get('personnal_info')?.invalid" (click)="CreateAccount()">
+              {{"Create Account" | translate}}
+              <nz-icon nzType="right"></nz-icon>
+            </button>
+          </div>
+        </fieldset>
+      }
+
+      @case(2){
+        <label class="title">{{"Your account has been created!" | translate}}</label>
+        <label>You must verify your email in order to continue</label>
+        <label>{{"An email has been sent to " | translate}}<b>{{RegisterForm.value.account_info?.email}}</b></label>
+        <ng-lottie class='verify-anim' [options]="EmailSentOptions" height="400px"
+          (animationCreated)="SetSpeed($event, 1.5)"></ng-lottie>
+
+        <ngx-otp-input formControlName="verification_code" [config]="{length:6, allowNumbersOnly:true}"
+          [disabled]="VerifyingAccount"></ngx-otp-input>
+
+        <br>
+
+        <button nz-button nzSize="large" [nzLoading]="VerifyingAccount"
+          [disabled]="RegisterForm.get('verification_code')?.invalid" (click)="Verify()">
+          {{'Verify' | translate}}
         </button>
-        <button nz-button [disabled]="RegisterForm.get('personnal_info')?.invalid" (click)="CreateAccount()">
-          {{"Create Account" | translate}}
-          <nz-icon nzType="right"></nz-icon>
-        </button>
-      </div>
-    </fieldset>
-    }
 
-    @case(2){
-    <label class="title">{{"Your account has been created!" | translate}}</label>
-    <label>You must verify your email in order to continue</label>
-    <label>{{"An email has been sent to " | translate}}<b>{{RegisterForm.value.account_info?.email}}</b></label>
-    <ng-lottie class='verify-anim' [options]="EmailSentOptions" height="400px"
-      (animationCreated)="SetSpeed($event, 1.5)"></ng-lottie>
-      
-    <ngx-otp-input formControlName="verification_code" [config]="{length:6, allowNumbersOnly:true}" [disabled]="VerifyingAccount"></ngx-otp-input>
+        <br>
 
-    <br>
+        <label>{{"Didn't recieve an email?" | translate}}</label>
+        <a>{{"Resend verification" | translate}}</a>
+      }
 
-    <button nz-button nzSize="large" 
-    [nzLoading]="VerifyingAccount" 
-    [disabled]="RegisterForm.get('verification_code')?.invalid" 
-    (click)="Verify()">
-      {{'Verify' | translate}}
-    </button>
+      @case(3){
+        <label class="title">{{"Verification Sucessfull!" | translate}}</label>
+        <ng-lottie [options]="EmailVerifiedOptions" height="300px"
+          (animationCreated)="SetSpeed($event, 0.5)"></ng-lottie>
+        <a routerLink="/dashboard">{{"Go to Dashboard" | translate}}</a>
 
-    <br>
-
-    <label>{{"Didn't recieve an email?" | translate}}</label>
-    <a>{{"Resend verification" | translate}}</a>
-    }
-
-    @case(3){
-    <label class="title">{{"Verification Sucessfull!" | translate}}</label>
-    <ng-lottie [options]="EmailVerifiedOptions" height="300px" (animationCreated)="SetSpeed($event, 0.5)"></ng-lottie>
-    <a routerLink="/dashboard">{{"Go to Dashboard" | translate}}</a>
-
-    }
+      }
     }
   </form>
 

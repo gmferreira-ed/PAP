@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategorie úspěšně přidána",
   "Failed to load categories": "Chyba načtení kategorií",
   "Could not connect to the server. Please try again later": "Nelze se připojit k serveru. Zkuste to prosím později",
-  "Failed to authenticate. Please try again": "Chyba autentizace. Zkuste to prosím znovu",
+  "Failed to authenticate Please try again": "Chyba autentizace. Zkuste to prosím znovu",
   "Failed to load user permissions. Please try again": "Chyba načtení oprávnění uživatele. Zkuste to prosím znovu",
   "Failed to add supplier": "Chyba přidání dodavatele",
   "Supplier added": "Dodavatel přidán",

@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, DEFAULT_CURRENCY_CODE } from '@angular/core'
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, DEFAULT_CURRENCY_CODE, inject, APP_INITIALIZER, provideAppInitializer } from '@angular/core'
 import { provideAnimations } from "@angular/platform-browser/animations"
 import { FormsModule } from '@angular/forms'
 import { HttpClient, provideHttpClient } from '@angular/common/http'
@@ -34,7 +34,7 @@ import localeTr from '@angular/common/locales/tr';
 import localeUk from '@angular/common/locales/uk';
 import localeVi from '@angular/common/locales/vi';
 import localeZh from '@angular/common/locales/zh';
-import localeZhTw from '@angular/common/locales/zh-Hant'; 
+import localeZhTw from '@angular/common/locales/zh-Hant';
 
 registerLocaleData(localeCs, 'cs');
 registerLocaleData(localeDa, 'da');
@@ -52,25 +52,26 @@ registerLocaleData(localeKo, 'ko');
 registerLocaleData(localeNl, 'nl');
 registerLocaleData(localeNo, 'no');
 registerLocaleData(localePl, 'pl');
-registerLocaleData(localePt, 'pt');      
+registerLocaleData(localePt, 'pt');
 registerLocaleData(localeRo, 'ro');
 registerLocaleData(localeRu, 'ru');
 registerLocaleData(localeSv, 'sv');
 registerLocaleData(localeTr, 'tr');
 registerLocaleData(localeUk, 'uk');
 registerLocaleData(localeVi, 'vi');
-registerLocaleData(localeZh, 'zh');       
+registerLocaleData(localeZh, 'zh');
 registerLocaleData(localeZhTw, 'zh-TW');
 
 // NGX translate
-import { provideTranslateService, TranslateLoader, TranslatePipe } from "@ngx-translate/core"
-import {TranslateHttpLoader} from '@ngx-translate/http-loader'
+import { provideTranslateService, TranslateLoader, TranslatePipe, TranslateService } from "@ngx-translate/core"
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 
 // Ng zorro language
-import { NZ_I18N, en_US} from 'ng-zorro-antd/i18n'
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n'
 import { AppSettings } from './Services/AppSettings'
 import { DynamicCurrencyPipe } from './Pipes/dynamic-currency.pipe'
 import { DynamicDatePipe } from './Pipes/dynamic-date.pipe'
+import { initTranslate } from './Providers/LanguageInit'
 
 
 const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
@@ -99,6 +100,13 @@ export const appConfig: ApplicationConfig = {
       player: () => player,
     }),
     { provide: NZ_I18N, useValue: en_US },
-    { provide: DEFAULT_CURRENCY_CODE, useValue: AppSettings.Currency}
+    { provide: DEFAULT_CURRENCY_CODE, useValue: AppSettings.Currency },
+
+    provideAppInitializer(
+      async () => {
+        const translate = inject(TranslateService);
+        await initTranslate(translate);
+      }
+    )
   ]
 };

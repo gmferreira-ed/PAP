@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategori lagt til med suksess",
   "Failed to load categories": "Kunne ikke laste inn kategorier",
   "Could not connect to the server. Please try again later": "Kunne ikke koble til serveren. Vennligst prøv igjen senere",
-  "Failed to authenticate. Please try again": "Autentisering mislyktes. Vennligst prøv igjen",
+  "Failed to authenticate Please try again": "Autentisering mislyktes. Vennligst prøv igjen",
   "Failed to load user permissions. Please try again": "Kunne ikke laste inn brukerrettigheter. Vennligst prøv igjen",
   "Failed to add supplier": "Kunne ikke legge til leverandør",
   "Supplier added": "Leverandør lagt til",

@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategori tillagd med framgång",
   "Failed to load categories": "Misslyckades att ladda kategorier",
   "Could not connect to the server. Please try again later": "Kunde inte ansluta till servern. Försök igen senare",
-  "Failed to authenticate. Please try again": "Misslyckades att autentisera. Försök igen",
+  "Failed to authenticate Please try again": "Misslyckades att autentisera. Försök igen",
   "Failed to load user permissions. Please try again": "Misslyckades att ladda användarrättigheter. Försök igen",
   "Failed to add supplier": "Misslyckades att lägga till leverantör",
   "Supplier added": "Leverantör tillagd",

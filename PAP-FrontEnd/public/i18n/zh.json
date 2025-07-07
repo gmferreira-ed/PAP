@@ -274,7 +274,7 @@
 	"Sucessfully added category": "成功添加类别",
 	"Failed to load categories": "无法加载类别",
 	"Could not connect to the server. Please try again later": "无法连接到服务器。请稍后再试",
-	"Failed to authenticate. Please try again": "身份验证失败。请重试",
+	"Failed to authenticate Please try again": "身份验证失败。请重试",
 	"Failed to load user permissions. Please try again": "无法加载用户权限。请重试",
 	"Failed to add supplier": "无法添加供应商",
 	"Supplier added": "已添加供应商",

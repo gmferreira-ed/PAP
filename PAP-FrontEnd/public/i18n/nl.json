@@ -273,7 +273,7 @@
   "Sucessfully added category": "Categorie succesvol toegevoegd",
   "Failed to load categories": "Laden van categorieën mislukt",
   "Could not connect to the server. Please try again later": "Kon geen verbinding maken met de server. Probeer het later opnieuw",
-  "Failed to authenticate. Please try again": "Authenticatie mislukt. Probeer het opnieuw",
+  "Failed to authenticate Please try again": "Authenticatie mislukt. Probeer het opnieuw",
   "Failed to load user permissions. Please try again": "Laden van gebruikersrechten mislukt. Probeer het opnieuw",
   "Failed to add supplier": "Leverancier toevoegen mislukt",
   "Supplier added": "Leverancier toegevoegd",

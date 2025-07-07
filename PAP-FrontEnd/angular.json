@@ -9,11 +9,9 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
-
       "i18n": {
-        "sourceLocale": "en-US"  
+        "sourceLocale": "en-US"
       },
-
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -41,7 +39,8 @@
               "src/min-styles.less",
               "src/styles-components.less",
               "src/styles-directives.less",
-              "src/styles.less"
+              "src/styles.less",
+              "public/Fonts/fonts-loader.css"
             ],
             "scripts": []
           },
@@ -82,30 +81,10 @@
           "options": {
             "port": 5000
           },
-          "defaultConfiguration": "development" 
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": [
-              "src/styles.less"
-            ],
-            "scripts": []
-          }
         }
       }
     }

@@ -14,7 +14,9 @@
             <label class="title">{{'Welcome back'| translate}}</label>
         </div>
 
+        <br>
         <nz-divider></nz-divider>
+        <br>
 
         <form nz-form [formGroup]="LoginForm" class="login-form" (ngSubmit)="Login()">
             <nz-form-item>
@@ -24,21 +26,26 @@
                     </nz-input-group>
                 </nz-form-control>
             </nz-form-item>
+
+            <br>
+
             <nz-form-item>
                 <nz-form-control>
                     <nz-input-group class="login-input" nzPrefixIcon="lock">
-                        <input type="password" nz-input formControlName="password" [placeholder]="'Password' | translate" />
+                        <input type="password" nz-input formControlName="password"
+                            [placeholder]="'Password' | translate" />
                     </nz-input-group>
                 </nz-form-control>
             </nz-form-item>
 
-            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'" [nzLoading]="LoggingIn" [disabled]="LoginForm.invalid">
+            <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'" [nzLoading]="LoggingIn"
+                [disabled]="LoginForm.invalid">
                 {{'Log in' | translate}}
             </button>
             <a class="login-form-forgot">{{'Forgot password' | translate}}</a>
         </form>
 
-        <nz-divider nzPlain [nzText]="'Or' | translate"></nz-divider>
+        <!-- <nz-divider nzPlain [nzText]="'Or' | translate"></nz-divider>
 
         <div class="row-layout" style="gap: 5px;">
             <div class="login-option">
@@ -47,7 +54,8 @@
             <div class="login-option">
                 <img src="Icons/Microsoft.svg" class="login-option-icon">
             </div>
-        </div>
+        </div> -->
+        <br>
 
         <nz-divider></nz-divider>
 

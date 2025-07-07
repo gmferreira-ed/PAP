@@ -273,7 +273,7 @@
   "Sucessfully added category": "카테고리가 성공적으로 추가되었습니다",
   "Failed to load categories": "카테고리 로딩에 실패했습니다",
   "Could not connect to the server. Please try again later": "서버에 연결할 수 없습니다. 나중에 다시 시도하세요",
-  "Failed to authenticate. Please try again": "인증에 실패했습니다. 다시 시도하세요",
+  "Failed to authenticate Please try again": "인증에 실패했습니다. 다시 시도하세요",
   "Failed to load user permissions. Please try again": "사용자 권한 로딩에 실패했습니다. 다시 시도하세요",
   "Failed to add supplier": "공급자 추가에 실패했습니다",
   "Supplier added": "공급자가 추가되었습니다",

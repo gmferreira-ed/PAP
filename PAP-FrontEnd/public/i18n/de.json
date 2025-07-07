@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategorie erfolgreich hinzugefügt",
   "Failed to load categories": "Kategorien konnten nicht geladen werden",
   "Could not connect to the server. Please try again later": "Keine Verbindung zum Server möglich. Bitte versuchen Sie es später erneut",
-  "Failed to authenticate. Please try again": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
+  "Failed to authenticate Please try again": "Authentifizierung fehlgeschlagen. Bitte versuchen Sie es erneut",
   "Failed to load user permissions. Please try again": "Benutzerberechtigungen konnten nicht geladen werden. Bitte versuchen Sie es erneut",
   "Failed to add supplier": "Hinzufügen des Lieferanten fehlgeschlagen",
   "Supplier added": "Lieferant hinzugefügt",

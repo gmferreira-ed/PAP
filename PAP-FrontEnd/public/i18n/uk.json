@@ -274,7 +274,7 @@
 	"Sucessfully added category": "Успішно додано категорію",
 	"Failed to load categories": "Не вдалося завантажити категорії",
 	"Could not connect to the server. Please try again later": "Не вдалося підключитися до сервера. Будь ласка, спробуйте ще раз пізніше",
-	"Failed to authenticate. Please try again": "Не вдалося автентифікувати. Будь ласка, спробуйте ще раз",
+	"Failed to authenticate Please try again": "Не вдалося автентифікувати. Будь ласка, спробуйте ще раз",
 	"Failed to load user permissions. Please try again": "Не вдалося завантажити дозволи користувача. Будь ласка, спробуйте ще раз",
 	"Failed to add supplier": "Не вдалося додати постачальника",
 	"Supplier added": "Постачальник доданий",

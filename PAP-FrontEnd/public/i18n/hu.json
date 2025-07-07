@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategória sikeresen hozzáadva",
   "Failed to load categories": "Kategóriák betöltése sikertelen",
   "Could not connect to the server. Please try again later": "Nem sikerült csatlakozni a szerverhez. Kérjük, próbálja meg később",
-  "Failed to authenticate. Please try again": "Hitelesítés sikertelen. Kérjük, próbálja meg újra",
+  "Failed to authenticate Please try again": "Hitelesítés sikertelen. Kérjük, próbálja meg újra",
   "Failed to load user permissions. Please try again": "Felhasználói engedélyek betöltése sikertelen. Kérjük, próbálja meg újra",
   "Failed to add supplier": "Beszállító hozzáadása sikertelen",
   "Supplier added": "Beszállító hozzáadva",

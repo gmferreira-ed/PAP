@@ -6,6 +6,8 @@ import { AppComponent } from './app/app.component';
 import { AppSettings } from './app/Services/AppSettings';
 import { inject } from '@angular/core';
 import { HttpService } from './app/Services/Http.service';
+import { TranslateService } from '@ngx-translate/core';
+
 
 
 async function StartApp() {

@@ -80,8 +80,7 @@
 
                 @if (CanModifySettings){
                     <button style="width: 50%;" nz-button nzType="primary" nzShape="round" [disabled]="!FieldsChanged()"
-                        (click)="SaveSettings()" [nzLoading]="ModifyingSettings" class="aself-center"
-                        nzSize="large">
+                        (click)="SaveSettings()" [nzLoading]="ModifyingSettings" class="aself-center" nzSize="large">
                         {{'Save' | translate}}
                     </button>
                 }
@@ -112,8 +111,11 @@
                     }
                 </nz-select>
             </div>
+            <span class="caption"
+                style="font-size: 10px;">{{'Some translations are AI generated and may not give accurate results'}}</span>
+            <span class="caption"
+                style="font-size: 10px;">{{'This message is not translated'}}</span>
 
-            <br>
             <br>
 
             <h2>{{'Theme' | translate}}</h2>

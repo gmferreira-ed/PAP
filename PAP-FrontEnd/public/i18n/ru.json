@@ -273,7 +273,7 @@
   "Sucessfully added category": "Категория успешно добавлена",
   "Failed to load categories": "Не удалось загрузить категории",
   "Could not connect to the server. Please try again later": "Не удалось подключиться к серверу. Попробуйте позже",
-  "Failed to authenticate. Please try again": "Не удалось выполнить аутентификацию. Попробуйте снова",
+  "Failed to authenticate Please try again": "Не удалось выполнить аутентификацию. Попробуйте снова",
   "Failed to load user permissions. Please try again": "Не удалось загрузить разрешения пользователя. Попробуйте снова",
   "Failed to add supplier": "Не удалось добавить поставщика",
   "Supplier added": "Поставщик добавлен",

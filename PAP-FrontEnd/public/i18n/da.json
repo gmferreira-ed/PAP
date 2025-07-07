@@ -273,7 +273,7 @@
   "Sucessfully added category": "Kategori tilføjet med succes",
   "Failed to load categories": "Fejl ved indlæsning af kategorier",
   "Could not connect to the server. Please try again later": "Kunne ikke oprette forbindelse til serveren - prøv igen senere",
-  "Failed to authenticate. Please try again": "Fejl ved autentificering - prøv igen",
+  "Failed to authenticate Please try again": "Fejl ved autentificering - prøv igen",
   "Failed to load user permissions. Please try again": "Fejl ved indlæsning af brugerrettigheder - prøv igen",
   "Failed to add supplier": "Fejl ved tilføjelse af leverandør",
   "Supplier added": "Leverandør tilføjet",
