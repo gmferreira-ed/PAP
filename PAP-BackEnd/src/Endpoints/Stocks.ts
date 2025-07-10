@@ -44,9 +44,8 @@ Router.patch('/stock-items', HandleEndpointFunction(async (req, res) => {
         'SKU', 'name', 'quantity_in_stock', 'unit_of_measure', 'purchase_price', 'supplier_id', 'description', 'active', 'connected_product_id'
     ], req.body, ['id'])
 
-    console.log(Query, Values)
     const [Result] = await Database.execute(Query, Values)
-    res.send(Result)
+    res.send()
 }))
 
 /**

@@ -12,6 +12,9 @@ ipcMain.on('print-receipt', async (event, data) => {
 
     const device = new escpos.Network('192.168.0.253', 6001);
     const printer = new escpos.Printer(device);
+
+    printer.raw(Buffer.from([0x1B, 0x74, 0x13]));
+    printer.encode('CP858')
     
     await new Promise((resolve, reject) => {
         try {

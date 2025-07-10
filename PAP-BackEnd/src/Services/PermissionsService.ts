@@ -10,7 +10,7 @@ const MailTransport = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "gabrielmonteiroferreira@gmail.com",
-    pass: "eijn thtg ahsd fnco"
+    pass: process.env.mail_pass
   }
 })
 
@@ -68,19 +68,23 @@ var EndpointsData = new SimpleCache(async function (): Promise<Endpoints> {
 
 async function GenerateUserCode(Request: ExpressRequest) {
   const Code = crypto.randomInt(0, 1000000).toString().padStart(6, '0');
+
   Request.session.verificationcode = Code
   Request.session.verificationcode_created = new Date().getTime()
 
+
   const UserData = await GetUserData(Request.session.user!)
+  let Fullname = UserData.fullname
+  let Email = UserData.email
   await MailTransport.sendMail({
     // from: mail_config.auth.user,
-    to: UserData.email,
+    to: Email,
     subject: 'Restro Link Verification code',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; padding: 32px 24px; background: #fafbfc;">
         <h2 style="color: #333; margin-bottom: 16px;">Your Verification Code</h2>
         <p style="font-size: 16px; color: #444; margin-bottom: 24px;">
-          Hello <b>${UserData.username || ''}</b>,
+          Hello <b>${Fullname || ''}</b>,
         </p>
         <p style="font-size: 16px; color: #444; margin-bottom: 24px;">
           Please use the following code to verify your account:

@@ -8,13 +8,25 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnimationItem } from 'lottie-web';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { TranslatePipe } from '@ngx-translate/core';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { TranslateService } from '@ngx-translate/core';
+import GlobalUtils from '../../Services/GlobalUtils';
+
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+  AnimationEvent
+} from '@angular/animations';
+import { NzMessageService } from 'ng-zorro-antd/message';
+
 
 @Component({
   selector: 'register-page',
@@ -22,7 +34,23 @@ import { TranslateService } from '@ngx-translate/core';
     LottieComponent, RouterLink, NgOtpInputModule, TranslatePipe
   ],
   templateUrl: './register.page.html',
-  styleUrl: './register.page.less'
+  styleUrl: './register.page.less',
+  animations: [
+    trigger('swipeState', [
+      state('inactive', style({ transform: 'translateX(0)', opacity: 1 })),
+      state('swipping', style({ transform: 'translateX(50%)', opacity: 0 })),
+
+      transition('* => swipping', [
+        style({ opacity: 0, transform: 'translateX(50%)' }),
+        animate('0ms')
+      ]),
+
+      transition('swipping => inactive', [
+        style({ opacity: 0, transform: 'translateX(-10%)' }), // start off-screen left
+        animate('400ms ease-out', style({ opacity: 1, transform: 'translateX(0)' }))
+      ]),
+    ]),
+  ],
 })
 export class RegisterPage {
   StepIndex = 0
@@ -31,9 +59,15 @@ export class RegisterPage {
   VerificationCode = ''
   CreatingAccount = false
   VerifyingAccount = false
+  Initialized = false
+  Swipping = false
 
   HttpService = inject(HttpService)
   TranslateService = inject(TranslateService)
+  MessageService = inject(NzMessageService)
+  ActiveRoute = inject(ActivatedRoute)
+
+  EnforceNumber = GlobalUtils.EnforceNumber
 
   EmailSentOptions: AnimationOptions = {
     path: 'Animations/MailSent.json',
@@ -50,12 +84,11 @@ export class RegisterPage {
 
   RegisterForm = new FormGroup({
     account_info: new FormGroup({
-      username: new FormControl('', Validators.required),
+      username: new FormControl('aasdasd', [Validators.required, Validators.minLength(3)]),
       active: new FormControl(false),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      phone: new FormControl('', Validators.required),
-      role: new FormControl(''),
-      password: new FormControl('', Validators.required)
+      email: new FormControl('tesel81357@dxirl.com', [Validators.required, Validators.email]),
+      phone: new FormControl('1231123123', [Validators.required, Validators.minLength(9)]),
+      password: new FormControl('123', Validators.required)
     }),
     personnal_info: new FormGroup({
       fullname: new FormControl('', Validators.required),
@@ -87,7 +120,8 @@ export class RegisterPage {
   async Verify() {
     this.VerifyingAccount = true
 
-    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST', this.TranslateService.instant('Failed to verify'), {
+    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST', 
+      this.TranslateService.instant('Failed to verify'), {
       verificationcode: this.RegisterForm.value.verification_code
     })
     if (VerifiedSucessfully) {
@@ -98,9 +132,44 @@ export class RegisterPage {
   }
 
   AdvanceStep(Target: number) {
+    this.Swipping = true
+
     if (Target > this.CurrentStepIndex) {
       this.CurrentStepIndex = Target
     }
     this.StepIndex = Target
+
+    setTimeout(() => {
+      this.Swipping = false
+    }, 400);
+  }
+
+  onAnimationDone(event: AnimationEvent) {
+    if (event.toState === 'swipping') {
+      this.Swipping = false
+    }
+  }
+
+  async ResendCode() {
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'request-code', 'POST', 
+      this.TranslateService.instant('Failed to re-send code: '))
+    if (Result){
+      this.MessageService.success(this.TranslateService.instant('Email successfully sent!'))
+    }
+  }
+
+  ngOnInit() {
+
+    const RedirectedEmail = this.ActiveRoute.snapshot.queryParamMap.get('verifying')
+    if (RedirectedEmail) {
+      this.RegisterForm.get('account_info')?.get('email')?.setValue(RedirectedEmail)
+      this.StepIndex = 2
+      this.CurrentStepIndex = 2
+      this.HttpService.MakeRequest(AppSettings.APIUrl + 'request-code', 'POST', undefined)
+    }
+
+    setTimeout(() => {
+      this.Initialized = true
+    }, 1);
   }
 }

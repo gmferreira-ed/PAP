@@ -20,11 +20,11 @@
                 <div class="row">
                     <div class="collumn">
                         <label>{{'Contact' | translate}}</label>
-                        <input nz-input type="tel" maxlength="20" formControlName="Contact" />
+                        <input nz-input type="number" maxlength="20" formControlName="Contact" />
                     </div>
                     <div class="collumn">
                         <label>{{'Tax ID' | translate}}</label>
-                        <input nz-input style="width: 250px;" maxlength="20" formControlName="TaxID"
+                        <input nz-input style="width: 250px;" maxlength="30" formControlName="TaxID"
                             (keypress)="FormatNumb($event)" />
                     </div>
                     <div class="collumn">

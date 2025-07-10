@@ -117,7 +117,8 @@
                     <nz-form-label>{{'Table ID' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-input-group nzSearch [nzAddOnAfter]="SearchSuffix">
-                            <input nz-input formControlName="tableid" [placeholder]="'Table ID' | translate" />
+                            <input nz-input formControlName="tableid" [placeholder]="'Table ID' | translate"
+                                maxlength="3" (keypress)="EnforceNumber($event)" />
                         </nz-input-group>
                     </nz-form-control>
                 </nz-form-item>
@@ -149,7 +150,8 @@
 
             <nz-form-item>
                 <nz-form-control>
-                    <a (click)="ReservationsModalVisible = true; PromptingSchedule = false">{{'More details' | translate}}</a>
+                    <a
+                        (click)="ReservationsModalVisible = true; PromptingSchedule = false">{{'More details' | translate}}</a>
                     <button style="float: right;" nz-button nzType="primary" [disabled]="ReservationForm.invalid"
                         [nzLoading]="BookingReservation">
                         {{'Submit' | translate}}
@@ -190,7 +192,37 @@
 
     <!-- ALL VIEW -->
     @else {
-
+        <nz-table nzTemplateMode="">
+            <thead>
+                <tr>
+                    <!-- <th>{{'ID' | translate}}</th> -->
+                    <th>{{'Table' | translate}}</th>
+                    <th>{{'Date' | translate}}</th>
+                    <th>{{'Time' | translate}}</th>
+                    <th>{{'Guests' | translate}}</th>
+                    <th>{{'Creator' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (Reservation of Reservations; track $index){
+                    <tr (click)="SelectedReservationDetails = Reservation">
+                        <!-- <td>{{Reservation.id}}</td> -->
+                        <td>{{Reservation.tableid}}</td>
+                        <td>{{Reservation.date | ddate}}</td>
+                        <td>{{Reservation.date | ddate:'HH:mm'}}</td>
+                        <td>{{Reservation.guest_count}}</td>
+                        <td>
+                            <div class="tag">
+                                <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
+                                    [src]="UserImagesURL+Reservation.username"
+                                    onerror="this.src='Images/Icons/account.svg'">
+                                <strong>{{Reservation.username}}</strong>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </nz-table>
     }
     </main>
 
@@ -236,8 +268,9 @@
 
 <!-- RESERVATION BOOKING MODAL -->
 <nz-modal nzDraggable [nzVisible]="ReservationsModalVisible" [nzTitle]="'Book New Reservation' | translate" nzCentered
-    [nzCancelText]="'Cancel' | translate" nzWidth="50%" [nzOkDisabled]="ReservationForm.invalid" [nzCancelDisabled]="BookingReservation"
-    [nzOkLoading]="BookingReservation" (nzOnOk)="BookReservation()" (nzOnCancel)="ReservationsModalVisible = false">
+    [nzCancelText]="'Cancel' | translate" nzWidth="50%" [nzOkDisabled]="ReservationForm.invalid"
+    [nzCancelDisabled]="BookingReservation" [nzOkLoading]="BookingReservation" (nzOnOk)="BookReservation()"
+    (nzOnCancel)="ReservationsModalVisible = false">
 
     <ng-container *nzModalContent>
         <form [formGroup]="ReservationForm" nz-form nzLayout="vertical" (ngSubmit)="BookReservation()">
@@ -247,7 +280,8 @@
                     <nz-form-label>{{'Table ID' | translate}}</nz-form-label>
                     <nz-form-control>
                         <nz-input-group nzSize="large" nzSearch [nzAddOnAfter]="SearchSuffix">
-                            <input nz-input formControlName="tableid" [placeholder]="'Table ID' | translate" />
+                            <input nz-input formControlName="tableid" maxlength="3"
+                                [placeholder]="'Table ID' | translate" (keypress)="EnforceNumber($event)" />
                         </nz-input-group>
                     </nz-form-control>
                 </nz-form-item>
@@ -255,7 +289,8 @@
                 <nz-form-item>
                     <nz-form-label>{{'Guest Count' | translate}}</nz-form-label>
                     <nz-form-control>
-                        <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count" nzSize="large" />
+                        <nz-input-number nzMin="1" nz-input type="number" formControlName="guest_count"
+                            nzSize="large" />
                     </nz-form-control>
                 </nz-form-item>
 
@@ -294,7 +329,8 @@
                     <nz-form-item>
                         <nz-form-label>{{'Phone' | translate}}</nz-form-label>
                         <nz-form-control>
-                            <input nz-input formControlName="phone" nzSize="large" [placeholder]="'Phone Number' | translate" />
+                            <input nz-input formControlName="phone" maxlength="12" nzSize="large"
+                                [placeholder]="'Phone Number' | translate" (keypress)="EnforceNumber($event)" />
                         </nz-form-control>
                     </nz-form-item>
                 </div>
@@ -310,7 +346,8 @@
             <nz-form-item>
                 <nz-form-label>{{'Notes' | translate}}</nz-form-label>
                 <nz-form-control>
-                    <textarea nz-input formControlName="notes" rows="3" [placeholder]="'Additional notes' | translate"></textarea>
+                    <textarea nz-input formControlName="notes" rows="3"
+                        [placeholder]="'Additional notes' | translate"></textarea>
                 </nz-form-control>
             </nz-form-item>
         </form>
@@ -318,10 +355,33 @@
     </ng-container>
 </nz-modal>
 
+<nz-modal [nzOkText]="null" [nzCancelText]="'Close' | translate" [nzVisible]="SelectedReservationDetails" 
+(nzOnCancel)="SelectedReservationDetails = undefined" nzTitle="Reservations" nzCentered>
+    <ng-container *nzModalContent>
+        <h3>Name</h3>
+        {{SelectedReservationDetails.name || '-'}}
+        <br>
+        <br>
+        
+        <h3>Email</h3>
+        {{SelectedReservationDetails.email || '-'}}
+        <br>
+        <br>
+
+        <h3>Phone</h3>
+        {{SelectedReservationDetails.phone || '-'}}
+        <br>
+        <br>
+
+        <h3>Notes</h3>
+        {{SelectedReservationDetails.notes || '-'}}
+        <br>
+    </ng-container>
+</nz-modal>
 
 <!-- TABLE SELECT MODAL -->
-<nz-modal [nzOkText]="null" [nzCancelText]="'Close' | translate" [nzVisible]="TableSelectVisible" [nzTitle]="'Select Table' | translate" nzCentered
-    nzDraggable nzWidth="70%" (nzOnCancel)="TableSelectVisible=false">
+<nz-modal [nzOkText]="null" [nzCancelText]="'Close' | translate" [nzVisible]="TableSelectVisible"
+    [nzTitle]="'Select Table' | translate" nzCentered nzDraggable nzWidth="70%" (nzOnCancel)="TableSelectVisible=false">
 
     <ng-container *nzModalContent>
         <restaurant-layout style="height: 50vh;" [SelectionMode]="true" (TableSelected)="OnTableSelected($event)">

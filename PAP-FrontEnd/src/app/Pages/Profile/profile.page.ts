@@ -233,6 +233,7 @@ export class ProfilePage {
         }
       },
       min: 0,
+      max: 24,
       forceNiceScale: true,
       tickAmount: 5
     }
@@ -375,7 +376,7 @@ export class ProfilePage {
 
     this.ActiveRoute.params.subscribe((params) => {
       const Username = params['username']
-      if (Username){
+      if (Username) {
         this.LoadUserInfo()
       }
     })

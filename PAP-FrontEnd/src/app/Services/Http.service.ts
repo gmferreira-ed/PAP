@@ -4,9 +4,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { TranslateService } from '@ngx-translate/core';
 
 type ErrorInfo = {
-  ErrorCode: number,
-  ErrorMessage: string
-}
+  ErrorCode: number;
+  ErrorMessage: string;
+} & Record<string, any>;
 
 @Injectable({
   providedIn: 'root'
@@ -89,7 +89,8 @@ export class HttpService {
             this.MessageService.error(`${ErrorSuffix}\n${this.TranslateService.instant(Result.error)}`)
           resolve([false, {
             ErrorCode: Response.status,
-            ErrorMessage: Result.error
+            ErrorMessage: Result.error,
+            ...Result
           }])
         }
 

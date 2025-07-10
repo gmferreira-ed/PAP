@@ -58,9 +58,9 @@
                                     {{'Deactivate User' | translate}}
                                 </button>
                             }@else {
-                                <button nz-button class="row green border" (click)="ToggleUserStatus()"
+                                <button nz-button class="button row green border" (click)="ToggleUserStatus()"
                                     [nzLoading]="TogglingUserStatus">
-                                    <icon type="user-round-check"></icon>
+                                    <icon type="user-round-check" style="display: inline; margin-right: 5px;"></icon>
                                     {{'Activate User' | translate}}
                                 </button>
                             }

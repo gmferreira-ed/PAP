@@ -1,6 +1,6 @@
 <img src="Backgrounds/Background2.jpg" class="background-image">
 
-<div class="login-container">
+<div class="login-container" [class.show]="Initialized">
     <div class="image-section">
         <img src="Images/Background2.jpg" class="image-background">
     </div>
@@ -27,7 +27,6 @@
                 </nz-form-control>
             </nz-form-item>
 
-            <br>
 
             <nz-form-item>
                 <nz-form-control>
@@ -42,7 +41,7 @@
                 [disabled]="LoginForm.invalid">
                 {{'Log in' | translate}}
             </button>
-            <a class="login-form-forgot">{{'Forgot password' | translate}}</a>
+            <!-- <a class="login-form-forgot">{{'Forgot password' | translate}}</a> -->
         </form>
 
         <!-- <nz-divider nzPlain [nzText]="'Or' | translate"></nz-divider>

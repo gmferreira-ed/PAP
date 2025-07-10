@@ -19,17 +19,19 @@ Router.get('/reservations', HandleEndpointFunction(async (req, res) => {
     const Query = req.query
 
     const Values: any = [Query.StartDate]
-    var ReservationsQuery = 'SELECT * FROM reservations '
+    var ReservationsQuery = `SELECT reservations.*, users.username FROM reservations 
+    LEFT JOIN users ON users.userid=reservations.creator_id `
 
     if (Query.EndDate && Query.EndDate != 'undefined') {
         ReservationsQuery += ' WHERE DATE(`date`) BETWEEN DATE(?) AND DATE(?)';
         Values.push(Query.EndDate)
     } else if (Query.StartDate) {
-        ReservationsQuery += 'WHERE DATE(?) = DATE(`date`)'
+        ReservationsQuery += ' WHERE DATE(?) = DATE(`date`)'
     }
-    ReservationsQuery += `ORDER BY date ASC`
+    ReservationsQuery += ` ORDER BY date DESC`
 
 
+    console.log(ReservationsQuery)
     const [Reservations] = await Database.execute<any>(ReservationsQuery, Values)
 
     res.send(Reservations)

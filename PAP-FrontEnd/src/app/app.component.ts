@@ -57,8 +57,8 @@ export class AppComponent {
           if (EntryResult) {
             const User = EntryResult.user
             if (User) {
-              const State = EntryResult.is_entry ? 'Entry' : 'Exit'
-              this.NotificationService.success(State, `${State} from ${User}`)
+              const State = this.TranslateService.instant(EntryResult.is_entry ? 'Entry' : 'Exit')
+              this.NotificationService.success(State, `${State} ${this.TranslateService.instant('from')} ${User}`)
               this.ScanSound.play()
             } else {
               this.NotificationService.warning(this.TranslateService.instant('Ignored entry'), this.TranslateService.instant('There is no user linked to the card') + ' ' + CardID)

@@ -46,7 +46,7 @@ type HistoryAction =
   | { type: "create", ComponentData: LayoutComponent }
   | { type: "delete", ComponentData: LayoutComponent }
   | { type: "update", ComponentData: LayoutComponent, PreviousComponentData: LayoutComponent }
-  | { type: "import", Layout: LayoutComponent[], PreviousLayout: LayoutComponent[] }
+  | { type: "import", NewLayout: LayoutComponent[], PreviousLayout: LayoutComponent[] }
 
 import { FormsModule } from '@angular/forms';
 import { NzGridModule } from 'ng-zorro-antd/grid';
@@ -84,6 +84,7 @@ export class RestaurantLayout {
   @Input() ShowProperties: boolean = true
   @Input() DraggingViewport: boolean = false
   @Input() LoadingLayout: boolean = true
+  @Input() ProcessingComponent: boolean = false
   @Input() EditMode: boolean = false
   @Input() SelectionMode: boolean = false
 
@@ -166,7 +167,7 @@ export class RestaurantLayout {
   @Input() History: HistoryAction[] = [];
   @Input() CurrentHistoryIndex: number = -1
 
-  NavigateHistory(IndexChange: number) {
+  async NavigateHistory(IndexChange: number) {
     const TargetIndex = this.CurrentHistoryIndex + IndexChange
     const HistoryLenght = this.History.length
 
@@ -176,6 +177,8 @@ export class RestaurantLayout {
       this.CurrentHistoryIndex += IndexChange
       const IsUndo = IndexChange == -1
 
+
+      this.LoadingLayout = true
 
       const TargetAction = IsUndo && this.History[TargetIndex + 1] || this.History[TargetIndex]
 
@@ -197,24 +200,56 @@ export class RestaurantLayout {
           const ExistingComponent = this.GetComponentById(TargetAction.ComponentData.id!)
           if (ExistingComponent) {
             Object.assign(ExistingComponent, TargetComponentData);
+            this.SaveComponentInfo(ExistingComponent)
           } else {
             console.warn('Failed to undo. ID', TargetAction.ComponentData.id, 'not found')
           }
         } else if (TargetAction.type == 'import') {
-          this.Components = TargetAction.PreviousLayout
+          let TargetLayout: any[] = []
+          if (IsUndo) {
+            TargetLayout = TargetAction.PreviousLayout
+          } else {
+            TargetLayout = TargetAction.NewLayout
+          }
+
+          const ConvertedLayout = this.ComponentArrayToSQLCollumns(TargetLayout)
+          const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'layout/import', 'POST',
+            this.TranslateService.instant('Failed to import layout. Invalid content format.'),
+            ConvertedLayout
+          )
+
+          this.Components = TargetLayout
         }
       }
 
     } else {
       console.warn('Failed to navigate history')
     }
+
+    this.LoadingLayout = false
   }
 
-  async ClearLayout() {
+  ComponentArrayToSQLCollumns(Components: LayoutComponent[]) {
+    return Components.map((Component: LayoutComponent) => {
+      return {
+        left: Component.Position.X,
+        top: Component.Position.Y,
+        width: Component.Size.X,
+        height: Component.Size.Y,
+        type: Component.Type,
+        tableid: Component.tableid,
+      }
+    })
+  }
+
+  async ClearLayout(TrackHistory: boolean = true) {
 
     const OldLayout = this.CloneLayout(this.Components)
-    this.TrackHistory('import', OldLayout)
+
     this.Components = []
+    if (TrackHistory) {
+      this.TrackHistory('import', OldLayout)
+    }
 
     this.LoadingLayout = true
     const [DeleteResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'DELETE', this.TranslateService.instant('Failed to clear layout'), {
@@ -266,7 +301,7 @@ export class RestaurantLayout {
 
       || {
         type: 'import',
-        Layout: [...this.Components],
+        NewLayout: [...this.Components],
         PreviousLayout: Array.isArray(ObjectToSave) ? ObjectToSave : [ObjectToSave]
       }
 
@@ -440,27 +475,19 @@ export class RestaurantLayout {
 
     document.body.classList.remove('cursor-grabbing');
 
-    const Component = this.DraggingComponent || this.ResizingComponent
+    let Component = this.DraggingComponent || this.ResizingComponent
     if (Component) {
 
-      if (!Component.Size.equals(this.DragComponentInitial.Size) || !Component.Position.equals(this.DragComponentInitial.Position))
+      if (!Component.Size.equals(this.DragComponentInitial.Size) || !Component.Position.equals(this.DragComponentInitial.Position)) {
+
         this.TrackHistory('update', Component)
 
-      const ComponentID = Component.id
-      if (ComponentID) {
-        const Body: any = {
-          left: Component.Position.X,
-          top: Component.Position.Y,
-
-          width: Component.Size.X,
-          height: Component.Size.Y,
-
-          componentid: Component.id
+        const ComponentID = Component.id
+        if (ComponentID) {
+          this.SaveComponentInfo(Component)
+        } else {
+          console.warn('Component doesnt have ID, ignoring save')
         }
-
-        this.HttpService.MakeRequest(this.LayoutAPI, 'PATCH', this.TranslateService.instant('Failed to update component data'), Body)
-      } else {
-        console.warn('Component doesnt have ID, ignoring save')
       }
     }
     this.DraggingComponent = null
@@ -474,6 +501,23 @@ export class RestaurantLayout {
       && !TargetComp.classList.contains('component')) {
       this.SelectedComponent = undefined
     }
+  }
+
+  SaveComponentInfo(Component: LayoutComponent) {
+    const Body: any = {
+      left: Component.Position.X,
+      top: Component.Position.Y,
+
+      width: Component.Size.X,
+      height: Component.Size.Y,
+
+      componentid: Component.id
+    }
+
+    Component.processing = true
+    this.HttpService.MakeRequest(this.LayoutAPI, 'PATCH', this.TranslateService.instant('Failed to update component data'), Body).then(() => {
+      Component.processing = false
+    })
   }
 
 
@@ -539,6 +583,7 @@ export class RestaurantLayout {
       const [DeleteResult] = await this.HttpService.MakeRequest(this.LayoutAPI, 'DELETE', this.TranslateService.instant('Failed to delete component'), {
         componentid: Component.id,
       })
+      Component.processing = false
     }
 
     if (!IgnoreTrack)
@@ -565,6 +610,7 @@ export class RestaurantLayout {
       if (!IgnoreTrack) {
         this.AddComponent(DuplicatedComponent)
       } else {
+        DuplicatedComponent.tableid = TargetComponent.tableid
         this.Components.push(DuplicatedComponent)
       }
       this.SelectedComponent = DuplicatedComponent;
@@ -577,21 +623,25 @@ export class RestaurantLayout {
 
   // PASTE
   async PasteClipboardComponent(MouseEvent?: MouseEvent) {
-    const ClipboardContent = await navigator.clipboard.readText()
-    const ParsedComponent = JSON.parse(ClipboardContent)
-    if (ParsedComponent && ParsedComponent.Type) {
-      const NewComp = new LayoutComponent()
-      NewComp.Type = ParsedComponent.Type
-      NewComp.Size = new Vector2(ParsedComponent.Size.X, ParsedComponent.Size.Y)
+    if (navigator.clipboard) {
+      const ClipboardContent = await navigator.clipboard.readText()
+      const ParsedComponent = JSON.parse(ClipboardContent)
+      if (ParsedComponent && ParsedComponent.Type) {
+        const NewComp = new LayoutComponent()
+        NewComp.Type = ParsedComponent.Type
+        NewComp.Size = new Vector2(ParsedComponent.Size.X, ParsedComponent.Size.Y)
 
-      if (MouseEvent) {
+        if (MouseEvent) {
 
-      } else {
-        NewComp.Position = new Vector2(ParsedComponent.Position.X, ParsedComponent.Position.Y)
+        } else {
+          NewComp.Position = new Vector2(ParsedComponent.Position.X, ParsedComponent.Position.Y)
+        }
+        this.AddComponent(NewComp)
+        this.SelectedComponent = NewComp;
+        this.ContextMenuVisible = false
       }
-      this.AddComponent(NewComp)
-      this.SelectedComponent = NewComp;
-      this.ContextMenuVisible = false
+    } else {
+      this.MessageService.error(this.TranslateService.instant('Clipboard unavailable'))
     }
   }
 
@@ -600,7 +650,11 @@ export class RestaurantLayout {
     const SelectedComponent = this.SelectedComponent
     if (SelectedComponent) {
       const StringifiedComponent = JSON.stringify(SelectedComponent);
-      navigator.clipboard.writeText(StringifiedComponent);
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(StringifiedComponent);
+      } else {
+        this.MessageService.error(this.TranslateService.instant('Clipboard unavailable'))
+      }
       this.HasClipboardContent = true
       this.ContextMenuVisible = false
     }
@@ -638,7 +692,7 @@ export class RestaurantLayout {
         } else if (Key == 'z') {
           this.NavigateHistory(-1)
 
-        } else if (Key == 'y' || (Key=='Z' && ShiftCombo)) {
+        } else if (Key == 'y' || (Key == 'Z' && ShiftCombo)) {
           this.NavigateHistory(1)
 
           // CUT
@@ -679,6 +733,7 @@ export class RestaurantLayout {
       componentid: IgnoreTrack && component.id,
     })
 
+    component.processing = false
 
     if (CreateResult) {
       component.id = Number(CreateResult.id)
@@ -785,29 +840,41 @@ export class RestaurantLayout {
     URL.revokeObjectURL(url);
   }
 
-  ImportLayout(event: Event) {
+  async ImportLayout(event: Event) {
     const input = event.target as HTMLInputElement;
     const LayoutFile = input.files && input.files[0]
+
     if (LayoutFile) {
       const reader = new FileReader()
 
-      reader.onload = () => {
+      reader.onload = async () => {
         try {
           const content = reader.result as string
           const LayoutData = JSON.parse(content)
+          input.value = '';
           const OldLayout = this.CloneLayout(this.Components)
 
-          this.Components = []
-          for (const Component of LayoutData) {
-            this.DuplicateComponent(Component, true)
-            this.Components.push()
+
+          const ImportBody = this.ComponentArrayToSQLCollumns(LayoutData)
+
+          const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'layout/import', 'POST',
+            this.TranslateService.instant('Failed to import layout. Invalid content format.'),
+            ImportBody
+          )
+
+          if (Result) {
+            this.Components = []
+            for (const Component of LayoutData) {
+              this.DuplicateComponent(Component, true)
+              //this.Components.push(Component)
+            }
+
+            this.TrackHistory('import', OldLayout)
+
+            this.CenterLayout()
+
+            this.MessageService.success(this.TranslateService.instant('Sucessfully imported layout!'))
           }
-
-          this.TrackHistory('import', OldLayout)
-
-          this.CenterLayout()
-
-          this.MessageService.success(this.TranslateService.instant('Sucessfully imported layout!'))
         } catch (error) {
           this.MessageService.error(this.TranslateService.instant('Failed to import layout. Invalid content format.'))
         }

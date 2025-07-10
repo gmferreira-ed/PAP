@@ -12,14 +12,14 @@
     <div class="separator vertical"></div>
 
     <div class="action">
-        <button class="button block" [disabled]="CurrentHistoryIndex == -1" (click)="NavigateHistory(-1)">
+        <button class="button block" [disabled]="CurrentHistoryIndex == -1 || LoadingLayout" (click)="NavigateHistory(-1)">
             <icon type="undo"></icon>
         </button>
         <label>{{'Undo' | translate}}</label>
     </div>
 
     <div class="action">
-        <button class="button block" [disabled]="CurrentHistoryIndex == History.length-1" (click)="NavigateHistory(1)">
+        <button class="button block" [disabled]="CurrentHistoryIndex == History.length-1 || LoadingLayout" (click)="NavigateHistory(1)">
             <icon type="redo"></icon>
         </button>
         <label>{{'Redo' | translate}}</label>
@@ -82,12 +82,12 @@
         <label>{{'Clear Layout' | translate}}</label>
     </div>
 
-    <div class="action">
+    <!-- <div class="action">
         <button class="button block">
             <icon type="circle-help"></icon>
         </button>
         <label>{{'Help' | translate}}</label>
-    </div>
+    </div> -->
 </div>
 }
 
@@ -167,10 +167,13 @@
                     <img class="background" [src]="LayoutConfigs.Components[Component.Type]?.Image">
                     }
 
+                    <loading-screen [IsLoading]="Component.processing" LoaderStyle="Spinner" ></loading-screen>
+
                     @if (Component.Type == 'Table' || Component.Type == 'RoundTable'){
                     <label class="table-number" [style.font-size]="4*Zoom+'px'">
                         {{'Table' | translate}} {{Component.tableid}}
                     </label>
+
 
                     @let Table = Component.tableid != null ? Tables[Component.tableid] : undefined;
                     @let TableStatus = Table && StatusDisplayNames[Table.status];

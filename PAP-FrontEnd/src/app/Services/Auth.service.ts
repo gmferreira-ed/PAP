@@ -66,11 +66,12 @@ export class AuthService {
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
     
-    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', 
-      this.TranslateService.instant('Failed to authenticate Please try again')
+    const ErrorMessage = !ActivateRoute.data['IgnoreRedirect'] && this.TranslateService.instant('Failed to authenticate Please try again')
+    const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', ErrorMessage
     )
 
     const TargetPageURL = ActivateRoute.routeConfig?.path
+
 
     if (AuthSuccess) {
       const User = AuthSuccess.user
@@ -83,9 +84,9 @@ export class AuthService {
 
       return [User, EndpointPermissions]
 
-    } else if (!ActivateRoute.data['NoLogin'] && ErrorInfo?.ErrorCode == 401) {
+    } else if (!ActivateRoute.data['IgnoreRedirect'] && ErrorInfo?.ErrorCode == 401) {
       this.router.navigate(['/login'])
-    } else {
+    } else if (ErrorInfo?.ErrorCode != 401) {
       this.router.navigate(['/error'])
     }
     return [null, {}]
@@ -118,9 +119,8 @@ export class AuthService {
     const [User, EndpointPermissions, IgnoreRedirect] = await this.Login(CurrentPage)
     const RouteData = CurrentPage.data
 
-    const NoLogin = RouteData['NoLogin']
     // Load permissions data
-    if (User && !NoLogin) {
+    if (User) {
       this.User.set(User)
 
       const Routes: { [key: string]: Route } = this.GetAllRoutes(this.router.config)
@@ -172,8 +172,6 @@ export class AuthService {
 
         }
       }
-    } else if (NoLogin) {
-      return [true]
     }
 
 

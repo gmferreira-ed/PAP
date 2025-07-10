@@ -1,6 +1,6 @@
 <!-- SEARCH -->
 <nz-input-group style="margin-bottom:10px;" nzSearch [nzAddOnAfter]="suffixIconButton">
-    <input type="text" nz-input [placeholder]="'Search for a product' | translate" />
+    <input type="text" nz-input [(ngModel)]="SearchText" [placeholder]="'Search for a product' | translate" />
 </nz-input-group>
 <ng-template #suffixIconButton>
     <button nz-button nzType="primary" nzSearch><nz-icon nzType="search" /></button>

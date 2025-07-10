@@ -79,7 +79,7 @@ Router.post('/layout', HandleEndpointFunction(async (req, res) => {
 
     const [Result] = await Database.execute<any>(InsertQuery, Values);
 
-    res.send({ id: Result?.insertId, tableid:body.tableid  })
+    res.send({ id: Result?.insertId, tableid: body.tableid })
 
 }));
 
@@ -96,18 +96,22 @@ Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 
     const body = req.body
 
-    const [InsertQuery, Values] = SQLUtils.BuildInsertQuery('layout', [
-        'top',
-        'left',
-        'width',
-        'height',
-        'type',
-        'componentid',
-    ], body)
+    await Database.query('DELETE FROM layout')
 
-    const [Result] = await Database.execute<any>(InsertQuery, Values);
+    if (req.body && Array.isArray(req.body) && req.body.length > 0) {
+        const [InsertQuery, Values] = SQLUtils.BuildInsertQuery('layout', [
+            'top',
+            'left',
+            'width',
+            'height',
+            'type',
+            'tableid',
+        ], body)
 
-    res.send({ id: Result?.insertId })
+        const [Result] = await Database.execute<any>(InsertQuery, Values);
+    }
+
+    res.send()
 
 }));
 

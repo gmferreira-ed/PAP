@@ -247,13 +247,13 @@ WITH ranked_sales AS (
         SUM(purchased_item.quantity * product.price) AS total_revenue,
         ROW_NUMBER() OVER (
             PARTITION BY category.id
-            ORDER BY SUM(purchased_item.quantity) DESC
+            ORDER BY SUM(purchased_item.quantity * purchased_item.cost) DESC
         ) AS rnk
     FROM order_items purchased_item
     LEFT JOIN menu product ON purchased_item.product_id = product.id
     LEFT JOIN menu_categories category ON product.category_id = category.id
     JOIN orders orde ON orde.order_id = purchased_item.order_id
-    WHERE orde.created_at >= ? AND orde.created_at <= ?
+    WHERE orde.created_at >= ? AND orde.created_at <= ? AND orde.status = 'Finished'
     GROUP BY category.id, category.name, product.id, product.name
 ),
 total_revenue_all AS (
@@ -262,7 +262,7 @@ total_revenue_all AS (
     FROM order_items purchased_item
     LEFT JOIN menu product ON purchased_item.product_id = product.id
     JOIN orders orde ON orde.order_id = purchased_item.order_id
-    WHERE orde.created_at >= ? AND orde.created_at <= ?
+    WHERE orde.created_at >= ? AND orde.created_at <= ? AND orde.status = 'Finished'
 )
 SELECT
     rs.category_id,

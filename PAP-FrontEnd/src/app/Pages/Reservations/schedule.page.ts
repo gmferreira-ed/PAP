@@ -25,6 +25,8 @@ import { LoadingScreen } from "../../Components/loading-screen/loading-screen.co
 import { Vector2 } from '../../../types/vector';
 import { AuthService } from '../../Services/Auth.service';
 import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
+import GlobalUtils from '../../Services/GlobalUtils';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 
 function ToSQLDate(Date: Date) {
@@ -35,7 +37,7 @@ function ToSQLDate(Date: Date) {
   selector: 'schedule-page',
   imports: [PageLayoutComponent, DatePipe, NzRadioModule, FormsModule, NzEmptyModule, NoDataComponent, NzButtonModule, NzIconModule, IconsModule,
     TranslateModule, NzModalModule, ReactiveFormsModule, NzFormModule, NzInputModule, NzDatePickerModule, NzInputNumberModule, RestaurantLayout,
-    NzTimePickerModule, LoadingScreen, DynamicDatePipe],
+    NzTimePickerModule, LoadingScreen, DynamicDatePipe, NzTableModule],
   templateUrl: './schedule.page.html',
   styleUrl: './schedule.page.less'
 })
@@ -56,6 +58,7 @@ export class SchedulePage {
   OpeningHours = new Date(5, 5, 10, 8, 30, 0, 0)
   ClosingHours = new Date(5, 5, 10, 23, 0, 0, 0)
   TotalHoursOpen = (this.ClosingHours.getTime() - this.OpeningHours.getTime()) / 1000 / 60 / 60
+  UserImagesURL = AppSettings.UserImagesURL
 
 
   // SERVICES
@@ -80,6 +83,7 @@ export class SchedulePage {
 
   // VARIABLES
   CanModifyReservations = this.AuthService.HasEndpointPermission('reservations', 'POST')
+  EnforceNumber = GlobalUtils.EnforceNumber
 
 
   // FORMS
@@ -223,6 +227,7 @@ export class SchedulePage {
 
   // SHOW RESERVATION INF
   SelectedReservation: any = undefined
+  SelectedReservationDetails:any = undefined
   ReservationPromptPosition = new Vector2()
 
   PromptReservationInfo(Event: MouseEvent, Reservation: any) {
@@ -370,8 +375,8 @@ export class SchedulePage {
       EndDate = undefined
     }
 
-    const StartSQLDate = ToSQLDate(StartDate)
-    const EndSQLDate = EndDate && ToSQLDate(EndDate)
+    const StartSQLDate = this.ViewType != 'All' ? ToSQLDate(StartDate) : ''
+    const EndSQLDate = this.ViewType != 'All' ? (EndDate && ToSQLDate(EndDate)) : ''
 
     const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', this.TranslateService.instant('Failed to get reservations'), {
       StartDate: StartSQLDate,

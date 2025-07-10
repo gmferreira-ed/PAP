@@ -1,7 +1,9 @@
 const path = require('path');
 const cors = require('cors')
-const dotenv = require('dotenv')
 const http = require('http')
+
+import dotenv from "dotenv"
+dotenv.config()
 
 import fs from 'fs'
 

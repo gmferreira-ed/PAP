@@ -24,6 +24,7 @@ export class LoginPage {
 
   router = inject(Router)
   LoggingIn = false
+  Initialized = false
 
   LoginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
@@ -49,10 +50,19 @@ export class LoginPage {
       }else if(LoginError?.ErrorMessage == this.TranslateService.instant('User does not exist')){
          this.LoginForm.get('username')?.reset()
       }
+      else if(LoginError?.ErrorCode ==403){
+        console.log(LoginError)
+         this.router.navigate(['register'], {queryParams:{verifying:LoginError['email']}})
+      }
     }
     
     this.LoggingIn = false
     this.LoginForm.enable()
   }
 
+  ngOnInit(){
+    setTimeout(() => {
+      this.Initialized = true
+    }, 5);
+  }
 }

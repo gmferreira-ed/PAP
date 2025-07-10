@@ -155,7 +155,7 @@ export class StocksPage {
   });
 
   StockOrderForm = new FormGroup({
-    supplier_id: new FormControl(null, [Validators.required]),
+    supplier_id: new FormControl<null | number>(null, [Validators.required]),
     order_date: new FormControl('', [Validators.required]),
     delivery_date: new FormControl(''),
   });
@@ -249,6 +249,31 @@ export class StocksPage {
 
 
 
+  TogglingStockItemActive = false
+  async ToggleStockitemActive(StockItem?: StockItem) {
+
+    if (!StockItem) {
+      StockItem = this.StocksService.StockItems.find((i) => i.id == this.SelectedItems[0])
+    }
+
+    if (StockItem) {
+      this.TogglingStockItemActive = true
+
+      const TargetVal = StockItem.active ? 0 : 1
+      const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-items', 'PATCH', this.TranslateService.instant("Failed to save component data"), {
+        active: TargetVal,
+        id: StockItem.id
+      })
+      if (Result) {
+        this.SelectedItems = []
+        this.MessageService.success('Sucess!')
+        this.LoadStockItems()
+      }
+    }
+
+
+    this.TogglingStockItemActive = false
+  }
 
   LinkingProduct = false
   UnlinkingProduct = false
@@ -381,7 +406,7 @@ export class StocksPage {
   AddOrderItem() {
     const CurrentSupplierID = this.StockOrderForm.value.supplier_id
     if (CurrentSupplierID) {
-      const DefaultItem: StockItem = CurrentSupplierID && this.StocksService.StockItems.find((Stockitem) => Stockitem.supplier_id == CurrentSupplierID)
+      const DefaultItem: StockItem|undefined =  this.StocksService.StockItems.find((Stockitem) => Stockitem.supplier_id == CurrentSupplierID)
       if (DefaultItem) {
         this.StockOrderItems.push({ item_id: DefaultItem.id, quantity: 1, cost: DefaultItem.purchase_price })
       } else {
@@ -429,6 +454,7 @@ export class StocksPage {
     this.StockOrderItems = []
     for (const ItemID of this.SelectedItems) {
       const StockItem = this.GetStockItemByID(ItemID)!
+      this.StockOrderForm.get('supplier_id')?.setValue(StockItem.supplier_id)
       this.StockOrderItems.push({ item_id: ItemID, quantity: 1, cost: StockItem.purchase_price })
     }
     this.SelectedItems = []
@@ -449,6 +475,17 @@ export class StocksPage {
     return this.StocksService.StockItems.find((item) => item.id == ID)
   }
 
+  SelectedItemsHaveSameSupplier(): boolean {
+    const firstStockItem = this.GetStockItemByID(this.SelectedItems[0])
+    if (!firstStockItem) return false
+
+    const firstSupplierId = firstStockItem.supplier_id
+    return this.SelectedItems.every(id => {
+      const item = this.GetStockItemByID(id);
+      const supllier = item && this.GetSupplierByID(item.supplier_id);
+      return item && item.supplier_id === firstSupplierId && supllier?.active
+    });
+  }
 
   // LOADING
   async LoadStockItems() {
@@ -458,10 +495,12 @@ export class StocksPage {
     const Ingredients: StockItem[] = []
 
     for (const StockItem of Stocks) {
-      if (!StockItem.unit_of_measure) {
-        Items.push(StockItem)
-      } else {
-        Ingredients.push(StockItem)
+      if (StockItem.active) {
+        if (!StockItem.unit_of_measure) {
+          Items.push(StockItem)
+        } else {
+          Ingredients.push(StockItem)
+        }
       }
     }
 
@@ -595,8 +634,10 @@ export class StocksPage {
     const StockItemsSeries: number[] = [];
 
     for (const StockItem of this.StocksService.StockItems) {
-      Labels.push(StockItem.name);
-      StockItemsSeries.push(StockItem.quantity_in_stock);
+      if (StockItem.active) {
+        Labels.push(StockItem.name);
+        StockItemsSeries.push(StockItem.quantity_in_stock);
+      }
     }
 
 
