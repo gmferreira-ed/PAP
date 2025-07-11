@@ -27,6 +27,7 @@ import { AuthService } from '../../Services/Auth.service';
 import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 import GlobalUtils from '../../Services/GlobalUtils';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { FValidators } from '../../Services/Validators';
 
 
 function ToSQLDate(Date: Date) {
@@ -93,7 +94,7 @@ export class SchedulePage {
     date: new FormControl<Date | undefined>(undefined, [Validators.required]),
     time: new FormControl<Date | undefined>(undefined, [Validators.required]),
     name: new FormControl(undefined, []),
-    phone: new FormControl(undefined, []),
+    phone: new FormControl(undefined, [FValidators.phone]),
     email: new FormControl(undefined, [Validators.email]),
     notes: new FormControl(undefined)
   })

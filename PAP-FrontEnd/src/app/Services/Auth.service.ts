@@ -47,9 +47,13 @@ export class AuthService {
     const EndpointPermissions = EndpointInfo?.Permissions
     const IsAdmin = UserPerms.administrator == 1
 
+    
 
     const IsGlobal = EndpointPermissions?.includes('User')
-    if (IsGlobal || EndpointPermissions?.includes(UserPerms.permission_name) || EndpointInfo?.Unprotected || IsAdmin) {
+    const HasPerm = IsGlobal || EndpointPermissions?.includes(UserPerms.role) || EndpointInfo?.Unprotected || IsAdmin
+   
+
+    if (HasPerm) {
       return true
     } else {
       return false
@@ -65,7 +69,7 @@ export class AuthService {
 
   async Login(ActivateRoute: ActivatedRouteSnapshot) {
     const AuthURL = new URL('auth', AppSettings.APIUrl)
-    
+
     const ErrorMessage = !ActivateRoute.data['IgnoreRedirect'] && this.TranslateService.instant('Failed to authenticate Please try again')
     const [AuthSuccess, ErrorInfo] = await this.HttpService.MakeRequest(AuthURL, 'POST', ErrorMessage
     )
@@ -84,11 +88,17 @@ export class AuthService {
 
       return [User, EndpointPermissions]
 
-    } else if (!ActivateRoute.data['IgnoreRedirect'] && ErrorInfo?.ErrorCode == 401) {
+    } else if ((!ActivateRoute.data['IgnoreRedirect']) && ErrorInfo?.ErrorCode == 401) {
       this.router.navigate(['/login'])
+      return [null, {}]
     } else if (ErrorInfo?.ErrorCode != 401) {
       this.router.navigate(['/error'])
     }
+
+    if (ActivateRoute.data['Unprotected']){
+      return [false, {}, true]
+    }
+
     return [null, {}]
   }
 
@@ -116,7 +126,7 @@ export class AuthService {
   async Authenticate(CurrentPage: ActivatedRouteSnapshot, State: RouterStateSnapshot): Promise<[boolean, boolean?]> {
 
 
-    const [User, EndpointPermissions, IgnoreRedirect] = await this.Login(CurrentPage)
+    const [User, EndpointPermissions, Unprotected, IgnoreLoginRedirect] = await this.Login(CurrentPage)
     const RouteData = CurrentPage.data
 
     // Load permissions data
@@ -157,7 +167,6 @@ export class AuthService {
           }
         }
 
-        //console.log( this.AccessibleRoutes)
         // CHECK CURRENT PAGE ACCESS
         if (CurrentPageURL) {
           const CurrentPageData = this.AccessibleRoutes[CurrentPageURL]
@@ -176,7 +185,7 @@ export class AuthService {
 
 
 
-    return [false, IgnoreRedirect]
+    return [Unprotected || false, IgnoreLoginRedirect]
   }
 
   private getTemplatePath(route: ActivatedRouteSnapshot): string {

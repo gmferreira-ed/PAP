@@ -23,14 +23,14 @@ export const PageAuthGuard: CanActivateChildFn = async (route, state) => {
     AuthenticationPromise = authService.Authenticating
   }
 
-  const [AuthenticationResult, IgnoreRedirect] = await AuthenticationPromise
+  const [AuthenticationResult, IgnoreLoginRedirect] = await AuthenticationPromise
 
   authService.Authenticating = false
-  if (true){
+  if (AuthenticationResult){
     return true
   }
   
-  if (!IgnoreRedirect){
+  if (!IgnoreLoginRedirect){
     router.navigate(['/login']);
   }
   return false;

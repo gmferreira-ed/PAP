@@ -9,9 +9,10 @@
         <div class="user-info">
 
             <div class="user-image-container">
-                @if (User()){
-                    <img [src]="FileSelector.Files[0]?.imagebase64 || UserImagesURL+User()?.username"
-                        onerror="this.src='Images/Profile.png'" class="pfp">
+                <img [src]="FileSelector && FileSelector.Files[0]?.imagebase64 || UserImagesURL+User()?.username"
+                    onerror="this.src='Images/Profile.png'" class="pfp">
+
+                @if (User()?.username == CurrentUser()){
                     <div class="overlay invisible">
                         <file-select #FileSelector [override]="true" UploadDisplayMode="none"
                             [disabled]="CurrentUser() == User()" (FilesChange)="ChangeUserImage($event)">
@@ -19,9 +20,9 @@
                             <nz-icon nzType="edit"></nz-icon>
                         </file-select>
                     </div>
-                    @if (UploadingImage){
-                        <loading-screen LoaderStyle="Spinner" [IsLoading]="UploadingImage"></loading-screen>
-                    }
+                }
+                @if (UploadingImage){
+                    <loading-screen LoaderStyle="Spinner" [IsLoading]="UploadingImage"></loading-screen>
                 }
             </div>
 
@@ -33,38 +34,42 @@
                         <label class="fullname">{{User()?.fullname}}</label>
 
                         <!-- BUTTONS -->
-                        <div class="row fill wrap" style="justify-content: end;">
-                            @if (User()?.active){
-                                <button nz-button nzType="primary" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"
-                                    [disabled]="User()?.username == CurrentUser()" [nzLoading]="ChangingUserRole">
-                                    <nz-icon nzType="security-scan" nzTheme="outline" />
-                                    {{'Change Permissions' | translate}}
-                                </button>
-                                <nz-dropdown-menu #menu="nzDropdownMenu">
-                                    <ul nz-menu>
-                                        @for (Role of Roles; track $index){
-                                            <li nz-menu-item
-                                                [nzDisabled]="Role.permission_level>AuthService.UserPermissions.permission_level"
-                                                (click)="ChangeUserRole(Role.name)">
-                                                {{Role.name | translate}}
-                                            </li>
-                                        }
-                                    </ul>
-                                </nz-dropdown-menu>
+                        @if (CanModifyUser){
+                            <div class="row fill wrap" style="justify-content: end;">
+                                @if (User()?.active){
+                                    <button nz-button nzType="primary" nz-dropdown nzTrigger="click"
+                                        [nzDropdownMenu]="menu" [disabled]="User()?.username == CurrentUser()"
+                                        [nzLoading]="ChangingUserRole">
+                                        <nz-icon nzType="security-scan" nzTheme="outline" />
+                                        {{'Change Permissions' | translate}}
+                                    </button>
+                                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                                        <ul nz-menu>
+                                            @for (Role of Roles; track $index){
+                                                <li nz-menu-item
+                                                    [nzDisabled]="Role.permission_level>AuthService.UserPermissions.permission_level"
+                                                    (click)="ChangeUserRole(Role.name)">
+                                                    {{Role.name | translate}}
+                                                </li>
+                                            }
+                                        </ul>
+                                    </nz-dropdown-menu>
 
-                                <button nz-button nzDanger (click)="ToggleUserStatus()" [nzLoading]="TogglingUserStatus"
-                                    [disabled]="User()?.username== CurrentUser()">
-                                    <nz-icon nzType="user-delete" nzTheme="outline" />
-                                    {{'Deactivate User' | translate}}
-                                </button>
-                            }@else {
-                                <button nz-button class="button row green border" (click)="ToggleUserStatus()"
-                                    [nzLoading]="TogglingUserStatus">
-                                    <icon type="user-round-check" style="display: inline; margin-right: 5px;"></icon>
-                                    {{'Activate User' | translate}}
-                                </button>
-                            }
-                        </div>
+                                    <button nz-button nzDanger (click)="ToggleUserStatus()"
+                                        [nzLoading]="TogglingUserStatus" [disabled]="User()?.username== CurrentUser()">
+                                        <nz-icon nzType="user-delete" nzTheme="outline" />
+                                        {{'Deactivate User' | translate}}
+                                    </button>
+                                }@else {
+                                    <button nz-button class="button row green border" (click)="ToggleUserStatus()"
+                                        [nzLoading]="TogglingUserStatus">
+                                        <icon type="user-round-check" style="display: inline; margin-right: 5px;">
+                                        </icon>
+                                        {{'Activate User' | translate}}
+                                    </button>
+                                }
+                            </div>
+                        }
                     </div>
 
                     <!-- USERNAME / ROLE -->
@@ -74,15 +79,19 @@
 
                 <!-- USER INFO -->
                 <div class="row wrap user-info-fields" style="width: 100%;">
-                    <div class="collumn">
-                        <label class="info-label">{{'Email' | translate }}</label>
-                        <label id="email">{{User()?.email}}</label>
-                    </div>
+                    @if (User()?.email){
+                        <div class="collumn">
+                            <label class="info-label">{{'Email' | translate }}</label>
+                            <label id="email">{{User()?.email}}</label>
+                        </div>
+                    }
 
-                    <div class="collumn">
-                        <label class="info-label">{{'Phone Number' | translate }}</label>
-                        <label id="phone">{{User()?.phone}}</label>
-                    </div>
+                    @if (User()?.phone){
+                        <div class="collumn">
+                            <label class="info-label">{{'Phone Number' | translate }}</label>
+                            <label id="phone">{{User()?.phone}}</label>
+                        </div>
+                    }
 
                     <div class="collumn">
                         <label class="info-label">{{'Register Date' | translate }}</label>
@@ -130,23 +139,25 @@
                         }@else {
                             <icon type="no-card" size="50"></icon>
                             <label>{{'This user has no keycard attributed' | translate}}</label>
-                            <div class="row" (click)="CardService.PromptingCardRead = true">
-                                <button class="button">
-                                    <icon type="credit-card" color="black"></icon>
-                                    {{'New User Card' | translate}}
-                                </button>
-                                <button class="button">
-                                    <icon type="keytag"></icon>
-                                    {{'New Key Tag' | translate}}
-                                </button>
-                            </div>
+                            @if (CanModifyUser){
+                                <div class="row" (click)="CardService.PromptingCardRead = true">
+                                    <button class="button">
+                                        <icon type="credit-card" color="black"></icon>
+                                        {{'New User Card' | translate}}
+                                    </button>
+                                    <button class="button">
+                                        <icon type="keytag"></icon>
+                                        {{'New Key Tag' | translate}}
+                                    </button>
+                                </div>
+                            }
                         }
                     </div>
                 </section>
 
-                <stat-card StatName="{{'Salary' | translate}}" [StatTotalValue]='TotalFinalPay' [ShowChartTimeOptions]="false"
-                    [ShowTimeNavigation]="true" ViewType="Month" (ViewTypeChanged)="SalaryRangeChanged($event)"
-                    FormatType="currency">
+                <stat-card StatName="{{'Salary' | translate}}" [StatTotalValue]='TotalFinalPay'
+                    [ShowChartTimeOptions]="false" [ShowTimeNavigation]="true" ViewType="Month"
+                    (ViewTypeChanged)="SalaryRangeChanged($event)" FormatType="currency">
                     @if (CanViewEntries){
                         <label>{{'Work hours:' | translate}} {{TotalNormalPay | dcurrency}}</label>
                         <label>{{'Extra work hours:' | translate}} {{TotalExtraPay | dcurrency}}</label>
@@ -157,7 +168,8 @@
                 </stat-card>
             </div>
 
-            <stat-card StatName="{{'Total Work Hours' | translate}}" #WorkHoursChart [TimeOptions]="['Day', 'Week', 'Month', 'All']"
+            <stat-card StatName="{{'Total Work Hours' | translate}}" #WorkHoursChart
+                [TimeOptions]="['Day', 'Week', 'Month', 'All']"
                 [ChartOptions]="CanViewEntries ? ShiftChartOptions : undefined" [StatTotalValue]='TotalHours'
                 (ViewTypeChanged)="EntriesChanged(this.UserEntries, $event)" [FormatCallback]="FormatTotal">
                 @if (!CanViewEntries){
@@ -175,7 +187,8 @@
     <div class="overlay" [class.invisible]="!CardService.PromptingCardRead">
         <!-- <icon type="keytag" size="200" [fill]="true" color="white"></icon> -->
         <ng-lottie [options]="CardAnimationOptions" width="300" height="300"></ng-lottie>
-        <h2 style="color: var(--secondary-color);">{{'Please pass the card or key tag over the reader' | translate}}</h2>
+        <h2 style="color: var(--secondary-color);">{{'Please pass the card or key tag over the reader' | translate}}
+        </h2>
         <button nz-button (click)="CardService.PromptingCardRead=false">{{'Cancel' | translate}}</button>
     </div>
 }

@@ -106,7 +106,9 @@ Router.post('/auth/signup', HandleEndpointFunction(async (req, res) => {
 
     if (!user || req.session.pending_verification) {
         const UserInfo = req.body
-        UserInfo.password = HashPassword(UserInfo.password)
+        UserInfo.password = await HashPassword(UserInfo.password)
+
+        console.log(UserInfo)
 
         try {
             const [UserCreateQuery, Values] = SQLUtils.BuildInsertQuery('users', [

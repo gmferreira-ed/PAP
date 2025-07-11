@@ -72,6 +72,7 @@ async function GenerateUserCode(Request: ExpressRequest) {
   Request.session.verificationcode = Code
   Request.session.verificationcode_created = new Date().getTime()
 
+  console.log('Code', Code)
 
   const UserData = await GetUserData(Request.session.user!)
   let Fullname = UserData.fullname
@@ -169,12 +170,12 @@ async function CheckPermissions(Route: string, Request: Request, ParamUser?: str
       const IsGlobal = EndpointData.Permissions.includes('User')
       const IsAdmin = UserData.administrator
 
-
       if ((EndpointData.Permissions.includes(UserData.role) || IsGlobal || IsAdmin) && UserData.active && UserData.verified) {
         return [true, IsGlobal]
       }
 
 
+      console.error('Acces denied to',Route)
       // Deny access
       return [false, 401, 'Unauthorized']
     } catch (error) {
@@ -216,7 +217,9 @@ async function PermissionsMiddleware(request: Request, response: Response, next:
 let HardCodedAdmins = ['gmferreira']
 
 async function GetUserData(User: string): Promise<User> {
-  const UserPermissionsQuery = `SELECT * FROM users JOIN roles ON users.role = roles.name WHERE username = ?`
+  const UserPermissionsQuery = `SELECT userid, username, administrator, card_id, created, email, fullname, permission_level,
+  role, verified, active
+   FROM users JOIN roles ON users.role = roles.name WHERE username = ?`
   const [Users] = await Database.execute<any>(UserPermissionsQuery, [User]);
 
 

@@ -121,9 +121,9 @@ export const routes: Routes = [
     { path: 'profile/:username', component: ProfilePage, canActivate: [PageAuthGuard] },
 
 
-    { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { IgnoreRedirect: true }   },
-    { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { IgnoreRedirect: true } },
-    { path: 'error', component: ErrorPage, data: { IgnoreRedirect: true } },
+    { path: 'login', component: LoginPage, canActivate: [PageAuthGuard], data: { IgnoreRedirect: true, Unprotected:true }   },
+    { path: 'register', component: RegisterPage, canActivate: [PageAuthGuard], data: { IgnoreRedirect: true, Unprotected:true  } },
+    { path: 'error', component: ErrorPage, data: { IgnoreRedirect: true, Unprotected:true  } },
 
     {
         path: 'settings', component: SettingsPage, canActivate: [PageAuthGuard]

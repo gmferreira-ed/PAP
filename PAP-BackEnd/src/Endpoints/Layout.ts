@@ -71,6 +71,7 @@ Router.post('/layout', HandleEndpointFunction(async (req, res) => {
         'left',
         'width',
         'height',
+        'rotation',
         'type',
         'componentid',
         'tableid',
@@ -104,6 +105,7 @@ Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
             'left',
             'width',
             'height',
+            'rotation',
             'type',
             'tableid',
         ], body)
@@ -127,7 +129,7 @@ Router.post('/layout/import', HandleEndpointFunction(async (req, res) => {
 Router.patch('/layout', HandleEndpointFunction(async (req, res) => {
     const body = req.body
 
-    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('layout', ['top', 'left', 'width', 'height'], body, ['componentid'])
+    var [SQLQuery, Values] = SQLUtils.BuildUpdateQuery('layout', ['top', 'left', 'width', 'height', 'rotation'], body, ['componentid'])
 
     const [rows] = await Database.execute(SQLQuery, Values);
     res.send(rows)

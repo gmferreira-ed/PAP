@@ -6,7 +6,16 @@ import axios from 'axios';
 import sharp from 'sharp'
 import path from 'path'
 import fs from 'fs'
+import PermissionsService from '../Services/PermissionsService';
 
+
+const UserQuery = `SELECT userid,username,active,fullname,
+    role,birthdate, card_id, created, verified 
+    FROM users `
+
+const SensitiveUserQuery = `SELECT userid,username,active,email,phone,fullname,
+    role,birthdate, country, city, address, postalcode, card_id, created, verified 
+    FROM users `
 
 /**
  * @displayname "View Users"
@@ -19,36 +28,32 @@ Router.get('/users', HandleEndpointFunction(async (req, res) => {
     const query = req.query
     const targetuser = query.user
 
-    if (!targetuser) {
-        // Paginated users
+    const ClientData = await PermissionsService.GetUserData(req.session.user!)
+    const TargetQuery = (ClientData.administrator || req.session.user == targetuser) ? SensitiveUserQuery : UserQuery
 
-        const [UsersQuery] = SQLUtils.BuildSelectQuery('users', {}, [])
+    var result = await GetPaginatedResult("users", TargetQuery, [], query)
+    res.send(result)
 
-        var result = await GetPaginatedResult("users", UsersQuery, [], query)
-        res.send(result)
-    } else {
-        const UserQuery = `SELECT * FROM users WHERE username=?`
-        const [UserInfo] = await Database.execute<any[]>(UserQuery, [targetuser])
-
-        res.send(UserInfo[0])
-    }
 }))
 
 
 /**
  * @displayname "View User by Username"
  * @category "Users"
- * @path /users/:user
+ * @path /users/user
  * @method GET
- * @summary "View specific user information by username"
- * @connected GET/api/users
+ * @summary "View specific user information by username. Only administrators may view sensitive info"
+ * @unprotected true
  */
-Router.get('/users/:user', HandleEndpointFunction(async (req, res) => {
+Router.get('/users/user', HandleEndpointFunction(async (req, res) => {
 
-    const targetuser = req.params.user
+    const targetuser = req.query.user
+    
+    const ClientData = await PermissionsService.GetUserData(req.session.user!)
+    let TargetQuery = (ClientData.administrator || req.session.user == targetuser) ? SensitiveUserQuery : UserQuery
+    TargetQuery+='WHERE username=?'
 
-    const UserQuery = `SELECT * FROM users WHERE username=?`
-    const [UserInfo] = await Database.execute<any[]>(UserQuery, [targetuser])
+    const [UserInfo] = await Database.execute<any[]>(TargetQuery, [targetuser])
 
     res.send(UserInfo[0])
 }))
@@ -86,9 +91,9 @@ Router.post('/users/keycard', HandleEndpointFunction(async (req, res) => {
     try {
         const CardSetQuery = `UPDATE users SET card_id=? WHERE userid=?`;
         const [CardSetResult] = await Database.execute(CardSetQuery, [CardID, UserID]);
-    } catch (err:any) {
+    } catch (err: any) {
         if (err.code === 'ER_DUP_ENTRY' || err.errno === 1062) {
-            res.status(401).send({error:"Already connected to another user"});
+            res.status(401).send({ error: "Already connected to another user" });
         } else {
             throw err
         }

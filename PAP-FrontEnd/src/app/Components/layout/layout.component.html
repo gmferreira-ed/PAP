@@ -3,9 +3,18 @@
     <div class="section">
         <label>{{'Snapping' | translate}}</label>
         <div class="row fill">
-            <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;" [nzMin]="0" [nzMax]="10" [nzStep]="1"
+            <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;" [nzMin]="0" [nzMax]="10" [nzStep]="0.5"
                 [(ngModel)]="Snapping"></nz-input-number>
-            <nz-slider style="flex: 1" [nzMin]="0" [nzMax]="10" [nzStep]="1" [(ngModel)]="Snapping"></nz-slider>
+            <nz-slider style="flex: 1" [nzMin]="0" [nzMax]="10" [nzStep]="0.5" [(ngModel)]="Snapping"></nz-slider>
+        </div>
+    </div>
+
+    <div class="section">
+        <label>{{'Rotation Snapping' | translate}}</label>
+        <div class="row fill">
+            <nz-input-number style="height: 80%; width: 60px; border-radius: 5px;" [nzMin]="5" [nzMax]="90" [nzStep]="5"
+                [(ngModel)]="RotationSnapping"></nz-input-number>
+            <nz-slider style="flex: 1" [nzMin]="5" [nzMax]="90" [nzStep]="5" [(ngModel)]="RotationSnapping"></nz-slider>
         </div>
     </div>
 
@@ -162,51 +171,57 @@
                     [style.height]="Component.Size.Y*Zoom +'px'" [style.left]="Component.Position.X*Zoom +'px'"
                     [style.top]="Component.Position.Y*Zoom +'px'" (mousedown)="DragStart($event, Component)"
                     (mouseup)="ShowHandles(Component)" [class.selected]="SelectedComponent == Component"
-                    [style.cursor]="EditMode ? 'move' : 'pointer'">
+                    [style.cursor]="EditMode ? 'move' : 'pointer'"
+                    [style.transform]="'rotate(' + (Component.Rotation) + 'deg)'"
+                >
                     @if (LayoutConfigs.Components[Component.Type]?.Image){
                     <img class="background" [src]="LayoutConfigs.Components[Component.Type]?.Image">
                     }
 
                     <loading-screen [IsLoading]="Component.processing" LoaderStyle="Spinner" ></loading-screen>
 
-                    @if (Component.Type == 'Table' || Component.Type == 'RoundTable'){
-                    <label class="table-number" [style.font-size]="4*Zoom+'px'">
-                        {{'Table' | translate}} {{Component.tableid}}
-                    </label>
-
-
-                    @let Table = Component.tableid != null ? Tables[Component.tableid] : undefined;
-                    @let TableStatus = Table && StatusDisplayNames[Table.status];
-
-                    @if (TableStatus && !SelectionMode){
-                        @if (!EditMode && Zoom>3){
-                            <label [class]="'table-status '+Table?.status" [style.font-size]="2.5*Zoom+'px'">
-                                {{TableStatus}}
-                                <br>
-                                {{Table.time | ddate:'HH:mm:ss':'UTC'}}
+                    <div class="contents" [style.transform]="'rotate(' + (-Component.Rotation) + 'deg)'">
+                         @if (Component.Type == 'Table' || Component.Type == 'RoundTable'){
+                            <label class="table-number" [style.font-size]="4*Zoom+'px'">
+                                {{'Table' | translate}} {{Component.tableid}}
                             </label>
-                        }
-                        @if (!EditMode && Zoom>2){
-                            <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-50%, 50%);">
-                                <div class="clock" style="width: 20px; height: 20px;">
-                                    <span class="hour"></span>
-                                    <span class="min"></span>
-                                    <span class="circel"></span>
-                                </div>
-                            </floating-container>
-                        }
-                    }
-                    
 
-                    }
 
-                    @if (SelectedComponent == Component && EditMode){
-                    <div class="selection-box">
-                        @for (Handle of Handles; track $index){
-                        <div [class]="'dragger ' + Handle" #Handle (mousedown)="ResizeStart($event, Component, Handle)">
-                        </div>
+                            @let Table = Component.tableid != null ? Tables[Component.tableid] : undefined;
+                            @let TableStatus = Table && StatusDisplayNames[Table.status];
+
+                            @if (TableStatus && !SelectionMode){
+                                @if (!EditMode && Zoom>3){
+                                    <label [class]="'table-status '+Table?.status" [style.font-size]="2.5*Zoom+'px'">
+                                        {{TableStatus}}
+                                        <br>
+                                        {{Table.time | ddate:'HH:mm:ss':'UTC'}}
+                                    </label>
+                                }
+                                @if (!EditMode && Zoom>2){
+                                    <floating-container style="left: 100%; bottom: 100%; margin: 0px; transform: translate(-50%, 50%);">
+                                        <div class="clock" style="width: 20px; height: 20px;">
+                                            <span class="hour"></span>
+                                            <span class="min"></span>
+                                            <span class="circel"></span>
+                                        </div>
+                                    </floating-container>
+                                }
+                            }
                         }
                     </div>
+
+                    @if (SelectedComponent == Component && EditMode){
+                        <!-- [style.transform]="'rotate(' + (-Component.Rotation) + 'deg)'" -->
+                        <div class="selection-box" >
+                            @for (Handle of Handles; track $index){
+                            <div [class]="'dragger ' + Handle" #Handle (mousedown)="ResizeStart($event, Component, Handle)">
+                            </div>
+                            }
+                            <div class="dragger rotate" (mousedown)="RotateStart($event, Component)">
+                                <icon type="refresh-ccw" size="20px" color="rgb(0,0,0)"></icon>
+                            </div>
+                        </div>
                     }
                 </div>
                 }
@@ -231,6 +246,11 @@
             <h4>{{'Size' | translate}}</h4>
             <label>X: {{SelectedComponent.Size.X}}</label>
             <label> | Y: {{SelectedComponent.Size.Y}}</label>
+        </div>
+
+        <div>
+            <h4>{{'Rotation' | translate}}</h4>
+            <label>{{SelectedComponent.Rotation}}°</label>
         </div>
         }@else {
         }

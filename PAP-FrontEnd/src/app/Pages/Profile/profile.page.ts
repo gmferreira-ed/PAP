@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal, SimpleChanges } from '@angular/core';
+import { Component, effect, inject, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { PageLayoutComponent } from '../../Components/page-layout/page-layout.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../Services/Http.service';
@@ -69,12 +69,15 @@ export class ProfilePage {
   DisassociatingCard = false
   ChangingUserRole = false
 
+  @ViewChild('FileSelector') FileSelector!:FileSelectComponent
+
   // Data
   Shifts: any = []
   Roles: UserRole[] = []
 
   // Variables
   CanViewEntries = this.AuthService.HasEndpointPermission('entries', 'GET') || this.CurrentUser() == this.User()?.username
+  CanModifyUser = this.AuthService.HasEndpointPermission('users', 'PATCH') 
 
 
 
@@ -359,7 +362,7 @@ export class ProfilePage {
 
     const UserToSearch = this.ActiveRoute.snapshot.paramMap.get('username')
 
-    const UsersURL = new URL('users', AppSettings.APIUrl)
+    const UsersURL = new URL('users/user', AppSettings.APIUrl)
     UsersURL.searchParams.append('user', UserToSearch || '')
 
     const [UserInfo] = await this.HttpService.MakeRequest(UsersURL, 'GET', this.TranslateService.instant('Failed to fetch user info')) as [User]

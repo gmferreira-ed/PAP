@@ -143,7 +143,7 @@
                 <nz-form-item>
                     <nz-form-label>{{'Time' | translate}}</nz-form-label>
                     <nz-form-control>
-                        <nz-time-picker nzFormat="HH:mm" formControlName="time"></nz-time-picker>
+                        <nz-time-picker nzFormat="HH:mm" [nzMinuteStep]="5" formControlName="time"></nz-time-picker>
                     </nz-form-control>
                 </nz-form-item>
             </div>
@@ -307,7 +307,7 @@
                 <nz-form-item>
                     <nz-form-label>{{'Time' | translate}}</nz-form-label>
                     <nz-form-control>
-                        <nz-time-picker nzFormat="HH:mm" formControlName="time" nzSize="large"></nz-time-picker>
+                        <nz-time-picker nzFormat="HH:mm" [nzMinuteStep]="5" formControlName="time" nzSize="large"></nz-time-picker>
                     </nz-form-control>
                 </nz-form-item>
 
@@ -328,7 +328,7 @@
 
                     <nz-form-item>
                         <nz-form-label>{{'Phone' | translate}}</nz-form-label>
-                        <nz-form-control>
+                        <nz-form-control [nzErrorTip]="'Please input a valid email!' | translate">
                             <input nz-input formControlName="phone" maxlength="12" nzSize="large"
                                 [placeholder]="'Phone Number' | translate" (keypress)="EnforceNumber($event)" />
                         </nz-form-control>
@@ -337,7 +337,7 @@
 
                 <nz-form-item>
                     <nz-form-label>{{'Email' | translate}}</nz-form-label>
-                    <nz-form-control>
+                    <nz-form-control [nzErrorTip]="'Please input a valid phone number!' | translate">
                         <input nz-input formControlName="email" nzSize="large" [placeholder]="'Email' | translate" />
                     </nz-form-control>
                 </nz-form-item>
@@ -355,14 +355,14 @@
     </ng-container>
 </nz-modal>
 
-<nz-modal [nzOkText]="null" [nzCancelText]="'Close' | translate" [nzVisible]="SelectedReservationDetails" 
-(nzOnCancel)="SelectedReservationDetails = undefined" nzTitle="Reservations" nzCentered>
+<nz-modal [nzOkText]="null" [nzCancelText]="'Close' | translate" [nzVisible]="SelectedReservationDetails"
+    (nzOnCancel)="SelectedReservationDetails = undefined" nzTitle="Reservations" nzCentered>
     <ng-container *nzModalContent>
         <h3>Name</h3>
         {{SelectedReservationDetails.name || '-'}}
         <br>
         <br>
-        
+
         <h3>Email</h3>
         {{SelectedReservationDetails.email || '-'}}
         <br>

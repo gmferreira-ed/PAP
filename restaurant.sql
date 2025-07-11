@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jul 10, 2025 at 06:58 PM
+-- Generation Time: Jul 11, 2025 at 04:02 PM
 -- Server version: 8.0.42
 -- PHP Version: 8.2.27
 
@@ -2256,6 +2256,7 @@ CREATE TABLE `layout` (
   `left` float(7,3) NOT NULL DEFAULT '0.000',
   `width` float(7,3) NOT NULL DEFAULT '0.000',
   `height` float(7,3) NOT NULL DEFAULT '0.000',
+  `rotation` int NOT NULL,
   `type` varchar(100) NOT NULL,
   `tableid` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -2264,20 +2265,66 @@ CREATE TABLE `layout` (
 -- Dumping data for table `layout`
 --
 
-INSERT INTO `layout` (`componentid`, `top`, `left`, `width`, `height`, `type`, `tableid`) VALUES
-(1473, 655.000, 710.000, 15.000, 35.000, 'Table', 1),
-(1474, 655.000, 735.000, 15.000, 35.000, 'Table', 2),
-(1475, 660.000, 765.000, 15.000, 15.000, 'Table', 3),
-(1476, 700.000, 705.000, 20.000, 20.000, 'RoundTable', 4),
-(1478, 725.000, 700.000, 50.000, 5.000, 'Wall', NULL),
-(1479, 650.000, 695.000, 5.000, 80.000, 'Wall', NULL),
-(1480, 650.000, 810.000, 5.000, 80.000, 'Wall', NULL),
-(1481, 725.000, 760.000, 50.000, 5.000, 'Wall', NULL),
-(1482, 705.000, 765.000, 40.000, 15.000, 'Table', 5),
-(1483, 660.000, 790.000, 15.000, 15.000, 'Table', 6),
-(1484, 685.000, 765.000, 15.000, 15.000, 'Table', 7),
-(1485, 685.000, 790.000, 15.000, 15.000, 'Table', 8),
-(1487, 645.000, 695.000, 120.000, 5.000, 'Wall', NULL);
+INSERT INTO `layout` (`componentid`, `top`, `left`, `width`, `height`, `rotation`, `type`, `tableid`) VALUES
+(1473, 620.000, 700.000, 15.000, 35.000, 0, 'Table', 1),
+(1474, 680.000, 700.000, 15.000, 35.000, 0, 'Table', 2),
+(1475, 620.000, 765.000, 15.000, 15.000, 0, 'Table', 3),
+(1478, 725.000, 680.000, 50.000, 5.000, 0, 'Wall', NULL),
+(1479, 605.000, 675.000, 5.000, 125.000, 0, 'Wall', NULL),
+(1480, 605.000, 820.000, 5.000, 125.000, 0, 'Wall', NULL),
+(1481, 725.000, 770.000, 50.000, 5.000, 0, 'Wall', NULL),
+(1482, 695.000, 765.000, 40.000, 15.000, 0, 'Table', 5),
+(1483, 620.000, 795.000, 15.000, 15.000, 0, 'Table', 6),
+(1484, 660.000, 765.000, 15.000, 15.000, 0, 'Table', 7),
+(1485, 660.000, 795.000, 15.000, 15.000, 0, 'Table', 8),
+(1487, 602.500, 750.000, 70.000, 2.500, 0, 'Wall', NULL),
+(1493, 630.000, 680.000, 15.000, 15.000, 0, 'Plant2', NULL),
+(1496, 690.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1497, 675.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1498, 660.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1499, 660.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1500, 675.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1501, 690.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1502, 645.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1503, 645.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(1504, 730.000, 710.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(1505, 730.000, 680.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(1506, 730.000, 775.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(1507, 730.000, 805.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(1508, 730.000, 790.000, 15.000, 15.000, 0, 'Plant1', NULL),
+(1509, 730.000, 695.000, 15.000, 15.000, 0, 'Plant1', NULL),
+(1510, 545.000, 705.000, 75.000, 5.000, 0, 'Wall', NULL),
+(1511, 550.000, 705.000, 5.000, 50.000, 0, 'Wall', NULL),
+(1513, 565.000, 780.000, 10.000, 10.000, 0, 'WCSign', NULL),
+(1514, 600.000, 675.000, 35.000, 5.000, 0, 'Wall', NULL),
+(1519, 550.000, 820.000, 5.000, 55.000, 0, 'Wall', NULL),
+(1520, 545.000, 780.000, 45.000, 5.000, 0, 'Wall', NULL),
+(1521, 550.000, 750.000, 5.000, 10.000, 0, 'Wall', NULL),
+(1522, 550.000, 760.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(1523, 550.000, 775.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(1526, 585.000, 765.000, 2.500, 20.000, 0, 'Wall', NULL),
+(1527, 585.000, 782.500, 2.500, 20.000, 0, 'Wall', NULL),
+(1530, 567.500, 807.500, 15.000, 10.000, 90, 'Sink', NULL),
+(1531, 587.500, 785.000, 15.000, 15.000, 180, 'Toilet', NULL),
+(1532, 587.500, 767.500, 15.000, 15.000, 180, 'Toilet', NULL),
+(1533, 550.000, 790.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(1534, 550.000, 805.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(1537, 590.000, 755.000, 10.000, 10.000, 0, 'Plant2', NULL),
+(1543, 610.000, 700.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(1544, 670.000, 700.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(1546, 610.000, 765.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(1548, 585.000, 800.000, 2.500, 20.000, 0, 'Wall', NULL),
+(1549, 587.500, 802.500, 15.000, 15.000, 180, 'Toilet', NULL),
+(1550, 570.000, 750.000, 5.000, 32.500, 0, 'Wall', NULL),
+(1552, 650.000, 700.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(1553, 710.000, 700.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(1554, 650.000, 765.000, 15.000, 15.000, 0, 'Chair1', NULL),
+(1555, 660.000, 755.000, 15.000, 15.000, -90, 'Chair1', NULL),
+(1556, 670.000, 765.000, 15.000, 15.000, 180, 'Chair1', NULL),
+(1558, 660.000, 775.000, 15.000, 15.000, 90, 'Chair1', NULL),
+(1559, 630.000, 765.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(1560, 630.000, 795.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(1561, 610.000, 795.000, 15.000, 15.000, 0, 'Chair2', NULL);
 
 -- --------------------------------------------------------
 
@@ -2735,7 +2782,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('KNAEAkdNrOkrOa01ZAagBc4G1IzAgEy5', 1752260293, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13,\"pending_verification\":false,\"verificationcode_created\":1752173860292}');
+('KNAEAkdNrOkrOa01ZAagBc4G1IzAgEy5', 1752260293, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13,\"pending_verification\":false,\"verificationcode_created\":1752173860292}'),
+('ZC16vyN2DvTmkdfc-RkkkZXf-gpLS34o', 1752336030, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}'),
+('dMdr0Zx1_fT1tTeIE2LAgUnuffE6Zr8Z', 1752319632, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}'),
+('hxEEbLO-B1pSX0CHUKY5sGElmLn6zPSF', 1752336065, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}');
 
 -- --------------------------------------------------------
 
@@ -2965,9 +3015,10 @@ INSERT INTO `users` (`userid`, `username`, `active`, `email`, `phone`, `fullname
 (369, 'vhubert', 1, 'viktor.hubert@example.com', '0766692938', 'Viktor Hubert', 'User', '1982-03-30', 'Switzerland', 'Bütschwil-Ganterschwil', '4828 Grande Rue', '9415', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:47:55', 1),
 (370, 'ichristensen', 1, 'isabella.christensen@example.com', '39493528', 'Isabella Christensen', 'User', '1954-04-08', 'Denmark', 'Aaborg Øst', '1130 Valdemarsgade', '54225', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:47:56', 1),
 (371, 'gasd', 1, 'jokom21613@dxirl.com', '434324323424', 'Teste', 'User', '2025-07-16', 'Teste', 'Teste', 'Teste', 'Teste', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 15:55:22', 1),
-(377, 'a', 1, 'a@g', '123123123', 'dsadasdasdas', 'User', '2025-07-29', 'asdadsdas', 'dsadasdas', 'dasdasasd', 'asdasdasd', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 16:26:14', 0),
+(377, 'a', 1, 'a@g', '123123123', 'dsadasdasdas', 'User', '2025-07-29', 'asdadsdas', 'dsadasdas', 'dasdasasd', 'asdasdasd', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 16:26:14', 1),
 (385, 'asdasdsad', 1, 'a@gadssaddsa', '1231231234', 'dsasda', 'User', '2025-07-16', 'dsasda', 'sadsdadsa', 'dsasda', 'asdsda', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 18:14:39', 0),
-(386, 'aasdasd', 1, 'tesel81357@dxirl.com', '1231123123', 'dsaasdsad', 'User', '2025-07-23', 'sdaadsasd', 'dsasadasd', 'adsasdsad', 'sdadasads', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 18:39:41', 1);
+(386, 'aasdasd', 1, 'tesel81357@dxirl.com', '1231123123', 'dsaasdsad', 'User', '2025-07-23', 'sdaadsasd', 'dsasadasd', 'adsasdsad', 'sdadasads', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 18:39:41', 1),
+(390, 'aasdasd1', 1, 'lejila4923@fenexy.com', '123456123', 'sdaadsad', 'User', '2011-07-04', 'asdassdaads', 'asdasdd', 'asdads', 'dsaasddas', '$2b$10$KdkZHhcllWKo67pqR6SKbuqmK4Bcrl2EDiadQQjNhdwIVchEyCkDG', NULL, '2025-07-11 08:55:58', 1);
 
 --
 -- Indexes for dumped tables
@@ -3127,7 +3178,7 @@ ALTER TABLE `inventory_report_items`
 -- AUTO_INCREMENT for table `layout`
 --
 ALTER TABLE `layout`
-  MODIFY `componentid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1488;
+  MODIFY `componentid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1562;
 
 --
 -- AUTO_INCREMENT for table `menu`
@@ -3181,7 +3232,7 @@ ALTER TABLE `role_permissions`
 -- AUTO_INCREMENT for table `stock_items`
 --
 ALTER TABLE `stock_items`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -3193,7 +3244,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=387;
+  MODIFY `userid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=392;
 
 --
 -- Constraints for dumped tables

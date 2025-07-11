@@ -26,6 +26,7 @@ import {
   AnimationEvent
 } from '@angular/animations';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { FValidators } from '../../Services/Validators';
 
 
 @Component({
@@ -86,8 +87,8 @@ export class RegisterPage {
     account_info: new FormGroup({
       username: new FormControl('aasdasd', [Validators.required, Validators.minLength(3)]),
       active: new FormControl(false),
-      email: new FormControl('tesel81357@dxirl.com', [Validators.required, Validators.email]),
-      phone: new FormControl('1231123123', [Validators.required, Validators.minLength(9)]),
+      email: new FormControl('tesel81357@dxirl.com', [Validators.required, FValidators.email]),
+      phone: new FormControl('1231123123', [Validators.required, FValidators.phone]),
       password: new FormControl('123', Validators.required)
     }),
     personnal_info: new FormGroup({
@@ -96,7 +97,7 @@ export class RegisterPage {
       country: new FormControl('', Validators.required),
       city: new FormControl('', Validators.required),
       address: new FormControl('', Validators.required),
-      postalcode: new FormControl('', Validators.required)
+      postalcode: new FormControl('', [Validators.required, FValidators.postalCode])
     }),
     verification_code: new FormControl('', [Validators.minLength(6), Validators.required])
   });
@@ -120,7 +121,7 @@ export class RegisterPage {
   async Verify() {
     this.VerifyingAccount = true
 
-    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST', 
+    const [VerifiedSucessfully] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'auth/verify', 'POST',
       this.TranslateService.instant('Failed to verify'), {
       verificationcode: this.RegisterForm.value.verification_code
     })
@@ -151,11 +152,30 @@ export class RegisterPage {
   }
 
   async ResendCode() {
-    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'request-code', 'POST', 
+    const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'request-code', 'POST',
       this.TranslateService.instant('Failed to re-send code: '))
-    if (Result){
+    if (Result) {
       this.MessageService.success(this.TranslateService.instant('Email successfully sent!'))
     }
+  }
+
+  defaultPickerValue = new Date(
+    new Date().getFullYear() - 14,
+    new Date().getMonth(),
+    new Date().getDate()
+  );
+
+  DisableDate = (current: Date): boolean => {
+    if (!current) return false
+
+    const today = new Date();
+    const fourteenYearsAgo = new Date(
+      today.getFullYear() - 14,
+      today.getMonth(),
+      today.getDate()
+    );
+
+    return current > fourteenYearsAgo
   }
 
   ngOnInit() {

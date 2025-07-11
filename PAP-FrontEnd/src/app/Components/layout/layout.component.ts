@@ -17,7 +17,8 @@ class LayoutComponent {
   Size: Vector2 = new Vector2(15, 15)
   MinSize: Vector2 = new Vector2(0, 0)
 
-  Position: Vector2 = new Vector2(0, 0);
+  Position: Vector2 = new Vector2(0, 0)
+  Rotation: number = 0
 
   id: number | string | null = null
   tableid: number | string | null = null
@@ -95,7 +96,26 @@ export class RestaurantLayout {
 
 
   // Config
-  @Input() Snapping: number = 5
+  private _snapping = Number(localStorage.getItem('Snapping')) || 5
+  @Input()
+  get Snapping() {
+    return this._snapping
+  }
+  set Snapping(Val: number) {
+    this._snapping = Val
+    localStorage.setItem('Snapping', String(Val))
+  }
+
+  private _rotationsnapping = Number(localStorage.getItem('RotationSnapping')) || 90
+  @Input()
+  get RotationSnapping() {
+    return this._rotationsnapping
+  }
+  set RotationSnapping(Val: number) {
+    this._rotationsnapping = Val
+    localStorage.setItem('RotationSnapping', String(Val))
+  }
+
   @Input() GridVisible: boolean = localStorage.getItem('gridvisible') != 'true' ? false : true
 
   ToggleGrid() {
@@ -236,6 +256,7 @@ export class RestaurantLayout {
         top: Component.Position.Y,
         width: Component.Size.X,
         height: Component.Size.Y,
+        rotation: Component.Rotation,
         type: Component.Type,
         tableid: Component.tableid,
       }
@@ -267,6 +288,7 @@ export class RestaurantLayout {
     const SavedCompomentState = new LayoutComponent(Component.Type)
     SavedCompomentState.Position = new Vector2(Component.Position.X, Component.Position.Y)
     SavedCompomentState.Size = new Vector2(Component.Size.X, Component.Size.Y)
+    SavedCompomentState.Rotation = Component.Rotation * 1 // Multiplication ensures Rotation is not a reference
     SavedCompomentState.id = Component.id
     SavedCompomentState.tableid = Component.tableid
     return SavedCompomentState
@@ -381,8 +403,15 @@ export class RestaurantLayout {
     return [DragStartMousePos.X - event.clientX, DragStartMousePos.Y - event.clientY]
   }
 
+  getSnapStep(CompSize: number) {
+    if (CompSize >= this.Snapping) {
+      return this.Snapping
+    } else {
+      return CompSize
+    }
+  }
 
-  DraggingStep(event: MouseEvent, DraggingComponent: LayoutComponent) {
+  private DraggingStep(event: MouseEvent, DraggingComponent: LayoutComponent) {
     const Snapping = this.Snapping != 0 && this.Snapping
 
     const InitialPos = this.DragComponentInitial.Position
@@ -392,17 +421,34 @@ export class RestaurantLayout {
     let Y = (InitialPos.Y - TotalDeltaY / this.Zoom)
 
 
-    let SnappedX = Snapping ? Math.round(X / Snapping) * Snapping : X
-    let SnappedY = Snapping ? Math.round(Y / Snapping) * Snapping : Y
+    const SmallestSize = Math.min(DraggingComponent.Size.X, DraggingComponent.Size.Y)
+    const SnapStep = this.getSnapStep(SmallestSize)
+
+
+    let SnappedX = Snapping ? Math.round(X / SnapStep) * SnapStep : X
+    let SnappedY = Snapping ? Math.round(Y / SnapStep) * SnapStep : Y
+
 
     DraggingComponent.Position.X = SnappedX
     DraggingComponent.Position.Y = SnappedY
   }
 
 
+  private RotateStep = (event: MouseEvent) => {
+
+    if (!this.RotatingComponent) return
+
+    const dx = event.clientX - this._rotationCenter.x
+    const dy = event.clientY - this._rotationCenter.y
+    let angle = Math.atan2(dy, dx) * 180 / Math.PI
+    angle = angle + 90
+    const snap = this.RotationSnapping || 1
+    angle = Math.round(angle / snap) * snap
+    this.RotatingComponent.Rotation = angle
+  };
 
 
-  ResizeStep(event: MouseEvent, DraggingComponent: LayoutComponent) {
+  private ResizeStep(event: MouseEvent, DraggingComponent: LayoutComponent) {
     const Snapping = this.Snapping != 0 && this.Snapping
     const InitialSize = this.DragComponentInitial.Size
     const InitialPos = this.DragComponentInitial.Position
@@ -410,9 +456,12 @@ export class RestaurantLayout {
     let [TotalDeltaX, TotalDeltaY] = this.GetTotalDragDelta(event)
 
 
+    const SnapStepX = this.getSnapStep(DraggingComponent.MinSize.X)
+    const SnapStepY = this.getSnapStep(DraggingComponent.MinSize.Y)
+
     if (ResizingType == 'left') {
       let X = (InitialPos.X - TotalDeltaX / this.Zoom)
-      let SnappedX = Snapping ? Math.round(X / Snapping) * Snapping : X
+      let SnappedX = Snapping ? Math.round(X / SnapStepX) * SnapStepX : X
       if (SnappedX < InitialPos.X + InitialSize.X) {
         DraggingComponent.Position.X = SnappedX
       }
@@ -420,7 +469,7 @@ export class RestaurantLayout {
     }
     if (ResizingType == 'top') {
       let Y = (InitialPos.Y - TotalDeltaY / this.Zoom)
-      let SnappedY = Snapping ? Math.round(Y / Snapping) * Snapping : Y
+      let SnappedY = Snapping ? Math.round(Y / SnapStepY) * SnapStepY : Y
       if (SnappedY < InitialPos.Y + InitialSize.Y)
         DraggingComponent.Position.Y = SnappedY
       TotalDeltaY *= -1
@@ -429,8 +478,8 @@ export class RestaurantLayout {
     let X = (InitialSize.X - TotalDeltaX / this.Zoom)
     let Y = (InitialSize.Y - TotalDeltaY / this.Zoom)
 
-    let SnappedX = Snapping ? Math.round(X / Snapping) * Snapping : X
-    let SnappedY = Snapping ? Math.round(Y / Snapping) * Snapping : Y
+    let SnappedX = Snapping ? Math.round(X / SnapStepX) * SnapStepX : X
+    let SnappedY = Snapping ? Math.round(Y / SnapStepY) * SnapStepY : Y
 
     const [FinalX, FinalY] = this.ClampSize(DraggingComponent, SnappedX, SnappedY)
     DraggingComponent.Size.X = FinalX
@@ -475,10 +524,12 @@ export class RestaurantLayout {
 
     document.body.classList.remove('cursor-grabbing');
 
-    let Component = this.DraggingComponent || this.ResizingComponent
+    let Component = this.DraggingComponent || this.ResizingComponent || this.RotatingComponent
     if (Component) {
 
-      if (!Component.Size.equals(this.DragComponentInitial.Size) || !Component.Position.equals(this.DragComponentInitial.Position)) {
+      if (!Component.Size.equals(this.DragComponentInitial.Size)
+        || !Component.Position.equals(this.DragComponentInitial.Position)
+        || Component.Rotation != this.DragComponentInitial.Rotation) {
 
         this.TrackHistory('update', Component)
 
@@ -490,8 +541,10 @@ export class RestaurantLayout {
         }
       }
     }
+
     this.DraggingComponent = null
     this.ResizingComponent = null
+    this.RotatingComponent = undefined
     this.DraggingViewport = false
 
     const TargetComp = event.target as HTMLElement
@@ -510,6 +563,8 @@ export class RestaurantLayout {
 
       width: Component.Size.X,
       height: Component.Size.Y,
+
+      rotation: Component.Rotation,
 
       componentid: Component.id
     }
@@ -607,6 +662,7 @@ export class RestaurantLayout {
       DuplicatedComponent.Type = TargetComponent.Type;
       DuplicatedComponent.Size = new Vector2(TargetComponent.Size.X, TargetComponent.Size.Y)
       DuplicatedComponent.Position = new Vector2(TargetComponent.Position.X, TargetComponent.Position.Y)
+      DuplicatedComponent.Rotation = TargetComponent.Rotation
       if (!IgnoreTrack) {
         this.AddComponent(DuplicatedComponent)
       } else {
@@ -699,7 +755,7 @@ export class RestaurantLayout {
         } else if (Key == 'x' && this.SelectedComponent) {
           this.CutSelectedComponent()
           // DUPLICATE
-        } else if (AltCombo && Key == 'd') {
+        } else if (Key == 'd') {
           this.DuplicateComponent(this.SelectedComponent)
         }
 
@@ -729,6 +785,7 @@ export class RestaurantLayout {
       top: component.Position.Y,
       width: component.Size.X,
       height: component.Size.Y,
+      rotation: component.Rotation,
       type: component.Type,
       componentid: IgnoreTrack && component.id,
     })
@@ -885,6 +942,74 @@ export class RestaurantLayout {
   }
 
 
+  async LoadLayout() {
+    this.LoadingLayout = true
+    const [LayoutData] = await this.HttpService.MakeRequest(this.LayoutAPI)
+    if (LayoutData) {
+
+      // Load components
+      for (const ComponentData of LayoutData) {
+        const Component = new LayoutComponent(ComponentData.type)
+        Component.Position = new Vector2(ComponentData.left, ComponentData.top)
+        Component.Size = new Vector2(ComponentData.width, ComponentData.height)
+        Component.Rotation = ComponentData.rotation
+        Component.id = ComponentData.componentid
+        Component.tableid = ComponentData.tableid
+        this.Components.push(Component)
+      }
+
+      this.CenterLayout()
+    } else {
+      this.MessageService.error(this.TranslateService.instant('Failed to load restaurant layout'))
+    }
+
+
+
+
+
+
+
+    this.LoadingLayout = false
+  }
+
+  async ngOnInit() {
+    this.LoadLayout()
+
+    // Listen to tables change and update the record according to it
+    this.Tables = await this.OrdersService.Tables.Get()
+  }
+
+
+  // Rotation
+  private RotatingComponent?: LayoutComponent
+  private rotateStartAngle: number = 0;
+  private rotateStartMouse: { x: number, y: number } = { x: 0, y: 0 };
+  private _rotationCenter: { x: number, y: number } = { x: 0, y: 0 };
+
+
+  RotateStart(event: MouseEvent, component: any) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    this.ComponentInteract(event, component)
+    this.RotatingComponent = component
+
+    const rect = (event.target as HTMLElement).closest('.component')!.getBoundingClientRect()
+    this.rotateStartMouse = { x: event.clientX, y: event.clientY }
+
+    this.rotateStartAngle = component.Rotation || 0;
+    this._rotationCenter = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    }
+    window.addEventListener('mousemove', this.RotateStep)
+  }
+
+
+
+
+
+
   // Mobile functions
   private lastTouchDistance: number | null = null;
 
@@ -919,42 +1044,5 @@ export class RestaurantLayout {
     const dy = touch2.clientY - touch1.clientY;
     return Math.sqrt(dx * dx + dy * dy);
   }
-
-  async LoadLayout() {
-    this.LoadingLayout = true
-    const [LayoutData] = await this.HttpService.MakeRequest(this.LayoutAPI)
-    if (LayoutData) {
-
-      // Load components
-      for (const ComponentData of LayoutData) {
-        const Component = new LayoutComponent(ComponentData.type)
-        Component.Position = new Vector2(ComponentData.left, ComponentData.top)
-        Component.Size = new Vector2(ComponentData.width, ComponentData.height)
-        Component.id = ComponentData.componentid
-        Component.tableid = ComponentData.tableid
-        this.Components.push(Component)
-      }
-
-      this.CenterLayout()
-    } else {
-      this.MessageService.error(this.TranslateService.instant('Failed to load restaurant layout'))
-    }
-
-
-
-
-
-
-
-    this.LoadingLayout = false
-  }
-
-  async ngOnInit() {
-    this.LoadLayout()
-
-    // Listen to tables change and update the record according to it
-    this.Tables = await this.OrdersService.Tables.Get()
-  }
-
 }
 

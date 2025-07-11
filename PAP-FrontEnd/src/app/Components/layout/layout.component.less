@@ -9,6 +9,7 @@
     flex: 1;
     width: 100%;
     height: 100%;
+    max-height: 70vh;
 }
 
 
@@ -38,7 +39,28 @@
 }
 
 .component-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 20px;
+    overflow-y: auto;
+
+    height: 100%;
+    width: 400px;
+
+
+    &::-webkit-scrollbar {
+        width: 2px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color-2);
+        border-radius: 5px;
+    }
 
     .component {
         position: relative;
@@ -126,6 +148,20 @@
     position: absolute;
 
     aspect-ratio: 1 / 1;
+    z-index: 1000;
+
+    &.rotate {
+        top: 0;
+        right: 0;
+        transform: translate(50%, -50%);
+        background-color: transparent;
+        border: none;
+        z-index: 100;
+
+        icon {
+            pointer-events: all;
+        }
+    }
 
 
     &.top {
@@ -267,7 +303,6 @@
 
 // COMPONENTS
 
-
 .component {
     display: flex;
     flex-direction: column;
@@ -280,7 +315,15 @@
         box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.2);
     }
 
-    
+    .contents {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+    }
+
     align-items: center;
     justify-content: center;
 
@@ -291,8 +334,7 @@
     }
 
 
-
-    label{
+    label {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -309,8 +351,8 @@
 
 .Table {
     border-radius: 5%;
-
     border: 1px solid rgba(100, 100, 0, 0.1);
+    z-index: 5;
 
 }
 
@@ -318,9 +360,36 @@
     border-radius: 105px;
 
     border: 1px solid rgba(100, 100, 0, 0.1);
+    z-index: 5;
+}
+
+
+.Plant1,
+.Plant2,
+.Plant3,
+.Plant4,
+.WCSign,
+.Chair1,
+.Chair2,
+.Sink,
+.Toilet,
+.Urinal {
+    box-shadow: none;
+    background-color: transparent;
+
+    img {
+        object-fit: contain !important;
+    }
+
+    z-index: 3;
 }
 
 .Wall {
     box-shadow: none;
     background-color: rgb(55, 55, 55);
+    z-index: 2;
+}
+
+.Toilet {
+    z-index: 1;
 }

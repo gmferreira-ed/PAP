@@ -55,14 +55,14 @@
 
           <nz-form-item>
             <nz-form-label nzRequired>{{"Email" | translate}}</nz-form-label>
-            <nz-form-control nzErrorTip="Please input a valid email!">
+            <nz-form-control [nzErrorTip]="'Please input a valid email!' | translate">
               <input nz-input formControlName="email" placeholder="Email" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
             <nz-form-label>{{"Phone" | translate}}</nz-form-label>
-            <nz-form-control>
+            <nz-form-control [nzErrorTip]="'Please input a valid phone number!' | translate">
               <input nz-input formControlName="phone" maxlength="12" placeholder="Phone number"
                 (keydown)="EnforceNumber($event)" />
             </nz-form-control>
@@ -82,7 +82,7 @@
         <fieldset formGroupName="personnal_info">
           <nz-form-item>
             <nz-form-label nzRequired>{{"Full Name" | translate}}</nz-form-label>
-            <nz-form-control nzErrorTip="Please input your full name!">
+            <nz-form-control [nzErrorTip]="'Please input your full name!'|translate">
               <input nz-input formControlName="fullname" placeholder="Full Name" />
             </nz-form-control>
           </nz-form-item>
@@ -91,14 +91,14 @@
           <div class="row">
             <nz-form-item>
               <nz-form-label>{{"Country" | translate}}</nz-form-label>
-              <nz-form-control>
+              <nz-form-control [nzErrorTip]="'Please input your country!'|translate">
                 <input nz-input formControlName="country" placeholder="Country" />
               </nz-form-control>
             </nz-form-item>
 
             <nz-form-item>
               <nz-form-label>{{"City" | translate}}</nz-form-label>
-              <nz-form-control>
+              <nz-form-control [nzErrorTip]="'Please input your city!'|translate">
                 <input nz-input formControlName="city" placeholder="City" />
               </nz-form-control>
             </nz-form-item>
@@ -106,7 +106,7 @@
 
           <nz-form-item>
             <nz-form-label>{{"Address" | translate}}</nz-form-label>
-            <nz-form-control>
+            <nz-form-control [nzErrorTip]="'Please input your address'|translate">
               <input nz-input formControlName="address" placeholder="Address" />
             </nz-form-control>
           </nz-form-item>
@@ -114,15 +114,16 @@
           <div class="row">
             <nz-form-item>
               <nz-form-label>{{"Postal Code" | translate}}</nz-form-label>
-              <nz-form-control>
+              <nz-form-control [nzErrorTip]="'Please input a valid postal code!'|translate">
                 <input nz-input formControlName="postalcode" placeholder="Postal Code" />
               </nz-form-control>
             </nz-form-item>
 
             <nz-form-item>
               <nz-form-label>{{"Birthdate" | translate}}</nz-form-label>
-              <nz-form-control>
-                <nz-date-picker nz-input formControlName="birthdate" placeholder="Birthdate" style="width: 100%;" />
+              <nz-form-control [nzErrorTip]="'Please select your birthdate'|translate">
+                <nz-date-picker nz-input [nzDisabledDate]="DisableDate" [nzDefaultPickerValue]="defaultPickerValue"
+                  formControlName="birthdate" placeholder="Birthdate" style="width: 100%;" [nzShowToday]="false" />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -132,7 +133,8 @@
               {{"Back" | translate}}
               <nz-icon nzType="left"></nz-icon>
             </button>
-            <button nz-button [disabled]="RegisterForm.get('personnal_info')?.invalid" (click)="CreateAccount()" [nzLoading]="CreatingAccount">
+            <button nz-button [disabled]="RegisterForm.get('personnal_info')?.invalid" (click)="CreateAccount()"
+              [nzLoading]="CreatingAccount">
               {{"Create Account" | translate}}
               <nz-icon nzType="right"></nz-icon>
             </button>

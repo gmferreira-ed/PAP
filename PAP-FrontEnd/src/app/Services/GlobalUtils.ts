@@ -82,6 +82,16 @@ const GlobalUtils = {
   },
 
   EnforceNumber(event: KeyboardEvent) {
+    const allowedKeys = [
+      'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'
+    ]
+    if (event.ctrlKey || event.metaKey) {
+      return
+    }
+    if (allowedKeys.includes(event.key)) {
+      return
+    }
+
     const charCode = event.key.charCodeAt(0)
     if (charCode < 48 || charCode > 57) {
       event.preventDefault()

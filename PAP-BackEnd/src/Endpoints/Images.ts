@@ -120,19 +120,25 @@ async function ProcessImage(req: ExpressRequest, res: ExpressResponse, ImageSize
     const webpPath = FilePath.replace(/\.[^/.]+$/, '.webp');
     const tempPath = webpPath + '-temp';
 
-    await sharp(FilePath)
-        .resize(ImageSize[0], ImageSize[1])
-        .webp()
-        .toFile(tempPath);
+    try {
+        await sharp(FilePath)
+            .resize(ImageSize[0], ImageSize[1])
+            .webp()
+            .toFile(tempPath);
 
-    await fsp.rename(tempPath, webpPath);
 
-    if (FilePath !== webpPath) {
-        await fsp.unlink(FilePath);
+        await fsp.rename(tempPath, webpPath);
+
+        if (FilePath !== webpPath) {
+            await fsp.unlink(FilePath);
+        }
+        res.send({ sucess: true });
+    } catch (Err) {
+        console.warn(Err)
+        res.status(502).send();
     }
 
 
-    res.json({ sucess: true });
 }
 
 /**
