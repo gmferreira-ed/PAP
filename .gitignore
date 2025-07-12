@@ -8,3 +8,4 @@ PAP-BackEnd/src/Uploads/users/**
 PAP-BackEnd/build
 PAP-BackEnd/.env
 desktop.ini/
+.env
