@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jul 11, 2025 at 04:02 PM
+-- Generation Time: Jul 14, 2025 at 03:50 PM
 -- Server version: 8.0.42
 -- PHP Version: 8.2.27
 
@@ -2171,7 +2171,38 @@ INSERT INTO `attendance` (`entryid`, `userid`, `action`, `timestamp`) VALUES
 (3719, 270, 'entry', '2025-07-10 11:07:00'),
 (3720, 270, 'exit', '2025-07-10 15:09:00'),
 (3721, 270, 'entry', '2025-07-10 19:04:00'),
-(3722, 270, 'exit', '2025-07-10 22:55:00');
+(3722, 270, 'exit', '2025-07-10 22:55:00'),
+(3723, 269, 'entry', '2025-07-12 10:06:51'),
+(3724, 269, 'exit', '2025-07-12 10:06:55'),
+(3725, 269, 'entry', '2025-07-12 10:07:04'),
+(3726, 269, 'exit', '2025-07-12 10:07:06'),
+(3727, 270, 'entry', '2025-07-12 10:07:29'),
+(3728, 268, 'entry', '2025-07-12 10:08:33'),
+(3729, 268, 'exit', '2025-07-12 10:08:39'),
+(3730, 268, 'entry', '2025-07-12 10:08:41'),
+(3731, 268, 'exit', '2025-07-12 10:08:43'),
+(3732, 269, 'entry', '2025-07-12 13:55:38'),
+(3733, 269, 'exit', '2025-07-12 13:56:04'),
+(3734, 269, 'entry', '2025-07-12 13:57:29'),
+(3735, 13, 'entry', '2025-07-12 13:57:38'),
+(3736, 268, 'entry', '2025-07-12 18:39:03'),
+(3737, 268, 'exit', '2025-07-12 18:39:14'),
+(3738, 269, 'exit', '2025-07-12 18:39:28'),
+(3739, 13, 'exit', '2025-07-12 18:39:39'),
+(3740, 270, 'exit', '2025-07-12 18:40:16'),
+(3741, 271, 'entry', '2025-07-13 09:00:05'),
+(3742, 270, 'entry', '2025-07-13 09:02:01'),
+(3743, 270, 'exit', '2025-07-13 09:02:49'),
+(3744, 271, 'exit', '2025-07-13 09:02:55'),
+(3745, 13, 'entry', '2025-07-13 09:02:59'),
+(3746, 13, 'exit', '2025-07-13 09:36:40'),
+(3747, 271, 'entry', '2025-07-13 19:00:03'),
+(3748, 271, 'exit', '2025-07-13 19:01:04'),
+(3749, 268, 'entry', '2025-07-14 10:14:36'),
+(3750, 270, 'entry', '2025-07-14 10:14:42'),
+(3751, 268, 'exit', '2025-07-14 10:27:05'),
+(3752, 13, 'entry', '2025-07-14 10:27:28'),
+(3753, 13, 'exit', '2025-07-14 10:49:58');
 
 -- --------------------------------------------------------
 
@@ -2202,7 +2233,9 @@ INSERT INTO `inventory_reports` (`id`, `created_by`, `created_at`) VALUES
 (12, 13, '2025-07-07 11:26:52'),
 (13, 13, '2025-07-07 11:27:46'),
 (14, 13, '2025-07-07 11:28:34'),
-(15, 13, '2025-07-07 11:28:45');
+(15, 13, '2025-07-07 11:28:45'),
+(16, 13, '2025-07-13 19:37:13'),
+(17, 13, '2025-07-14 10:41:17');
 
 -- --------------------------------------------------------
 
@@ -2242,7 +2275,12 @@ INSERT INTO `inventory_report_items` (`uid`, `report_id`, `item_id`, `action`, `
 (18, 12, 2, 'REMOVE', 1, 50, 49),
 (19, 13, 1, 'REMOVE', 40, 39, -1),
 (20, 14, 1, 'REMOVE', 5, -1, -6),
-(21, 15, 1, 'SET', 50, -6, 50);
+(21, 15, 1, 'SET', 50, -6, 50),
+(22, 16, 1, 'SET', 35, 50, 35),
+(23, 16, 2, 'REMOVE', 5, 49, 44),
+(24, 16, 3, 'SET', 55, 49, 55),
+(25, 17, 1, 'SET', 5, 35, 5),
+(26, 17, 2, 'REMOVE', 5, 44, 39);
 
 -- --------------------------------------------------------
 
@@ -2266,65 +2304,89 @@ CREATE TABLE `layout` (
 --
 
 INSERT INTO `layout` (`componentid`, `top`, `left`, `width`, `height`, `rotation`, `type`, `tableid`) VALUES
-(1473, 620.000, 700.000, 15.000, 35.000, 0, 'Table', 1),
-(1474, 680.000, 700.000, 15.000, 35.000, 0, 'Table', 2),
-(1475, 620.000, 765.000, 15.000, 15.000, 0, 'Table', 3),
-(1478, 725.000, 680.000, 50.000, 5.000, 0, 'Wall', NULL),
-(1479, 605.000, 675.000, 5.000, 125.000, 0, 'Wall', NULL),
-(1480, 605.000, 820.000, 5.000, 125.000, 0, 'Wall', NULL),
-(1481, 725.000, 770.000, 50.000, 5.000, 0, 'Wall', NULL),
-(1482, 695.000, 765.000, 40.000, 15.000, 0, 'Table', 5),
-(1483, 620.000, 795.000, 15.000, 15.000, 0, 'Table', 6),
-(1484, 660.000, 765.000, 15.000, 15.000, 0, 'Table', 7),
-(1485, 660.000, 795.000, 15.000, 15.000, 0, 'Table', 8),
-(1487, 602.500, 750.000, 70.000, 2.500, 0, 'Wall', NULL),
-(1493, 630.000, 680.000, 15.000, 15.000, 0, 'Plant2', NULL),
-(1496, 690.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1497, 675.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1498, 660.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1499, 660.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1500, 675.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1501, 690.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1502, 645.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1503, 645.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
-(1504, 730.000, 710.000, 15.000, 15.000, 0, 'Plant4', NULL),
-(1505, 730.000, 680.000, 15.000, 15.000, 0, 'Plant4', NULL),
-(1506, 730.000, 775.000, 15.000, 15.000, 0, 'Plant4', NULL),
-(1507, 730.000, 805.000, 15.000, 15.000, 0, 'Plant4', NULL),
-(1508, 730.000, 790.000, 15.000, 15.000, 0, 'Plant1', NULL),
-(1509, 730.000, 695.000, 15.000, 15.000, 0, 'Plant1', NULL),
-(1510, 545.000, 705.000, 75.000, 5.000, 0, 'Wall', NULL),
-(1511, 550.000, 705.000, 5.000, 50.000, 0, 'Wall', NULL),
-(1513, 565.000, 780.000, 10.000, 10.000, 0, 'WCSign', NULL),
-(1514, 600.000, 675.000, 35.000, 5.000, 0, 'Wall', NULL),
-(1519, 550.000, 820.000, 5.000, 55.000, 0, 'Wall', NULL),
-(1520, 545.000, 780.000, 45.000, 5.000, 0, 'Wall', NULL),
-(1521, 550.000, 750.000, 5.000, 10.000, 0, 'Wall', NULL),
-(1522, 550.000, 760.000, 10.000, 10.000, 0, 'Urinal', NULL),
-(1523, 550.000, 775.000, 10.000, 10.000, 0, 'Urinal', NULL),
-(1526, 585.000, 765.000, 2.500, 20.000, 0, 'Wall', NULL),
-(1527, 585.000, 782.500, 2.500, 20.000, 0, 'Wall', NULL),
-(1530, 567.500, 807.500, 15.000, 10.000, 90, 'Sink', NULL),
-(1531, 587.500, 785.000, 15.000, 15.000, 180, 'Toilet', NULL),
-(1532, 587.500, 767.500, 15.000, 15.000, 180, 'Toilet', NULL),
-(1533, 550.000, 790.000, 10.000, 10.000, 0, 'Urinal', NULL),
-(1534, 550.000, 805.000, 10.000, 10.000, 0, 'Urinal', NULL),
-(1537, 590.000, 755.000, 10.000, 10.000, 0, 'Plant2', NULL),
-(1543, 610.000, 700.000, 15.000, 15.000, 0, 'Chair2', NULL),
-(1544, 670.000, 700.000, 15.000, 15.000, 0, 'Chair2', NULL),
-(1546, 610.000, 765.000, 15.000, 15.000, 0, 'Chair2', NULL),
-(1548, 585.000, 800.000, 2.500, 20.000, 0, 'Wall', NULL),
-(1549, 587.500, 802.500, 15.000, 15.000, 180, 'Toilet', NULL),
-(1550, 570.000, 750.000, 5.000, 32.500, 0, 'Wall', NULL),
-(1552, 650.000, 700.000, 15.000, 15.000, 180, 'Chair2', NULL),
-(1553, 710.000, 700.000, 15.000, 15.000, 180, 'Chair2', NULL),
-(1554, 650.000, 765.000, 15.000, 15.000, 0, 'Chair1', NULL),
-(1555, 660.000, 755.000, 15.000, 15.000, -90, 'Chair1', NULL),
-(1556, 670.000, 765.000, 15.000, 15.000, 180, 'Chair1', NULL),
-(1558, 660.000, 775.000, 15.000, 15.000, 90, 'Chair1', NULL),
-(1559, 630.000, 765.000, 15.000, 15.000, 180, 'Chair2', NULL),
-(1560, 630.000, 795.000, 15.000, 15.000, 180, 'Chair2', NULL),
-(1561, 610.000, 795.000, 15.000, 15.000, 0, 'Chair2', NULL);
+(2031, 615.000, 700.000, 15.000, 40.000, 180, 'Table', 1),
+(2032, 680.000, 700.000, 15.000, 35.000, 0, 'Table', 2),
+(2033, 725.000, 680.000, 50.000, 5.000, 0, 'Wall', NULL),
+(2034, 605.000, 675.000, 5.000, 125.000, 0, 'Wall', NULL),
+(2035, 605.000, 820.000, 5.000, 125.000, 0, 'Wall', NULL),
+(2036, 725.000, 770.000, 50.000, 5.000, 0, 'Wall', NULL),
+(2037, 620.000, 790.000, 15.000, 15.000, 0, 'Table', 6),
+(2038, 660.000, 750.000, 15.000, 15.000, 0, 'Table', 7),
+(2039, 660.000, 790.000, 15.000, 15.000, 0, 'Table', 8),
+(2040, 602.500, 750.000, 70.000, 2.500, 0, 'Wall', NULL),
+(2041, 690.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2042, 675.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2043, 660.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2044, 660.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2045, 675.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2046, 690.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2047, 645.000, 660.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2048, 645.000, 825.000, 15.000, 15.000, 0, 'Plant3', NULL),
+(2049, 730.000, 710.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(2050, 730.000, 680.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(2051, 730.000, 775.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(2052, 730.000, 805.000, 15.000, 15.000, 0, 'Plant4', NULL),
+(2053, 730.000, 790.000, 15.000, 15.000, 0, 'Plant1', NULL),
+(2054, 730.000, 695.000, 15.000, 15.000, 0, 'Plant1', NULL),
+(2055, 545.000, 705.000, 75.000, 5.000, 0, 'Wall', NULL),
+(2056, 550.000, 705.000, 5.000, 50.000, 0, 'Wall', NULL),
+(2057, 565.000, 780.000, 10.000, 10.000, 0, 'WCSign', NULL),
+(2058, 600.000, 675.000, 35.000, 5.000, 0, 'Wall', NULL),
+(2059, 550.000, 820.000, 5.000, 55.000, 0, 'Wall', NULL),
+(2060, 545.000, 780.000, 45.000, 5.000, 0, 'Wall', NULL),
+(2061, 550.000, 750.000, 5.000, 15.000, 0, 'Wall', NULL),
+(2062, 550.000, 760.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(2063, 550.000, 775.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(2064, 585.000, 765.000, 2.500, 20.000, 0, 'Wall', NULL),
+(2065, 585.000, 782.500, 2.500, 20.000, 0, 'Wall', NULL),
+(2066, 567.500, 807.500, 15.000, 10.000, 90, 'Sink', NULL),
+(2067, 587.500, 785.000, 15.000, 15.000, 180, 'Toilet', NULL),
+(2068, 587.500, 767.500, 15.000, 15.000, 180, 'Toilet', NULL),
+(2069, 550.000, 790.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(2070, 550.000, 805.000, 10.000, 10.000, 0, 'Urinal', NULL),
+(2071, 590.000, 755.000, 10.000, 10.000, 0, 'Plant2', NULL),
+(2072, 605.000, 700.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(2073, 670.000, 700.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(2074, 610.000, 750.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(2075, 585.000, 800.000, 2.500, 20.000, 0, 'Wall', NULL),
+(2076, 587.500, 802.500, 15.000, 15.000, 180, 'Toilet', NULL),
+(2077, 582.500, 750.000, 5.000, 20.000, 0, 'Wall', NULL),
+(2078, 650.000, 700.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(2079, 710.000, 700.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(2080, 650.000, 750.000, 15.000, 15.000, 0, 'Chair1', NULL),
+(2081, 660.000, 740.000, 15.000, 15.000, -90, 'Chair1', NULL),
+(2082, 670.000, 750.000, 15.000, 15.000, 180, 'Chair1', NULL),
+(2083, 660.000, 760.000, 15.000, 15.000, 90, 'Chair1', NULL),
+(2084, 630.000, 750.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(2085, 630.000, 790.000, 15.000, 15.000, 180, 'Chair2', NULL),
+(2086, 610.000, 790.000, 15.000, 15.000, 0, 'Chair2', NULL),
+(2087, 635.000, 710.000, 15.000, 15.000, 90, 'Chair2', NULL),
+(2088, 620.000, 690.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2089, 635.000, 690.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2090, 610.000, 680.000, 10.000, 10.000, 0, 'Plant2', NULL),
+(2091, 710.000, 680.000, 10.000, 10.000, 0, 'Plant2', NULL),
+(2092, 710.000, 810.000, 10.000, 10.000, 0, 'Plant2', NULL),
+(2093, 610.000, 810.000, 10.000, 10.000, 0, 'Plant2', NULL),
+(2094, 620.000, 780.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2095, 620.000, 800.000, 15.000, 15.000, 90, 'Chair2', NULL),
+(2096, 620.000, 760.000, 15.000, 15.000, 90, 'Chair2', NULL),
+(2097, 620.000, 740.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2098, 660.000, 780.000, 15.000, 15.000, 270, 'Chair1', NULL),
+(2099, 650.000, 790.000, 15.000, 15.000, 0, 'Chair1', NULL),
+(2100, 660.000, 800.000, 15.000, 15.000, 90, 'Chair1', NULL),
+(2101, 670.000, 790.000, 15.000, 15.000, 180, 'Chair1', NULL),
+(2102, 700.000, 710.000, 15.000, 15.000, 90, 'Chair2', NULL),
+(2103, 680.000, 710.000, 15.000, 15.000, 90, 'Chair2', NULL),
+(2104, 680.000, 690.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2105, 700.000, 690.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2106, 695.000, 775.000, 15.000, 15.000, 0, 'Table', 9),
+(2107, 695.000, 785.000, 15.000, 15.000, 90, 'Chair2', NULL),
+(2108, 695.000, 765.000, 15.000, 15.000, 270, 'Chair2', NULL),
+(2109, 725.000, 750.000, 20.000, 7.500, 0, 'Door1', NULL),
+(2110, 725.000, 730.000, 20.000, 7.500, 0, 'Door2', NULL),
+(2111, 570.000, 740.000, 20.000, 7.500, 90, 'Door2', NULL),
+(2112, 620.000, 750.000, 15.000, 15.000, 0, 'Table', 10),
+(2113, 620.000, 710.000, 15.000, 15.000, 90, 'Chair2', NULL);
 
 -- --------------------------------------------------------
 
@@ -2347,42 +2409,42 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`id`, `name`, `price`, `category_id`, `order`, `active`, `description`) VALUES
-(22, 'Pasta', 11.35, 1, 6, 1, ''),
+(22, 'Pasta', 11.35, 1, 5, 1, ''),
 (23, 'Salad', 1, 1, 7, 1, ''),
-(24, 'Ham sandwich', 4.75, 1, 15, 1, ''),
-(25, 'Pork', 17.8, 1, 4, 1, ''),
-(26, 'Salmon', 13.9, 1, 5, 1, ''),
-(27, 'Gnocchi', 8.95, 1, 3, 1, ''),
+(24, 'Ham sandwich', 4.75, 1, 16, 1, ''),
+(25, 'Pork', 17.8, 1, 3, 1, ''),
+(26, 'Salmon', 13.9, 1, 4, 1, ''),
+(27, 'Gnocchi', 8.95, 1, 2, 1, ''),
 (28, 'Steak', 13.58, 1, 1, 1, ''),
-(29, 'Mango Ice Tea', 1.2, 2, 17, 1, ''),
+(29, 'Mango Ice Tea', 1.2, 2, 18, 1, ''),
 (30, 'Lemon Ice Tea', 1.2, 2, 19, 1, ''),
-(31, 'Peach Ice Tea', 1.2, 2, 16, 1, ''),
-(32, 'Bitoque', 9.95, 1, 2, 1, ''),
-(33, 'Wine', 4.7, 2, 22, 1, ''),
-(34, 'Water', 1, 2, 21, 1, ''),
-(35, 'Cake', 2.6, 5, 24, 1, ''),
-(36, 'Cupcake', 3.7, 5, 25, 1, ''),
-(37, 'Ice Cream Cone', 1.6, 5, 26, 1, ''),
-(38, 'Ice Cream Ball', 1.4, 5, 23, 1, ''),
-(43, 'Sprite', 1.5, 2, 20, 1, NULL),
+(31, 'Peach Ice Tea', 1.2, 2, 17, 1, ''),
+(32, 'Bitoque', 9.95, 3, 8, 1, ''),
+(33, 'Wine', 4.7, 2, 23, 1, ''),
+(34, 'Water', 1, 2, 22, 1, ''),
+(35, 'Cake', 2.6, 5, 25, 1, ''),
+(36, 'Cupcake', 3.7, 5, 26, 1, ''),
+(37, 'Ice Cream Cone', 1.6, 5, 27, 1, ''),
+(38, 'Ice Cream Ball', 1.5, 5, 24, 1, 'adasdasdsad'),
+(43, 'Sprite', 1.5, 2, 21, 1, NULL),
 (44, 'Chocolate Avocado Mousse', 9.36, 5, 28, 1, NULL),
-(48, 'Kidney Bean Curry', 6.64, 1, 8, 1, NULL),
-(50, 'Chicken Karaage', 20.75, 1, 9, 1, NULL),
+(48, 'Kidney Bean Curry', 6.64, 1, 9, 1, NULL),
+(50, 'Chicken Karaage', 20.75, 1, 10, 1, NULL),
 (51, 'White chocolate creme brulee', 22.67, 5, 29, 1, NULL),
 (53, 'Eton Mess', 5.69, 5, 30, 1, NULL),
 (57, 'Apam balik', 15.58, 5, 31, 1, NULL),
-(58, 'Chicken Fajita Mac and Cheese', 18.03, 1, 10, 1, NULL),
+(58, 'Chicken Fajita Mac and Cheese', 18.03, 1, 11, 1, NULL),
 (59, 'Salted Caramel Cheescake', 16.9, 5, 32, 1, NULL),
 (61, 'Carrot Cake', 12.01, 1, 34, 1, NULL),
-(62, 'Lamb Rogan josh', 7.99, 1, 12, 1, NULL),
+(62, 'Lamb Rogan josh', 7.99, 1, 13, 1, NULL),
 (63, 'Peanut Butter Cheesecake', 9.34, 5, 33, 1, NULL),
-(65, 'Chicken Parmentier', 24.84, 1, 11, 1, NULL),
-(66, 'Fresh sardines', 19.71, 1, 13, 1, NULL),
-(68, 'Jerk chicken with rice & peas', 19.97, 1, 14, 1, NULL),
+(65, 'Chicken Parmentier', 24.84, 1, 12, 1, NULL),
+(66, 'Fresh sardines', 19.71, 1, 14, 1, NULL),
+(68, 'Jerk chicken with rice & peas', 19.97, 1, 15, 1, NULL),
 (69, 'Lamb and Potato pie', 9.55, 5, 35, 1, NULL),
 (70, 'Pouding chomeur', 17.84, 5, 36, 1, NULL),
-(71, 'RedBull', 2, 2, 18, 1, NULL),
-(74, 'Bread', 0.55, 4, 1, 1, 'sfddsfdsf');
+(71, 'RedBull', 2, 2, 20, 1, NULL),
+(74, 'Bread', 0.55, 4, 6, 1, 'sfddsfdsf');
 
 -- --------------------------------------------------------
 
@@ -2404,7 +2466,8 @@ INSERT INTO `menu_categories` (`id`, `name`) VALUES
 (2, 'Drink'),
 (3, 'Kids'),
 (4, 'Appetizer'),
-(5, 'Desserts');
+(5, 'Desserts'),
+(23, 'Category');
 
 -- --------------------------------------------------------
 
@@ -2457,7 +2520,16 @@ INSERT INTO `orders` (`order_id`, `tableid`, `TIN`, `created_at`, `checked_out_a
 (92, 2, 34534343434, '2025-07-07 11:48:17', '2025-07-07 11:48:26', 78.47, 5, 78, 'Visa', 13, 'Finished'),
 (93, 2, NULL, '2025-07-07 13:24:54', NULL, 0, 0, 0, NULL, 13, 'Cancelled'),
 (95, 5, 34534543543, '2025-07-08 09:04:02', '2025-07-08 09:04:31', 80.18, 0, 90, 'Cash', 13, 'Finished'),
-(96, 8, NULL, '2025-07-08 09:05:40', NULL, 0, 0, 0, NULL, 13, 'OnGoing');
+(96, 8, 0, '2025-07-08 09:05:40', '2025-07-12 14:03:05', 62.24, 0, 62, 'Visa', 13, 'Finished'),
+(97, 3, NULL, '2025-07-12 10:09:14', NULL, 0, 0, 0, NULL, 13, 'Cancelled'),
+(100, 1, 234234234234234, '2025-07-13 16:26:07', '2025-07-13 16:26:42', 90.72, 0, 91, 'Visa', 13, 'Finished'),
+(101, 6, NULL, '2025-07-13 16:26:53', NULL, 0, 0, 0, NULL, 13, 'Cancelled'),
+(102, 6, 0, '2025-07-13 16:26:57', '2025-07-13 16:27:01', 24.84, 0, 25, 'Visa', 13, 'Finished'),
+(103, 6, 0, '2025-07-13 16:28:24', '2025-07-13 16:28:28', 63.45, 0, 63, 'Visa', 13, 'Finished'),
+(104, 1, NULL, '2025-07-13 19:06:12', NULL, 0, 0, 0, NULL, 13, 'Cancelled'),
+(105, 1, 83624892474, '2025-07-13 19:08:21', '2025-07-13 19:12:41', 98.31, 17, 100, 'Cash', 13, 'Finished'),
+(106, 1, 1928301923970, '2025-07-14 10:28:59', '2025-07-14 10:31:41', 34.31, 10, 40, 'Cash', 13, 'Finished'),
+(107, 1, NULL, '2025-07-14 11:03:53', NULL, 0, 0, 0, NULL, 13, 'OnGoing');
 
 -- --------------------------------------------------------
 
@@ -2554,12 +2626,41 @@ INSERT INTO `order_items` (`uid`, `product_id`, `order_id`, `quantity`, `cost`) 
 (74, 34, 95, 1, 1),
 (75, 33, 95, 1, 4.7),
 (76, 32, 95, 1, 9.95),
-(77, 48, 96, 1, 0),
-(78, 25, 96, 1, 0),
-(79, 27, 96, 1, 0),
-(80, 34, 96, 2, 0),
-(81, 33, 96, 1, 0),
-(82, 38, 96, 1, 0);
+(77, 48, 96, 1, 6.64),
+(78, 25, 96, 1, 17.8),
+(79, 27, 96, 1, 8.95),
+(80, 34, 96, 2, 2),
+(81, 33, 96, 1, 4.7),
+(82, 38, 96, 1, 1.4),
+(83, 23, 97, 1, 0),
+(84, 50, 96, 1, 20.75),
+(86, 74, 100, 3, 1.6500000000000001),
+(87, 28, 100, 2, 27.16),
+(88, 27, 100, 1, 8.95),
+(89, 61, 100, 1, 12.01),
+(90, 31, 100, 2, 2.4),
+(91, 30, 100, 1, 1.2),
+(92, 34, 100, 1, 1),
+(93, 32, 100, 1, 9.95),
+(94, 37, 100, 2, 3.2),
+(95, 38, 100, 1, 1.5),
+(96, 35, 100, 1, 2.6),
+(97, 69, 100, 2, 19.1),
+(98, 28, 101, 1, 0),
+(99, 65, 102, 1, 24.84),
+(100, 48, 103, 1, 6.64),
+(101, 58, 103, 2, 36.06),
+(102, 50, 103, 1, 20.75),
+(104, 74, 104, 1, 0),
+(106, 34, 104, 1, 0),
+(107, 50, 105, 3, 62.25),
+(108, 58, 105, 2, 36.06),
+(109, 48, 106, 2, 13.28),
+(110, 28, 106, 1, 13.58),
+(111, 74, 106, 1, 0.55),
+(112, 30, 106, 1, 1.2),
+(113, 33, 106, 1, 4.7),
+(114, 34, 106, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -2595,7 +2696,11 @@ INSERT INTO `purchase_items` (`id`, `purchase_order_id`, `item_id`, `quantity`, 
 (13, 11, 4, 10, 59.90),
 (14, 12, 5, 25, 25.00),
 (15, 12, 11, 40, 471.20),
-(16, 12, 9, 40, 356.00);
+(16, 12, 9, 40, 356.00),
+(17, 13, 4, 10, 59.90),
+(18, 13, 7, 5, 9.00),
+(19, 14, 7, 10, 20.00),
+(20, 14, 4, 5, 29.95);
 
 -- --------------------------------------------------------
 
@@ -2627,7 +2732,9 @@ INSERT INTO `purchase_orders` (`id`, `supplier_id`, `order_date`, `delivery_date
 (9, 1, '2025-06-25', '2025-06-25', 'Received', 13),
 (10, 2, '2025-06-25', '2025-06-25', 'Received', 13),
 (11, 1, '2025-06-25', '2025-07-05', 'Received', 13),
-(12, 3, '2025-07-08', '2025-07-07', 'Received', 13);
+(12, 3, '2025-07-08', '2025-07-07', 'Received', 13),
+(13, 1, '2025-07-13', '2025-07-13', 'Received', 13),
+(14, 1, '2025-07-14', '2025-07-14', 'Received', 13);
 
 -- --------------------------------------------------------
 
@@ -2639,13 +2746,13 @@ CREATE TABLE `reservations` (
   `id` int NOT NULL,
   `tableid` int NOT NULL,
   `creator_id` int NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `phone` bigint DEFAULT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `guest_count` int NOT NULL DEFAULT '1',
   `date` datetime NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `notes` text COLLATE utf8mb4_general_ci
+  `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -2673,7 +2780,29 @@ INSERT INTO `reservations` (`id`, `tableid`, `creator_id`, `name`, `phone`, `ema
 (33, 7, 13, NULL, NULL, NULL, 1, '2025-07-05 11:00:00', '2025-07-05 14:15:28', NULL),
 (34, 7, 13, NULL, NULL, NULL, 1, '2025-07-08 13:30:00', '2025-07-08 09:03:54', NULL),
 (37, 7, 13, NULL, NULL, NULL, 1, '2025-07-10 18:30:00', '2025-07-10 13:26:57', NULL),
-(38, 7, 13, 'fdsdsfdsfdsf', 34324432423, 'dsfdsfdsfdsf@asdhfih', 1, '2025-07-10 20:15:00', '2025-07-10 15:35:57', 'dsfdsfdsfdsfdsf');
+(38, 7, 13, 'fdsdsfdsfdsf', 34324432423, 'dsfdsfdsfdsf@asdhfih', 1, '2025-07-10 20:15:00', '2025-07-10 15:35:57', 'dsfdsfdsfdsfdsf'),
+(39, 10, 13, NULL, NULL, NULL, 1, '2025-06-02 14:45:00', '2025-07-12 14:06:02', NULL),
+(40, 1, 13, NULL, NULL, NULL, 5, '2025-06-01 20:45:00', '2025-07-12 14:06:14', NULL),
+(41, 3, 13, NULL, NULL, NULL, 1, '2025-07-12 20:15:00', '2025-07-12 14:06:24', NULL),
+(42, 1, 13, NULL, NULL, NULL, 5, '2025-07-13 21:15:00', '2025-07-13 08:57:24', NULL),
+(43, 9, 13, NULL, NULL, NULL, 2, '2025-07-13 19:15:00', '2025-07-13 08:57:33', NULL),
+(44, 8, 13, NULL, NULL, NULL, 3, '2025-07-13 19:15:00', '2025-07-13 08:57:51', NULL),
+(45, 2, 13, NULL, NULL, NULL, 5, '2025-07-13 19:45:00', '2025-07-13 08:58:10', NULL),
+(46, 6, 13, NULL, NULL, NULL, 5, '2025-07-13 19:30:00', '2025-07-13 08:58:41', NULL),
+(47, 3, 13, NULL, NULL, NULL, 4, '2025-07-13 20:30:00', '2025-07-13 08:59:01', NULL),
+(48, 6, 13, NULL, NULL, NULL, 3, '2025-07-13 20:30:00', '2025-07-13 08:59:18', NULL),
+(49, 3, 13, NULL, NULL, NULL, 1, '2025-07-14 11:00:00', '2025-07-13 16:51:50', NULL),
+(50, 7, 13, NULL, NULL, NULL, 3, '2025-07-14 11:00:00', '2025-07-13 16:52:17', NULL),
+(52, 9, 13, NULL, NULL, NULL, 1, '2025-07-13 14:00:00', '2025-07-13 19:20:01', NULL),
+(53, 1, 13, NULL, NULL, NULL, 1, '2025-07-14 11:15:00', '2025-07-14 09:19:45', NULL),
+(54, 2, 13, NULL, NULL, NULL, 1, '2025-07-14 16:45:00', '2025-07-14 09:20:35', NULL),
+(55, 1, 13, NULL, NULL, NULL, 3, '2025-07-15 13:30:00', '2025-07-14 09:20:50', NULL),
+(56, 1, 13, NULL, NULL, NULL, 2, '2025-07-16 10:30:00', '2025-07-14 09:21:04', NULL),
+(57, 7, 13, NULL, NULL, NULL, 2, '2025-07-16 11:00:00', '2025-07-14 09:21:16', NULL),
+(58, 1, 13, NULL, NULL, NULL, 1, '2025-07-14 14:45:00', '2025-07-14 09:23:58', NULL),
+(59, 3, 13, NULL, NULL, NULL, 3, '2025-07-14 14:35:00', '2025-07-14 09:24:18', NULL),
+(60, 8, 13, NULL, NULL, NULL, 1, '2025-07-05 14:45:00', '2025-07-14 10:34:23', NULL),
+(61, 10, 13, NULL, NULL, NULL, 2, '2025-07-05 11:45:00', '2025-07-14 10:35:03', 'Order one Wine');
 
 -- --------------------------------------------------------
 
@@ -2782,10 +2911,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('KNAEAkdNrOkrOa01ZAagBc4G1IzAgEy5', 1752260293, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13,\"pending_verification\":false,\"verificationcode_created\":1752173860292}'),
-('ZC16vyN2DvTmkdfc-RkkkZXf-gpLS34o', 1752336030, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}'),
-('dMdr0Zx1_fT1tTeIE2LAgUnuffE6Zr8Z', 1752319632, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}'),
-('hxEEbLO-B1pSX0CHUKY5sGElmLn6zPSF', 1752336065, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}');
+('0-b17bzJgJ9spirmTS1l7PpWTBGLIIdb', 1752506925, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}'),
+('LTdwSjauiKAR9dri-tcHkwzD3qOuwNny', 1752572852, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}'),
+('uZv4Ct2Qw4SgpLBQL01Qo7cWG8xkPHy0', 1752577442, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"secure\":false,\"httpOnly\":true,\"path\":\"/\"},\"user\":\"gmferreira\",\"userid\":13}');
 
 -- --------------------------------------------------------
 
@@ -2814,7 +2942,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`Currency`, `WorkHours`, `WorkHourLimit`, `PayPerHour`, `MealAllowance`, `ExtraPay`, `ExtraPayMinuteRate`, `City`, `Contact`, `TaxID`, `Adress`, `RestaurantName`, `PostalCode`) VALUES
-('EUR', 8.00, 10.00, 7.35, 6.25, 9.78, 30, 'Coimbra', '967342198', 235281024275312128, '12 Test Street', 'Restaurant', '3030-032');
+('USD', 8.00, 10.00, 7.35, 6.25, 9.78, 30, 'Coimbra', '967342198', 235281024275312128, '12 Test Street', 'Restaurant', '3030-032');
 
 -- --------------------------------------------------------
 
@@ -2841,13 +2969,13 @@ CREATE TABLE `stock_items` (
 --
 
 INSERT INTO `stock_items` (`id`, `SKU`, `name`, `quantity_in_stock`, `unit_of_measure`, `purchase_price`, `supplier_id`, `description`, `active`, `connected_product_id`, `created_at`) VALUES
-(1, 'AS-B', 'Coca Cola', 50, 'g', 0.8, 2, '', 1, NULL, '2025-06-11 15:42:01'),
-(2, 'SDK-1', 'Mango Ice Tea', 49, '', 0.5, 2, '', 1, NULL, '2025-06-11 15:50:48'),
-(3, 'SDK-2', 'Lemon Ice Tea', 49, '', 0.5, 1, '', 1, 30, '2025-06-11 15:51:39'),
-(4, 'SKU-596', 'Strawberry Ice Cream', 35, 'L', 5.99, 1, '', 1, 38, '2025-06-12 11:44:21'),
+(1, 'AS-BA', 'Coca Cola', 5, 'CL', 0.9, 2, 'note', 1, NULL, '2025-06-11 15:42:01'),
+(2, 'SDK-1', 'Mango Ice Tea', 39, '', 0.5, 2, '', 1, 29, '2025-06-11 15:50:48'),
+(3, 'SKU-2', 'Lemon Ice Tea', 55, '', 0.5, 2, '', 1, 30, '2025-06-11 15:51:39'),
+(4, 'SKU-5966', 'Strawberry Ice Creama', 50, 'L', 5.99, 1, 'asdasads', 0, 38, '2025-06-12 11:44:21'),
 (5, 'ABCD-123', 'Sprite', 47, 'L', 1, 3, '', 1, 43, '2025-07-01 11:20:40'),
 (6, 'SDK-5', 'Beef', 0, 'kg', 2.4, 2, '', 1, NULL, '2025-07-02 17:02:11'),
-(7, 'SDK-6', 'Chicken', 0, 'kg', 1.8, 1, '', 1, NULL, '2025-07-02 17:02:59'),
+(7, 'SDK-6', 'Chicken', 15, 'kg', 1.8, 1, '', 1, NULL, '2025-07-02 17:02:59'),
 (8, 'SDK-7', 'Dough', 0, 'kg', 0.6, 2, '', 1, NULL, '2025-07-02 17:03:47'),
 (9, 'SDK-8', 'Ketchup', 80, 'L', 8.9, 3, NULL, 1, NULL, '2025-07-02 17:05:19'),
 (10, 'SDK-9', 'Mayonnaise', 0, 'L', 7.3, 3, NULL, 1, NULL, '2025-07-02 17:05:48'),
@@ -2876,7 +3004,7 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `name`, `email`, `phone`, `address`, `active`, `notes`) VALUES
-(1, 'Company 1', 'company1-manager@gmail.pt', 56543213, '21st Test street, California, USA', 1, 'Strict people, beware in meetings/calls'),
+(1, 'Company 1', 'company1-manager@gmail.pt', 56543213, '21st Test street, California, USA', 1, 'Strict people, beware in meetings'),
 (2, 'Company 2', 'company2@gmail.com', 94325235, '12 Stout Street', 1, ''),
 (3, 'Company 3', 'company3@gmail.com', 967342198, 'Test Adress 3', 0, '');
 
@@ -2910,16 +3038,16 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userid`, `username`, `active`, `email`, `phone`, `fullname`, `role`, `birthdate`, `country`, `city`, `address`, `postalcode`, `password`, `card_id`, `created`, `verified`) VALUES
-(13, 'gmferreira', 1, 'gabrielmonteiroferreira@gmail.com', '233223', 'Gabriel Ferreira', 'Administrator', '2000-05-05', 'Portugal', 'Coimbra', 'Praça Açores Nº5', '3030-032', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 11511719, '2024-12-12 14:47:36', 1),
-(209, 'acardoso', 0, 'antonio@gmail.com', '913123123', 'Antonio Pedro Rodrigues Cardoso', 'Staff', '2006-07-19', 'Portugal', 'Lisboa', 'Rua 2 do Tovim', '3030-099', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 11493721, '2025-07-01 11:28:53', 1),
+(13, 'gmferreira', 1, 'gabrielmonteiroferreira@gmail.com', '233223', 'Gabriel Ferreira', 'Administrator', '2000-05-05', 'Portugal', 'Coimbra', 'Praça Açores Nº5', '3030-032', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 4787411, '2024-12-12 14:47:36', 1),
+(209, 'acardoso', 1, 'antonio@gmail.com', '913123123', 'Antonio Pedro Rodrigues Cardoso', 'Sub-Manager', '2006-07-19', 'Portugal', 'Lisboa', 'Rua 2 do Tovim', '3030-099', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 11493721, '2025-07-01 11:28:53', 1),
 (268, 'lwillis', 1, 'lawrence.willis@example.com', '0211197204', 'Lawrence Willis', 'Manager', '1979-11-26', 'Ireland', 'Waterford', '7963 Church Lane', '43790', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 12773034, '2025-07-02 15:43:10', 1),
 (269, 'nlo', 1, 'nicolas.lo@example.com', '47988411', 'Nicolas Lo', 'Staff', '1995-07-22', 'Canada', 'St. Antoine', '7011 Park Rd', 'R6L 0N6', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 12758933, '2025-07-02 15:43:12', 1),
-(270, 'fdixon', 1, 'fernando.dixon@example.com', '6265229220', 'Fernando Dixon', 'Staff', '1954-05-29', 'United States', 'West Jordan', '2128 W Belt Line Rd', '73467', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 4801914, '2025-07-02 15:43:13', 1),
-(271, 'ale', 1, 'amar.le@example.com', '21011825', 'Amar Le', 'Kitchen Staff', '1961-06-22', 'Norway', 'Mønshaugen-Bjørgum', '1798 St. Olavs plass', '4017', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:14', 1),
-(272, 'fma', 1, 'felix.ma@example.com', '92308465', 'Felix Ma', 'Kitchen Staff', '1978-11-08', 'Canada', 'Chipman', '9652 22nd Ave', 'D2M 2A5', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:15', 1),
+(270, 'fdixon', 1, 'fernando.dixon@example.com', '6265229220', 'Fernando Dixon', 'Staff', '1954-05-29', 'United States', 'West Jordan', '2128 W Belt Line Rd', '73467', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 12787066, '2025-07-02 15:43:13', 1),
+(271, 'ale', 1, 'amar.le@example.com', '21011825', 'Amar Le', 'Kitchen Staff', '1961-06-22', 'Norway', 'Mønshaugen-Bjørgum', '1798 St. Olavs plass', '4017', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', 12805256, '2025-07-02 15:43:14', 1),
+(272, 'fma', 0, 'felix.ma@example.com', '92308465', 'Felix Ma', 'Kitchen Staff', '1978-11-08', 'Canada', 'Chipman', '9652 22nd Ave', 'D2M 2A5', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:15', 1),
 (273, 'acaldeira', 1, 'austrelino.caldeira@example.com', '8365069867', 'Austrelino Caldeira', 'User', '1998-07-22', 'Brazil', 'São João de Meriti', '5715 Avenida Vinícius de Morais', '43226', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:17', 1),
 (274, 'jturner', 1, 'jo.turner@example.com', '3617406986', 'Jo Turner', 'User', '1947-11-29', 'United States', 'North Charleston', '5820 Elgin St', '82822', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:18', 1),
-(275, 'rgiraud', 1, 'ryan.giraud@example.com', '0442840613', 'Ryan Giraud', 'User', '1989-01-20', 'France', 'Perpignan', '7111 Rue de la Charité', '26803', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:19', 1),
+(275, 'rgiraud', 0, 'ryan.giraud@example.com', '0442840613', 'Ryan Giraud', 'User', '1989-01-20', 'France', 'Perpignan', '7111 Rue de la Charité', '26803', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:19', 1),
 (276, 'umoreau', 1, 'ugo.moreau@example.com', '0231489905', 'Ugo Moreau', 'User', '1968-05-24', 'France', 'Avignon', '3067 Rue Gasparin', '48147', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:21', 1),
 (277, 'mdupont', 1, 'marta.dupont@example.com', '0757720876', 'Marta Dupont', 'User', '1982-09-05', 'Switzerland', 'Disentis/Mustér', '9983 Rue de la Charité', '5218', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:22', 1),
 (278, 'pvan den heuvel', 1, 'pjotr.vandenheuvel@example.com', '0705158071', 'Pjotr Van den Heuvel', 'User', '1977-02-28', 'Netherlands', 'Midwoud', '9334 Kolbleistraat', '6012 TE', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-02 15:43:24', 1),
@@ -3018,7 +3146,25 @@ INSERT INTO `users` (`userid`, `username`, `active`, `email`, `phone`, `fullname
 (377, 'a', 1, 'a@g', '123123123', 'dsadasdasdas', 'User', '2025-07-29', 'asdadsdas', 'dsadasdas', 'dasdasasd', 'asdasdasd', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 16:26:14', 1),
 (385, 'asdasdsad', 1, 'a@gadssaddsa', '1231231234', 'dsasda', 'User', '2025-07-16', 'dsasda', 'sadsdadsa', 'dsasda', 'asdsda', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 18:14:39', 0),
 (386, 'aasdasd', 1, 'tesel81357@dxirl.com', '1231123123', 'dsaasdsad', 'User', '2025-07-23', 'sdaadsasd', 'dsasadasd', 'adsasdsad', 'sdadasads', '$2b$10$9e.PqfCgub/64mcokFNhlunLGH4a2NWFI0tHaaC4t5bRiJkPXMRnm', NULL, '2025-07-10 18:39:41', 1),
-(390, 'aasdasd1', 1, 'lejila4923@fenexy.com', '123456123', 'sdaadsad', 'User', '2011-07-04', 'asdassdaads', 'asdasdd', 'asdads', 'dsaasddas', '$2b$10$KdkZHhcllWKo67pqR6SKbuqmK4Bcrl2EDiadQQjNhdwIVchEyCkDG', NULL, '2025-07-11 08:55:58', 1);
+(390, 'aasdasd1', 1, 'lejila4923@fenexy.com', '123456123', 'sdaadsad', 'User', '2011-07-04', 'asdassdaads', 'asdasdd', 'asdads', 'dsaasddas', '$2b$10$KdkZHhcllWKo67pqR6SKbuqmK4Bcrl2EDiadQQjNhdwIVchEyCkDG', NULL, '2025-07-11 08:55:58', 1),
+(392, 'cvan paassen', 1, 'cheryll.vanpaassen@example.com', '0775590303', 'Cheryll Van Paassen', 'user', '1959-09-01', 'Netherlands', 'Sambeek', '3719 Braziliedreef', '1538 SG', 'rufus', NULL, '2025-07-12 11:03:03', 0),
+(393, 'canchan', 1, 'champak.anchan@example.com', '8442013080', 'Champak Anchan', 'user', '1993-08-06', 'India', 'Sagar', '3274 MG Rd Bangalore', '76855', 'picard', NULL, '2025-07-12 11:03:15', 0),
+(394, 'tjesus', 1, 'tamara.jesus@example.com', '5384253091', 'Tamara Jesus', 'user', '1954-03-17', 'Brazil', 'João Pessoa', '4118 Rua Amazonas ', '61652', 'civic', NULL, '2025-07-12 11:03:22', 0),
+(395, 'baretz', 1, 'broer.aretz@example.com', '0130619431', 'Broer Aretz', 'user', '1946-12-12', 'Netherlands', 'Herten', '7180 Katernstraat', '6402 IP', 'brucelee', NULL, '2025-07-12 11:03:33', 0),
+(396, 'mrhodes', 1, 'minnie.rhodes@example.com', '2946102290', 'Minnie Rhodes', 'user', '1986-03-18', 'United States', 'Chula Vista', '7431 Marsh Ln', '88722', 'muscle', NULL, '2025-07-12 11:03:46', 0),
+(397, 'jkangas', 1, 'julia.kangas@example.com', '02004212', 'Julia Kangas', 'user', '1974-12-03', 'Finland', 'Kitee', '5936 Siilitie', '39205', 'house1', NULL, '2025-07-12 11:03:47', 0),
+(398, 'epoulsen', 1, 'emilie.poulsen@example.com', '67149055', 'Emilie Poulsen', 'user', '1997-09-14', 'Denmark', 'Sundby/Erslev', '2726 Engblommevej', '66220', 'eskimo', NULL, '2025-07-12 11:03:49', 0),
+(399, 'lda mota', 1, 'lidia.damota@example.com', '6634164111', 'Lídia da Mota', 'user', '1960-04-18', 'Brazil', 'Teresópolis', '8963 Avenida Brasil ', '28394', 'compton', NULL, '2025-07-12 11:03:50', 0),
+(400, 'zkulik', 1, 'zoreslava.kulik@example.com', '066068809', 'Zoreslava Kulik', 'user', '1959-03-20', 'Ukraine', 'Pivdenne', '3603 Volkova', '66573', 'nitram', NULL, '2025-07-12 11:03:51', 0),
+(401, 'esamuels', 1, 'emanuela.samuels@example.com', '0312995059', 'Emanuela Samuels', 'user', '1996-03-03', 'Netherlands', 'Zwammerdam', '7779 Kerkhoekweg', '2803 HV', '3030', NULL, '2025-07-12 11:03:52', 0),
+(402, 'aasdasasdd', 1, 'adsadsasd@dxirl.com', '123112312333', 'asddsaads', 'User', '2011-07-05', 'adsasdas', 'adsadsasd', 'asdadsasd', 'adsasd', '$2b$10$LA5fO7VB2L0Jep9eyO9PkuaMeSGTBP10z58rRG485.uEMumUIAstO', NULL, '2025-07-12 13:53:14', 0),
+(408, 'Teste', 1, 'asdasd@asda.co', '1231231296', 'Teste', 'User', '2011-07-12', 'Teste', 'Teste', 'Teste', 'Teste', '$2b$10$U8dRyGCF76EzCs6cTKjV9.yCrSbv6.qjxsVgWvCIJRrlDk57wA9Hy', NULL, '2025-07-13 18:56:41', 1),
+(409, 'oisadhoasd', 1, 'dsasadsdasad@asiduygh.co', '1423342143', 'dsadasdas', 'Sub-Manager', '2011-07-05', 'Teste', 'Teste', 'Teste', 'Teste', '$2b$10$YS5r9c8jdVaoEYjMsFFMCe98ofAfRQHlZESW94/3viQMZQxBhBztq', NULL, '2025-07-13 19:50:58', 1),
+(410, 'Test', 1, 'Test@gmail.com', '123333333333', 'Test', 'User', '2011-07-12', 'Test', 'Test', 'Test', 'Test', '$2b$10$fgAG5rrQIVVLp5lTkjqteu64T0H3QDWvkLdH98NFCpx/gS6JBkPLO', NULL, '2025-07-14 09:38:12', 1),
+(415, 'Testdsf', 1, 'Teste123123@gmail.com', '123123123777', 'Test', 'User', '2011-07-04', 'Test', 'Test', 'Test', 'Test', '$2b$10$u..qomQm.DQN09x.CG/h5u2fFvkj/9AFihJnVydd9yRvfpT8ANpL2', NULL, '2025-07-14 09:45:08', 1),
+(417, 'Test1234234', 1, 'Tadsasd@gmail.com', '967342198213', 'Test', 'User', '2011-07-06', 'Test', 'Test', 'Test', 'Test', '$2b$10$Pk.zf7KKY339ITpa845vTOnp/e83IVLF6sMrIN3e49Wk2qZZD1mkm', NULL, '2025-07-14 09:46:15', 1),
+(418, 'asdasdasd', 1, 'asdasd@asdij.co', '213123132', 'asdsad', 'User', '2011-07-05', 'Teste', 'Teste', 'Teste', 'Teste', '$2b$10$HLov/R63z75N8.POEuSbOuMBdhTy5BbZaHwPP5.u./zYZQsQtbwUO', NULL, '2025-07-14 09:47:52', 1),
+(421, 'Teste123', 1, 'nawaci2261@mytaemin.com', '123123123232', 'Teste', 'User', '2011-07-06', 'Teste', 'Teste', 'Teste', '3030-032', '$2b$10$kBcuZIEo7JDu3YN69rzEYObVJkrzMYPDIz4HOPbPIiaomc9aY5F6.', NULL, '2025-07-14 10:25:40', 1);
 
 --
 -- Indexes for dumped tables
@@ -3160,73 +3306,73 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `entryid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3723;
+  MODIFY `entryid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3754;
 
 --
 -- AUTO_INCREMENT for table `inventory_reports`
 --
 ALTER TABLE `inventory_reports`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `inventory_report_items`
 --
 ALTER TABLE `inventory_report_items`
-  MODIFY `uid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `uid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `layout`
 --
 ALTER TABLE `layout`
-  MODIFY `componentid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1562;
+  MODIFY `componentid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2114;
 
 --
 -- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT for table `menu_categories`
 --
 ALTER TABLE `menu_categories`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `uid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `uid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT for table `purchase_items`
 --
 ALTER TABLE `purchase_items`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `role_permissions`
 --
 ALTER TABLE `role_permissions`
-  MODIFY `entry_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
+  MODIFY `entry_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT for table `stock_items`
@@ -3244,7 +3390,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `userid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=392;
+  MODIFY `userid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=422;
 
 --
 -- Constraints for dumped tables
