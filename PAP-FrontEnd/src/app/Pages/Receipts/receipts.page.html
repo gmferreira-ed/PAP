@@ -38,7 +38,12 @@
                             </status-tag>
                         </td>
                         <td>
-                            <span>{{Receipt.username}}</span>
+                            <div class="tag">
+                                <img style="width: 25px; height: 25px; margin-right: 5px;" class="pfp small"
+                                    [src]="UserImagesURL+Receipt.username"
+                                    onerror="this.src='Images/Icons/account.svg'">
+                                <strong>{{Receipt.username}}</strong>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -52,8 +57,13 @@
                 <div class="row space-between" style="width: 100%;">
                     <h2>{{'Order' | translate}} - #{{ReceiptData.order_id}}</h2>
 
-                    <button class="button" (click)="Receipt.Print()">
-                        <icon type="receipt"></icon> {{'Print Receipt' | translate}}
+                    <button class="button" (click)="Receipt.Print()" [disabled]="Receipt.Printing">
+                        @if (Receipt.Printing){
+                            <loader LoaderStyle="Spinner" [Loading]="Receipt.Printing" style="width: 20px; height: 20px;"></loader>
+                        }@else{
+                        <icon type="receipt"></icon> 
+                        }
+                        {{'Print Receipt' | translate}}
                     </button>
                 </div>
                 <div class="row">

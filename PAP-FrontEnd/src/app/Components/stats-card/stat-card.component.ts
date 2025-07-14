@@ -1,4 +1,4 @@
-import {  DatePipe, NgTemplateOutlet } from '@angular/common';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
 import { Component, inject, HostBinding, Input, input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { ApexXAxis, ChartComponent, NgApexchartsModule, XAxisAnnotations } from 'ng-apexcharts';
 import { ApexChartOptions } from '../../../types/apex-chart';
@@ -141,9 +141,7 @@ export class StatCardComponent {
       }
     }
 
-    if (this.ViewType != 'All') {
-      this.UpdateChartView(this.ViewType)
-    }
+    this.UpdateChartView(this.ViewType)
   }
   ngOnInit() {
     this.UpdateTimeOptions()

@@ -260,7 +260,7 @@
 	"Failed to load inventory reports": "无法加载库存报告",
 	"Failed to fetch roles": "无法获取角色",
 	"Could not get menu items. Please try again": "无法获取菜单项。请重试",
-	"Failed to delete menu item": "无法删除菜单项",
+	"Failed to delete menu item: ": "无法删除菜单项",
 	"Sucessfully removed": "成功移除",
 	"from the menu": "从菜单中",
 	"Failed to upload menu item image": "无法上传菜单项图像",

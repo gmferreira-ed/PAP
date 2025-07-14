@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Απέτυχε η φόρτωση αναφορών αποθέματος",
   "Failed to fetch roles": "Απέτυχε η λήψη ρόλων",
   "Could not get menu items. Please try again": "Αδυναμία λήψης στοιχείων μενού. Δοκιμάστε ξανά",
-  "Failed to delete menu item": "Απέτυχε η διαγραφή στοιχείου μενού",
+  "Failed to delete menu item: ": "Απέτυχε η διαγραφή στοιχείου μενού",
   "Sucessfully removed": "Καταργήθηκε με επιτυχία",
   "from the menu": "από το μενού",
   "Failed to upload menu item image": "Απέτυχε η μεταφόρτωση εικόνας στοιχείου μενού",

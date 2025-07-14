@@ -183,6 +183,32 @@
         }
     }
 
+    .time-line {
+        display: block;
+        position: absolute;
+        width: calc(100% - 70px);
+        left: 70px;
+        height: 2px;
+        background-color: var(--accent-color-active);
+
+        .circle {
+            position: absolute;
+            background-color: var(--accent-color-active);
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            transform: translate(-50%, -50%);
+        }
+
+        &.s {
+            background-color: var(--accent-color);
+
+            .circle {
+                background-color: var(--accent-color);
+            }
+        }
+
+    }
 
     .schedule {
         display: flex;
@@ -269,12 +295,12 @@
     }
 }
 
-tr{
+tr {
     cursor: pointer;
 }
 
-::ng-deep{
-    .ant-modal-body{
+::ng-deep {
+    .ant-modal-body {
         display: block;
     }
 }

@@ -260,7 +260,7 @@
 	"Failed to load inventory reports": "Nie udało się załadować raportów inwentaryzacyjnych",
 	"Failed to fetch roles": "Nie udało się pobrać ról",
 	"Could not get menu items. Please try again": "Nie można pobrać pozycji w menu. Proszę spróbować ponownie",
-	"Failed to delete menu item": "Nie udało się usunąć pozycji w menu",
+	"Failed to delete menu item: ": "Nie udało się usunąć pozycji w menu",
 	"Sucessfully removed": "Pomyślnie usunięto",
 	"from the menu": "z menu",
 	"Failed to upload menu item image": "Nie udało się przesłać obrazu pozycji w menu",

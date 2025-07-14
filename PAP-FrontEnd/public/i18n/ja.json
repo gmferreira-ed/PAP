@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "在庫レポートの読み込みに失敗しました",
   "Failed to fetch roles": "役割の取得に失敗しました",
   "Could not get menu items. Please try again": "メニューアイテムを取得できませんでした。再試行してください",
-  "Failed to delete menu item": "メニューアイテムの削除に失敗しました",
+  "Failed to delete menu item: ": "メニューアイテムの削除に失敗しました",
   "Sucessfully removed": "正常に削除されました",
   "from the menu": "メニューから",
   "Failed to upload menu item image": "メニューアイテム画像のアップロードに失敗しました",

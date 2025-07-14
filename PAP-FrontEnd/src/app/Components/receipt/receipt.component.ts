@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 declare global {
   interface Window {
     electronAPI: {
-      printReceipt: (data: any) => void;
+      printReceipt: (data: any) => any;
     };
   }
 }
@@ -50,13 +50,13 @@ export class ReceiptComponent implements OnChanges {
       const hours = String(Today.getHours()).padStart(2, '0');
       const minutes = String(Today.getMinutes()).padStart(2, '0');
 
-      let TotalPrice = ReceiptData.total ||  ReceiptData.items.reduce((total: number, product: any) => {
+      let TotalPrice = ReceiptData.total || ReceiptData.items.reduce((total: number, product: any) => {
         return total + product.price * product.quantity;
       }, 0);
 
       let SubTotal = TotalPrice
-      if (ReceiptData.discount){
-        TotalPrice*=1-(ReceiptData.discount/100)
+      if (ReceiptData.discount) {
+        TotalPrice *= 1 - (ReceiptData.discount / 100)
       }
 
       const AmountPaid = ReceiptData.payment_method == 'Cash' ? Number(ReceiptData.amount_paid) : TotalPrice
@@ -128,12 +128,27 @@ export class ReceiptComponent implements OnChanges {
   }
 
 
-  Print() {
+  @Input() Printing = false
+  async Print() {
+    this.Printing = true
+
     try {
-      window.electronAPI.printReceipt(this.PrinterInstructions)
-    } catch (Error) {
-      this.MessageService.error(this.TranslateService.instant('Failed to print receipt. Please check if your printer is connected properly'))
+      const result = await window.electronAPI.printReceipt(this.PrinterInstructions);
+      
+      if (result && result.success) {
+        this.MessageService.success(this.TranslateService.instant('Receipt printed successfully'));
+      } else {
+        const errorMessage = result?.message || 'Failed to print receipt';
+        console.error('Print failed:', errorMessage);
+        this.MessageService.error(this.TranslateService.instant(errorMessage));
+      }
+    } catch (error) {
+      console.error('Print error:', error);
+      this.MessageService.error(this.TranslateService.instant('Failed to print receipt. Please check if your printer is connected properly'));
     }
+
+    
+    this.Printing = false
   }
 
   ngOnChanges(changes: SimpleChanges) {

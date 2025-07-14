@@ -16,7 +16,7 @@ Router.get('/receipts', HandleEndpointFunction(async (req, res) => {
 
     const QueryParams = req.query
 
-    let OrdersQuery = `SELECT * FROM orders `
+    let OrdersQuery = `SELECT orders.*, users.username FROM orders LEFT JOIN users ON users.userid=orders.created_by`
 
 
 
@@ -78,7 +78,7 @@ Router.get('/receipts/id', HandleEndpointFunction(async (req, res) => {
 
     const OrderData = OrderItems[0]
     if (OrderData) {
-        console.log(OrderData)
+        // console.log(OrderData)
         const Order = {
             id: OrderData.id,
             order_id: OrderData.order_id,

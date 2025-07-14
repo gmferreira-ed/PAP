@@ -265,7 +265,7 @@
 	"Failed to load inventory reports": "Falha ao carregar relatórios de inventário",
 	"Failed to fetch roles": "Falha ao buscar funções",
 	"Could not get menu items. Please try again": "Não foi possível obter itens de menu. Tente novamente",
-	"Failed to delete menu item": "Falha ao excluir item de menu",
+	"Failed to delete menu item: ": "Falha ao excluir item de menu",
 	"Sucessfully removed": "Removido com sucesso",
 	"from the menu": "do menu",
 	"Failed to upload menu item image": "Falha ao carregar imagem do item de menu",

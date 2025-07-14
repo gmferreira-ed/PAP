@@ -5,9 +5,8 @@ import SQLUtils from '../Services/SQLUtils';
 import axios from 'axios';
 import sharp from 'sharp'
 import path from 'path'
-import fs from 'fs'
+import bcrypt from 'bcrypt'
 import PermissionsService from '../Services/PermissionsService';
-
 
 const UserQuery = `SELECT userid,username,active,fullname,
     role,birthdate, card_id, created, verified 
@@ -57,6 +56,47 @@ Router.get('/users/user', HandleEndpointFunction(async (req, res) => {
 
     res.send(UserInfo[0])
 }))
+
+
+
+
+/**
+ * @displayname "Create/Modify Users"
+ * @category "Users"
+ * @summary "Create new user accounts and modify existing user information"
+ * @path /users
+ * @method POST
+ */
+Router.post('/users', HandleEndpointFunction(async (req, res) => {
+    const UserInfo = req.body;
+    UserInfo.verified = 1
+    UserInfo.active = 1
+    UserInfo.password = await HashPassword(UserInfo.password)
+    
+    try {
+        const [UserCreateQuery, Values] = SQLUtils.BuildInsertQuery('users', [
+            'username', 'email', 'phone', 'fullname', 'birthdate', 'country', 'city', 'address', 'postalcode', 'password', 'role', 'verified', 'active'
+        ], UserInfo);
+        const [CreateResult] = await Database.execute(UserCreateQuery, Values) as any
+
+        res.send({ success: true, userid: CreateResult.insertId });
+    } catch (err: any) {
+        if (err.code === 'ER_DUP_ENTRY' || err.errno === 1062) {
+            if (err.sqlMessage.includes('email')) {
+                res.status(401).send({ error: "This email is already in use" });
+            } else if (err.sqlMessage.includes('phone')) {
+                res.status(401).send({ error: "This phone is already in use" });
+            } else if (err.sqlMessage.includes('username')) {
+                res.status(401).send({ error: "This username is already in use" });
+            } else {
+                res.status(502).send({ error: "Unknown error" });
+            }
+        } else {
+            throw err
+        }
+    }
+}))
+
 
 
 /**
@@ -119,31 +159,22 @@ Router.delete('/users/keycard', HandleEndpointFunction(async (req, res) => {
     res.send()
 }))
 
-/**
- * @displayname "Create/Modify Users"
- * @category "Users"
- * @summary "Create new user accounts and modify existing user information"
- * @path /users
- * @method POST
- */
-Router.post('/users', HandleEndpointFunction(async (req, res) => {
-    const user = req.session.user;
-    const UserInfo = req.body;
 
-    const [UserCreateQuery, Values] = SQLUtils.BuildInsertQuery('users', [
-        'username', 'email', 'phone', 'fullname', 'birthdate', 'country', 'city', 'address', 'postalcode', 'password', 'role'
-    ], UserInfo);
-    await Database.execute(UserCreateQuery, Values);
 
-    res.send({ success: true });
-}))
+const saltRounds = 10
+async function HashPassword(ClientPassword:string) {
+  const hashedPassword = await bcrypt.hash(ClientPassword, saltRounds);
+  return hashedPassword;
+}
 
 
 
 
-// Generates random users
-// const UsersFolder = path.join(__dirname, "../Uploads/users/");
 
+const UsersFolder = path.join(__dirname, "../Uploads/users/");
+
+
+// //Generates random users
 // async function GenerateRandomUser(role: string = 'user') {
 //     const { data } = await axios.get('https://randomuser.me/api/');
 //     const user = data.results[0];
@@ -198,8 +229,126 @@ Router.post('/users', HandleEndpointFunction(async (req, res) => {
 
 // GenerateUsers();
 
+// async function RegenerateUserImages() {
+//     console.log('Starting to regenerate user images...');
+    
+//     // Get all users from database
+//     const [users] = await Database.execute<any[]>('SELECT username, fullname FROM users');
+    
+//     for (const user of users) {
+//         const webpPath = path.join(UsersFolder, `${user.username}.webp`);
+        
+//         // Check if image already exists
+//         if (fs.existsSync(webpPath)) {
+//             console.log(`Image already exists for ${user.username}, skipping...`);
+//             continue;
+//         }
+        
+//         try {
+//             console.log(`Downloading image for ${user.username}...`);
+            
+//             // Try to get a random user image
+//             const { data } = await axios.get('https://randomuser.me/api/');
+//             const randomUser = data.results[0];
+            
+//             const pictureUrl = randomUser.picture.large;
+//             const imageResp = await axios.get(pictureUrl, { responseType: 'arraybuffer' });
+//             const imageBuffer = Buffer.from(imageResp.data, 'binary');
+            
+//             // Ensure users folder exists
+//             if (!fs.existsSync(UsersFolder)) {
+//                 fs.mkdirSync(UsersFolder, { recursive: true });
+//             }
+            
+//             await sharp(imageBuffer)
+//                 .resize(600, 600)
+//                 .webp()
+//                 .toFile(webpPath);
+                
+//             console.log(`Successfully downloaded image for ${user.username}`);
+            
+//             // Add delay to avoid hitting API rate limits
+//             await new Promise(resolve => setTimeout(resolve, 500));
+            
+//         } catch (err) {
+//             console.error(`Failed to download image for ${user.username}:`, err);
+//         }
+//     }
+    
+//     console.log('Finished regenerating user images!');
+// }
+
+// RegenerateUserImages();
 
 
+// async function convertUserImagesToWebP() {
+//     console.log('Starting to convert user images to WebP...');
+    
+//     // Ensure users folder exists
+//     if (!fs.existsSync(UsersFolder)) {
+//         console.log('Users folder does not exist, creating it...');
+//         fs.mkdirSync(UsersFolder, { recursive: true });
+//         return;
+//     }
+    
+//     // Get all files in the users folder
+//     const files = fs.readdirSync(UsersFolder);
+    
+//     // Filter for image files (common formats)
+//     const imageFiles = files.filter(file => {
+//         const ext = path.extname(file).toLowerCase();
+//         return ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp'].includes(ext);
+//     });
+    
+//     console.log(`Found ${imageFiles.length} image files to process`);
+    
+//     for (const file of imageFiles) {
+//         const filePath = path.join(UsersFolder, file);
+//         const fileName = path.parse(file).name;
+//         const webpPath = path.join(UsersFolder, `${fileName}.webp`);
+        
+//         try {
+//             // Check if it's already a WebP file
+//             if (path.extname(file).toLowerCase() === '.webp') {
+//                 // console.log(`Checking WebP file: ${file}`);
+                
+//                 // Check if WebP file needs resizing
+//                 const metadata = await sharp(filePath).metadata();
+//                 if (metadata.width !== 600 || metadata.height !== 600) {
+//                     await sharp(filePath)
+//                         .resize(600, 600)
+//                         .webp()
+//                         .toFile(webpPath + '.tmp');
+                    
+//                     // Replace original file
+//                     fs.renameSync(webpPath + '.tmp', webpPath);
+//                 } else {
+//                     // console.log(`WebP file ${file} already correctly sized, skipping...`);
+//                 }
+//             } else {
+//                 console.log(`Converting ${file} to WebP...`);
+                
+//                 // Convert to WebP and resize
+//                 await sharp(filePath)
+//                     .resize(600, 600)
+//                     .webp()
+//                     .toFile(webpPath);
+                
+//                 // Remove original file after successful conversion
+//                 fs.unlinkSync(filePath);
+//                 console.log(`Successfully converted ${file} to ${fileName}.webp`);
+//             }
+            
+//         } catch (err) {
+//             console.error(`Failed to process ${file}:`, err);
+//         }
+//     }
+    
+//     console.log('Finished converting user images to WebP!');
+// }
+
+// // Run the script
+// convertUserImagesToWebP().catch(console.error);
 
 
 module.exports = Router

@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Не удалось загрузить отчеты по инвентаризации",
   "Failed to fetch roles": "Не удалось получить роли",
   "Could not get menu items. Please try again": "Не удалось получить элементы меню. Попробуйте снова",
-  "Failed to delete menu item": "Не удалось удалить элемент меню",
+  "Failed to delete menu item: ": "Не удалось удалить элемент меню",
   "Sucessfully removed": "Успешно удалено",
   "from the menu": "из меню",
   "Failed to upload menu item image": "Не удалось загрузить изображение элемента меню",

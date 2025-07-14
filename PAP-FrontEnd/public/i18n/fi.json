@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Varastoraporttien lataus epäonnistui",
   "Failed to fetch roles": "Roolien hakeminen epäonnistui",
   "Could not get menu items. Please try again": "Ruokalistan tuotteiden haku epäonnistui, yritä uudelleen",
-  "Failed to delete menu item": "Ruokalistan tuotteen poistaminen epäonnistui",
+  "Failed to delete menu item: ": "Ruokalistan tuotteen poistaminen epäonnistui",
   "Sucessfully removed": "Poistettu onnistuneesti",
   "from the menu": "ruokalistasta",
   "Failed to upload menu item image": "Ruokalistan tuotteen kuvan lähetys epäonnistui",

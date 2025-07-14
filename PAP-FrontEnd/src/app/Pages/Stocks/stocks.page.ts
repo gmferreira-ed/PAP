@@ -46,6 +46,7 @@ import { AuthService } from '../../Services/Auth.service';
 import { UnavailableInfo } from '../../Components/unavailable-info/unavailable-info';
 import { TranslateService } from '@ngx-translate/core';
 import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
+import { FValidators } from '../../Services/Validators';
 
 
 type StockTotalData = {
@@ -135,11 +136,13 @@ export class StocksPage {
     this.OrdersStartDate.setDate(this.OrdersStartDate.getDate() - 7)
   }
 
+  EnforceNumbers = GlobalUtils.EnforceNumber
+
   // FORMS
   SupplierForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
-    email: new FormControl(''),
-    phone: new FormControl(''),
+    email: new FormControl('', [FValidators.email]),
+    phone: new FormControl('', [FValidators.phone]),
     address: new FormControl(''),
     notes: new FormControl(''),
   });
@@ -406,7 +409,7 @@ export class StocksPage {
   AddOrderItem() {
     const CurrentSupplierID = this.StockOrderForm.value.supplier_id
     if (CurrentSupplierID) {
-      const DefaultItem: StockItem|undefined =  this.StocksService.StockItems.find((Stockitem) => Stockitem.supplier_id == CurrentSupplierID)
+      const DefaultItem: StockItem | undefined = this.StocksService.StockItems.find((Stockitem) => Stockitem.supplier_id == CurrentSupplierID)
       if (DefaultItem) {
         this.StockOrderItems.push({ item_id: DefaultItem.id, quantity: 1, cost: DefaultItem.purchase_price })
       } else {
@@ -669,7 +672,6 @@ export class StocksPage {
     const ItemID = Number(this.ActiveRoute.snapshot.paramMap.get('itemid'));
     const Context = this.ActiveRoute.snapshot.queryParamMap.get('context');
 
-    console.log(Context, ItemID)
     if (Context) {
       this.ActiveView = Context;
       if (ItemID) {
@@ -678,7 +680,7 @@ export class StocksPage {
         const SelectedInventoryAdjustment = Context == 'Adjustments History' && this.StocksService.InventoryReports.find(item => item.id == ItemID);
 
         if (SelectedStockItem) {
-          this.SelectedStockItem = SelectedStockItem;
+          this.SelectedStockItem = SelectedStockItem
         } else if (SelectedStockOrder) {
           this.SelectedStockOrder = SelectedStockOrder
         } else if (SelectedInventoryAdjustment) {
@@ -755,48 +757,33 @@ export class StocksPage {
 
   LoadingItemStats = false
 
-  GetOrderTotal(Property: string, StockItem: StockItem, ViewType: 'Week' | 'Month' | 'Year' | 'All' | string) {
+  TotalCost = 0
+  TotalQuantity = 0
+  async GetOrderTotal(Property: string, StockItem: StockItem | undefined = this.SelectedStockItem, dateRange?: [number?, number?]) {
     let Total = 0;
-    const now = new Date();
 
-    let filterFn = (_: any) => true;
+    if (StockItem) {
+      while (!StockItem.Orders) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
 
-    if (ViewType === 'Week') {
-      const startOfWeek = new Date(now);
-      startOfWeek.setHours(0, 0, 0, 0);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
-      filterFn = (order: any) => {
-        const d = new Date(order.order_date);
-        return d >= startOfWeek && d <= endOfWeek;
-      };
-    } else if (ViewType === 'Month') {
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
-      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
-      filterFn = (order: any) => {
-        const d = new Date(order.order_date);
-        return d >= startOfMonth && d <= endOfMonth;
-      };
-    } else if (ViewType === 'Year') {
-      const startOfYear = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
-      const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
-      filterFn = (order: any) => {
-        const d = new Date(order.order_date);
-        return d >= startOfYear && d <= endOfYear;
-      };
-    }
+      for (const PurchaseOrderItem of StockItem.Orders) {
+        const TimeStamp = new Date(PurchaseOrderItem.order_date).getTime()
+        if (dateRange && dateRange[0] && dateRange[1] && (TimeStamp < dateRange[0] || TimeStamp > dateRange[1])) continue;
+        Total += PurchaseOrderItem[Property]
+      }
 
-    const FilteredItems = StockItem.Orders && StockItem.Orders.filter(filterFn);
-    if (FilteredItems) {
-      for (const PurchaseOrderItem of FilteredItems) {
-        Total += PurchaseOrderItem[Property];
+      if (Property == 'cost') {
+        this.TotalCost = Total
+      } else {
+        this.TotalQuantity = Total
       }
     }
-    return Total;
+
+    return Total
   }
 
+// LOAD STAT TOTALS
   OrdersQuickDateChanged(Option: string) {
     const now = new Date();
     if (Option == 'Week') {
@@ -823,6 +810,7 @@ export class StocksPage {
     }
   }
 
+  // LOAD STAT TOTALS
   GetOrdersInfo(StockItem: StockItem) {
     const FilteredItems = StockItem.Orders && StockItem.Orders.filter((order) => {
       const OrderDate = new Date(order.order_date)
@@ -839,12 +827,14 @@ export class StocksPage {
     return { expenses: Expenses, received: Received };
   }
 
+  // LOADING ITEM INFO ON SELECT
   async CalculateItemStats(item: StockItem) {
 
     this._selectedStockItem = item;
+    this.LoadingItemStats = true
+
     if (!item.Orders && this.CanViewOrders) {
 
-      this.LoadingItemStats = true
 
       const [StockItemOrders] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'stock-orders', 'GET', this.TranslateService.instant('Failed to load product stats'), {
         item_id: item.id
@@ -889,10 +879,72 @@ export class StocksPage {
       } as ApexChartOptions
 
 
-      this.LoadingItemStats = false
     }
 
+    this.GetOrderTotal('quantity')
+    this.GetOrderTotal('cost')
+    this.LoadingItemStats = false
+  }
 
+
+  // STOCK ITEM EDITING
+  EditingStockItem = false
+
+  StockItemEditForm = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    SKU: new FormControl(''),
+    unit_of_measure: new FormControl(''),
+    purchase_price: new FormControl(0),
+    supplier_id: new FormControl<null | number>(null, [Validators.required]),
+    description: new FormControl(''),
+  });
+
+  StartEditingStockItem() {
+    if (this.SelectedStockItem) {
+      this.StockItemEditForm.patchValue({
+        name: this.SelectedStockItem.name,
+        SKU: this.SelectedStockItem.SKU,
+        unit_of_measure: this.SelectedStockItem.unit_of_measure,
+        purchase_price: this.SelectedStockItem.purchase_price,
+        supplier_id: this.SelectedStockItem.supplier_id,
+        description: this.SelectedStockItem.description
+      });
+      this.EditingStockItem = true;
+    }
+  }
+
+  CancelEditingStockItem() {
+    this.EditingStockItem = false;
+    this.StockItemEditForm.reset();
+  }
+
+  UpdatingStockItem = false
+
+  async SaveStockItem() {
+    if (this.SelectedStockItem && this.StockItemEditForm.valid) {
+      this.UpdatingStockItem = true;
+
+      const [Result] = await this.HttpService.MakeRequest(
+        AppSettings.APIUrl + 'stock-items',
+        'PATCH',
+        this.TranslateService.instant('Failed to update stock item'),
+        {
+          ...this.StockItemEditForm.value,
+          id: this.SelectedStockItem.id
+        }
+      );
+
+      if (Result) {
+        this.MessageService.success(this.TranslateService.instant('Stock item updated successfully'));
+
+        Object.assign(this.SelectedStockItem, this.StockItemEditForm.value);
+
+        this.EditingStockItem = false;
+        this.LoadStockItems(); 
+      }
+
+      this.UpdatingStockItem = false;
+    }
   }
 
 }

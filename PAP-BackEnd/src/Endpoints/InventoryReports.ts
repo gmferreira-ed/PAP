@@ -27,7 +27,8 @@ Router.get('/inventory-reports', HandleEndpointFunction(async (req, res) => {
     LEFT JOIN inventory_report_items item ON item.report_id = report.id
     LEFT JOIN users user ON user.userid = report.created_by
     LEFT JOIN stock_items stock_item ON stock_item.id = item.item_id
-    LEFT JOIN menu ON menu.id = stock_item.connected_product_id`
+    LEFT JOIN menu ON menu.id = stock_item.connected_product_id
+    ORDER BY report.created_at DESC`
 
     const [InventoryReports] = await Database.execute(Query) as any[]
 

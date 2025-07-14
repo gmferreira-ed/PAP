@@ -9,10 +9,11 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { HttpService } from '../../Services/Http.service';
 import { AppSettings } from '../../Services/AppSettings';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'login-page',
-  imports: [NzFormModule, ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzDividerModule, TranslateModule, RouterModule],
+  imports: [NzFormModule, ReactiveFormsModule, FormsModule, NzInputModule, NzButtonModule, NzDividerModule, TranslateModule, RouterModule, NzIconModule],
   templateUrl: './login.page.html',
   styleUrl: './login.page.less'
 })
@@ -21,10 +22,11 @@ export class LoginPage {
   HttpService = inject(HttpService)
   AuthService = inject(AuthService)
   TranslateService = inject(TranslateService)
-
   router = inject(Router)
+
   LoggingIn = false
   Initialized = false
+  passwordVisible = false
 
   LoginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),

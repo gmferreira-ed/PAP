@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Laden van voorraadrapporten mislukt",
   "Failed to fetch roles": "Kon rollen niet ophalen",
   "Could not get menu items. Please try again": "Kon de menuposten niet ophalen. Probeer het opnieuw",
-  "Failed to delete menu item": "Verwijderen van menupost mislukt",
+  "Failed to delete menu item: ": "Verwijderen van menupost mislukt",
   "Sucessfully removed": "Succesvol verwijderd",
   "from the menu": "van het menu",
   "Failed to upload menu item image": "Uploaden van menupostafbeelding mislukt",

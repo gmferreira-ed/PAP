@@ -12,11 +12,12 @@ import { IconsModule } from "../../Components/icon/icon.component";
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 import { TranslateService } from '@ngx-translate/core';
 import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
+import { LoaderComponent } from '../../Components/loader/loader.component';
 
 @Component({
   selector: 'receipts-page',
   imports: [PageLayoutComponent, NzTableModule, LoadingScreen, TranslateModule, DynamicCurrencyPipe, StatusTagComponent, 
-    ReceiptComponent, IconsModule, DynamicDatePipe],
+    ReceiptComponent, IconsModule, DynamicDatePipe, LoaderComponent],
   templateUrl: './receipts.page.html',
   styleUrl: './receipts.page.less'
 })
@@ -58,6 +59,8 @@ export class ReceiptsPage {
       this.TotalPages = Result.Pages * this.ReceiptsPageSize
     }
 
+    console.log(Result)
+
     this.LoadingReceipts = false
   }
 
@@ -72,8 +75,8 @@ export class ReceiptsPage {
       { id: this.ReceiptId })
     if (ReceiptData) {
       this.ReceiptData = ReceiptData
-   
     }
+
 
     this.LoadingReceiptData = false
   }

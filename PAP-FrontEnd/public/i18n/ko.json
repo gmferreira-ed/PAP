@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "재고 보고서 로딩에 실패했습니다",
   "Failed to fetch roles": "역할 정보를 가져올 수 없습니다",
   "Could not get menu items. Please try again": "메뉴 항목을 가져올 수 없습니다. 다시 시도하세요",
-  "Failed to delete menu item": "메뉴 항목 삭제에 실패했습니다",
+  "Failed to delete menu item: ": "메뉴 항목 삭제에 실패했습니다",
   "Sucessfully removed": "성공적으로 삭제됨",
   "from the menu": "메뉴에서",
   "Failed to upload menu item image": "메뉴 항목 이미지 업로드에 실패했습니다",

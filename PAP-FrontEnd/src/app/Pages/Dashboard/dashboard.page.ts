@@ -38,7 +38,7 @@ export class DashboardPage {
   AuthService = inject(AuthService)
   TranslateService = inject(TranslateService)
 
-  @ViewChild('AttendanceView') AttendanceView?:AtendanceViewer
+  @ViewChild('AttendanceView') AttendanceView?: AtendanceViewer
 
   // Data
   WorkingStaff: any[] = []
@@ -74,8 +74,6 @@ export class DashboardPage {
     const DayStart = this.TodayStart.getTime()
     const DayEnd = this.TodayEnd.getTime()
 
-    const UserStatuses: { [userid: string]: { name: string, lastAction: string, entry?: any } } = {};
-
 
     const TodayEntries = Attendance.filter((a) => {
       const Time = new Date(a.timestamp)
@@ -84,31 +82,22 @@ export class DashboardPage {
       return Timestamp >= DayStart && Timestamp <= DayEnd
     })
 
-    for (const entry of TodayEntries) {
-      const userid = entry.userid
-      if (!UserStatuses[userid]) {
-        UserStatuses[userid] = { name: entry.name || entry.fullname || '', lastAction: '', entry: undefined };
-      }
-      UserStatuses[userid].lastAction = entry.action;
-      if (entry.action === 'Entry') {
-        UserStatuses[userid].entry = entry
-      } else if (entry.action === 'Exit') {
-        UserStatuses[userid].entry = undefined
+    const UserTimestamps: Record<number, any> = {}
+    for (const Entry of TodayEntries.reverse()) {
+      if (Entry.action == 'Entry') {
+        UserTimestamps[Entry.userid] = Entry
+      } else {
+        delete UserTimestamps[Entry.userid]
       }
     }
 
-    this.WorkingStaff = Object.values(UserStatuses)
-      .filter(u => u.lastAction === 'Entry' && u.entry)
-      .map(u => {
-        return {
-          ...u.entry,
-        }
-      })
+    this.WorkingStaff = Object.values(UserTimestamps)
+
   }
 
   async LoadReservations() {
 
-    if (this.CanViewReservations){
+    if (this.CanViewReservations) {
       this.LoadingReservations = true
 
       const [Reservations] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'reservations', 'GET', this.TranslateService.instant('Failed to load reservations'), {
@@ -191,6 +180,10 @@ export class DashboardPage {
     this.LoadReservations()
     this.LoadRevenue()
     this.LoadTables()
+
+    setInterval(()=>{
+      this.Now = new Date()
+    }, 1000)
   }
 
   FormatTotal(Value: number) {

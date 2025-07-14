@@ -91,7 +91,7 @@ export class RestaurantLayout {
 
   @Output() TableSelected = new EventEmitter();
 
-  ContextMenuVisible = false
+  ContextMenuVisible: boolean | Vector2 = false
   HasClipboardContent = false
 
 
@@ -193,58 +193,66 @@ export class RestaurantLayout {
 
 
 
-    if (TargetIndex >= -1 && HistoryLenght >= TargetIndex + 1) {
-      this.CurrentHistoryIndex += IndexChange
-      const IsUndo = IndexChange == -1
+    if (!this.ProcessingComponent) {
+      if (TargetIndex >= -1 && HistoryLenght >= TargetIndex + 1) {
+        this.CurrentHistoryIndex += IndexChange
+        const IsUndo = IndexChange == -1
 
 
-      this.LoadingLayout = true
+        this.LoadingLayout = true
+        this.ProcessingComponent = true
 
-      const TargetAction = IsUndo && this.History[TargetIndex + 1] || this.History[TargetIndex]
+        const TargetAction = IsUndo && this.History[TargetIndex + 1] || this.History[TargetIndex]
 
-      if (TargetAction) {
+        if (TargetAction) {
 
-        if (TargetAction.type == 'delete' && IsUndo || TargetAction.type == 'create' && !IsUndo) {
-          this.AddComponent(TargetAction.ComponentData, true)
-        }
-        else if (TargetAction.type == 'create' && IsUndo || TargetAction.type == 'delete' && !IsUndo) {
-          const TargetComponent = !IsUndo ? TargetAction.ComponentData : this.GetComponentById(TargetAction.ComponentData.id!)
-          if (TargetComponent)
-            this.DeleteComponent(TargetComponent, true)
-          else
-            console.warn('Failed to undo component creation', TargetAction.ComponentData.id)
-        }
-        else if (TargetAction.type == 'update') {
-          const TargetComponentData = IsUndo && TargetAction.PreviousComponentData || TargetAction.ComponentData
-
-          const ExistingComponent = this.GetComponentById(TargetAction.ComponentData.id!)
-          if (ExistingComponent) {
-            Object.assign(ExistingComponent, TargetComponentData);
-            this.SaveComponentInfo(ExistingComponent)
-          } else {
-            console.warn('Failed to undo. ID', TargetAction.ComponentData.id, 'not found')
+          if (TargetAction.type == 'delete' && IsUndo || TargetAction.type == 'create' && !IsUndo) {
+            this.AddComponent(TargetAction.ComponentData, true)
           }
-        } else if (TargetAction.type == 'import') {
-          let TargetLayout: any[] = []
-          if (IsUndo) {
-            TargetLayout = TargetAction.PreviousLayout
-          } else {
-            TargetLayout = TargetAction.NewLayout
+          else if (TargetAction.type == 'create' && IsUndo || TargetAction.type == 'delete' && !IsUndo) {
+            const TargetComponent = !IsUndo ? TargetAction.ComponentData : this.GetComponentById(TargetAction.ComponentData.id!)
+            if (TargetComponent)
+              this.DeleteComponent(TargetComponent, true)
+            else
+              console.warn('Failed to undo component creation', TargetAction.ComponentData.id)
           }
+          else if (TargetAction.type == 'update') {
+            const TargetComponentData = IsUndo && TargetAction.PreviousComponentData || TargetAction.ComponentData
 
-          const ConvertedLayout = this.ComponentArrayToSQLCollumns(TargetLayout)
-          const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'layout/import', 'POST',
-            this.TranslateService.instant('Failed to import layout. Invalid content format.'),
-            ConvertedLayout
-          )
+            const ExistingComponent = this.GetComponentById(TargetAction.ComponentData.id!)
+            if (ExistingComponent) {
+              Object.assign(ExistingComponent, TargetComponentData);
+              this.SaveComponentInfo(ExistingComponent)
+            } else {
+              console.warn('Failed to undo. ID', TargetAction.ComponentData.id, 'not found')
+            }
+          } else if (TargetAction.type == 'import') {
+            let TargetLayout: any[] = []
+            if (IsUndo) {
+              TargetLayout = TargetAction.PreviousLayout
+            } else {
+              TargetLayout = TargetAction.NewLayout
+            }
 
-          this.Components = TargetLayout
+            const ConvertedLayout = this.ComponentArrayToSQLCollumns(TargetLayout)
+            const [Result] = await this.HttpService.MakeRequest(AppSettings.APIUrl + 'layout/import', 'POST',
+              this.TranslateService.instant('Failed to import layout. Invalid content format.'),
+              ConvertedLayout
+            )
+
+            this.Components = TargetLayout
+          }
         }
+
+      } else {
+        console.warn('Failed to navigate history')
       }
 
+      this.ProcessingComponent = false
     } else {
-      console.warn('Failed to navigate history')
+      console.warn('Rate limited')
     }
+
 
     this.LoadingLayout = false
   }
@@ -592,7 +600,10 @@ export class RestaurantLayout {
   // Start dragging
   DragStart(Event: MouseEvent, Component: LayoutComponent) {
     const DragStartSucess = this.ComponentInteract(Event, Component)
-    if ((this.EditMode || Component.Type == 'Table' || Component.Type == 'RoundTable') && DragStartSucess) {
+
+
+    const CanSelect = (this.EditMode || Component.Type == 'Table' || Component.Type == 'RoundTable') && DragStartSucess
+    if (CanSelect) {
 
       this.SelectedComponent = Component
       this.TableSelected.emit(Component)
@@ -628,7 +639,10 @@ export class RestaurantLayout {
       Event.preventDefault()
 
       this.DragStartMousePosition = new Vector2(Event.clientX, Event.clientY)
-      this.ContextMenuVisible = true
+      const ContainerRect = this.MainContainer.nativeElement.getBoundingClientRect();
+      const layoutX = (Event.clientX - ContainerRect.left - this.ViewportX) / this.Zoom;
+      const layoutY = (Event.clientY - ContainerRect.top - this.ViewportY) / this.Zoom;
+      this.ContextMenuVisible = new Vector2(layoutX, layoutY)
     }
   }
 
@@ -685,10 +699,11 @@ export class RestaurantLayout {
       if (ParsedComponent && ParsedComponent.Type) {
         const NewComp = new LayoutComponent()
         NewComp.Type = ParsedComponent.Type
+        NewComp.Rotation = ParsedComponent.Rotation
         NewComp.Size = new Vector2(ParsedComponent.Size.X, ParsedComponent.Size.Y)
 
-        if (MouseEvent) {
-
+        if (MouseEvent && this.ContextMenuVisible instanceof Vector2) {
+          NewComp.Position = new Vector2(this.ContextMenuVisible.X, this.ContextMenuVisible.Y);
         } else {
           NewComp.Position = new Vector2(ParsedComponent.Position.X, ParsedComponent.Position.Y)
         }
@@ -764,6 +779,10 @@ export class RestaurantLayout {
       // DELETE
       else if (Key == 'Delete' && this.SelectedComponent) {
         this.DeleteComponent(this.SelectedComponent)
+      }
+
+      else if (Key == 'r' && this.SelectedComponent) {
+        this.SelectedComponent.Rotation = (this.SelectedComponent.Rotation + this.RotationSnapping) % 360
       }
     }
   }

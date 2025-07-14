@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Kunne ikke laste inn lagerrapporter",
   "Failed to fetch roles": "Kunne ikke hente roller",
   "Could not get menu items. Please try again": "Kunne ikke hente menyelementer. Vennligst prøv igjen",
-  "Failed to delete menu item": "Kunne ikke slette menyelement",
+  "Failed to delete menu item: ": "Kunne ikke slette menyelement",
   "Sucessfully removed": "Fjernet med suksess",
   "from the menu": "fra menyen",
   "Failed to upload menu item image": "Kunne ikke laste opp bilde for menyelement",

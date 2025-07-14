@@ -25,6 +25,16 @@ const LayoutConfigs: any = {
             Size: new Vector2(15, 15),
             MinSize: new Vector2(10, 10),
         },
+        Door1: {
+            Image: 'LayoutComponents/Door1.webp',
+            Size: new Vector2(20, 7.5),
+            MinSize: new Vector2(2.5, 2.5)
+        },
+        Door2: {
+            Image: 'LayoutComponents/Door2.webp',
+            Size: new Vector2(20, 7.5),
+            MinSize: new Vector2(2.5, 2.5)
+        },
         Plant1: {
             Image: 'LayoutComponents/Plant1.webp',
             Size: new Vector2(15, 15),

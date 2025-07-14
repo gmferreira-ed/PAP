@@ -98,7 +98,7 @@ Router.patch('/menu', HandleEndpointFunction(async (req, res) => {
             try {
                 fs.renameSync(oldFilePath, newFilePath);
             } catch (err) {
-                res.send({error:'Failed to update linked image'})
+                res.send({ error: 'Failed to update linked image' })
             }
         }
     }
@@ -160,8 +160,17 @@ Router.delete('/menu', HandleEndpointFunction(async (Request, Response) => {
     var SQLQuery = "DELETE FROM `menu` WHERE name=?"
 
 
-    const [rows] = await Database.execute(SQLQuery, [body.name]);
-    Response.send(rows)
+    try {
+        const [rows] = await Database.execute(SQLQuery, [body.name]);
+        Response.send(rows)
+    } catch (err:any) {
+        console.error(err)
+        if (err.code == 'ER_ROW_IS_REFERENCED_2') {
+            Response.status(502).send({error: 'You cannot delete this item, as it has been referenced in orders before. Try disabling the product instead.'})
+        } else {
+            Response.status(502).send({error: 'Internal server error'})
+        }
+    }
 
 
 }))

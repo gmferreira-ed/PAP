@@ -260,7 +260,7 @@
 	"Failed to load inventory reports": "Tải báo cáo tồn kho không thành công",
 	"Failed to fetch roles": "Lấy vai trò không thành công",
 	"Could not get menu items. Please try again": "Không thể lấy các mục trong thực đơn. Vui lòng thử lại",
-	"Failed to delete menu item": "Xóa mục trong thực đơn không thành công",
+	"Failed to delete menu item: ": "Xóa mục trong thực đơn không thành công",
 	"Sucessfully removed": "Đã xóa thành công",
 	"from the menu": "khỏi thực đơn",
 	"Failed to upload menu item image": "Tải lên hình ảnh mục trong thực đơn không thành công",

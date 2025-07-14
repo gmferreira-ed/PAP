@@ -50,7 +50,7 @@ export class MenuService {
   LastMenuFetch = 0
 
   async DeleteMenuItem(ProductName: string) {
-    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', this.TranslateService.instant('Failed to delete menu item'), {
+    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'DELETE', this.TranslateService.instant('Failed to delete menu item: '), {
       name: ProductName,
     })
     if (Result) {
@@ -73,30 +73,28 @@ export class MenuService {
     return UploadResult
   }
 
-  async InsertMenuItem(name: string, category: string|null, price: number, active: boolean | string, File?: File) {
+  async InsertMenuItem(name: string, category: string | null, price: number, active: boolean | string, File?: File) {
 
 
-    var UploadResult: any = true
-    if (File) {
-      UploadResult = await this.SetImage(name, File)
-    }
 
-    if (UploadResult) {
-      const formData = new URLSearchParams();
-      formData.append('name', name)
-      if (category)
-        formData.append('category_id', category)
-      formData.append('price', String(price))
-      formData.append('active', 'true')
+    const formData = new URLSearchParams();
+    formData.append('name', name)
+    if (category)
+      formData.append('category_id', category)
+    formData.append('price', String(price))
+    formData.append('active', 'true')
 
-      const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'POST', this.TranslateService.instant('Failed to insert menu item'), formData)
+    const [Result] = await this.HttpService.MakeRequest(this.MenuURL, 'POST', this.TranslateService.instant('Failed to insert menu item'), formData)
 
-      if (Result) {
-        this.MessageService.success(this.TranslateService.instant('Sucessfully added') + ` ${name} ` + this.TranslateService.instant('to the menu'))
-        return true
+    if (Result) {
+      this.MessageService.success(this.TranslateService.instant('Sucessfully added') + ` ${name} ` + this.TranslateService.instant('to the menu'))
+
+      if (File) {
+         await this.SetImage(name, File)
       }
-    }
 
+      return true
+    }
 
     return false
   }

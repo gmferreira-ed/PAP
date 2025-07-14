@@ -25,6 +25,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { DynamicCurrencyPipe } from '../../Pipes/dynamic-currency.pipe';
 import { AuthService } from '../../Services/Auth.service';
 import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
+import { LoaderComponent } from '../../Components/loader/loader.component';
 
 
 
@@ -32,7 +33,7 @@ import { DynamicDatePipe } from '../../Pipes/dynamic-date.pipe';
 @Component({
   selector: 'checkout-page',
   imports: [PageLayoutComponent, NzRadioModule, FormsModule, ReactiveFormsModule, NzInputModule, NzIconModule, NzButtonModule, IconsModule,
-    DynamicCurrencyPipe, NzInputNumberModule, DynamicDatePipe,
+    DynamicCurrencyPipe, NzInputNumberModule, DynamicDatePipe, LoaderComponent,
     RouterModule, LoadingScreen, RestaurantLayout, TranslateModule, FloatingContainer, NgTemplateOutlet, NzSelectModule,
     NzFormModule, MenuProductSelect,
     ReceiptComponent],
@@ -139,10 +140,6 @@ export class CheckoutPage {
     }
   }
 
-  async PrinptReceipt() {
-    this.Receipt.Print()
-  }
-
   async FinalizeCheckout() {
     this.FinalizingCheckout = true
 
@@ -155,12 +152,14 @@ export class CheckoutPage {
       TIN: FormValues.TIN,
       discount: Number(FormValues.discount)
     })
+
     if (Response) {
       this.MessageService.success(this.TranslateService.instant('Sucessfullly checked out'))
       this.OrderProducts = []
 
+      this.OrdersService.Tables.ResetExpiration()
       this.Router.navigate(['/orders'])
-      this.Receipt.Print()
+      //this.Receipt.Print()
     }
 
     this.FinalizingCheckout = false

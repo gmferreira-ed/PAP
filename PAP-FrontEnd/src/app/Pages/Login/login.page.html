@@ -30,10 +30,15 @@
 
             <nz-form-item>
                 <nz-form-control>
-                    <nz-input-group class="login-input" nzPrefixIcon="lock">
-                        <input type="password" nz-input formControlName="password"
+                    <nz-input-group class="login-input" nzPrefixIcon="lock" [nzSuffix]="suffixIconSearch">
+                        <input  [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password"
                             [placeholder]="'Password' | translate" />
                     </nz-input-group>
+
+                    <ng-template #suffixIconSearch>
+                        <nz-icon class="ant-input-password-icon" [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                            (click)="passwordVisible = !passwordVisible" />
+                    </ng-template>
                 </nz-form-control>
             </nz-form-item>
 

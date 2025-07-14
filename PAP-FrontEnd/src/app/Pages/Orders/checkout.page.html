@@ -175,8 +175,12 @@
                     </form>
 
                     <div class="row right">
-                        <button class="button large" (click)="PrinptReceipt()">
-                            <icon type="receipt_long" [fill]="true"></icon>
+                        <button class="button large" (click)="Receipt.Print()" [disabled]="Receipt.Printing">
+                            @if (!Receipt.Printing){
+                                <icon type="receipt_long" [fill]="true"></icon>
+                            }@else {
+                                <loader [Loading]="Receipt.Printing" style="width: 25px; height: 25px;" LoaderStyle="Spinner"></loader>
+                            }
                             {{'Receipt' | translate}}
                         </button>
                         <button class="button large sucess" nzType="primary" (click)="FinalizeCheckout()">

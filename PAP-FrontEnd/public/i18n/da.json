@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Fejl ved indlæsning af lagerrapporter",
   "Failed to fetch roles": "Fejl ved hentning af roller",
   "Could not get menu items. Please try again": "Kunne ikke hente menupunkter - prøv venligst igen",
-  "Failed to delete menu item": "Fejl ved sletning af menupunkt",
+  "Failed to delete menu item: ": "Fejl ved sletning af menupunkt",
   "Sucessfully removed": "Fjernet med succes",
   "from the menu": "fra menuen",
   "Failed to upload menu item image": "Fejl under upload af billede til menupunkt",

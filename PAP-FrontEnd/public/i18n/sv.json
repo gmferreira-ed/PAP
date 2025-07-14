@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Misslyckades att ladda inventeringsrapporter",
   "Failed to fetch roles": "Misslyckades att hämta roller",
   "Could not get menu items. Please try again": "Kunde inte hämta menyobjekt. Försök igen",
-  "Failed to delete menu item": "Misslyckades att radera menyobjekt",
+  "Failed to delete menu item: ": "Misslyckades att radera menyobjekt",
   "Sucessfully removed": "Framgångsrikt borttagen",
   "from the menu": "från menyn",
   "Failed to upload menu item image": "Misslyckades att ladda upp bild för menyobjekt",

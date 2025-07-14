@@ -62,6 +62,7 @@ export class RegisterPage {
   VerifyingAccount = false
   Initialized = false
   Swipping = false
+  passwordVisible = false
 
   HttpService = inject(HttpService)
   TranslateService = inject(TranslateService)
@@ -85,11 +86,11 @@ export class RegisterPage {
 
   RegisterForm = new FormGroup({
     account_info: new FormGroup({
-      username: new FormControl('aasdasd', [Validators.required, Validators.minLength(3)]),
+      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
       active: new FormControl(false),
-      email: new FormControl('tesel81357@dxirl.com', [Validators.required, FValidators.email]),
-      phone: new FormControl('1231123123', [Validators.required, FValidators.phone]),
-      password: new FormControl('123', Validators.required)
+      email: new FormControl('', [Validators.required, FValidators.email]),
+      phone: new FormControl('', [Validators.required, FValidators.phone]),
+      password: new FormControl('', [Validators.required, FValidators.strongPassword])
     }),
     personnal_info: new FormGroup({
       fullname: new FormControl('', Validators.required),
@@ -101,6 +102,30 @@ export class RegisterPage {
     }),
     verification_code: new FormControl('', [Validators.minLength(6), Validators.required])
   });
+
+  // Password strength tracking
+  passwordStrength = FValidators.getPasswordStrength('');
+
+  onPasswordChange(password: string) {
+    this.passwordStrength = FValidators.getPasswordStrength(password);
+  }
+
+  getPasswordErrorMessage(): string {
+    const control = this.RegisterForm.get('account_info')?.get('password');
+    if (control?.errors) {
+      const errors = control.errors;
+      const messages = [];
+      
+      if (errors['minLength']) messages.push(this.TranslateService.instant('At least 8 characters'));
+      if (errors['lowercase']) messages.push(this.TranslateService.instant('One lowercase letter'));
+      if (errors['uppercase']) messages.push(this.TranslateService.instant('One uppercase letter'));
+      if (errors['number']) messages.push(this.TranslateService.instant('One number'));
+      if (errors['specialChar']) messages.push(this.TranslateService.instant('One special character'));
+      
+      return this.TranslateService.instant('Password must contain: ') + messages.join(', ');
+    }
+    return '';
+  }
 
   async CreateAccount() {
     this.CreatingAccount = true

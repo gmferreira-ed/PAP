@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Készletjelentések betöltése sikertelen",
   "Failed to fetch roles": "Szerepek lekérése sikertelen",
   "Could not get menu items. Please try again": "Nem sikerült lekérdezni a menütételeket. Kérjük, próbálja újra",
-  "Failed to delete menu item": "Menü tétel törlése sikertelen",
+  "Failed to delete menu item: ": "Menü tétel törlése sikertelen",
   "Sucessfully removed": "Sikeresen eltávolítva",
   "from the menu": "a menüből",
   "Failed to upload menu item image": "Menü tétel kép feltöltése sikertelen",

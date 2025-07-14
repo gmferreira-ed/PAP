@@ -89,7 +89,7 @@
                             @for (Reservation of Reservations; track $index){
                         @if (IsSameDate(Reservation.date, DayDate)){
                             @let ReservationRect = GetReservationRect(Reservation);
-                                    @if (ReservationRect){
+                            @if (ReservationRect){
                                 <div class="reservation" [style.left]="ReservationRect.X+'%'"
                                     [style.top]="ReservationRect.Y+'px'" [style.width]="ReservationRect.Width+'%'"
                                     [class.selected]="SelectedReservation?.id == Reservation.id"
@@ -104,6 +104,16 @@
         </div>
     }
     </section>
+
+    <div class="time-line" [style.top]="NowTop+'px'">
+        <div class="circle"></div>
+    </div>
+
+    @if (PromptingSchedule){
+        <div class="time-line s" [style.top]="GetPromptLinePosition(ReservationForm.value.time!)+'px'">
+        <div class="circle"></div>
+    </div>
+    }
 
     <!-- SCHEDULING PROMPT -->
     <div class="prompt" #SchedulePrompt [class.visible]="PromptingSchedule" [style.top]="SchedulePromptTop+'px'"
@@ -242,7 +252,7 @@
         <div class="separator"></div>
         <div class="reservations flex">
             <!-- TODAY's RESERVATIONS -->
-            @for (Reservation of TodayReservations; track $index){
+            @for (Reservation of TodayReservations.reverse(); track $index){
                 @if (Reservation.date.getTime() >= Today.getTime()){
                     <div class="reservation-card">
                         <label class="table">{{'Table'|translate}} {{Reservation.tableid}}</label>

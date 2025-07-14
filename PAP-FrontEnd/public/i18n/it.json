@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Caricamento rapporti d'inventario fallito",
   "Failed to fetch roles": "Recupero ruoli fallito",
   "Could not get menu items. Please try again": "Impossibile ottenere le voci del menu. Riprova",
-  "Failed to delete menu item": "Eliminazione voce di menu fallita",
+  "Failed to delete menu item: ": "Eliminazione voce di menu fallita",
   "Sucessfully removed": "Rimosso con successo",
   "from the menu": "dal menu",
   "Failed to upload menu item image": "Caricamento immagine della voce di menu fallito",

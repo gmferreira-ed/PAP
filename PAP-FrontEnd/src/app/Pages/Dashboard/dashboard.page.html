@@ -91,7 +91,7 @@
                 <h1>{{'Reservations' | translate}}</h1>
                 @if (CanViewReservations){
                     <section class="content">
-                        @for (Reservation of Reservations; track $index){
+                        @for (Reservation of Reservations.reverse(); track $index){
                             @let ReservationTimestamp = Date(Reservation.date).getTime();
                             <div class="collumn reservation">
                             <div class="row space-between">
@@ -126,7 +126,7 @@
             <section class="content">
                 @for (EntryInfo of WorkingStaff; track $index){
                     <user-card [UserData]="EntryInfo">
-                        <label>{{Now.getTime()-EntryInfo.timestamp.getTime() | duration}}</label>
+                        <label>{{Now.getTime()-EntryInfo.timestamp.getTime()+5 | duration}}</label>
                     </user-card>
                     <div class="separator" style="margin: 0px;"></div>
                 }@empty {

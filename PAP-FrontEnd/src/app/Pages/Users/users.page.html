@@ -1,16 +1,13 @@
 <page-layout>
 
+    <button nz-button nzType="primary" (click)="UserCreateModalVisible=true">
+        <nz-icon nzType="plus"></nz-icon>
+        {{'Create User' | translate}}
+    </button>
 
-    <nz-table style="width: 100%;"  nzAlign="left"
-    
-        [nzData]="UsersList"
-        [nzLoading]="LoadingUsers" 
-       
-
-        [nzShowPagination]="true" 
-        [nzTotal]="PageCount" [(nzPageSize)]="PageSize" [(nzPageIndex)]="PageNumber"
+    <nz-table style="width: 100%;" nzAlign="left" [nzData]="UsersList" [nzLoading]="LoadingUsers"
+        [nzShowPagination]="true" [nzTotal]="PageCount" [(nzPageSize)]="PageSize" [(nzPageIndex)]="PageNumber"
         [nzPageSizeOptions]="[10,20,50,100]" [nzShowSizeChanger]="true" [nzFrontPagination]="false"
-
         (nzPageIndexChange)="LoadPage()" (nzPageSizeChange)="LoadPage()">
         <thead>
             <tr>
@@ -25,25 +22,159 @@
 
         <tbody>
             @for (UserInfo of UsersList; track UserInfo.userid) {
-                <tr style="cursor: pointer;" (click)="ViewProfile(UserInfo)">
+            <tr style="cursor: pointer;" (click)="ViewProfile(UserInfo)">
 
-                    <td>
-                        <img class="profile-pfp" [src]="UserImagesURL+UserInfo.username"
-                            onerror="this.src='Images/Profile.png'">
-                        <label>{{UserInfo.fullname}}</label>
-                    </td>
-                    <td>{{UserInfo.username}}</td>
-                    <td>{{UserInfo.role | translate}}</td>
-                    <td>{{UserInfo.email}}</td>
-                    <td>{{UserInfo.phone}}</td>
-                    <!-- <td>{{UserInfo.address}} {{UserInfo.city}} {{UserInfo.country}} {{UserInfo.postalcode}}</td> -->
-                    <td>
-                        <div class="circle" [ngStyle]="{'background-color': UserInfo.active ? 'rgb(0,180,0)' : 'rgb(220,0,0)'}"></div>
-                    </td>
-                </tr>
+                <td>
+                    <img class="profile-pfp" [src]="UserImagesURL+UserInfo.username"
+                        onerror="this.src='Images/Profile.png'">
+                    <label>{{UserInfo.fullname}}</label>
+                </td>
+                <td>{{UserInfo.username}}</td>
+                <td>{{UserInfo.role | translate}}</td>
+                <td>{{UserInfo.email}}</td>
+                <td>{{UserInfo.phone}}</td>
+                <!-- <td>{{UserInfo.address}} {{UserInfo.city}} {{UserInfo.country}} {{UserInfo.postalcode}}</td> -->
+                <td>
+                    <div class="circle"
+                        [ngStyle]="{'background-color': UserInfo.active ? 'rgb(0,180,0)' : 'rgb(220,0,0)'}"></div>
+                </td>
+            </tr>
             }
         </tbody>
     </nz-table>
 
     <br><br>
 </page-layout>
+
+<!-- CREATE USER MODAL -->
+<nz-modal [nzOkText]="'Create User' | translate" [nzCancelText]="'Cancel' | translate"
+    [nzVisible]="UserCreateModalVisible" [nzTitle]="'Create New User' | translate" nzCentered nzDraggable
+    nzWidth="600px" (nzOnCancel)="UserCreateModalVisible=false" (nzOnOk)="CreateUser()" [nzOkLoading]="CreatingUser"
+    [nzOkDisabled]="UserCreateForm.invalid">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="UserCreateForm" nzLayout="vertical">
+
+            <div class="row">
+                <nz-form-item>
+                    <nz-form-label nzRequired>{{'Username' | translate}}</nz-form-label>
+                    <nz-form-control
+                        nzErrorTip="{{'Username is required and must be at least 3 characters' | translate}}">
+                        <input nz-input formControlName="username" placeholder="{{'Enter username' | translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label nzRequired>{{'Full Name' | translate}}</nz-form-label>
+                    <nz-form-control nzErrorTip="{{'Full name is required' | translate}}">
+                        <input nz-input formControlName="fullname" placeholder="{{'Enter full name' | translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div class="row">
+                <nz-form-item>
+                    <nz-form-label nzRequired>{{'Email' | translate}}</nz-form-label>
+                    <nz-form-control nzErrorTip="{{'Valid email is required' | translate}}">
+                        <input nz-input formControlName="email" type="email"
+                            placeholder="{{'Enter email address' | translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label>{{'Phone' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="phone" maxlength="12" (keydown)="EnforceNumbers($event)"
+                            placeholder="{{'Enter phone number' | translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <nz-form-item>
+                <nz-form-label nzRequired>{{'Password' | translate}}</nz-form-label>
+                <nz-form-control
+                    nzErrorTip="{{'Password must be at least 8 characters and contain uppercase, lowercase, number and special character' | translate}}">
+                    <nz-input-group [nzSuffix]="suffixIconPassword" style="width: 100%;">
+                        <input nz-input [type]="passwordVisible ? 'text' : 'password'" style="width: 100%;"
+                            formControlName="password" placeholder="{{'Enter password' | translate}}"
+                            (input)="onPasswordChange($any($event.target).value)" />
+                    </nz-input-group>
+
+                    <ng-template #suffixIconPassword>
+                        <nz-icon class="ant-input-password-icon" [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                            (click)="passwordVisible = !passwordVisible" />
+                    </ng-template>
+
+                    <!-- Password Strength Indicator -->
+                    @if (UserCreateForm.get('password')?.value) {
+                    <div style="margin-top: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 12px;">{{'Password Strength' | translate}}:</span>
+                            <span style="font-size: 12px; font-weight: 500;" [style.color]="passwordStrength.color">
+                                {{passwordStrength.label | translate}}
+                            </span>
+                        </div>
+                        <div style="width: 100%; height: 4px; background-color: #f0f0f0; border-radius: 2px;">
+                            <div [style.width.%]="(passwordStrength.score / 6) * 100"
+                                [style.background-color]="passwordStrength.color"
+                                style="height: 100%; border-radius: 2px; transition: all 0.3s ease;">
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </nz-form-control>
+            </nz-form-item>
+
+            <div class="row">
+                <nz-form-item>
+                    <nz-form-label nzRequired>{{'Role' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-select formControlName="role">
+                            @for (Role of Roles; track $index) {
+                            <nz-option [nzValue]="Role.name" [nzLabel]="Role.name | translate"></nz-option>
+                            }
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label>{{'Birth Date' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <nz-date-picker formControlName="birthdate" [nzDisabledDate]="DisableDate"
+                            [nzDefaultPickerValue]="defaultPickerValue" [nzShowToday]="false"
+                            style="width: 100%"></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div class="row">
+                <nz-form-item>
+                    <nz-form-label>{{'Country' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="country" placeholder="{{'Enter country' | translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                    <nz-form-label>{{'City' | translate}}</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input formControlName="city" placeholder="{{'Enter city' | translate}}" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <nz-form-item>
+                <nz-form-label>{{'Address' | translate}}</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="address" placeholder="{{'Enter address' | translate}}" />
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label>{{'Postal Code' | translate}}</nz-form-label>
+                <nz-form-control>
+                    <input nz-input formControlName="postalcode" placeholder="{{'Enter postal code' | translate}}" />
+                </nz-form-control>
+            </nz-form-item>
+
+        </form>
+    </ng-container>
+</nz-modal>

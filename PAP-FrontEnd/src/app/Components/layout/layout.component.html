@@ -111,7 +111,7 @@
 
         <div class="component-info">
             <h3>{{GlobalUtils.FormatName(ComponentInfo.Key | translate)}}</h3>
-            <div [class]="'component '+ComponentInfo.Key" [style.width]="PseudoComponent.Size.X*Scaling +'px'"
+            <div [class]="'component '+ComponentInfo.Key" [style.width]="PseudoComponent.Size.X*Scaling +'px'" [class.disabled]="ProcessingComponent"
                 [style.height]="PseudoComponent.Size.Y*Scaling +'px'" [style.left]="PseudoComponent.Position.X +'px'"
                 [style.top]="PseudoComponent.Position.Y +'px'" [style.cursor]="'pointer'"
                 (click)="AddComponent(NewComponent(ComponentType))">
@@ -191,7 +191,7 @@
                             @let TableStatus = Table && StatusDisplayNames[Table.status];
 
                             @if (TableStatus && !SelectionMode){
-                                @if (!EditMode && Zoom>3){
+                                @if (!EditMode && Zoom>2){
                                     <label [class]="'table-status '+Table?.status" [style.font-size]="2.5*Zoom+'px'">
                                         {{TableStatus}}
                                         <br>
@@ -212,7 +212,6 @@
                     </div>
 
                     @if (SelectedComponent == Component && EditMode){
-                        <!-- [style.transform]="'rotate(' + (-Component.Rotation) + 'deg)'" -->
                         <div class="selection-box" >
                             @for (Handle of Handles; track $index){
                             <div [class]="'dragger ' + Handle" #Handle (mousedown)="ResizeStart($event, Component, Handle)">

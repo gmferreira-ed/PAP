@@ -24,7 +24,7 @@ async function GetStockOrders(Fields: {}): Promise<StockOrder[]> {
         `JOIN purchase_items ON purchase_items.purchase_order_id=purchase_orders.id
         LEFT JOIN users ON users.userid=purchase_orders.userid
         LEFT JOIN suppliers ON suppliers.id=purchase_orders.supplier_id 
-        `, 'ORDER BY purchase_orders.order_date ASC')
+        `, 'ORDER BY purchase_orders.order_date DESC')
 
     const [StockOrders] = await Database.execute(Query, Values) as any[]
 

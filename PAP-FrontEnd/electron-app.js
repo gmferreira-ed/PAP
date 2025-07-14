@@ -8,73 +8,81 @@ app.setName('RestroLink');
 
 
 
-ipcMain.on('print-receipt', async (event, data) => {
+ipcMain.handle('print-receipt', async (event, data) => {
 
-    const device = new escpos.Network('192.168.0.253', 6001);
-    const printer = new escpos.Printer(device);
+    try {
+        const device = new escpos.Network('192.168.0.253', 6001);
+        const printer = new escpos.Printer(device);
 
-    printer.raw(Buffer.from([0x1B, 0x74, 0x13]));
-    printer.encode('CP858')
-    
-    await new Promise((resolve, reject) => {
-        try {
-            device.open(function (error) {
-                if (error) {
-                    console.error('Printer connection failed:', error);
-                    return;
-                }
-                console.log('Connected to printer')
-                resolve()
-            });
+        printer.raw(Buffer.from([0x1B, 0x74, 0x13]));
+        printer.encode('CP858')
 
-        } catch (Err) {
-            console.error(Err)
-            reject()
+        await new Promise((resolve, reject) => {
+            try {
+                device.open(function (error) {
+                    if (error) {
+                        console.error('Printer connection failed:', error);
+                        reject(new Error(`Printer connection failed: ${error.message || error}`));
+                        return;
+                    }
+                    console.log('Connected to printer')
+                    resolve()
+                });
+
+            } catch (Err) {
+                console.error(Err)
+                reject(Err)
+            }
         }
-    }
-    )
+        )
 
-    console.log(data)
-    for (const line of data) {
-        if (line.name === 'text') {
-            const textData = line.data;
+        console.log(data)
+        for (const line of data) {
+            if (line.name === 'text') {
+                const textData = line.data;
 
-            printer.align(textData.align)
-            printer.size(textData.size[0], textData.size[1])
-            printer.font(textData.font)
-            printer.style(textData.style)
+                printer.align(textData.align)
+                printer.size(textData.size[0], textData.size[1])
+                printer.font(textData.font)
+                printer.style(textData.style)
 
-            printer.text(textData.text)
+                printer.text(textData.text)
 
-            printer.font('A')
-            printer.style('NORMAL');
-            printer.size('NORMAL', 'NORMAL');
-            printer.align('LT');
+                printer.font('A')
+                printer.style('NORMAL');
+                printer.size('NORMAL', 'NORMAL');
+                printer.align('LT');
 
-        } else if (line.name === 'image') {
-            const ImagePath = path.join(__dirname, 'public/Images/RestroLinkPrinter.png')
-            await new Promise((resolve, reject) => {
-                escpos.Image.load(ImagePath, (image) => {
-                    printer
-                        .align('CT')
-                        .image(image, 's8')
-                        .then(() => {
-                            console.log('Image loaded')
-                            resolve()
-                        })
-                        .catch(err => {
-                            console.error('Error printing image:', err)
-                            reject()
-                        })
+            } else if (line.name === 'image') {
+                const ImagePath = path.join(__dirname, 'public/Images/RestroLinkPrinter.png')
+                await new Promise((resolve, reject) => {
+                    escpos.Image.load(ImagePath, (image) => {
+                        printer
+                            .align('CT')
+                            .image(image, 's8')
+                            .then(() => {
+                                console.log('Image loaded')
+                                resolve()
+                            })
+                            .catch(err => {
+                                console.error('Error printing image:', err)
+                                reject(err)
+                            })
+                    })
                 })
-            })
-        } else {
-            printer[line.name](line.data)
+            } else {
+                printer[line.name](line.data)
+            }
         }
-    }
 
-    printer.cut();
-    printer.close();
+        printer.cut();
+        printer.close();
+        return { success: true };
+
+    } catch (error) {
+        console.error('Print receipt error:', error);
+        return { success: false, message: error.message || 'Unknown error occurred' };
+    }
 });
 
 function StartAppWindow() {

@@ -260,7 +260,7 @@
 	"Failed to load inventory reports": "Envanter raporları yüklenemedi",
 	"Failed to fetch roles": "Roller getirilemedi",
 	"Could not get menu items. Please try again": "Menü öğeleri alınamadı. Lütfen tekrar deneyin",
-	"Failed to delete menu item": "Menü öğesi silinemedi",
+	"Failed to delete menu item: ": "Menü öğesi silinemedi",
 	"Sucessfully removed": "Başarıyla kaldırıldı",
 	"from the menu": "menüden",
 	"Failed to upload menu item image": "Menü öğesi resmi yüklenemedi",

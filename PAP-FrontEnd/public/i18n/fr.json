@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Échec du chargement des rapports d'inventaire",
   "Failed to fetch roles": "Échec de la récupération des rôles",
   "Could not get menu items. Please try again": "Impossible de récupérer les éléments du menu. Veuillez réessayer",
-  "Failed to delete menu item": "Échec de la suppression de l'élément du menu",
+  "Failed to delete menu item: ": "Échec de la suppression de l'élément du menu",
   "Sucessfully removed": "Supprimé avec succès",
   "from the menu": "du menu",
   "Failed to upload menu item image": "Échec du téléchargement de l'image de l'élément du menu",

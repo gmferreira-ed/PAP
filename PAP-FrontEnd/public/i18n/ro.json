@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Încărcarea rapoartelor de inventar a eșuat",
   "Failed to fetch roles": "Nu s-au putut prelua rolurile",
   "Could not get menu items. Please try again": "Nu s-au putut obține articolele de meniu. Încearcă din nou",
-  "Failed to delete menu item": "Ștergerea articolului din meniu a eșuat",
+  "Failed to delete menu item: ": "Ștergerea articolului din meniu a eșuat",
   "Sucessfully removed": "Eliminat cu succes",
   "from the menu": "din meniu",
   "Failed to upload menu item image": "Încărcarea imaginii pentru articolul de meniu a eșuat",

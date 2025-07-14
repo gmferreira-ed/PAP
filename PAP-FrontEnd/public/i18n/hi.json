@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "इन्वेंटरी रिपोर्ट लोड करने में विफल",
   "Failed to fetch roles": "भूमिकाएँ प्राप्त करने में विफल",
   "Could not get menu items. Please try again": "मेन्यू आइटम प्राप्त नहीं हुए, कृपया पुनः प्रयास करें",
-  "Failed to delete menu item": "मेन्यू आइटम हटाने में विफल",
+  "Failed to delete menu item: ": "मेन्यू आइटम हटाने में विफल",
   "Sucessfully removed": "सफलतापूर्वक हटाया गया",
   "from the menu": "मेन्यू से",
   "Failed to upload menu item image": "मेन्यू आइटम की छवि अपलोड करने में विफल",

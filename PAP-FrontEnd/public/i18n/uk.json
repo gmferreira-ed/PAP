@@ -260,7 +260,7 @@
 	"Failed to load inventory reports": "Не вдалося завантажити звіти про запаси",
 	"Failed to fetch roles": "Не вдалося отримати ролі",
 	"Could not get menu items. Please try again": "Не вдалося отримати пункти меню. Будь ласка, спробуйте ще раз",
-	"Failed to delete menu item": "Не вдалося видалити пункт меню",
+	"Failed to delete menu item: ": "Не вдалося видалити пункт меню",
 	"Sucessfully removed": "Успішно видалено",
 	"from the menu": "з меню",
 	"Failed to upload menu item image": "Не вдалося завантажити зображення пункту меню",

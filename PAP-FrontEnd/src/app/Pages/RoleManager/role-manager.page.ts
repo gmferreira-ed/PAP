@@ -158,7 +158,7 @@ export class RoleManagementPage {
 
     EndpointData.Changing = true
 
-    const [InsertSuccess] = await this.HttpService.MakeRequest(this.RolePermissionsURL, 'POST', this.TranslateService.instant('Failed to add endpoint permissions'),
+    const [InsertSuccess] = await this.HttpService.MakeRequest(this.RolePermissionsURL, 'POST', this.TranslateService.instant('Failed to add permissions'),
       {
         endpoint_id: EndpointData.ID,
         role: this.SelectedRole.name
@@ -168,7 +168,7 @@ export class RoleManagementPage {
     EndpointData.Changing = false
 
     if (InsertSuccess) {
-      this.MessageService.success(this.TranslateService.instant('Successfully added endpoint permissions!'))
+      this.MessageService.success(this.TranslateService.instant('Successfully added permissions!'))
       this.LoadPermissions()
     }
   }

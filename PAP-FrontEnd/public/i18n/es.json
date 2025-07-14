@@ -259,7 +259,7 @@
 	"Failed to load inventory reports": "Error al cargar informes de inventario",
 	"Failed to fetch roles": "Error al obtener roles",
 	"Could not get menu items. Please try again": "No se pudieron obtener los artículos del menú. Inténtalo de nuevo",
-	"Failed to delete menu item": "Error al eliminar artículo del menú",
+	"Failed to delete menu item: ": "Error al eliminar artículo del menú",
 	"Sucessfully removed": "Eliminado con éxito",
 	"from the menu": "del menú",
 	"Failed to upload menu item image": "Error al subir imagen del artículo del menú",

@@ -266,7 +266,7 @@
 	"Failed to load inventory reports": "無法載入庫存報告",
 	"Failed to fetch roles": "無法獲取角色",
 	"Could not get menu items. Please try again": "無法獲取菜單項目。請重試",
-	"Failed to delete menu item": "無法刪除菜單項目",
+	"Failed to delete menu item: ": "無法刪除菜單項目",
 	"Sucessfully removed": "成功移除",
 	"from the menu": "從菜單中",
 	"Failed to upload menu item image": "無法上傳菜單項目圖片",

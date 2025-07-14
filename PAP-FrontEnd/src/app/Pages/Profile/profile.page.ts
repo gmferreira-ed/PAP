@@ -69,7 +69,7 @@ export class ProfilePage {
   DisassociatingCard = false
   ChangingUserRole = false
 
-  @ViewChild('FileSelector') FileSelector!:FileSelectComponent
+  @ViewChild('FileSelector') FileSelector!: FileSelectComponent
 
   // Data
   Shifts: any = []
@@ -77,7 +77,7 @@ export class ProfilePage {
 
   // Variables
   CanViewEntries = this.AuthService.HasEndpointPermission('entries', 'GET') || this.CurrentUser() == this.User()?.username
-  CanModifyUser = this.AuthService.HasEndpointPermission('users', 'PATCH') 
+  CanModifyUser = this.AuthService.HasEndpointPermission('users', 'PATCH')
 
 
 
@@ -249,10 +249,12 @@ export class ProfilePage {
   TotalExtraPay = 0
   TotalMealAllowance = 0
 
-  UserEntries: any[] = []
+
+  UserEntries?: any[] = undefined
   ShiftsMap?: { [key: string]: number }
 
   async SalaryRangeChanged(dateRange?: [number?, number?]) {
+
     // The function triggers early on load, therefore we wait
     while (!this.ShiftsMap) {
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -294,57 +296,60 @@ export class ProfilePage {
     const paddedMinutes = minutes.toString().padStart(2, '0')
     return `${hours}h:${paddedMinutes}m`
   }
-  EntriesChanged(UserEntries: any[], dateRange?: [number?, number?]) {
+  EntriesChanged(UserEntries?: any[], dateRange?: [number?, number?]) {
 
 
-    let TotalHours = 0
-    const ReversedEntries = [...UserEntries].reverse()
-    const Shifts: Shift[] = []
-    const ChartShifts: any[] = []
+    if (UserEntries) {
 
-    for (let i = 1; i < ReversedEntries.length; i++) {
-      const Entry = ReversedEntries[i]
-      const LastEntry = ReversedEntries[i - 1]
+      let TotalHours = 0
+      const ReversedEntries = [...UserEntries].reverse()
+      const Shifts: Shift[] = []
+      const ChartShifts: any[] = []
 
-      if (LastEntry && LastEntry.action == 'Entry') {
-        const Start = new Date(LastEntry.timestamp)
-        const End = new Date(Entry.timestamp)
-        const Duration = (End.getTime() - Start.getTime()) / 1000 / 60 / 60
-        const Shift = {
-          start: Start,
-          end: End,
-          duration: Duration
-        };
-        Shifts.push(Shift)
+      for (let i = 1; i < ReversedEntries.length; i++) {
+        const Entry = ReversedEntries[i]
+        const LastEntry = ReversedEntries[i - 1]
+
+        if (LastEntry && LastEntry.action == 'Entry') {
+          const Start = new Date(LastEntry.timestamp)
+          const End = new Date(Entry.timestamp)
+          const Duration = (End.getTime() - Start.getTime()) / 1000 / 60 / 60
+          const Shift = {
+            start: Start,
+            end: End,
+            duration: Duration
+          };
+          Shifts.push(Shift)
+        }
       }
+
+      const ShiftsMap: { [key: string]: number } = {};
+      for (const shift of Shifts) {
+        const dayKey = shift.start.getFullYear() + '-' + (shift.start.getMonth() + 1).toString().padStart(2, '0') + '-' + shift.start.getDate().toString().padStart(2, '0');
+        ShiftsMap[dayKey] = (ShiftsMap[dayKey] || 0) + shift.duration;
+      }
+
+      for (const dayKey in ShiftsMap) {
+        const [year, month, day] = dayKey.split('-').map(Number);
+        const dayDate = new Date(year, month - 1, day);
+        const Duration = ShiftsMap[dayKey]
+        const TimeStamp = dayDate.getTime()
+        ChartShifts.push([TimeStamp, Duration]);
+
+        if (dateRange && dateRange[0] && dateRange[1] && (TimeStamp < dateRange[0] || TimeStamp > dateRange[1])) continue;
+        TotalHours += Duration
+      }
+
+
+      this.ShiftChartOptions = {
+        ...this.ShiftChartOptions,
+        series: [{ name: 'Duration', data: ChartShifts }],
+      };
+
+      this.TotalHours = TotalHours
+      this.UserEntries = UserEntries
+      this.ShiftsMap = ShiftsMap
     }
-
-    const ShiftsMap: { [key: string]: number } = {};
-    for (const shift of Shifts) {
-      const dayKey = shift.start.getFullYear() + '-' + (shift.start.getMonth() + 1).toString().padStart(2, '0') + '-' + shift.start.getDate().toString().padStart(2, '0');
-      ShiftsMap[dayKey] = (ShiftsMap[dayKey] || 0) + shift.duration;
-    }
-
-    for (const dayKey in ShiftsMap) {
-      const [year, month, day] = dayKey.split('-').map(Number);
-      const dayDate = new Date(year, month - 1, day);
-      const Duration = ShiftsMap[dayKey]
-      const TimeStamp = dayDate.getTime()
-      ChartShifts.push([TimeStamp, Duration]);
-
-      if (dateRange && dateRange[0] && dateRange[1] && (TimeStamp < dateRange[0] || TimeStamp > dateRange[1])) continue;
-      TotalHours += Duration
-    }
-
-
-    this.ShiftChartOptions = {
-      ...this.ShiftChartOptions,
-      series: [{ name: 'Duration', data: ChartShifts }],
-    };
-
-    this.TotalHours = TotalHours
-    this.UserEntries = UserEntries
-    this.ShiftsMap = ShiftsMap
   }
 
 

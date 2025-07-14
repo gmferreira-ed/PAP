@@ -89,4 +89,25 @@ Router.post('/entries', HandleEndpointFunction(async (req, res) => {
 }));
 
 
+
+// Clean up attendance
+// Database.query('SELECT * FROM attendance ORDER BY timestamp ASC').then((Data: any[]) => {
+//   const Entries = Data[0]
+
+//   const LastActions: Record<number, string> = {}
+
+//   for (const Entry of Entries) {
+//     const Action = Entry.action
+//     const LastAction = LastActions[Entry.userid]
+
+//     console.log(Action)
+//     if (LastAction == Action) {
+//       console.log(Entry.entryid)
+//     }
+
+//     LastActions[Entry.userid] = Action
+//   }
+// })
+
+
 module.exports = Router

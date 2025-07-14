@@ -29,7 +29,6 @@ Router.post('/auth', HandleEndpointFunction(async (req, res) => {
     }
 }))
 
-const saltRounds = 10
 
 async function VerifyPassword(ClientPassword:string, HashedPassword:string) {
   const match = await bcrypt.compare(ClientPassword, HashedPassword);
@@ -40,6 +39,7 @@ async function VerifyPassword(ClientPassword:string, HashedPassword:string) {
   }
 }
 
+const saltRounds = 10
 async function HashPassword(ClientPassword:string) {
   const hashedPassword = await bcrypt.hash(ClientPassword, saltRounds);
   return hashedPassword;

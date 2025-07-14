@@ -56,8 +56,9 @@ export class SchedulePage {
   SchedulePromptLeft = 0
 
   // CONFIGURATION
-  OpeningHours = new Date(5, 5, 10, 8, 30, 0, 0)
-  ClosingHours = new Date(5, 5, 10, 23, 0, 0, 0)
+  Now = new Date()
+  OpeningHours = new Date(this.Now.getFullYear(), this.Now.getMonth(), this.Now.getDate(), 8, 30, 0, 0)
+  ClosingHours = new Date(this.Now.getFullYear(), this.Now.getMonth(), this.Now.getDate(), 23, 0, 0, 0)
   TotalHoursOpen = (this.ClosingHours.getTime() - this.OpeningHours.getTime()) / 1000 / 60 / 60
   UserImagesURL = AppSettings.UserImagesURL
 
@@ -189,6 +190,26 @@ export class SchedulePage {
     return {}
   }
 
+  GetPromptLinePosition(TargetDate: Date) {
+    const ScheduleContainer = this.ScheduleContainer?.nativeElement as HTMLElement
+
+    if (ScheduleContainer) {
+
+      const ContainerHeight = ScheduleContainer.scrollHeight
+
+      const NormalizedTargetDate = new Date(TargetDate)
+      NormalizedTargetDate.setDate(this.OpeningHours.getDate())
+      NormalizedTargetDate.setMonth(this.OpeningHours.getMonth())
+      NormalizedTargetDate.setFullYear(this.OpeningHours.getFullYear())
+
+      const HoursPassed = (NormalizedTargetDate.getTime() - this.OpeningHours.getTime()) / 1000 / 60 / 60
+      const Percentage = HoursPassed / this.TotalHoursOpen
+
+      return Math.min(ContainerHeight * Percentage, ContainerHeight)
+    }
+
+    return -100
+  }
 
   PromptBookReservation(Event: MouseEvent, DayDate: Date) {
     if (this.CanModifyReservations) {
@@ -228,7 +249,7 @@ export class SchedulePage {
 
   // SHOW RESERVATION INF
   SelectedReservation: any = undefined
-  SelectedReservationDetails:any = undefined
+  SelectedReservationDetails: any = undefined
   ReservationPromptPosition = new Vector2()
 
   PromptReservationInfo(Event: MouseEvent, Reservation: any) {
@@ -396,9 +417,6 @@ export class SchedulePage {
 
 
 
-
-
-
   GetFormmatedTimeTo(reservationDate: Date): string {
     let diff = reservationDate.getTime() - this.Today.getTime()
 
@@ -425,12 +443,29 @@ export class SchedulePage {
     return parts.join(' ');
   }
 
+
+
+  NowTop = 0
+
   ngOnInit() {
     this.LoadReservations()
     this.LoadTodayReservations()
 
     setInterval(() => {
       this.Today = new Date()
+
+      const ScheduleContainer = this.ScheduleContainer?.nativeElement as HTMLElement
+
+      if (ScheduleContainer) {
+        const ContainerRect = ScheduleContainer.getBoundingClientRect()
+        const ContainerHeight = ScheduleContainer.scrollHeight
+
+        const HoursPassed = (this.Today.getTime() - this.OpeningHours.getTime()) / 1000 / 60 / 60
+        const Percentage = HoursPassed / this.TotalHoursOpen
+
+        this.NowTop = Math.min(ContainerHeight * Percentage, ContainerHeight)
+      }
+
     }, 1000);
   }
 }

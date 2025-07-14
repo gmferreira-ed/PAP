@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Inventarberichte konnten nicht geladen werden",
   "Failed to fetch roles": "Rollen konnten nicht abgerufen werden",
   "Could not get menu items. Please try again": "Menüpunkte konnten nicht geladen werden. Bitte versuchen Sie es erneut",
-  "Failed to delete menu item": "Löschen des Menüpunkts fehlgeschlagen",
+  "Failed to delete menu item: ": "Löschen des Menüpunkts fehlgeschlagen",
   "Sucessfully removed": "Erfolgreich entfernt",
   "from the menu": "aus dem Menü",
   "Failed to upload menu item image": "Upload des Menübildes fehlgeschlagen",

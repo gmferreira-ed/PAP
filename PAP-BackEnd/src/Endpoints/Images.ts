@@ -55,22 +55,22 @@ const StockImages = multer({ storage: StockImagesStorage });
 
 
 
-const Extensions = ['.jpg', '.jpeg', '.png', '.webp'];
-function FindImage(Folder: string, Name: string, Response: ExpressResponse): string | undefined {
+// const Extensions = ['.jpg', '.jpeg', '.png', '.webp'];
+// function FindImage(Folder: string, Name: string, Response: ExpressResponse): string | undefined {
 
-    for (const ext of Extensions) {
-        const FilePath = path.join(Folder, `${Name}${ext}`);
-        const Exists = fs.existsSync(FilePath)
+//     for (const ext of Extensions) {
+//         const FilePath = path.join(Folder, `${Name}${ext}`);
+//         const Exists = fs.existsSync(FilePath)
 
-        if (Exists) {
-            Response.sendFile(FilePath)
-            return FilePath
-        }
-    }
+//         if (Exists) {
+//             Response.sendFile(FilePath)
+//             return FilePath
+//         }
+//     }
 
 
-    Response.status(404).send()
-}
+//     Response.status(404).send()
+// }
 
 /**
  * @displayname "Images"
@@ -113,32 +113,32 @@ Router.get("/images/stocks/:product", (Request, Response) => {
 async function ProcessImage(req: ExpressRequest, res: ExpressResponse, ImageSize: [number, number]) {
     if (!req.file) {
         res.status(400).send({ error: 'No file uploaded' });
-        return
+        return;
     }
 
-    const FilePath = req.file.path
+    const FilePath = req.file.path;
     const webpPath = FilePath.replace(/\.[^/.]+$/, '.webp');
     const tempPath = webpPath + '-temp';
 
     try {
-        await sharp(FilePath)
+        const imageBuffer = await fsp.readFile(FilePath); // read to memory
+
+        await sharp(imageBuffer)
             .resize(ImageSize[0], ImageSize[1])
             .webp()
             .toFile(tempPath);
 
-
         await fsp.rename(tempPath, webpPath);
 
         if (FilePath !== webpPath) {
-            await fsp.unlink(FilePath);
+            await fsp.unlink(FilePath); // now should not fail
         }
-        res.send({ sucess: true });
-    } catch (Err) {
-        console.warn(Err)
+
+        res.send({ success: true });
+    } catch (err) {
+        console.error(err);
         res.status(502).send();
-    }
-
-
+    } 
 }
 
 /**
@@ -149,7 +149,7 @@ async function ProcessImage(req: ExpressRequest, res: ExpressResponse, ImageSize
  * @unprotected true
  */
 Router.post('/images/users', UserImages.single('image'), HandleEndpointFunction(async (req, res) => {
-    ProcessImage(req, res, [600, 600])
+    await ProcessImage(req, res, [600, 600])
 }))
 
 
@@ -162,7 +162,7 @@ Router.post('/images/users', UserImages.single('image'), HandleEndpointFunction(
 * @connected POST/api/menu
  */
 Router.post('/images/menu', MenuImages.single('image'), HandleEndpointFunction(async (req, res) => {
-    ProcessImage(req, res, [300, 300])
+    await ProcessImage(req, res, [300, 300])
 }))
 
 /**
@@ -173,7 +173,7 @@ Router.post('/images/menu', MenuImages.single('image'), HandleEndpointFunction(a
 * @connected POST/api/stock-items
  */
 Router.post('/images/stocks', StockImages.single('image'), HandleEndpointFunction(async (req, res) => {
-    ProcessImage(req, res, [300, 300])
+    await ProcessImage(req, res, [300, 300])
 }))
 
 

@@ -28,7 +28,7 @@
                             @let FirstName = SplitString[0];
                             @let LastName = SplitString.length > 1 ? SplitString[SplitString.length-1] : '';
                             <label class="name">{{FirstName}} {{LastName}}</label>
-                    <img class="picture" [src]="UserImagesURL+Entry.username">
+                    <img class="picture" [src]="UserImagesURL+Entry.username" onerror="this.src='Images/Icons/account.svg'">
                     }
                     </div>
                 </div>

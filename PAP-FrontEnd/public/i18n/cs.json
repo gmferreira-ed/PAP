@@ -259,7 +259,7 @@
   "Failed to load inventory reports": "Chyba načtení inventárních zpráv",
   "Failed to fetch roles": "Chyba načtení rolí",
   "Could not get menu items. Please try again": "Nepodařilo se načíst položky menu. Zkuste to prosím znovu",
-  "Failed to delete menu item": "Chyba smazání položky menu",
+  "Failed to delete menu item: ": "Chyba smazání položky menu",
   "Sucessfully removed": "Úspěšně odstraněno",
   "from the menu": "z menu",
   "Failed to upload menu item image": "Chyba nahrání obrázku položky menu",
